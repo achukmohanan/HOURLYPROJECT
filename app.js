@@ -2,10 +2,26 @@ const express = require('express')
 const app = express();
 const env = require('dotenv').config()
 const db = require('./config/db')
+const path = require('path')
+const userRouter = require('./routes/userRouter')
+
+
 db()
-app.get('/',(req,res)=>{
-    res.send('hello ,sughamaascascasc')
-}).listen(process.env.PORT,()=>console.log('http://localhost:3000'))
+app.use(express.json())
+app.use(express.urlencoded({extended:true}))
+app.set('view engine','ejs')
+app.set('views'[path.join(__dirname,'views/admin'),path.join(__dirname,'views/user')])
+app.use(express.static(path.join(__dirname,"public")))
 
 
-module.exports = app
+
+app.use('/',userRouter)
+
+
+ 
+
+
+app.listen(process.env.PORT,()=>console.log('http://localhost:3000'))
+
+
+module.exports = app;
