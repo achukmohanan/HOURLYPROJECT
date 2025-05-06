@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hourly Sign Up</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(to top right, #b5f5f0, #ffffff);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+
+    .container {
+      display: flex;
+      flex-direction: row;
+      background-color: white;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+      padding: 40px;
+      max-width: 900px;
+      width: 90%;
+      gap: 40px;
+    }
+
+    .form-box {
+      width: 100%;
+      max-width: 350px;
+    }
+
+    .form-box h2 {
+      text-align: center;
+      font-size: 24px;
+      margin-bottom: 8px;
+    }
+
+    .form-box p {
+      text-align: center;
+      font-size: 12px;
+      color: #555;
+      margin-bottom: 20px;
+    }
+
+    form input {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 12px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    form button {
+      width: 100%;
+      padding: 10px;
+      background-color: #3e3a80;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .image-box {
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .image-box img {
+      width: 120px;
+      height: auto;
+      margin-bottom: 20px;
+    }
+
+    .hourly-label {
+      background-color: #b3a8a8;
+      padding: 15px;
+      font-weight: bold;
+      font-size: 20px;
+      border-radius: 10px;
+    }
+
+    /* 🔹 Responsive Styling */
+    @media (max-width: 768px) {
+      .container {
+        flex-direction: column;
+        padding: 20px;
+        height: auto;
+      }
+
+      body {
+        height: auto;
+        padding: 20px;
+      }
+
+      .form-box {
+        max-width: 100%;
+      }
+
+      .image-box {
+        margin-top: 30px;
+      }
+    }
+
+    .image-box img {
+      width: 50%;
+      height: 80%;
+      display: block;
+      border-radius: 3%;
+    }
+
+    .google-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      padding: 10px;
+      background-color: white;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-weight: bold;
+      margin-bottom: 20px;
+      cursor: pointer;
+      gap: 10px;
+    }
+
+    .google-btn img {
+      width: 20px;
+      height: 20px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <div class="form-box">
+      <h2>SIGN UP</h2>
+      <p>Please fill in the information below</p>
+      <!-- 🔹 Google Login Button -->
+      <button class="google-btn" type="button">
+        <img src="assets/img/gallery/google.png" alt="Google icon" />
+        Sign up with Google
+      </button>
+      <form id="signupform" method="post" action="/signup">
+        <div class="form-group">
+          <input type="text" id="name" name="name" placeholder="Enter Full Name" required />
+          <div id="error1" class="error-message"></div>
+        </div>
+        <!-- <input type="text" placeholder="Last name" required /> -->
+        <div class="form-group">
+          <input type="email" id="email" name="email" placeholder="Enter E-mail Address" required />
+          <div id="error2" class="error-message"></div>
+        </div>
+        <div class="form-group">
+          <input type="tel" id="phone" name="phone" placeholder="Enter Mobile Number" required />
+          <div id="error3" class="error-message"></div>
+        </div>
+
+        <div class="form-group">
+          <input type="password" id="password" name="password" placeholder="Enter Password" required />
+          <div id="error4" class="error-message"></div>
+        </div>
+        <div class="form-group">
+          <input type="password" id="cPassword" name="cPassword" placeholder="Confirm Password" required />
+          <div id="error5" class="error-message"></div>
+        </div>
+        <button type="submit">login</button>
+        <p>already a User? <a href="/login">Login Now</a></p>
+      </form>
+    </div>
+
+    <div class="image-box">
+      <img src="assets/img/gallery/HourlyYours.png" alt="Watch">
+      <!-- <div class="hourly-label">HOURLY</div> -->
+    </div>
+  </div>
+  <script>
+
+    const nameid = document.getElementById('name');
+    const emailid = document.getElementById('email');
+    const phoneid = document.getElementById('phone');
+    const passwordid = document.getElementById('password');
+    const cPasswordid = document.getElementById('cPassword')
+
+    const error1 = document.getElementById('error1')
+    const error2 = document.getElementById('error2')
+    const error3 = document.getElementById('error3')
+    const error4 = document.getElementById('error4')
+    const error5 = document.getElementById('error5')
+
+    const signupform = document.getElementById('signupform')
+
+    function nameValidateChecking (e){
+        const nameval = nameid.value;
+        namepattern = /^[A-Za-z\s]+$/;
+        if(nameval.trim() === ""){
+          error1.style.display = "block";
+          error1.innerHTML = "Please enter a Valid Name"
+        }else if(!namepattern.test(nameval)){
+        error1.style.display = "block";
+        error1.innerHTML = "Name can only contain Alphabets and Spaces"
+        }else{
+          error1.style.display = "none";
+          error1.innerHTML = "";
+        }
+    }
+
+
+    function emailValidateChecking(e){
+        const emailval = emailid;
+        emailpattern =  /^([a-zA-Z0-9._-]+)@([a-zA-Z0-9.-]+)\.([a-zA-Z]{2,4})$/;
+
+      if(!emailpattern.test(emailval)){
+        error
+      }
+
+    }
+
+
+    // <here we define a event listener for the validation of signupform>
+
+    document.addEventListener('DOMContentLoaded', function () {
+      signupform.addEventListener('submit', function (e) {
+        nameValidateChecking();
+        emailValidateChecking();
+        phoneValidateChecking();
+        passwordValidateChecking();
+        cPasswordValidateChecking();
+
+        if (
+          !nameid ||
+          !emailid ||
+          !phoneid ||
+          !passwordid ||
+          !error1 ||
+          !error2 ||
+          !error3 ||
+          !error4 ||
+          !error5 ||
+          !signupform
+        ) {
+          console.log('One or more Elements are not Found');
+
+        }
+
+        if (
+          !error1.innerHTML ||
+          !error2.innerHTML ||
+          !error3.innerHTML ||
+          !error4.innerHTML ||
+          !error5.innerHTML
+        ) {
+          e.preventDefault();
+        }
+
+
+      })
+    })
+
+  </script>
+
+</body>
+
+</html>

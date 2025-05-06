@@ -18545,6 +18545,27 @@ Calaendar icon input[type="date"]::-webkit-calendar-picker-indicator {
 .watch-tabs .nav-item.show .nav-link {
   border-bottom-color: #757575;
 }
+/* <----------------------new updation ---------------> */
+
+
+ .carousel-image {
+  padding: 10%;
+      height: 35%;
+      object-fit: fill;
+      width: 100%;
+    }
+    
+    .carousel-control-next, .carousel-control-prev {
+      width: auto;
+      padding: 0 15px;
+    }
+    
+    @media (max-width: 767.98px) {
+      .carousel-content {
+        text-align: center;
+        padding-top: 20px;
+      }
+    }
 
 /*-----------------------------------------------
 |   User Styles

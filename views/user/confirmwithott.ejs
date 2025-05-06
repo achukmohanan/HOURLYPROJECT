@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confirm with OTP</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background-color: #aae0d4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 600px;
+            display: flex;
+            flex-direction: row;
+            overflow: hidden;
+        }
+
+        .otp-section {
+            flex: 1;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background-color: #f5f5f5;
+        }
+
+        .brand-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background-color: #f0ebeb;
+            padding: 30px;
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        p {
+            margin-bottom: 20px;
+            text-align: center;
+            color: #555;
+        }
+
+        .otp-inputs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+            justify-content: center;
+        }
+
+        .otp-input {
+            width: 40px;
+            height: 40px;
+            text-align: center;
+            font-size: 1.2rem;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .confirm-btn {
+            background-color: #4c4ca6;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 12px;
+            width: 100%;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-bottom: 15px;
+        }
+
+        .confirm-btn:hover {
+            background-color: #3c3c8a;
+        }
+
+        .back-link {
+            color: #666;
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        .watch-icon {
+            width: 80px;
+            margin-bottom: 20px;
+        }
+
+        .brand-name {
+            font-size: 1.8rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+                max-width: 400px;
+            }
+
+            .otp-section, .brand-section {
+                padding: 25px;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .otp-section, .brand-section {
+                padding: 20px 15px;
+            }
+
+            h2 {
+                font-size: 1.3rem;
+            }
+
+            .otp-input {
+                width: 35px;
+                height: 35px;
+            }
+
+            .watch-icon {
+                width: 60px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="otp-section">
+            <h2>Confirm with OTP</h2>
+            <p>Please check your mail address for OTP</p>
+            <div class="otp-inputs">
+                <input type="text" class="otp-input"  maxlength="1">
+                <input type="text" class="otp-input"  maxlength="1">
+                <input type="text" class="otp-input" maxlength="1">
+                <input type="text" class="otp-input" maxlength="1">
+            </div>
+            <button class="confirm-btn">Confirm</button>
+            <a href="/login" class="back-link">Go back to Login page</a>
+        </div>
+        <div class="brand-section">
+            <img src="assets/img/gallery/HourlyYours.png" style="max-width: 150px;  border-radius: 10px" alt="img" >
+        </div>
+    </div>
+</body>
+</html>
