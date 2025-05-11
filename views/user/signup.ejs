@@ -140,6 +140,11 @@
       width: 20px;
       height: 20px;
     }
+    .error-message{
+      color: red;
+      font-size: 0.75rem;
+      display: none;
+    }
   </style>
 </head>
 
@@ -155,28 +160,28 @@
       </button>
       <form id="signupform" method="post" action="/signup">
         <div class="form-group">
-          <input type="text" id="name" name="name" placeholder="Enter Full Name" required />
+          <input type="text" id="name" name="name" placeholder="Enter Full Name"  />
           <div id="error1" class="error-message"></div>
         </div>
         <!-- <input type="text" placeholder="Last name" required /> -->
         <div class="form-group">
-          <input type="email" id="email" name="email" placeholder="Enter E-mail Address" required />
+          <input type="email" id="email" name="email" placeholder="Enter E-mail Address"  />
           <div id="error2" class="error-message"></div>
         </div>
         <div class="form-group">
-          <input type="tel" id="phone" name="phone" placeholder="Enter Mobile Number" required />
+          <input type="tel" id="phone" name="phone" placeholder="Enter Mobile Number"  />
           <div id="error3" class="error-message"></div>
         </div>
 
         <div class="form-group">
-          <input type="password" id="password" name="password" placeholder="Enter Password" required />
+          <input type="password" id="password" name="password" placeholder="Enter Password" />
           <div id="error4" class="error-message"></div>
         </div>
         <div class="form-group">
-          <input type="password" id="cPassword" name="cPassword" placeholder="Confirm Password" required />
+          <input type="password" id="cPassword" name="cPassword" placeholder="Confirm Password"  />
           <div id="error5" class="error-message"></div>
         </div>
-        <button type="submit">login</button>
+        <button type="submit">signup</button>
         <p>already a User? <a href="/login">Login Now</a></p>
       </form>
     </div>
@@ -223,10 +228,58 @@
         emailpattern =  /^([a-zA-Z0-9._-]+)@([a-zA-Z0-9.-]+)\.([a-zA-Z]{2,4})$/;
 
       if(!emailpattern.test(emailval)){
-        error
+        error2.style.display = 'block';
+        error2.innerHTML = 'Invalid Format'
+      }else{
+        error2.style.display = "none";
+        error2.innerHTML = "";
       }
 
     }
+
+    function phoneValidateChecking(e){
+      const phoneval = phoneid.value;
+
+      if(phoneval.trim() === ""){
+        error3.style.display = "block";
+        error3.innerHTML = "Enter Valid Phone Number"
+      }else if(phoneval.length<10 || phoneval.length>10){
+        error3.style.display = "block";
+        error3.innerHTML = "Enter 10 digit";
+      }else{
+        error3.style.display = "none";
+        error3.innerHTML = "none"
+        error3.innerHTML = "";
+      }
+    }
+
+   function  passwordValidateChecking(e){
+    const passwordval =  password.value;
+    const cPasswordval = cPassword.value;
+    const alpha = /[a-zA-Z]/;
+    const digit =/\d/;
+
+
+    if(passwordval.length <8){
+      error4.style.display ="block";
+      error4.innerHTML= "Character Must be Eight Charactors"
+    }else if(!alpha.test(passval) || !digit.test(passval)){
+      error4.style.display = "block";
+      error4.innerHTML = "Should contain numbers and alphabets"
+
+    }else{
+      error4.style.display = "none";
+      error4.innerHTML = "";
+    }
+    if(passwordval!= cPasswordval){
+      error5.style.display = "block";
+      error5.innerHTML = "password is isMatching"
+    }else{
+      error5.style.display = "none";
+      error5.innerHTML ="";
+    }
+   }
+
 
 
     // <here we define a event listener for the validation of signupform>
@@ -237,7 +290,7 @@
         emailValidateChecking();
         phoneValidateChecking();
         passwordValidateChecking();
-        cPasswordValidateChecking();
+        
 
         if (
           !nameid ||

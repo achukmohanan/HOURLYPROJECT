@@ -4,8 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Confirm with OTP</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
-        * {
+         
+        *{
             margin: 0;
             padding: 0;
             box-sizing: border-box;
@@ -98,7 +101,7 @@
         }
 
         .back-link {
-            color: #666;
+            color: #1987f6;
             text-decoration: none;
             font-size: 0.9rem;
         }
@@ -152,22 +155,90 @@
     </style>
 </head>
 <body>
+    
     <div class="container">
         <div class="otp-section">
             <h2>Confirm with OTP</h2>
             <p>Please check your mail address for OTP</p>
-            <div class="otp-inputs">
+            <form action="/confirmwithotp" method="post" id="otpForm" onsubmit="return validateOTPForm()">
+            <div class="otp-inputs" id="otp">
                 <input type="text" class="otp-input"  maxlength="1">
                 <input type="text" class="otp-input"  maxlength="1">
                 <input type="text" class="otp-input" maxlength="1">
                 <input type="text" class="otp-input" maxlength="1">
             </div>
             <button class="confirm-btn">Confirm</button>
+            </form>
+           <div id="otpTimer" class="otp-timer">
+            <button type="button"    style="color: rgb(42, 34, 34); border: none; cursor: pointer;" onclick="">Resend OTP</button>
+            <span id="timerValue" style="color: red;">60</span>
+           </div>
+
             <a href="/login" class="back-link">Go back to Login page</a>
         </div>
         <div class="brand-section">
             <img src="assets/img/gallery/HourlyYours.png" style="max-width: 150px;  border-radius: 10px" alt="img" >
         </div>
     </div>
+    
+    <script>
+
+        let timer = 60;
+        let timerInterval;
+
+        function startTimer(){
+            timerInterval = setInterval(()=>{
+                timer--;
+                document.getElementById("timerValue").textContent = timer;
+                if(timer<=0){
+                    clearInterval(timerInterval);
+                    document.getElementById("timerValue").classList.add("expired");
+                    document.getElementById("timerValue").textContent = "Expired"
+                    document.getElementById("otp").disabled = true;
+                }
+            },1000);
+        }
+startTimer()
+
+        function validateOTPForm(){
+            const otpInput = document.getElementById("otp").value;
+            $.ajax({
+                type:"POST",
+                url:"verify-otp",
+                data:{otp:otpInput},
+                success:function(response){
+                    if(response.success){
+                        swal.fire({
+                            icon:"Sucess",
+                            title:"OTP Verified Successfully",
+                            showConfirmButton:false,
+                            timer:1500,
+
+                        }).then(()=>{
+                            window.location.href = response.redirectUrl;
+
+                        })
+                    }else{
+                        swal.fire({
+                            icon:"error",
+                            title:Error,
+                            text:response.message,
+
+                        })
+                    }
+                },
+                error:function(){
+                    swal.fire({
+                        icon:"error",
+                        title:"Invalid OTP",
+                        text:"Invalid OTP",
+                        text:"Please try again"
+                    })
+                }
+            })
+            return false;
+        }
+
+    </script>
 </body>
 </html>
