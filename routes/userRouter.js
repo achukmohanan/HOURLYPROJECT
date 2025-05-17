@@ -12,7 +12,7 @@ router.get('/confirmwithott',userController.confirmWithOtp)
 router.post('/confirmwithotp',userController.confirmwithott)
 router.get('/changepassword',userController.changePassword)
 router.get('/', userController.landingPage)
-
+router.post('/resend-otp',userController.resendOtp)
 
 
 

@@ -170,7 +170,7 @@
             <button class="confirm-btn">Confirm</button>
             </form>
            <div id="otpTimer" class="otp-timer">
-            <button type="button"    style="color: rgb(42, 34, 34); border: none; cursor: pointer;" onclick="">Resend OTP</button>
+            <button type="button"    style="color: rgb(42, 34, 34); border: none; cursor: pointer;" onclick="resendOTP()">Resend OTP</button>
             <span id="timerValue" style="color: red;">60</span>
            </div>
 
@@ -266,8 +266,53 @@ startTimer()
                     text: "Please try again"
                 });
             });
+            return false
         }
         
+        async function resendOTP() {
+            clearInterval(timerInterval);
+            time = 60;
+            document.getElementById('otp').disabled = false;
+            document.getElementById('timerValue').classList.remove("Expired");
+            startTimer();
+
+            try {
+                const response = await fetch('/resend-otp', {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    }
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    Swal.fire({
+                        icon: "success", // Fixed typo: "Sucess" -> "success"
+                        title: "OTP Sent Again",
+                        showConfirmButton: false,
+                        timer: 1000
+                    }).then(()=>{
+                        window.location.reload();
+                    })
+                } else {
+                    Swal.fire({
+                        icon: "error", // Fixed typo: "Error" -> "error"
+                        title: "Failed to Resend OTP",
+                        text: data.message || "Please try again"
+                    });
+                }
+            } catch (error) {
+                Swal.fire({
+                    icon: "error",
+                    title: "Network Error",
+                    text: "Something went wrong. Please try again"
+                });
+            }
+
+            return false;
+        }
+
     </script>
 </body>
 </html>

@@ -130,7 +130,7 @@ const changePassword = async (req, res) => {
 
 const landingPage = async (req, res) => {
     try {
-        res.render('user/home')
+        res.render('user/landing')
     } catch (error) {
         res.status(500).send("enternal error happend")
     }
@@ -177,6 +177,30 @@ const   confirmwithott = async (req,res)=>{
     }
 }
 
+const resendOtp = async (req,res)=>{
+    try {
+        const {email}=req.session.userData;
+        if(!email){
+            return res.status(400).json({success:false,message:"Email not found in Session"})
+        }
+
+        const otp = generateOtp();
+        req.session.userOtp = otp;
+
+        const emailSent =  await sendVerificationEmail(email,otp);
+        if(emailSent){
+            console.log("Resend OTP:",otp);
+            return res.status(200).json({success:true,message:"OTP Resend Succesfully"})
+        }else{
+            return res.status(500).json({success:false,message:"Failed to Resend OTP. Please try again"});
+        }
+
+    } catch (error) {
+        console.log("error  resending otp",error);
+        res.status(500).json({success:false,message:"internal Server Error,Please try again"});
+        
+    }
+}
 
 
 module.exports = {
@@ -190,6 +214,6 @@ module.exports = {
     changePassword,
     landingPage,
     confirmwithott,
-   
+    resendOtp
 } 
 
