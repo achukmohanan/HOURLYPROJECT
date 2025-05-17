@@ -240,7 +240,7 @@
     function phoneValidateChecking(e){
       const phoneval = phoneid.value;
 
-      if(phoneval.trim() === ""){
+      if(phoneval.trim() === ""){ 
         error3.style.display = "block";
         error3.innerHTML = "Enter Valid Phone Number"
       }else if(phoneval.length<10 || phoneval.length>10){

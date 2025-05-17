@@ -1,6 +1,7 @@
 const User = require('../../models/userSchema');
 const nodemailer = require("nodemailer");
 const env = require('dotenv').config();
+const bcrypt = require('bcrypt')
 
 const pageNotFound = async (req, res) => {
     try {
@@ -51,7 +52,7 @@ async function sendVerificationEmail(email, otp) {
             to: email,
             subject: "Verify your account",
             text: `Your OTP is ${otp}`,
-            html: `<b>Your OTP<b>`,
+            html: `<b>Your OTP : ${otp}<b>`,
 
         })
         return info.accepted.length > 0
@@ -66,23 +67,23 @@ const signup = async (req, res) => {
         const { name,phone,email, password, cPassword } = req.body
 
         if (password !== cPassword) {
-            return res.render("/signup", { message: "Password does not match!" })
+            return res.render("user/signup", { message: "Password does not match!" })
         } 
         const findUser = await User.findOne({ email });
         if (findUser) {
-            return res.render("signup", { message: "User with this Email already Exists" })
+            return res.render("user/signup", { message: "User with this Email already Exists" })
         }
         const otp = generateOtp();
         const emailSent = await sendVerificationEmail(email, otp);
         if(!emailSent){
             return res.json("email-error")
-        }
+        } 
 
         req.session.userOtp = otp;
         req.session.userData = {name,phone,email,password};
 
         res.render('user/confirmwithotp')
-        // console.log("Otp sent",otp);
+        console.log("Otp sent",otp);
         
     } catch (error) {
         console.log("signup error",error);
@@ -110,9 +111,9 @@ const forgotPassword = async (req, res) => {
     }
 }
 
-const confirmWithOtt = async (req, res) => {
+const confirmWithOtp = async (req, res) => {
     try {
-        return res.render('user/confirmWithOtt')
+        return res.render('user/confirmwithotp')
     } catch (error) {
         console.log('error happened in confirm with ott ', error)
         res.status(500).send('Server error')
@@ -135,18 +136,48 @@ const landingPage = async (req, res) => {
     }
 }
 
-// const confirmwithott = async (req,res)=>{ 
-//     try {
-//         const {otp} = req.body;
-//         console.log(otp);
+const securePassword = async (password)=>{
+    try {
+        const passwordHash = await bcrypt.hash(password,10)
+        return passwordHash;
+
+
+    } catch (error) {
         
-//         if(otp === req.session.userOtp){
-//             const user = req.session.userData
-//         }
-//     } catch (error) {
+    }
+}
+
+const   confirmwithott = async (req,res)=>{ 
+    try {
+        const {otp1, otp2, otp3, otp4} = req.body;
+        console.log(req.body);
+
+        const otp = otp1 + otp2 + otp3 + otp4
         
-//     }
-// }
+        if(otp === req.session.userOtp){
+            console.log('otp verified successfully')
+            const user = req.session.userData
+            const passwordHash = await securePassword(user.password);
+            const saveUserData = new User({
+                name:user.name,
+                email:user.email,
+                phone:user.phone,
+                password:passwordHash,
+            })
+            await saveUserData.save();
+            req.session.user = saveUserData._id;
+            res.json({success:true, redirectUrl:"/login"})
+
+        }else{
+            res.status(400).json({success:false,message:"Invalid OTP,Please try again"})
+        }
+    } catch (error) {
+        console.log("error in verify otp ",error);
+        res.status(500).json({success:false,message:"An errr occured"})
+    }
+}
+
+
 
 module.exports = {
     loadHomepage,
@@ -155,8 +186,10 @@ module.exports = {
     signup,
     login,
     forgotPassword,
-    confirmWithOtt,
+    confirmWithOtp,
     changePassword,
-    landingPage
+    landingPage,
+    confirmwithott,
+   
 } 
 

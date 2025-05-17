@@ -160,12 +160,12 @@
         <div class="otp-section">
             <h2>Confirm with OTP</h2>
             <p>Please check your mail address for OTP</p>
-            <form action="/confirmwithotp" method="post" id="otpForm" onsubmit="return validateOTPForm()">
+            <form id="otpForm">
             <div class="otp-inputs" id="otp">
-                <input type="text" class="otp-input"  maxlength="1">
-                <input type="text" class="otp-input"  maxlength="1">
-                <input type="text" class="otp-input" maxlength="1">
-                <input type="text" class="otp-input" maxlength="1">
+                <input type="text" id="otp1" name="otp1" class="otp-input"  maxlength="1">
+                <input type="text" id="otp2" name="otp2" class="otp-input"  maxlength="1">
+                <input type="text" id="otp3" name="otp3" class="otp-input" maxlength="1">
+                <input type="text" id="otp4" name="otp4" class="otp-input" maxlength="1">
             </div>
             <button class="confirm-btn">Confirm</button>
             </form>
@@ -198,47 +198,76 @@
                 }
             },1000);
         }
+
+document.querySelectorAll('.otp-input').forEach((input, index, inputs) => {
+    input.addEventListener('input', () => {
+        if (input.value.length === 1 && index < inputs.length - 1) {
+            inputs[index + 1].focus();
+        }
+    });
+
+    input.addEventListener('keydown', (e) => {
+        if (e.key === 'Backspace' && input.value === '' && index > 0) {
+            inputs[index - 1].focus();
+        }
+    });
+});
+
+
 startTimer()
 
-        function validateOTPForm(){
-            const otpInput = document.getElementById("otp").value;
-            $.ajax({
-                type:"POST",
-                url:"verify-otp",
-                data:{otp:otpInput},
-                success:function(response){
-                    if(response.success){
-                        swal.fire({
-                            icon:"Sucess",
-                            title:"OTP Verified Successfully",
-                            showConfirmButton:false,
-                            timer:1500,
+        document.getElementById("otpForm").addEventListener("submit", validateOTPForm);
 
-                        }).then(()=>{
-                            window.location.href = response.redirectUrl;
+        function validateOTPForm(e) {
+            e.preventDefault();
 
-                        })
-                    }else{
-                        swal.fire({
-                            icon:"error",
-                            title:Error,
-                            text:response.message,
+            const otp1 = document.getElementById("otp1").value.trim();
+            const otp2 = document.getElementById("otp2").value.trim();
+            const otp3 = document.getElementById("otp3").value.trim();
+            const otp4 = document.getElementById("otp4").value.trim();
 
-                        })
-                    }
+            if (!otp1 || !otp2 || !otp3 || !otp4) {
+                Swal.fire("Please enter all 4 digits of the OTP");
+                return;
+            }
+
+            const data = { otp1, otp2, otp3, otp4 };
+
+            fetch("/confirmwithotp", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
                 },
-                error:function(){
-                    swal.fire({
-                        icon:"error",
-                        title:"Invalid OTP",
-                        text:"Invalid OTP",
-                        text:"Please try again"
-                    })
+                body: JSON.stringify(data)
+            })
+            .then(res => res.json())
+            .then(response => {
+                if (response.success) {
+                    Swal.fire({
+                        icon: "success",
+                        title: "OTP Verified Successfully",
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(() => {
+                        window.location.href = response.redirectUrl;
+                    });
+                } else {
+                    Swal.fire({
+                        icon: "error",
+                        title: "Error",
+                        text: response.message
+                    });
                 }
             })
-            return false;
+            .catch(() => {
+                Swal.fire({
+                    icon: "error",
+                    title: "Invalid OTP",
+                    text: "Please try again"
+                });
+            });
         }
-
+        
     </script>
 </body>
 </html>
