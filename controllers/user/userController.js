@@ -94,10 +94,12 @@ const signup = async (req, res) => {
 
 const login = async (req, res) => {
     try {
+        if(!req.session.user){
         return res.render('user/login')
+        }
     } catch (error) {
         console.log('error happened in login:', error);
-        res.status(500).send('Server error')
+        res.redirect('/user/pageNotFound')
     }
 }
 

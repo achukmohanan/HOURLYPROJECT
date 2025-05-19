@@ -1,6 +1,7 @@
 const express = require('express')
 const router = express.Router()
 const userController = require('../controllers/user/userController');
+const passport = require('passport');
 
 router.get('/pagenotfound', userController.pageNotFound);
 router.get('/home', userController.loadHomepage);
@@ -13,7 +14,6 @@ router.post('/confirmwithotp',userController.confirmwithott)
 router.get('/changepassword',userController.changePassword)
 router.get('/', userController.landingPage)
 router.post('/resend-otp',userController.resendOtp)
-
 
 
 

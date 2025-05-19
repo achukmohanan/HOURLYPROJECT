@@ -20,7 +20,7 @@ const userSchema = new Schema({
             unique:false,
             sparse:true,
             default:null
-       },
+       }, 
        googleId:{
         type : String,
         unique : true,

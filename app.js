@@ -1,5 +1,6 @@
 const express = require('express');
 const app = express();
+const passport = require('./config/passport')
 const env = require('dotenv').config();
 const db = require('./config/db');
 const path = require('path')    
@@ -19,6 +20,15 @@ app.use(session({
         maxAge:72*60*60*1000    
     }
 }))
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+app.get('/auth/google',passport.authenticate('google',{scope:['profile','email']}))
+app.get('/google/callback',passport.authenticate('google',{failureRedirect:'/signup'}),(req,res)=>{
+    res.redirect('/home')
+})
+
 app.use((req,res,next)=>{
     res.set('cache-control','no-store')
     next();
