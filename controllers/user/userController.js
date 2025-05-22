@@ -1,7 +1,8 @@
 const User = require('../../models/userSchema');
 const nodemailer = require("nodemailer");
 const env = require('dotenv').config();
-const bcrypt = require('bcrypt')
+const bcrypt = require('bcrypt');
+const { json } = require('express');
 
 const pageNotFound = async (req, res) => {
     try {
@@ -63,6 +64,8 @@ async function sendVerificationEmail(email, otp) {
 }
 
 const signup = async (req, res) => {
+
+    
     try {
         const { name,phone,email, password, cPassword } = req.body
 
@@ -71,7 +74,8 @@ const signup = async (req, res) => {
         } 
         const findUser = await User.findOne({ email });
         if (findUser) {
-            return res.render("user/signup", { message: "User with this Email already Exists" })
+            return res.render("user/signup", 
+                { message: "User with this Email already Exists" })
         }
         const otp = generateOtp();
         const emailSent = await sendVerificationEmail(email, otp);
@@ -79,28 +83,82 @@ const signup = async (req, res) => {
             return res.json("email-error")
         } 
 
+        
+
+
         req.session.userOtp = otp;
         req.session.userData = {name,phone,email,password};
-
-        res.render('user/confirmwithotp')
+        // console.log(req.session.userData)
         console.log("Otp sent",otp);
+
+
+        return res.status(200).json({success : true, message : 'Otp send Successfully...!'});
+
         
     } catch (error) {
         console.log("signup error",error);
         res.redirect('/error404')
     }
+    const otpSent = true;
+        if(otpSent){
+            return res,json({
+                success: true,
+                message:"OTP sent to your Email"
+
+            });
+
+        }else{
+            return res.status(500).json({
+                success:false,
+                message:"Failed to sent OTP,Please try again"
+            });
+        }
 }
 
 
-const login = async (req, res) => {
+const loadLogin = async (req, res) => {
     try {
-        if(!req.session.user){
         return res.render('user/login')
-        }
     } catch (error) {
         console.log('error happened in login:', error);
-        res.redirect('/user/pageNotFound')
+        res.redirect('/pageNotFound')
     }
+}
+
+const login = async (req,res) => {
+    try {
+        const {email ,password} = req.body;
+        
+// console.log(req.body);
+
+        const findUser = await User.findOne({isAdmin:0,email:email})
+        if(!findUser){
+            return res.render('user/login',{message:"User not found"})
+        }
+        if(findUser.isBlocked){     
+            return res.render('user/login',{message:"User is blocked by Admin"})
+        }
+
+        const passwordMatch = await bcrypt.compare(password,findUser.password)
+        if(!passwordMatch){
+            return res.render("user/login",{message:"Incorrect Password"})
+        }
+
+//            console.log('Email:', email);
+// console.log('Password:', password);
+// console.log('Found user:', findUser);
+     
+        req.session.user = findUser.id;
+        
+      return  res.redirect('/home')
+
+
+    } catch (error) {
+        console.log("login error",error);
+        res.render("user/login",{message:"login failed. Please try again later"})
+        
+    }
+    
 }
 
 const forgotPassword = async (req, res) => {
@@ -149,39 +207,67 @@ const securePassword = async (password)=>{
     }
 }
 
-const   confirmwithott = async (req,res)=>{ 
+const confirmwithotp = async (req, res) => {
     try {
-        const {otp1, otp2, otp3, otp4} = req.body;
-        console.log(req.body);
+        const { otp1, otp2, otp3, otp4 } = req.body;
 
-        const otp = otp1 + otp2 + otp3 + otp4
-        
-        if(otp === req.session.userOtp){
-            console.log('otp verified successfully')
-            const user = req.session.userData
+        // Ensure all fields are present
+        if (!otp1 || !otp2 || !otp3 || !otp4) {
+            return res.status(400).json({ success: false, message: "All 4 OTP digits are required" });
+        }
+
+        const otp = otp1 + otp2 + otp3 + otp4;
+
+        // Compare with session OTP
+        if (otp === req.session.userOtp) {
+            console.log('OTP verified successfully');
+
+            const user = req.session.userData;
+
+            if (!user) {
+                return res.status(400).json({ success: false, message: "User session expired. Please sign up again." });
+            }
+
             const passwordHash = await securePassword(user.password);
-            const saveUserData = new User({
-                name:user.name,
-                email:user.email,
-                phone:user.phone,
-                password:passwordHash,
-            })
-            await saveUserData.save();
-            req.session.user = saveUserData._id;
-            res.json({success:true, redirectUrl:"/login"})
 
-        }else{
-            res.status(400).json({success:false,message:"Invalid OTP,Please try again"})
+            const saveUserData = new User({
+                name: user.name,
+                email: user.email,
+                phone: user.phone,
+                password: passwordHash,
+            });
+
+            await saveUserData.save();
+
+            req.session.user = saveUserData._id;
+            delete req.session.userOtp;
+            delete req.session.userData;
+
+            return res.status(200).json({
+                success: true,
+                message: "OTP verified successfully",
+                redirectUrl: "/login"
+            });
+        } else {
+            return res.status(400).json({
+                success: false,
+                message: "Invalid OTP, please try again"
+            });
         }
     } catch (error) {
-        console.log("error in verify otp ",error);
-        res.status(500).json({success:false,message:"An errr occured"})
+        console.error("Error verifying OTP:", error);
+        return res.status(500).json({
+            success: false,
+            message: "An internal server error occurred"
+        });
     }
 }
 
+
 const resendOtp = async (req,res)=>{
     try {
-        const {email}=req.session.userData;
+        console.log(req.session.userData)
+        const {email} = req.session.userData;
         if(!email){
             return res.status(400).json({success:false,message:"Email not found in Session"})
         }
@@ -210,12 +296,13 @@ module.exports = {
     pageNotFound,
     loadSignup,
     signup,
-    login,
+    loadLogin,
     forgotPassword,
     confirmWithOtp,
     changePassword,
     landingPage,
-    confirmwithott,
-    resendOtp
+    confirmwithotp,
+    resendOtp,
+    login
 } 
 

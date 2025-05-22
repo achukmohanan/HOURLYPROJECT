@@ -218,7 +218,7 @@ startTimer()
 
         document.getElementById("otpForm").addEventListener("submit", validateOTPForm);
 
-        function validateOTPForm(e) {
+        async function validateOTPForm(e) {
             e.preventDefault();
 
             const otp1 = document.getElementById("otp1").value.trim();
@@ -233,24 +233,27 @@ startTimer()
 
             const data = { otp1, otp2, otp3, otp4 };
 
-            fetch("/confirmwithotp", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(data)
-            })
-            .then(res => res.json())
-            .then(response => {
+            try {
+                const res = await fetch("/confirmwithotp", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                const response = await res.json();
+                console.log(response)
+
                 if (response.success) {
                     Swal.fire({
                         icon: "success",
                         title: "OTP Verified Successfully",
                         showConfirmButton: false,
                         timer: 1500
-                    }).then(() => {
-                        window.location.href = response.redirectUrl;
-                    });
+                    }).then(()=>{
+                        window.location.href = "/login";
+                    })
                 } else {
                     Swal.fire({
                         icon: "error",
@@ -258,16 +261,17 @@ startTimer()
                         text: response.message
                     });
                 }
-            })
-            .catch(() => {
+            } catch (error) {
                 Swal.fire({
                     icon: "error",
                     title: "Invalid OTP",
                     text: "Please try again"
                 });
-            });
-            return false
+            }
+
+            return false;
         }
+
         
         async function resendOTP() {
             clearInterval(timerInterval);

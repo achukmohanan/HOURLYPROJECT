@@ -27,7 +27,7 @@ const userSchema = new Schema({
         sparse : true
 
        },
-       pasword:{
+       password:{
         type : String,
         required : false
        },
