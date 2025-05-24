@@ -4,6 +4,7 @@ const env = require('dotenv').config();
 const bcrypt = require('bcrypt');
 const { json } = require('express');
 
+
 const pageNotFound = async (req, res) => {
     try {
         return res.render("user/error404")
@@ -14,13 +15,21 @@ const pageNotFound = async (req, res) => {
 
 const loadHomepage = async (req, res) => {
     try {
-        return res.render('user/home')
+
+        const user = req.session.user;
+        if(user){
+            const userData = await User.findById(user._id);
+            res.render('user/home',{user: userData});
+        }else{
+            return res.render('user/home')
+        }
+        // return res.redi  rect('/login')
 
     } catch (error) {
-        console.log("error happened", error.message);
-        res.status(500).send("server error")
+        console.log("Home page is not loading", error);
+       res.status(500).send("server error")
     }
-}
+};
 
 const loadSignup = async (req, res) => {
     try {
@@ -67,20 +76,28 @@ const signup = async (req, res) => {
 
     
     try {
-        const { name,phone,email, password, cPassword } = req.body
+        const { name ,phone ,email, password, cPassword } = req.body
 
         if (password !== cPassword) {
-            return res.render("user/signup", { message: "Password does not match!" })
+            return res.status(400).json({
+                success:false,
+                message:"Password does not Match"
+            });
         } 
         const findUser = await User.findOne({ email });
         if (findUser) {
-            return res.render("user/signup", 
-                { message: "User with this Email already Exists" })
+            return res.status(400).json({
+                success:false,
+                message:"User with this Email already exists"
+            });
         }
         const otp = generateOtp();
         const emailSent = await sendVerificationEmail(email, otp);
         if(!emailSent){
-            return res.json("email-error")
+           return res.status(500).json({
+            success:false,
+            message:"Failed to send verification Email.Please try again"
+           });
         } 
 
         
@@ -88,6 +105,7 @@ const signup = async (req, res) => {
 
         req.session.userOtp = otp;
         req.session.userData = {name,phone,email,password};
+        
         // console.log(req.session.userData)
         console.log("Otp sent",otp);
 
@@ -148,7 +166,7 @@ const login = async (req,res) => {
 // console.log('Password:', password);
 // console.log('Found user:', findUser);
      
-        req.session.user = findUser.id;
+        req.session.user = findUser;
         
       return  res.redirect('/home')
 
@@ -290,6 +308,37 @@ const resendOtp = async (req,res)=>{
     }
 }
 
+const loadaccount = async (req,res) =>{
+    try {
+        return res.render('user/account')
+    } catch (error) {
+        res.status(500).send("server error")
+        console.log("error occured in account",error);
+        
+    }
+}
+
+const logout = async (req,res) => {
+    try {
+        req.session.destroy ((err)=>{
+            if(err){
+               
+               
+                console.log("Session destruction error",err.message);
+                return res.redirect('/pageNotFound')
+                
+                
+            }
+            
+            return res.redirect('/login')
+            
+        })
+    } catch (error) {
+        console.log("logout error ",error);
+        res.redirect('/pageNotFound')
+        
+    }
+}
 
 module.exports = {
     loadHomepage,
@@ -303,6 +352,8 @@ module.exports = {
     landingPage,
     confirmwithotp,
     resendOtp,
-    login
+    login,
+    loadaccount,
+    logout
 } 
 

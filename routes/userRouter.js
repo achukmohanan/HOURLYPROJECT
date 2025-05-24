@@ -16,8 +16,8 @@ router.get('/changepassword',userController.changePassword)
 router.get('/', userController.landingPage)
 router.post('/resend-otp',userController.resendOtp)
 router.get('/google', passport.authenticate('google', {scope: ['profile', 'email'],prompt: 'select_account',accessType:'offline'}));
-
-
+router.get('/account',userController.loadaccount)
+router.get('/logout',userController.logout)
 
 
 module.exports = router; 

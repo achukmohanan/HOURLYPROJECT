@@ -285,17 +285,17 @@
       return false;
     }else if(!alpha.test(passwordval) || !digit.test(passwordval)){
       error4.style.display = "block";
-      error4.innerHTML = "Should contain numbers and alphabets"
+      error4.innerHTML = "Password Should contain numbers and alphabets"
       return false;
 
     }else{
       error4.style.display = "none";
       error4.innerHTML = "";
-      return true;
+      // return true;
     }
-    if(passwordval!= cPasswordval){
+    if(passwordval!== cPasswordval){
       error5.style.display = "block";
-      error5.innerHTML = "password doesn't match"
+      error5.innerHTML = "Password doesn't match"
       return false;
     }else{
       error5.style.display = "none";
@@ -335,8 +335,8 @@
         const passwordValid=  passwordValidateChecking();
 
         
-        signupform.addEventListener('submit', async function(e) {
-         e.preventDefault();
+        // signupform.addEventListener('submit', async function(e) {
+        //  e.preventDefault();
 
        
         if (nameValid && emailValid && phoneValid && passwordValid) {
@@ -347,7 +347,8 @@
           password: passwordid.value,
           cPassword: cPasswordid.value
         };
-      
+        
+      console.log("Form data ready to submit", formData);
 
         try {
           const res = await fetch('/signup',{
@@ -389,7 +390,7 @@
       }
       });
     });
-  })
+  
 
   </script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
