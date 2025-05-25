@@ -5,6 +5,7 @@ const env = require('dotenv').config();
 const db = require('./config/db');
 const path = require('path')    
 const userRouter = require('./routes/userRouter');
+const adminRouter = require('./routes/adminRouter');
 const session = require('express-session')
 
 db()
@@ -40,9 +41,10 @@ app.use(express.static(path.join(__dirname, "public")))
 
 
 app.use('/', userRouter)
-// app.use((req, res, next) => {
-//     res.status(404).render('user/error404')
-// })
+app.use('/admin',adminRouter)
+app.use((req, res, next) => {
+    res.status(404).render('user/error404')
+})
 
 
 

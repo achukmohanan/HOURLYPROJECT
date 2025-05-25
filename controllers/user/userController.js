@@ -2,14 +2,14 @@ const User = require('../../models/userSchema');
 const nodemailer = require("nodemailer");
 const env = require('dotenv').config();
 const bcrypt = require('bcrypt');
-const { json } = require('express');
+ 
 
 
 const pageNotFound = async (req, res) => {
     try {
         return res.render("user/error404")
     } catch (error) {
-        res.redirect('/pagenotfound')
+        res.redirect('/error404')
     }
 }
 
@@ -325,7 +325,7 @@ const logout = async (req,res) => {
                
                
                 console.log("Session destruction error",err.message);
-                return res.redirect('/pageNotFound')
+                return res.redirect('/error404')
                 
                 
             }
@@ -335,7 +335,7 @@ const logout = async (req,res) => {
         })
     } catch (error) {
         console.log("logout error ",error);
-        res.redirect('/pageNotFound')
+        res.redirect('/error404')
         
     }
 }
