@@ -18,6 +18,8 @@ router.post('/resend-otp',userController.resendOtp)
 router.get('/google', passport.authenticate('google', {scope: ['profile', 'email'],prompt: 'select_account',accessType:'offline'}));
 router.get('/account',userController.loadaccount)
 router.get('/logout',userController.logout)
-
+// router.use('/user/*',(req, res, next) => {
+//     res.status(404).render('user/error404')
+// })
 
 module.exports = router; 

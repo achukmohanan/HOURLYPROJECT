@@ -1,9 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
+<%- include("../../views/partials/admin/sidebar") %>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hourly Dashboard</title>
+     <title>Hourly Dashboard</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
     <style>
         * {
@@ -21,56 +18,6 @@
         .container {
             display: flex;
             min-height: 100vh;
-        }
-
-        /* Sidebar */
-        .sidebar {
-            width: 250px;
-            background-color: #fff;
-            border-right: 1px solid #e9ecef;
-            padding: 20px 0;
-            transition: transform 0.3s ease;
-            position: relative;
-        }
-
-        .sidebar.collapsed {
-            transform: translateX(-100%);
-        }
-
-        .logo {
-            padding: 0 20px 30px;
-            font-size: 18px;
-            font-weight: bold;
-            color: #6c757d;
-        }
-
-        .nav-item {
-            display: flex;
-            align-items: center;
-            padding: 15px 20px;
-            color: #6c757d;
-            text-decoration: none;
-            transition: all 0.2s;
-            font-size: 14px;
-            white-space: nowrap;
-            min-height: 48px;
-            border: none;
-            background: none;
-            width: 100%;
-            text-align: left;
-            cursor: pointer;
-        }
-
-        .nav-item:hover, .nav-item.active {
-            background-color: #f8f9fa;
-            color: #007bff;
-        }
-
-        .nav-item::before {
-            content: "▪";
-            margin-right: 10px;
-            font-size: 12px;
-            flex-shrink: 0;
         }
 
         /* Main Content */
@@ -310,21 +257,6 @@
 
         /* Mobile Styles */
         @media (max-width: 768px) {
-            .sidebar {
-                position: fixed;
-                top: 0;
-                left: 0;
-                height: 100vh;
-                z-index: 1000;
-                box-shadow: 2px 0 5px rgba(0,0,0,0.1);
-                width: 280px;
-                max-width: 80vw;
-            }
-
-            .sidebar.collapsed {
-                transform: translateX(-100%);
-            }
-
             .menu-toggle {
                 display: block;
             }
@@ -333,25 +265,6 @@
                 margin-left: 0;
                 padding: 15px;
                 width: 100%;
-            }
-
-            .nav-item {
-                padding: 18px 20px;
-                font-size: 16px;
-                min-height: 56px;
-                touch-action: manipulation;
-            }
-
-            .nav-item::before {
-                margin-right: 12px;
-                font-size: 14px;
-            }
-
-            .logo {
-                padding: 0 20px 20px;
-                font-size: 20px;
-                border-bottom: 1px solid #e9ecef;
-                margin-bottom: 10px;
             }
 
             .stats-grid {
@@ -378,22 +291,6 @@
         }
 
         @media (max-width: 480px) {
-            .sidebar {
-                width: 260px;
-                max-width: 85vw;
-            }
-
-            .nav-item {
-                padding: 16px 15px;
-                font-size: 15px;
-                min-height: 52px;
-            }
-
-            .logo {
-                padding: 0 15px 15px;
-                font-size: 18px;
-            }
-
             .stat-card {
                 padding: 15px;
             }
@@ -414,42 +311,12 @@
                 padding: 10px;
             }
         }
-
-        /* Overlay for mobile sidebar */
-        .overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.5);
-            z-index: 999;
-        }
-
-        .overlay.active {
-            display: block;
-        }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- Sidebar -->
-        <nav class="sidebar" id="sidebar">
-            <div class="logo">HOURLY</div>
-            <button class="nav-item active">Dashboard</button>
-            <button class="nav-item">Products</button>
-            <button class="nav-item">Orders</button>
-            <button class="nav-item">Customers</button>
-            <button class="nav-item">Reviews</button>
-            <button class="nav-item">Offers</button>
-            <button class="nav-item">Coupon</button>
-            <button class="nav-item">Banner management</button>
-            <button class="nav-item">Category</button>
-        </nav>
-
-        <!-- Overlay for mobile -->
-        <div class="overlay" id="overlay"></div>
+        <!-- Load Sidebar Component -->
+        <div id="sidebar-container"></div>
 
         <!-- Main Content -->
         <main class="main-content">
@@ -459,7 +326,7 @@
                     <button class="menu-toggle" id="menuToggle">☰</button>
                     <div class="breadcrumb">Admin > Dashboard</div>
                 </div>
-                <button class="logout-btn">LOGOUT</button>
+                <a href="/admin/adminlogin"><button class="logout-btn">LOGOUT</button></a>
             </header>
 
             <!-- Stats Cards -->
@@ -600,111 +467,241 @@
     </div>
 
     <script>
-        // Mobile menu toggle
-        const menuToggle = document.getElementById('menuToggle');
-        const sidebar = document.getElementById('sidebar');
-        const overlay = document.getElementById('overlay');
-
-        menuToggle.addEventListener('click', () => {
-            sidebar.classList.toggle('collapsed');
-            overlay.classList.toggle('active');
-        });
-
-        overlay.addEventListener('click', () => {
-            sidebar.classList.add('collapsed');
-            overlay.classList.remove('active');
-        });
-
-        // Navigation item clicks
-        const navItems = document.querySelectorAll('.nav-item');
-        navItems.forEach(item => {
-            item.addEventListener('click', (e) => {
-                // Remove active class from all items
-                navItems.forEach(nav => nav.classList.remove('active'));
-                // Add active class to clicked item
-                e.target.classList.add('active');
+        // Load sidebar component
+        async function loadSidebar() {
+            try {
+                // In a real application, you would fetch this from a separate file
+                const sidebarHTML = `
+                    <!-- Sidebar Styles -->
+                    <style>
+                        .sidebar {
+                            width: 250px;
+                            background-color: #fff;
+                            border-right: 1px solid #e9ecef;
+                            padding: 20px 0;
+                            transition: transform 0.3s ease;
+                            position: relative;
+                        }
+                        .sidebar.collapsed { transform: translateX(-100%); }
+                        .logo {
+                            padding: 0 20px 30px;
+                            font-size: 18px;
+                            font-weight: bold;
+                            color: #6c757d;
+                        }
+                        .nav-item {
+                            display: flex;
+                            align-items: center;
+                            padding: 15px 20px;
+                            color: #6c757d;
+                            text-decoration: none;
+                            transition: all 0.2s;
+                            font-size: 14px;
+                            white-space: nowrap;
+                            min-height: 48px;
+                            border: none;
+                            background: none;
+                            width: 100%;
+                            text-align: left;
+                            cursor: pointer;
+                        }
+                        .nav-item:hover, .nav-item.active {
+                            background-color: #f8f9fa;
+                            color: #007bff;
+                        }
+                        .nav-item::before {
+                            content: "▪";
+                            margin-right: 10px;
+                            font-size: 12px;
+                            flex-shrink: 0;
+                        }
+                        .overlay {
+                            display: none;
+                            position: fixed;
+                            top: 0;
+                            left: 0;
+                            width: 100%;
+                            height: 100%;
+                            background-color: rgba(0,0,0,0.5);
+                            z-index: 999;
+                        }
+                        .overlay.active { display: block; }
+                        @media (max-width: 768px) {
+                            .sidebar {
+                                position: fixed;
+                                top: 0;
+                                left: 0;
+                                height: 100vh;
+                                z-index: 1000;
+                                box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+                                width: 280px;
+                                max-width: 80vw;
+                            }
+                            .nav-item {
+                                padding: 18px 20px;
+                                font-size: 16px;
+                                min-height: 56px;
+                            }
+                            .logo {
+                                padding: 0 20px 20px;
+                                font-size: 20px;
+                                border-bottom: 1px solid #e9ecef;
+                                margin-bottom: 10px;
+                            }
+                        }
+                    </style>
+                    <nav class="sidebar" id="sidebar">
+                        <div class="logo">HOURLY</div>
+                        <button class="nav-item active" data-page="dashboard">Dashboard</button>
+                        <button class="nav-item" data-page="products">Products</button>
+                        <button class="nav-item" data-page="orders">Orders</button>
+                        <button class="nav-item" data-page="customers">Customers</button>
+                        <button class="nav-item" data-page="reviews">Reviews</button>
+                        <button class="nav-item" data-page="offers">Offers</button>
+                        <button class="nav-item" data-page="coupon">Coupon</button>
+                        <button class="nav-item" data-page="banner">Banner management</button>
+                        <button class="nav-item" data-page="category">Category</button>
+                    </nav>
+                    <div class="overlay" id="overlay"></div>
+                `;
                 
-                // Close sidebar on mobile after selection
-                if (window.innerWidth <= 768) {
-                    sidebar.classList.add('collapsed');
+                document.getElementById('sidebar-container').innerHTML = sidebarHTML;
+                initializeSidebar();
+            } catch (error) {
+                console.error('Failed to load sidebar:', error);
+            }
+        }
+
+        // Initialize sidebar functionality
+        function initializeSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('overlay');
+            const menuToggle = document.getElementById('menuToggle');
+
+            // Navigation item clicks
+            const navItems = document.querySelectorAll('.nav-item');
+            navItems.forEach(item => {
+                item.addEventListener('click', (e) => {
+                    const page = e.target.getAttribute('data-page');
+                    
+                    // Remove active class from all items
+                    navItems.forEach(nav => nav.classList.remove('active'));
+                    // Add active class to clicked item
+                    e.target.classList.add('active');
+                    
+                    // Close sidebar on mobile after selection
+                    if (window.innerWidth <= 768) {
+                        sidebar.classList.add('collapsed');
+                        overlay.classList.remove('active');
+                    }
+
+                    // Handle page navigation
+                    console.log('Navigate to:', page);
+                    // Here you would implement your page routing logic
+                });
+            });
+
+            // Menu toggle functionality
+            if (menuToggle) {
+                menuToggle.addEventListener('click', () => {
+                    sidebar.classList.toggle('collapsed');
+                    overlay.classList.toggle('active');
+                });
+            }
+
+            // Overlay click to close sidebar
+            overlay.addEventListener('click', () => {
+                sidebar.classList.add('collapsed');
+                overlay.classList.remove('active');
+            });
+
+            // Handle window resize
+            window.addEventListener('resize', () => {
+                if (window.innerWidth > 768) {
+                    sidebar.classList.remove('collapsed');
                     overlay.classList.remove('active');
                 }
             });
-        });
+        }
 
-        // Charts
-        const salesCtx = document.getElementById('salesChart').getContext('2d');
-        new Chart(salesCtx, {
-            type: 'bar',
-            data: {
-                labels: Array.from({length: 30}, (_, i) => i + 1),
-                datasets: [{
-                    data: Array.from({length: 30}, () => Math.random() * 100),
-                    backgroundColor: '#007bff',
-                    borderRadius: 2,
-                    barThickness: 4
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: { legend: { display: false } },
-                scales: {
-                    x: { display: false },
-                    y: { display: false }
+        // Dashboard specific functionality
+        function initializeCharts() {
+            // Sales Chart
+            const salesCtx = document.getElementById('salesChart').getContext('2d');
+            new Chart(salesCtx, {
+                type: 'bar',
+                data: {
+                    labels: Array.from({length: 30}, (_, i) => i + 1),
+                    datasets: [{
+                        data: Array.from({length: 30}, () => Math.random() * 100),
+                        backgroundColor: '#007bff',
+                        borderRadius: 2,
+                        barThickness: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { display: false },
+                        y: { display: false }
+                    }
                 }
-            }
-        });
+            });
 
-        const customersCtx = document.getElementById('customersChart').getContext('2d');
-        new Chart(customersCtx, {
-            type: 'line',
-            data: {
-                labels: Array.from({length: 30}, (_, i) => i + 1),
-                datasets: [{
-                    data: Array.from({length: 30}, () => Math.random() * 100),
-                    borderColor: '#28a745',
-                    backgroundColor: 'transparent',
-                    borderWidth: 2,
-                    pointRadius: 0
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: { legend: { display: false } },
-                scales: {
-                    x: { display: false },
-                    y: { display: false }
+            // Customers Chart
+            const customersCtx = document.getElementById('customersChart').getContext('2d');
+            new Chart(customersCtx, {
+                type: 'line',
+                data: {
+                    labels: Array.from({length: 30}, (_, i) => i + 1),
+                    datasets: [{
+                        data: Array.from({length: 30}, () => Math.random() * 100),
+                        borderColor: '#28a745',
+                        backgroundColor: 'transparent',
+                        borderWidth: 2,
+                        pointRadius: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { display: false },
+                        y: { display: false }
+                    }
                 }
-            }
-        });
+            });
 
-        const donutCtx = document.getElementById('donutChart').getContext('2d');
-        new Chart(donutCtx, {
-            type: 'doughnut',
-            data: {
-                datasets: [{
-                    data: [35, 33, 32],
-                    backgroundColor: ['#28a745', '#fd7e14', '#007bff'],
-                    borderWidth: 0
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: { legend: { display: false } },
-                cutout: '70%'
-            }
-        });
+            // Donut Chart
+            const donutCtx = document.getElementById('donutChart').getContext('2d');
+            new Chart(donutCtx, {
+                type: 'doughnut',
+                data: {
+                    datasets: [{
+                        data: [35, 33, 32],
+                        backgroundColor: ['#28a745', '#fd7e14', '#007bff'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    cutout: '70%'
+                }
+            });
+        }
 
-        // Handle window resize
-        window.addEventListener('resize', () => {
-            if (window.innerWidth > 768) {
-                sidebar.classList.remove('collapsed');
-                overlay.classList.remove('active');
-            }
+        // Initialize everything when DOM loads
+        document.addEventListener('DOMContentLoaded', function() {
+            loadSidebar();
+            initializeCharts();
         });
     </script>
-</body>
-</html>
+ </body>
+
+    
+   
