@@ -322,8 +322,6 @@ const logout = async (req,res) => {
     try {
         req.session.destroy ((err)=>{
             if(err){
-               
-               
                 console.log("Session destruction error",err.message);
                 return res.redirect('/error404')
                 
