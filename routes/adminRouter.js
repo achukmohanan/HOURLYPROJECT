@@ -10,8 +10,8 @@ router.get("/seconddash",adminAuth,adminController.loaddashboard)
 router.get('/pageerror',adminController.pageerror)
 router.get('/logout',adminController.logout)
 router.get('/users',adminAuth,customerController.customerInfo)
-// router.get('/blockCustomer',adminAuth,customerController.customerBlocked)
-// router.get('/unblockCustomer',adminAuth,customerController.customerunBlocked)
+router.get('/blockCustomer',adminAuth,customerController.customerBlocked)
+router.get('/unblockCustomer',adminAuth,customerController.customerunBlocked)
 
 // router.get('/users',customerController.loadcustomerInfo)
 
