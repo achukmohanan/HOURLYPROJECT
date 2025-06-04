@@ -1,8 +1,19 @@
 <%- include("../../views/partials/admin/sidebar") %>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-     <title>Hourly Dashboard</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sales Dashboard</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
+        :root {
+            --primary-color: #6366f1;
+            --sidebar-width: 260px;
+            --header-height: 70px;
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -10,698 +21,621 @@
         }
 
         body {
+            background-color: #f8fafc;
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background-color: #f8f9fa;
-            color: #333;
+            overflow-x: hidden;
         }
 
-        .container {
+        /* Header Styles */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: var(--header-height);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            z-index: 1000;
             display: flex;
-            min-height: 100vh;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .sidebar-toggle {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 6px;
+            transition: background-color 0.2s;
+        }
+
+        .sidebar-toggle:hover {
+            background-color: rgba(255,255,255,0.1);
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .breadcrumb-nav {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .logout-btn {
+            background: rgba(255,255,255,0.1);
+            border: none;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .logout-btn:hover {
+            background: rgba(255,255,255,0.2);
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            position: fixed;
+            top: var(--header-height);
+            left: 0;
+            width: var(--sidebar-width);
+            height: calc(100vh - var(--header-height));
+            background: #1e293b;
+            color: white;
+            z-index: 999;
+            transform: translateX(0);
+            transition: transform 0.3s ease;
+            overflow-y: auto;
+        }
+
+        .sidebar.hidden {
+            transform: translateX(-100%);
+        }
+
+        .sidebar-menu {
+            padding: 20px 0;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 24px;
+            color: #cbd5e1;
+            text-decoration: none;
+            transition: all 0.2s;
+            border-left: 3px solid transparent;
+        }
+
+        .menu-item:hover,
+        .menu-item.active {
+            background-color: #334155;
+            color: white;
+            border-left-color: var(--primary-color);
+        }
+
+        .menu-item i {
+            width: 20px;
+            margin-right: 12px;
+            font-size: 16px;
         }
 
         /* Main Content */
         .main-content {
-            flex: 1;
-            padding: 20px;
-            overflow-x: hidden;
+            margin-left: var(--sidebar-width);
+            margin-top: var(--header-height);
+            padding: 30px;
+            transition: margin-left 0.3s ease;
+            min-height: calc(100vh - var(--header-height));
         }
 
-        /* Header */
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
+        .main-content.expanded {
+            margin-left: 0;
         }
 
-        .menu-toggle {
-            display: none;
-            background: none;
-            border: none;
-            font-size: 20px;
-            cursor: pointer;
-            padding: 5px;
-        }
-
-        .breadcrumb {
-            color: #6c757d;
-            font-size: 14px;
-        }
-
-        .logout-btn {
-            background-color: #6c757d;
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 4px;
-            font-size: 12px;
-            cursor: pointer;
-        }
-
-        /* Stats Cards */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-
-        .stat-card {
+        /* Dashboard Card Styles */
+        .dashboard-card {
             background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            border: none;
+            transition: transform 0.2s ease;
+            overflow: hidden;
         }
-
-        .stat-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
+        
+        .dashboard-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
         }
-
-        .stat-title {
-            font-size: 14px;
+        
+        .metric-card {
+            padding: 24px;
+            text-align: center;
+        }
+        
+        .metric-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 8px;
+        }
+        
+        .metric-label {
             color: #6c757d;
-            font-weight: 500;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 16px;
         }
-
-        .stat-period {
-            font-size: 12px;
-            color: #adb5bd;
-        }
-
-        .stat-value {
-            font-size: 24px;
-            font-weight: bold;
-            color: #212529;
-            margin-bottom: 10px;
-        }
-
+        
         .chart-container {
-            height: 60px;
+            height: 80px;
             position: relative;
         }
+        
+        .bar-chart {
+            display: flex;
+            align-items: flex-end;
+            height: 60px;
+            gap: 3px;
+            justify-content: center;
+        }
+        
+        .bar {
+            background: linear-gradient(to top, var(--primary-color), #8b5cf6);
+            border-radius: 3px;
+            min-height: 8px;
+            transition: all 0.3s ease;
+        }
 
-        .progress-bar {
-            width: 100%;
-            height: 8px;
-            background-color: #e9ecef;
-            border-radius: 4px;
+        .bar:hover {
+            transform: scaleY(1.1);
+        }
+        
+        .line-chart {
+            position: relative;
+            height: 60px;
             overflow: hidden;
         }
-
-        .progress-fill {
-            height: 100%;
-            background-color: #007bff;
-            width: 68%;
-            border-radius: 4px;
+        
+        .line-path {
+            stroke: var(--primary-color);
+            stroke-width: 3;
+            fill: none;
+            filter: drop-shadow(0 2px 4px rgba(99, 102, 241, 0.3));
         }
-
-        /* Content Grid */
-        .content-grid {
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 20px;
-        }
-
-        .card {
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            overflow: hidden;
-        }
-
-        .card-header {
-            padding: 20px;
-            border-bottom: 1px solid #e9ecef;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .card-title {
-            font-size: 16px;
-            font-weight: 600;
-            color: #212529;
-        }
-
-        .view-all {
-            color: #007bff;
-            text-decoration: none;
-            font-size: 14px;
-        }
-
-        .card-content {
-            padding: 20px;
-        }
-
-        /* Table */
-        .table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        .table th {
-            text-align: left;
-            padding: 12px;
-            font-size: 12px;
-            color: #6c757d;
-            font-weight: 500;
-            border-bottom: 1px solid #e9ecef;
-        }
-
-        .table td {
-            padding: 12px;
-            font-size: 14px;
-            border-bottom: 1px solid #f8f9fa;
-        }
-
-        .status {
-            padding: 4px 8px;
-            border-radius: 12px;
-            font-size: 12px;
-            font-weight: 500;
-        }
-
-        .status.processing {
-            background-color: #fff3cd;
-            color: #856404;
-        }
-
-        .status.completed {
-            background-color: #d4edda;
-            color: #155724;
-        }
-
-        /* Best Selling Card */
-        .best-selling-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        .total-sales {
-            font-size: 20px;
-            font-weight: bold;
-            color: #212529;
-        }
-
-        .sales-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 8px 0;
-            border-bottom: 1px solid #f8f9fa;
-        }
-
-        .sales-item:last-child {
-            border-bottom: none;
-        }
-
-        .item-info {
-            display: flex;
-            align-items: center;
-        }
-
-        .item-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            margin-right: 10px;
-        }
-
-        .item-dot.green { background-color: #28a745; }
-        .item-dot.orange { background-color: #fd7e14; }
-        .item-dot.blue { background-color: #007bff; }
-
-        .item-name {
-            font-size: 14px;
-            color: #212529;
-        }
-
-        .item-value {
-            font-size: 14px;
-            font-weight: 500;
-            color: #6c757d;
-        }
-
-        .donut-chart {
+        
+        .progress-ring {
             width: 80px;
             height: 80px;
-            margin: 20px auto;
-            position: relative;
+            margin: 0 auto;
+        }
+        
+        .progress-circle {
+            fill: transparent;
+            stroke-width: 8;
+            stroke-linecap: round;
+        }
+        
+        .progress-bg {
+            stroke: #e9ecef;
+        }
+        
+        .progress-fill {
+            stroke: var(--primary-color);
+            stroke-dasharray: 251.2;
+            stroke-dashoffset: 75.36;
+            transform: rotate(-90deg);
+            transform-origin: 50% 50%;
+            animation: progressFill 2s ease-out;
         }
 
-        /* Mobile Styles */
+        @keyframes progressFill {
+            from { stroke-dashoffset: 251.2; }
+            to { stroke-dashoffset: 75.36; }
+        }
+        
+        .recent-orders, .best-selling {
+            padding: 24px;
+        }
+        
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+        
+        .orders-table {
+            font-size: 0.9rem;
+        }
+        
+        .orders-table th {
+            border: none;
+            font-weight: 600;
+            color: #6c757d;
+            padding: 12px 8px;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            background-color: #f8fafc;
+        }
+        
+        .orders-table td {
+            border: none;
+            padding: 16px 8px;
+            vertical-align: middle;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .orders-table tr:hover {
+            background-color: #f8fafc;
+        }
+        
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+        
+        .status-processing {
+            background-color: #fef3c7;
+            color: #d97706;
+        }
+        
+        .status-completed {
+            background-color: #d1fae5;
+            color: #059669;
+        }
+        
+        .view-all-btn {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+        
+        .view-all-btn:hover {
+            color: #4f46e5;
+            text-decoration: underline;
+        }
+        
+        .product-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #f1f3f4;
+            transition: background-color 0.2s;
+        }
+
+        .product-item:hover {
+            background-color: #f8fafc;
+            border-radius: 8px;
+            padding: 12px 8px;
+        }
+        
+        .product-item:last-child {
+            border-bottom: none;
+        }
+        
+        .product-info {
+            display: flex;
+            align-items: center;
+            flex: 1;
+        }
+        
+        .product-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 12px;
+        }
+        
+        .indicator-green { background-color: #22c55e; }
+        .indicator-orange { background-color: #f97316; }
+        .indicator-blue { background-color: #3b82f6; }
+        
+        .product-name {
+            font-weight: 500;
+            color: #2c3e50;
+            margin-bottom: 4px;
+        }
+        
+        .product-sales {
+            font-size: 0.8rem;
+            color: #6c757d;
+        }
+
+        /* Responsive Design */
         @media (max-width: 768px) {
-            .menu-toggle {
-                display: block;
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.show {
+                transform: translateX(0);
             }
 
             .main-content {
                 margin-left: 0;
-                padding: 15px;
-                width: 100%;
             }
 
-            .stats-grid {
-                grid-template-columns: 1fr;
-                gap: 15px;
+            .metric-value {
+                font-size: 1.5rem;
+            }
+            
+            .metric-card {
+                padding: 16px;
+            }
+            
+            .recent-orders, .best-selling {
+                padding: 16px;
+            }
+            
+            .orders-table {
+                font-size: 0.8rem;
+            }
+            
+            .orders-table th,
+            .orders-table td {
+                padding: 8px 4px;
             }
 
-            .content-grid {
-                grid-template-columns: 1fr;
-                gap: 15px;
-            }
-
-            .header {
-                margin-bottom: 20px;
-            }
-
-            .table-responsive {
-                overflow-x: auto;
-            }
-
-            .table {
-                min-width: 500px;
+            .header-right .breadcrumb-nav {
+                display: none;
             }
         }
 
-        @media (max-width: 480px) {
-            .stat-card {
-                padding: 15px;
-            }
+        /* Overlay for mobile */
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: var(--header-height);
+            left: 0;
+            width: 100%;
+            height: calc(100vh - var(--header-height));
+            background: rgba(0,0,0,0.5);
+            z-index: 998;
+        }
 
-            .stat-value {
-                font-size: 20px;
-            }
-
-            .card-header {
-                padding: 15px;
-            }
-
-            .card-content {
-                padding: 15px;
-            }
-
-            .main-content {
-                padding: 10px;
+        @media (max-width: 768px) {
+            .sidebar-overlay.show {
+                display: block;
             }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <!-- Load Sidebar Component -->
-        <div id="sidebar-container"></div>
-
-        <!-- Main Content -->
-        <main class="main-content">
-            <!-- Header -->
-            <header class="header">
-                <div style="display: flex; align-items: center; gap: 15px;">
-                    <button class="menu-toggle" id="menuToggle">☰</button>
-                    <div class="breadcrumb">Admin > Dashboard</div>
-                </div>
-                <a href="/admin/logout"><button class="logout-btn">LOGOUT</button></a>
-            </header>
-
-            <!-- Stats Cards -->
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-header">
-                        <div class="stat-title">Total Sales</div>
-                        <div class="stat-period">THIS MONTH</div>
-                    </div>
-                    <div class="stat-value">₹51,00,199</div>
-                    <div class="chart-container">
-                        <canvas id="salesChart"></canvas>
-                    </div>
-                </div>
-
-                <div class="stat-card">
-                    <div class="stat-header">
-                        <div class="stat-title">Customers</div>
-                        <div class="stat-period">THIS MONTH</div>
-                    </div>
-                    <div class="stat-value">2,571</div>
-                    <div class="chart-container">
-                        <canvas id="customersChart"></canvas>
-                    </div>
-                </div>
-
-                <div class="stat-card">
-                    <div class="stat-header">
-                        <div class="stat-title">Orders</div>
-                        <div class="stat-period">MONTHLY GOAL: 1,000</div>
-                    </div>
-                    <div class="stat-value">734</div>
-                    <div class="progress-bar">
-                        <div class="progress-fill"></div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Content Grid -->
-            <div class="content-grid">
-                <!-- Recent Orders -->
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title">Recent Orders</h3>
-                        <a href="#" class="view-all">View All</a>
-                    </div>
-                    <div class="card-content">
-                        <div class="table-responsive">
-                            <table class="table">
-                                <thead>
-                                    <tr>
-                                        <th>Item</th>
-                                        <th>Date</th>
-                                        <th>Total</th>
-                                        <th>Status</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>Liverolo</td>
-                                        <td>10 May, 2023</td>
-                                        <td>₹12,00,000.00</td>
-                                        <td><span class="status processing">Processing</span></td>
-                                    </tr>
-                                    <tr>
-                                        <td>Lifestyle Health</td>
-                                        <td>10 May, 2023</td>
-                                        <td>₹4,67,700.00</td>
-                                        <td><span class="status processing">Processing</span></td>
-                                    </tr>
-                                    <tr>
-                                        <td>Habilist</td>
-                                        <td>7 Feb, 2023</td>
-                                        <td>₹1,84,500.00</td>
-                                        <td><span class="status completed">Completed</span></td>
-                                    </tr>
-                                    <tr>
-                                        <td>Bionomat</td>
-                                        <td>28 Jan, 2023</td>
-                                        <td>₹35,29,395.00</td>
-                                        <td><span class="status completed">Completed</span></td>
-                                    </tr>
-                                    <tr>
-                                        <td>Titan</td>
-                                        <td>27 Jan, 2023</td>
-                                        <td>₹97,2000.00</td>
-                                        <td><span class="status completed">Completed</span></td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Best Selling -->
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title">Best Selling</h3>
-                        <div class="stat-period">THIS MONTH</div>
-                    </div>
-                    <div class="card-content">
-                        <div class="best-selling-header">
-                            <div class="total-sales">$2,400</div>
-                            <div style="font-size: 12px; color: #6c757d;">Total Sales</div>
-                        </div>
-                        
-                        <div class="sales-item">
-                            <div class="item-info">
-                                <div class="item-dot green"></div>
-                                <span class="item-name">Men Watches</span>
-                            </div>
-                            <span class="item-value">$840 Sales</span>
-                        </div>
-                        
-                        <div class="sales-item">
-                            <div class="item-info">
-                                <div class="item-dot orange"></div>
-                                <span class="item-name">Women's Watches</span>
-                            </div>
-                            <span class="item-value">$790 Sales</span>
-                        </div>
-                        
-                        <div class="sales-item">
-                            <div class="item-info">
-                                <div class="item-dot blue"></div>
-                                <span class="item-name">Unisex Watches</span>
-                            </div>
-                            <span class="item-value">$770 Sales</span>
-                        </div>
-
-                        <div class="donut-chart">
-                            <canvas id="donutChart"></canvas>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </main>
-    </div>
-
-    <script>
-        // Load sidebar component
-        async function loadSidebar() {
-            try {
-                // In a real application, you would fetch this from a separate file
-                const sidebarHTML = `
-                    <!-- Sidebar Styles -->
-                    <style>
-                        .sidebar {
-                            width: 250px;
-                            background-color: #fff;
-                            border-right: 1px solid #e9ecef;
-                            padding: 20px 0;
-                            transition: transform 0.3s ease;
-                            position: relative;
-                        }
-                        .sidebar.collapsed { transform: translateX(-100%); }
-                        .logo {
-                            padding: 0 20px 30px;
-                            font-size: 18px;
-                            font-weight: bold;
-                            color: #6c757d;
-                        }
-                        .nav-item {
-                            display: flex;
-                            align-items: center;
-                            padding: 15px 20px;
-                            color: #6c757d;
-                            text-decoration: none;
-                            transition: all 0.2s;
-                            font-size: 14px;
-                            white-space: nowrap;
-                            min-height: 48px;
-                            border: none;
-                            background: none;
-                            width: 100%;
-                            text-align: left;
-                            cursor: pointer;
-                        }
-                        .nav-item:hover, .nav-item.active {
-                            background-color: #f8f9fa;
-                            color: #007bff;
-                        }
-                        .nav-item::before {
-                            content: "▪";
-                            margin-right: 10px;
-                            font-size: 12px;
-                            flex-shrink: 0;
-                        }
-                        .overlay {
-                            display: none;
-                            position: fixed;
-                            top: 0;
-                            left: 0;
-                            width: 100%;
-                            height: 100%;
-                            background-color: rgba(0,0,0,0.5);
-                            z-index: 999;
-                        }
-                        .overlay.active { display: block; }
-                        @media (max-width: 768px) {
-                            .sidebar {
-                                position: fixed;
-                                top: 0;
-                                left: 0;
-                                height: 100vh;
-                                z-index: 1000;
-                                box-shadow: 2px 0 5px rgba(0,0,0,0.1);
-                                width: 280px;
-                                max-width: 80vw;
-                            }
-                            .nav-item {
-                                padding: 18px 20px;
-                                font-size: 16px;
-                                min-height: 56px;
-                            }
-                            .logo {
-                                padding: 0 20px 20px;
-                                font-size: 20px;
-                                border-bottom: 1px solid #e9ecef;
-                                margin-bottom: 10px;
-                            }
-                        }
-                    </style>
-                    <nav class="sidebar" id="sidebar">
-                        <div class="logo">HOURLY</div>
-                        <button class="nav-item active" data-page="dashboard">Dashboard</button>
-                        <button class="nav-item" data-page="products">Products</button>
-                        <button class="nav-item" data-page="orders">Orders</button>
-                        <button class="nav-item" data-page="customers">Customers</button>
-                        <button class="nav-item" data-page="reviews">Reviews</button>
-                        <button class="nav-item" data-page="offers">Offers</button>
-                        <button class="nav-item" data-page="coupon">Coupon</button>
-                        <button class="nav-item" data-page="banner">Banner management</button>
-                        <button class="nav-item" data-page="category">Category</button>
-                    </nav>
-                    <div class="overlay" id="overlay"></div>
-                `;
-                
-                document.getElementById('sidebar-container').innerHTML = sidebarHTML;
-                initializeSidebar();
-            } catch (error) {
-                console.error('Failed to load sidebar:', error);
-            }
-        }
-
-        // Initialize sidebar functionality
-        function initializeSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            const overlay = document.getElementById('overlay');
-            const menuToggle = document.getElementById('menuToggle');
-
-            // Navigation item clicks
-            const navItems = document.querySelectorAll('.nav-item');
-            navItems.forEach(item => {
-                item.addEventListener('click', (e) => {
-                    const page = e.target.getAttribute('data-page');
-                    
-                    // Remove active class from all items
-                    navItems.forEach(nav => nav.classList.remove('active'));
-                    // Add active class to clicked item
-                    e.target.classList.add('active');
-                    
-                    // Close sidebar on mobile after selection
-                    if (window.innerWidth <= 768) {
-                        sidebar.classList.add('collapsed');
-                        overlay.classList.remove('active');
-                    }
-
-                    // Handle page navigation
-                    console.log('Navigate to:', page);
-                    // Here you would implement your page routing logic
-                });
-            });
-
-            // Menu toggle functionality
-            if (menuToggle) {
-                menuToggle.addEventListener('click', () => {
-                    sidebar.classList.toggle('collapsed');
-                    overlay.classList.toggle('active');
-                });
-            }
-
-            // Overlay click to close sidebar
-            overlay.addEventListener('click', () => {
-                sidebar.classList.add('collapsed');
-                overlay.classList.remove('active');
-            });
-
-            // Handle window resize
-            window.addEventListener('resize', () => {
-                if (window.innerWidth > 768) {
-                    sidebar.classList.remove('collapsed');
-                    overlay.classList.remove('active');
-                }
-            });
-        }
-
-        // Dashboard specific functionality
-        function initializeCharts() {
-            // Sales Chart
-            const salesCtx = document.getElementById('salesChart').getContext('2d');
-            new Chart(salesCtx, {
-                type: 'bar',
-                data: {
-                    labels: Array.from({length: 30}, (_, i) => i + 1),
-                    datasets: [{
-                        data: Array.from({length: 30}, () => Math.random() * 100),
-                        backgroundColor: '#007bff',
-                        borderRadius: 2,
-                        barThickness: 4
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
-                    scales: {
-                        x: { display: false },
-                        y: { display: false }
-                    }
-                }
-            });
-
-            // Customers Chart
-            const customersCtx = document.getElementById('customersChart').getContext('2d');
-            new Chart(customersCtx, {
-                type: 'line',
-                data: {
-                    labels: Array.from({length: 30}, (_, i) => i + 1),
-                    datasets: [{
-                        data: Array.from({length: 30}, () => Math.random() * 100),
-                        borderColor: '#28a745',
-                        backgroundColor: 'transparent',
-                        borderWidth: 2,
-                        pointRadius: 0
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
-                    scales: {
-                        x: { display: false },
-                        y: { display: false }
-                    }
-                }
-            });
-
-            // Donut Chart
-            const donutCtx = document.getElementById('donutChart').getContext('2d');
-            new Chart(donutCtx, {
-                type: 'doughnut',
-                data: {
-                    datasets: [{
-                        data: [35, 33, 32],
-                        backgroundColor: ['#28a745', '#fd7e14', '#007bff'],
-                        borderWidth: 0
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
-                    cutout: '70%'
-                }
-            });
-        }
-
-        // Initialize everything when DOM loads
-        document.addEventListener('DOMContentLoaded', function() {
-            loadSidebar();
-            initializeCharts();
-        });
-    </script>
- </body>
+   
 
     
-   
+
+    <!-- Sidebar Overlay for Mobile -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+    <!-- Main Content -->
+    <main class="main-content" id="mainContent">
+        <div class="container-fluid">
+            <!-- Top Metrics Row -->
+            <div class="row g-4 mb-4">
+                <!-- Total Sales -->
+                <div class="col-12 col-md-4">
+                    <div class="card dashboard-card">
+                        <div class="metric-card">
+                            <div class="metric-value">₹51,00,199</div>
+                            <div class="metric-label">Total Sales<br><small>THIS MONTH</small></div>
+                            <div class="chart-container">
+                                <div class="bar-chart">
+                                    <div class="bar" style="height: 30%; width: 8px;"></div>
+                                    <div class="bar" style="height: 60%; width: 8px;"></div>
+                                    <div class="bar" style="height: 40%; width: 8px;"></div>
+                                    <div class="bar" style="height: 80%; width: 8px;"></div>
+                                    <div class="bar" style="height: 20%; width: 8px;"></div>
+                                    <div class="bar" style="height: 70%; width: 8px;"></div>
+                                    <div class="bar" style="height: 45%; width: 8px;"></div>
+                                    <div class="bar" style="height: 90%; width: 8px;"></div>
+                                    <div class="bar" style="height: 35%; width: 8px;"></div>
+                                    <div class="bar" style="height: 55%; width: 8px;"></div>
+                                    <div class="bar" style="height: 25%; width: 8px;"></div>
+                                    <div class="bar" style="height: 75%; width: 8px;"></div>
+                                    <div class="bar" style="height: 50%; width: 8px;"></div>
+                                    <div class="bar" style="height: 85%; width: 8px;"></div>
+                                    <div class="bar" style="height: 15%; width: 8px;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Customers -->
+                <div class="col-12 col-md-4">
+                    <div class="card dashboard-card">
+                        <div class="metric-card">
+                            <div class="metric-value">2,571</div>
+                            <div class="metric-label">Customers<br><small>THIS MONTH</small></div>
+                            <div class="chart-container">
+                                <div class="line-chart">
+                                    <svg width="100%" height="60" viewBox="0 0 200 60">
+                                        <path class="line-path" d="M10,45 Q30,35 50,40 T90,30 Q110,25 130,35 T170,25 Q180,20 190,15"/>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Orders -->
+                <div class="col-12 col-md-4">
+                    <div class="card dashboard-card">
+                        <div class="metric-card">
+                            <div class="metric-value">734</div>
+                            <div class="metric-label">Orders<br><small>MONTHLY GOALS: 1,000</small></div>
+                            <div class="chart-container">
+                                <svg class="progress-ring">
+                                    <circle class="progress-circle progress-bg" cx="40" cy="40" r="35"></circle>
+                                    <circle class="progress-circle progress-fill" cx="40" cy="40" r="35"></circle>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Bottom Row -->
+            <div class="row g-4">
+                <!-- Recent Orders -->
+                <div class="col-12 col-lg-8">
+                    <div class="card dashboard-card">
+                        <div class="recent-orders">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h5 class="section-title mb-0">Recent Orders</h5>
+                                <a href="#" class="view-all-btn">View All</a>
+                            </div>
+                            
+                            <div class="table-responsive">
+                                <table class="table orders-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Item</th>
+                                            <th>Date</th>
+                                            <th>Total</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>Laureato</td>
+                                            <td>20 Mar, 2023</td>
+                                            <td>₹15,60,000.00</td>
+                                            <td><span class="status-badge status-processing">Processing</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Ulysse nardin</td>
+                                            <td>19 Mar, 2023</td>
+                                            <td>₹4,67,700.00</td>
+                                            <td><span class="status-badge status-processing">Processing</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Hublot</td>
+                                            <td>7 Feb, 2023</td>
+                                            <td>₹5,88,600.00</td>
+                                            <td><span class="status-badge status-completed">Completed</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Bremont</td>
+                                            <td>29 Jan, 2023</td>
+                                            <td>₹4,20,999.00</td>
+                                            <td><span class="status-badge status-completed">Completed</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Titan</td>
+                                            <td>27 Jan, 2023</td>
+                                            <td>₹27,2000.00</td>
+                                            <td><span class="status-badge status-completed">Completed</span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Best Selling -->
+                <div class="col-12 col-lg-4">
+                    <div class="card dashboard-card">
+                        <div class="best-selling">
+                            <h5 class="section-title">Best Selling</h5>
+                            <div class="metric-label mb-3">THIS MONTH</div>
+                            
+                            <div class="text-center mb-4">
+                                <div class="metric-value">$2,400</div>
+                                <div class="text-muted small">Total Sales</div>
+                            </div>
+                            
+                            <div class="product-item">
+                                <div class="product-info">
+                                    <div class="product-indicator indicator-green"></div>
+                                    <div>
+                                        <div class="product-name">Luxury Chronograph</div>
+                                        <div class="product-sales">$940 Sales</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="product-item">
+                                <div class="product-info">
+                                    <div class="product-indicator indicator-orange"></div>
+                                    <div>
+                                        <div class="product-name">Smart Watches</div>
+                                        <div class="product-sales">$790 Sales</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="product-item">
+                                <div class="product-info">
+                                    <div class="product-indicator indicator-blue"></div>
+                                    <div>
+                                        <div class="product-name">Analog Watches</div>
+                                        <div class="product-sales">$740 Sales</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="text-center mt-4">
+                                <svg width="120" height="120" viewBox="0 0 120 120">
+                                    <!-- Background circle -->
+                                    <circle cx="60" cy="60" r="50" fill="none" stroke="#f1f3f4" stroke-width="8"/>
+                                  
+                                    <circle cx="60" cy="60" r="50" fill="none" stroke="#22c55e" stroke-width="8"
+                                            stroke-dasharray="117.8 314.16" stroke-dashoffset="78.54" 
+                                            transform="rotate(-90 60 60)" stroke-linecap="round"/>
+                                   
+                                    <circle cx="60" cy="60" r="50" fill="none" stroke="#f97316" stroke-width="8"
+                                            stroke-dasharray="98.96 314.16" stroke-dashoffset="-39.24"
+                                            transform="rotate(-90 60 60)" stroke-linecap="round"/>
+                                   
+                                    <circle cx="60" cy="60" r="50" fill="none" stroke="#3b82f6" stroke-width="8"
+                                            stroke-dasharray="92.72 314.16" stroke-dashoffset="-138.2"
+                                            transform="rotate(-90 60 60)" stroke-linecap="round"/>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    
+</body>
+</html>

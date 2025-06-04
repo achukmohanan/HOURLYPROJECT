@@ -72,7 +72,7 @@ const logout = async (req,res)=>{
                 console.log("Error destroying session ",err.message);
                 return res.redirect('/admin/pageerror')
             }
-            // console.log("logout session");
+            console.log("logout session");
             
             res.redirect('/admin/adminlogin')
         })
@@ -83,6 +83,8 @@ const logout = async (req,res)=>{
         
     }
 }
+
+
 
 module.exports = {
     loadLogin,
