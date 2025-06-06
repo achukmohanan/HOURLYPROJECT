@@ -1,11 +1,393 @@
 <%- include("../../views/partials/admin/sidebar") %>
-<div class="content-header row">
-    <div class="d-flex justify-content-between align-items-center">
-        <h2 class="content-title card-title">Customers</h2>
-    </div>
-</div>         
 
-<div class="card">
+    <style>
+        :root {
+            --sidebar-width: 250px;
+            --header-height: 70px;
+            --primary-color: #2c3e50;
+            --secondary-color: #34495e;
+            --accent-color: #3498db;
+            --text-light: #ecf0f1;
+            --bg-light: #f8f9fa;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-light);
+        }
+
+        /* Header Styles */
+        .main-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: var(--header-height);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            transition: all 0.3s ease;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .menu-toggle {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+
+        .menu-toggle:hover {
+            background-color: rgba(255,255,255,0.1);
+        }
+
+        .logo {
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+            text-decoration: none;
+            letter-spacing: 1px;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .breadcrumb-nav {
+            color: rgba(255,255,255,0.8);
+            font-size: 14px;
+        }
+
+        .breadcrumb-nav a {
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .breadcrumb-nav a:hover {
+            color: white;
+        }
+
+        .logout-btn {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .logout-btn:hover {
+            background: rgba(255,255,255,0.2);
+            border-color: rgba(255,255,255,0.3);
+            color: white;
+            transform: translateY(-1px);
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            position: fixed;
+            top: var(--header-height);
+            left: 0;
+            width: var(--sidebar-width);
+            height: calc(100vh - var(--header-height));
+            background: linear-gradient(180deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+            z-index: 999;
+            overflow-y: auto;
+        }
+
+        .sidebar.collapsed {
+            transform: translateX(-100%);
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 20px 0;
+        }
+
+        .sidebar-menu li {
+            margin: 0;
+        }
+
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            padding: 15px 25px;
+            color: var(--text-light);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+        }
+
+        .sidebar-menu a:hover {
+            background: rgba(255,255,255,0.1);
+            border-left-color: var(--accent-color);
+            padding-left: 30px;
+        }
+
+        .sidebar-menu a.active {
+            background: rgba(52, 152, 219, 0.2);
+            border-left-color: var(--accent-color);
+            color: white;
+        }
+
+        .sidebar-menu i {
+            width: 20px;
+            margin-right: 15px;
+            text-align: center;
+            font-size: 16px;
+        }
+
+        /* Main Content - This is the key fix */
+        .main-content {
+            margin-top: var(--header-height);
+            margin-left: var(--sidebar-width);
+            padding: 30px;
+            transition: margin-left 0.3s ease;
+            min-height: calc(100vh - var(--header-height));
+        }
+
+        .main-content.expanded {
+            margin-left: 0;
+        }
+
+        /* Content Header */
+        .content-header {
+            margin-bottom: 25px;
+        }
+
+        .content-title {
+            color: var(--primary-color);
+            font-size: 28px;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        /* Card Styles */
+        .card {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.08);
+            border: none;
+        }
+
+        .card-header {
+            background: white;
+            border-bottom: 1px solid #eee;
+            padding: 20px;
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+
+        /* Search Form Styles */
+        .input-group-sm .form-control {
+            font-size: 14px;
+            padding: 8px 15px;
+        }
+
+        .input-group .btn {
+            background: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 8px 20px;
+        }
+
+        .input-group .btn:hover {
+            background: #2980b9;
+        }
+
+        /* Table Styles */
+        .table {
+            margin-bottom: 0;
+        }
+
+        .table thead th {
+            background-color: #f8f9fa;
+            border-bottom: 2px solid #dee2e6;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .table-striped tbody tr:nth-of-type(odd) {
+            background-color: rgba(0,0,0,0.02);
+        }
+
+        /* Button Styles */
+        .btn-danger, .btn-success {
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .btn-danger a, .btn-success a {
+            text-decoration: none !important;
+            color: white !important;
+        }
+
+        /* Pagination Styles */
+        .pagination .page-link {
+            color: var(--accent-color);
+            border-color: #dee2e6;
+        }
+
+        .pagination .page-item.active .page-link {
+            background-color: var(--accent-color);
+            border-color: var(--accent-color);
+        }
+
+        .pagination .page-link:hover {
+            color: #2980b9;
+            background-color: #f8f9fa;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            
+            .sidebar.show {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0;
+                padding: 20px 15px;
+            }
+            
+            .breadcrumb-nav {
+                display: none;
+            }
+
+            .input-group {
+                width: 100% !important;
+            }
+
+            .table-responsive {
+                font-size: 14px;
+            }
+        }
+
+        /* Overlay for mobile */
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: var(--header-height);
+            left: 0;
+            width: 100%;
+            height: calc(100vh - var(--header-height));
+            background: rgba(0,0,0,0.5);
+            z-index: 998;
+        }
+
+        .sidebar-overlay.show {
+            display: block;
+        }
+
+        /* Custom Scrollbar */
+        .sidebar::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .sidebar::-webkit-scrollbar-track {
+            background: var(--secondary-color);
+        }
+
+        .sidebar::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.3);
+            border-radius: 3px;
+        }
+
+        .sidebar::-webkit-scrollbar-thumb:hover {
+            background: rgba(255,255,255,0.5);
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="main-header">
+        <div class="header-left">
+            <button class="menu-toggle" id="menuToggle">
+                <i class="fas fa-bars"></i>
+            </button>
+            <a href="#" class="logo">HOURLY</a>
+        </div>
+        
+        <div class="header-right">
+            <nav class="breadcrumb-nav">
+                <a href="#" id="breadcrumbAdmin">Admin</a>
+                <span class="mx-2">></span>
+                <span id="breadcrumbPage">Customers</span>
+            </nav>
+            <a href="/admin/logout" class="logout-btn" id="logoutBtn">
+                <i class="fas fa-sign-out-alt"></i>
+                LOGOUT
+            </a>
+        </div>
+    </header>
+
+    <!-- Sidebar
+    <nav class="sidebar" id="sidebar">
+        <ul class="sidebar-menu">
+            <li><a href="/admin/seconddash" class="menu-item" data-page="Dashboard"><i class="fas fa-tachometer-alt"></i>Dashboard</a></li>
+            <li><a href="/admin/users" class="menu-item active" data-page="Users"><i class="fas fa-users"></i>Customers</a></li>
+            <li><a href="#" class="menu-item" data-page="Projects"><i class="fas fa-project-diagram"></i>Category</a></li>
+            <li><a href="#" class="menu-item" data-page="Tasks"><i class="fas fa-tasks"></i>Brands</a></li>
+            <li><a href="#" class="menu-item" data-page="Reports"><i class="fas fa-chart-bar"></i>Add Products</a></li>
+            <li><a href="#" class="menu-item" data-page="Settings"><i class="fas fa-cog"></i>Coupon</a></li>
+            <li><a href="#" class="menu-item" data-page="Profile"><i class="fas fa-user"></i>Banner</a></li>
+            <li><a href="#" class="menu-item" data-page="Analytics"><i class="fas fa-analytics"></i>Orders</a></li>
+        </ul>
+    </nav> -->
+
+    <!-- Sidebar Overlay for Mobile -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- Main Content - This wrapper is crucial -->
+    <main class="main-content" id="mainContent">
+        <!-- Your customer page content starts here -->
+        <div class="content-header row">
+            <div class="d-flex justify-content-between align-items-center">
+                <h2 class="content-title card-title">Customers</h2>
+            </div>
+        </div>         
+
+      <div class="card">
     <header class="card-header text-center mb-20">
         <form action="/admin/users/" method="get" class="d-inline">
             <div class="input-group input-group-sm border border-1 border-grey rounded-pill" style="width: 500px; margin: 0 auto;">
@@ -32,7 +414,9 @@
                 <tbody>
                     <% if(data && data.length > 0) { %>
                         <% for(let i = 0; i < data.length; i++) { %>
+                            
                             <tr>
+
                                 <td><%= data[i].name %></td>
                                 <td><%= data[i].email %></td>
                                 <td><%= data[i].phone %></td>
@@ -64,7 +448,7 @@
     </div>
 </div>
 
-<!-- Pagination -->
+      <!-- Pagination -->
 <% if(totalPages > 1) { %>
 <div class="container mt-3">
     <nav aria-label="Page navigation">
@@ -93,3 +477,56 @@
     </nav>
 </div>
 <% } %>
+    </main>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Sidebar toggle functionality
+        const menuToggle = document.getElementById('menuToggle');
+        const sidebar = document.getElementById('sidebar');
+        const mainContent = document.getElementById('mainContent');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+
+        menuToggle.addEventListener('click', function() {
+            if (window.innerWidth <= 768) {
+                // Mobile behavior
+                sidebar.classList.toggle('show');
+                sidebarOverlay.classList.toggle('show');
+            } else {
+                // Desktop behavior
+                sidebar.classList.toggle('collapsed');
+                mainContent.classList.toggle('expanded');
+            }
+        });
+
+        // Close sidebar when clicking overlay (mobile)
+        sidebarOverlay.addEventListener('click', function() {
+            sidebar.classList.remove('show');
+            sidebarOverlay.classList.remove('show');
+        });
+
+        // Handle window resize
+        window.addEventListener('resize', function() {
+            if (window.innerWidth > 768) {
+                sidebar.classList.remove('show');
+                sidebarOverlay.classList.remove('show');
+            }
+        });
+
+        // Update active menu item and breadcrumb
+        const menuItems = document.querySelectorAll('.menu-item');
+        const breadcrumbPage = document.getElementById('breadcrumbPage');
+
+        menuItems.forEach(item => {
+            item.addEventListener('click', function(e) {
+                // Remove active class from all items
+                menuItems.forEach(i => i.classList.remove('active'));
+                // Add active class to clicked item
+                this.classList.add('active');
+                // Update breadcrumb
+                const pageName = this.getAttribute('data-page');
+                breadcrumbPage.textContent = pageName;
+            });
+        });
+    </script>
+</body>
