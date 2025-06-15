@@ -462,7 +462,8 @@
                             <table class="table table-hover">
                                 <thead>
                                     <tr>
-                                        <th>#</th>
+                                        
+                                        <th></th>
                                         <th>Name</th>
                                         <th>Description</th>
                                         <th>Offer Price</th>
@@ -480,28 +481,36 @@
                         <td class="text-start"><%=category.name%></td>
                         <td class="text-start"><%=category.description %></td>
                         <td>
-                        </td>
+                            <%if(category.categoryOffer){%>
+                                <%= category.categoryOffer %>
+                                <%}else{%>
+                                   0%
+                                    <%} %>
+                        </td> 
                         <td class="text-start">
+                             <% if (category.categoryOffer === 0){%>
                         <button class="btn btn-info" style="width: 100px">
-                            <a href="#" class="text-white">Add Offer</a>
+                            <a href="#" class="text-white text-decoration-none" onclick="addOffer('<%= category._id %>')" >Add Offer</a>
                         </button>
+                        <%}else{ %>
                         <button class="btn btn-info"style="width: 100px">
-                            <a href="#" class="text-white">Remove</a>
+                            <a href="#" class="text-white text-decoration-none " onclick="removeOffer('<%=category._id %>')">Remove</a>
                         </button>
+                        <%} %>
                         </td>
                         <td class="text-start">
-                        <span class="badge rounded-pill alert-success" style="width: 60px">Listed</span>
-                        <span class="badge rounded-pill alert-danger" style="width: 60px">Unlisted</span>
+                        <span class="badge rounded-pill alert-success text-black" style="width: 60px">Listed</span>
+                        <span class="badge rounded-pill alert-danger text-black" style="width: 60px">Unlisted</span>
                         </td>
                         <td class="text-start">
-                        <button class="btn btn-danger" style="width: 70px">
-                            <a href="#" class="text-white">Unlist</a>
+                        <button class="btn btn-danger" style="width: 70px ">
+                            <a href="#" class="text-white text-decoration-none">Unlist</a>
                         </button>
                         <button class="btn btn-success" style="width: 70px">
-                            <a href="" class="text-white">List</a>
+                            <a href="" class="text-white text-decoration-none" >List</a>
                         </button>
                         </td>
-                        <td class="text-start">
+                        <td class="text-start">   
                         <a href="" class="btn btn-info text-white">Edit</a>
                         </td>
                     </tr>
@@ -516,15 +525,30 @@
         </div>
 
         <!-- Pagination -->
-        <div class="pagination-container">
+        <!-- <div class="pagination-container">
             <div class="pagination">
-                <a href="#">&laquo; Previous</a>
+               <% if (currentPage > 1) { %>
+      <a href="?page=<%= currentPage - 1 %>">&laquo; Previous</a>
+      <% } %>
                 <span class="current-page">1</span>
                 <a href="#">2</a>
                 <a href="#">3</a>
                 <a href="#">Next &raquo;</a>
             </div>
-        </div>
+        </div> -->
+        <div class="pagination-container">
+      <% if (currentPage > 1) { %>
+      <a href="?page=<%= currentPage - 1 %>">&laquo; Previous</a>
+      <% } %> <% for (let i = 1; i <= totalPages; i++) { %> <% if (i ===
+      currentPage) { %>
+      <span class="current-page"><%= i %></span>
+      <% } else { %>
+      <a href="?page=<%= i %>"><%= i %></a>
+      <% } %> <% } %> <% if (currentPage < totalPages) { %>
+      <a href="?page=<%= currentPage + 1 %>">Next &raquo;</a>
+      <% } %>
+    </div>
+
     </main>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
@@ -629,6 +653,102 @@
                 element.style.display = "none";
             });
         }
+
+        async function addOffer(categoryId){
+            const {value:amount} = await Swal.fire({
+                title:"Offer in percentage",
+                input:"number",
+                inputLabel:"Percentage",
+                inputPlaceholder:"%",
+            })
+
+            if(amount){
+                console.log("is data ");
+                   
+                try {
+                    const response =  await fetch('/admin/addCategoryOffer',{
+                        method:"POST",
+                        headers:{
+                            'Content-Type':'application/json',
+                        },
+                        body:JSON.stringify({
+                            percentage:amount,
+                            categoryId:categoryId
+                        }),  
+                    });
+
+                    const data = await response.json();
+                    if(response.ok && data.status === true){
+                        Swal.fire(
+                            "Offer added",
+                            "The offer has been added",
+                            "success"
+                        ).then(()=>{
+                            location.reload();
+                        })
+                    }else{
+                        Swal.fire("Failed",data.message || "Adding offer failed","error");
+
+                    }
+                    console.log("add offers");
+                    
+                    console.log(data)
+                    console.log(response.status)
+                } catch (error) {
+                    console.log("error in add offer")
+                    Swal.fire(
+                        "Error",
+                        "An error occured while adding the offer",
+                        "error"
+                    );
+                    console.log("error in adding offfer",error);
+                    
+                }
+            }
+
+
+        }
+
+
+
+        async function removeOffer(categoryId){
+            try {
+                const response = await fetch("/admin/removeCategoryOffer",{
+                    method:"POST",
+                    headers:{
+                        "content-type" : "application/json",
+                    },
+                    body:JSON.stringify({
+                        categoryId:categoryId,
+                    }),
+                })
+
+                const data =  await response.json()
+
+                if(response.ok && data.status === true){
+                    Swal.fire(
+                    "Offer removed",
+                    "The offer has been removed",
+                    "success"
+                ).then(()=>{
+                    location.reload();
+                });
+            }else{
+                Swal.fire("Failed",data.message || "Removing offer failed", "error")
+            }
+            } catch (error) {
+                
+                Swal.fire(
+                    "Error",
+                    "An Error occured while removing the offer",
+                    "error"
+                );
+                console.error("Error removing offer ",error);
+                 
+            }
+        }
+
+
 
         // Mobile responsive
         window.addEventListener('resize', function() {

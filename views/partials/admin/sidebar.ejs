@@ -160,7 +160,7 @@
         }
 
         .sidebar-menu a:hover {
-            background: rgba(255,255,255,0.1);
+            background:  rgba(176, 133, 133, 0.1);
             border-left-color: var(--accent-color);
             padding-left: 30px;
         }
@@ -265,23 +265,19 @@
     <!-- Header -->
     <header class="main-header">
         <div class="header-left">
-            <button class="menu-toggle" id="menuToggle">
+            <!-- <button class="menu-toggle" id="menuToggle">
                 <i class="fas fa-bars"></i>
-            </button>
-            <a href="#" class="logo">HOURLY</a>
+            </button> -->
+            <a href="#" class="logo"><span style="font-family: 'Lakki Reddy'" class="text-light fs-4 fw-bold ms-2" >HOURLY</a>
         </div>
         
         <div class="header-right">
-            <nav class="breadcrumb-nav">
-                <a href="#" id="breadcrumbAdmin">Admin</a>
-                <span class="mx-2">></span>
-                <span id="breadcrumbPage">Dashboard</span>
-            </nav>
-            <a href="/admin/logout" class="logout-btn" id="logoutBtn">
-                <i class="fas fa-sign-out-alt"></i>
-                LOGOUT
-            </a>
-            
+           
+                <a href="/admin/logout" class="logout-btn" >
+                    <i class="fas fa-sign-out-alt"></i>
+                    LOGOUT
+                </a>
+                
         </div>
     </header>
 
@@ -298,9 +294,6 @@
             <li><a href="#" class="menu-item" data-page="Analytics"><i class="fas fa-analytics"></i>Orders</a></li>
         </ul>
     </nav>
-
-    <!-- Sidebar Overlay for Mobile -->
-    <!-- <div class="sidebar-overlay" id="sidebarOverlay"></div> -->
 
    
 
