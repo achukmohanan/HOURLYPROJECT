@@ -1,0 +1,67 @@
+<%- include("../../views/partials/admin/sidebar") %>
+<!-- Main Content Area (to be used after including sidebar) -->
+<div class="main-content" id="mainContent">
+    <div class="content-card">
+        <h2 class="page-title">Category Management</h2>
+        
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <form method="post" action="/admin/editCategory/<%= category._id%>">
+                    <div class="d-flex justify-content-end mb-4">
+                        <button class="btn btn-primary px-4" type="submit">Update Category</button>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label for="categoryName" class="form-label fw-semibold">Category Name</label>
+                        <input type="text" name="categoryName" id="categoryName" value="<%= category.name%>" class="form-control border" placeholder="Enter category name" />
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label for="description" class="form-label fw-semibold">Description</label>
+                        <textarea name="description" id="description" class="form-control border" rows="4" placeholder="Enter category description"><%= category.description%></textarea>
+                    </div>
+                </form>
+            </div>  
+        </div>
+    </div>
+</div>
+
+<!-- Sidebar Overlay for Mobile -->
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<script>
+// Menu toggle functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const menuToggle = document.getElementById('menuToggle');
+    const sidebar = document.getElementById('sidebar');
+    const mainContent = document.getElementById('mainContent');
+    const sidebarOverlay = document.getElementById('sidebarOverlay');
+
+    if (menuToggle) {
+        menuToggle.addEventListener('click', function() {
+            sidebar.classList.toggle('collapsed');
+            mainContent.classList.toggle('expanded');
+            
+            // Mobile overlay
+            if (window.innerWidth <= 768) {
+                sidebar.classList.toggle('show');
+                sidebarOverlay.classList.toggle('show');
+            }
+        });
+    }
+
+    // Close sidebar when clicking overlay
+    sidebarOverlay.addEventListener('click', function() {
+        sidebar.classList.remove('show');
+        sidebarOverlay.classList.remove('show');
+    });
+
+    // Handle window resize
+    window.addEventListener('resize', function() {
+        if (window.innerWidth > 768) {
+            sidebar.classList.remove('show');
+            sidebarOverlay.classList.remove('show');
+        }
+    });
+});
+</script>

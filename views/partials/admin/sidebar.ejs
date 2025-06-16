@@ -59,7 +59,7 @@
             cursor: pointer;
             padding: 8px;
             border-radius: 4px;
-            transition: background-color 0.3s;
+            transition: background-color 0.3s;  
         }
 
         .menu-toggle:hover {
@@ -160,7 +160,7 @@
         }
 
         .sidebar-menu a:hover {
-            background:  rgba(176, 133, 133, 0.1);
+            background:  rgba(52, 152, 219, 0.1);
             border-left-color: var(--accent-color);
             padding-left: 30px;
         }
@@ -265,10 +265,10 @@
     <!-- Header -->
     <header class="main-header">
         <div class="header-left">
-            <!-- <button class="menu-toggle" id="menuToggle">
+            <button class="menu-toggle" id="menuToggle">
                 <i class="fas fa-bars"></i>
-            </button> -->
-            <a href="#" class="logo"><span style="font-family: 'Lakki Reddy'" class="text-light fs-4 fw-bold ms-2" >HOURLY</a>
+            </button>
+            <a href="#" class="logo"><span style="font-family: 'Lakki Reddy'" class="text-light fs-4 fw-bold ms-2" >HOURLY</span></a>
         </div>
         
         <div class="header-right">
@@ -297,7 +297,47 @@
 
    
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
    
+   <script>
+    // Toggle sidebar functionality
+const menuToggle = document.getElementById('menuToggle');
+const sidebar = document.getElementById('sidebar');
+const mainContent = document.getElementById('mainContent');
+const sidebarOverlay = document.getElementById('sidebarOverlay');
+
+// Toggle sidebar on menu button click
+menuToggle.addEventListener('click', function() {
+    const isMobile = window.innerWidth <= 768;
+    
+    if (isMobile) {
+        sidebar.classList.toggle('show');
+        sidebarOverlay.classList.toggle('show');
+    } else {
+        sidebar.classList.toggle('collapsed');
+        mainContent.classList.toggle('expanded');
+    }
+});
+
+// Close sidebar when clicking overlay (mobile)
+sidebarOverlay.addEventListener('click', function() {
+    sidebar.classList.remove('show');
+    sidebarOverlay.classList.remove('show');
+});
+
+// Handle window resize
+window.addEventListener('resize', function() {
+    const isMobile = window.innerWidth <= 768;
+    
+    if (!isMobile) {
+        sidebar.classList.remove('show');
+        sidebarOverlay.classList.remove('show');
+    } else {
+        sidebar.classList.remove('collapsed');
+        mainContent.classList.remove('expanded');
+    }
+});
+   </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
+
