@@ -31,7 +31,7 @@ router.post('/editCategory/:id',adminAuth,categoryController.editCategory)
 
 //brand controller
 router.get('/brands',adminAuth,brandController.getBrandPage)
-
+router.post("/addBrand",adminAuth,uploads.single('image'),brandController.addBrand)
 
 
 
