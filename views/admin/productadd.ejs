@@ -1,0 +1,286 @@
+<%- include("../../views/partials/admin/sidebar") %>
+<head>
+   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cropperjs/dist/cropper.min.css">
+</head>
+<style>
+   .error-message{
+       color: red;
+   }
+
+   .thumbnails-container {
+       display: flex;
+       overflow-x: auto;
+   }
+
+   .thumbnail {
+       margin-right: 10px;
+   }
+
+   /* Main content adjustments for sidebar layout */
+   .main-content {
+       margin-top: var(--header-height, 70px);
+       margin-left: var(--sidebar-width, 250px);
+       padding: 30px;
+       transition: margin-left 0.3s ease;
+       min-height: calc(100vh - var(--header-height, 70px));
+   }
+
+   .main-content.expanded {
+       margin-left: 0;
+   }
+
+   .content-main {
+       background: white;
+       border-radius: 10px;
+       box-shadow: 0 2px 20px rgba(0,0,0,0.08);
+       padding: 30px;
+       margin-bottom: 20px;
+   }
+
+   .content-title {
+       color: var(--primary-color, #2c3e50);
+       font-size: 28px;
+       font-weight: 600;
+       margin-bottom: 30px;
+       padding-bottom: 15px;
+       border-bottom: 2px solid #e9ecef;
+   }
+
+   .form-control, .form-select {
+       border: 2px solid #e9ecef;
+       border-radius: 8px;
+       padding: 12px 15px;
+       font-size: 14px;
+       transition: border-color 0.3s ease;
+   }
+
+   .form-control:focus, .form-select:focus {
+       border-color: var(--accent-color, #3498db);
+       box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
+   }
+
+   .card {
+       border: none;
+       border-radius: 10px;
+       box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+       margin-bottom: 20px;
+   }
+
+   .card-header {
+       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+       color: white;
+       border-radius: 10px 10px 0 0 !important;
+       padding: 15px 20px;
+   }
+
+   .card-header h4 {
+       margin: 0;
+       font-size: 18px;
+   }
+
+   .btn {
+       border-radius: 8px;
+       padding: 12px 30px;
+       font-weight: 500;
+       text-transform: uppercase;
+       letter-spacing: 0.5px;
+       transition: all 0.3s ease;
+   }
+
+   .btn-primary {
+       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+       border: none;
+   }
+
+   .btn-primary:hover {
+       transform: translateY(-2px);
+       box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+   }
+
+   .image-cropper {
+       border: 2px dashed #dee2e6;
+       border-radius: 8px;
+       padding: 20px;
+       text-align: center;
+   }
+
+   /* Mobile Responsive */
+   @media (max-width: 768px) {
+       .main-content {
+           margin-left: 0;
+           padding: 20px 15px;
+       }
+       
+       .content-main {
+           padding: 20px;
+       }
+   }
+</style>
+
+<!-- Main Content Wrapper -->
+<main class="main-content" id="mainContent">
+   <section class="content-main">
+       <div class="content-header">
+           <h2 class="content-title">Add New Product</h2>
+       </div>
+       
+       <div class="row">
+           <div class="col-lg-8">
+               <form method="POST" action="/admin/addProducts" enctype="multipart/form-data" onsubmit="return validateForm()">
+                   
+                   <!-- Product Basic Information -->
+                   <div class="card mb-4">
+                       <div class="card-body">
+                           <div class="mb-4">
+                               <label for="product_name" class="form-label">Product Name</label>
+                               <input type="text" placeholder="Enter product name" name="productName" class="form-control" id="product_name">
+                               <div id="productName-error" class="error-message"></div>
+                           </div>
+
+                           <div class="row">
+                               <div class="col-lg-6 mb-4">
+                                   <label class="form-label">Brand</label>
+                                   <select class="form-select" name="brand">
+                                       <option value="">Select Brand</option>
+                                       <!-- Your brand options here -->
+                                   </select>
+                                   <div id="brand-error" class="error-message"></div>
+                               </div>
+                               <div class="col-lg-6 mb-4">
+                                   <label class="form-label">Category</label>
+                                   <select class="form-select" name="category">
+                                       <option value="">Select Category</option>
+                                       <!-- Your category options here -->
+                                   </select>
+                                   <div id="category-error" class="error-message"></div>
+                               </div>
+                           </div>
+
+                           <div class="mb-4">
+                               <label class="form-label">Description</label>
+                               <textarea placeholder="Enter product description" id="descriptionid" name="description" class="form-control" rows="4"></textarea>
+                               <div id="description-error" class="error-message"></div>
+                           </div>
+                       </div>
+                   </div>
+
+                   <!-- Pricing and Inventory -->
+                   <div class="card mb-4">
+                       <div class="card-header">
+                           <h4>Pricing & Inventory</h4>
+                       </div>
+                       <div class="card-body">
+                           <div class="row">
+                               <div class="col-lg-4 mb-4">
+                                   <label class="form-label">Regular Price</label>
+                                   <input placeholder="0.00" name="regularPrice" type="number" step="0.01" class="form-control">
+                                   <div id="regularPrice-error" class="error-message"></div>
+                               </div>
+                               <div class="col-lg-4 mb-4">
+                                   <label class="form-label">Sale Price</label>
+                                   <input placeholder="0.00" name="salePrice" type="number" step="0.01" class="form-control">
+                                   <div id="salePrice-error" class="error-message"></div>
+                               </div>
+                               <div class="col-lg-4 mb-4">
+                                   <label class="form-label">Quantity</label>
+                                   <input placeholder="0" name="quantity" type="number" class="form-control">
+                                   <div id="quantity-error" class="error-message"></div>
+                               </div>
+                           </div>
+                           <div class="row">
+                               <div class="col-lg-6 mb-4">
+                                   <label class="form-label">Color</label>
+                                   <input name="color" type="text" placeholder="Enter color" class="form-control">
+                                   <div id="color-error" class="error-message"></div>
+                               </div>
+                           </div>
+                       </div>
+                   </div>
+
+                   <!-- Product Images -->
+                   <div class="card mb-4">
+                       <div class="card-header">
+                           <h4>Product Images</h4>
+                       </div>
+                       <div class="card-body">
+                           <div id="addedImagesContainer" class="thumbnails-container mb-3"></div>
+                           
+                           <!-- Image Upload Sections -->
+                           <div class="row">
+                               <div class="col-md-6 mb-4">
+                                   <label class="form-label">Image 1</label>
+                                   <img src="" alt="" id="imgView1" style="max-width: 200px; display: none;" class="mb-2">
+                                   <input class="form-control" type="file" name="images" id="input1" accept="image/png, image/jpeg, image/jpg" onchange="viewImage1(event), viewImage(event, 1)">
+                                   <div class="image-cropper" style="display:none;">
+                                       <img src="" id="croppedImg1" alt="" style="max-width: 100%;">
+                                       <button type="button" id="saveButton1" class="btn btn-sm btn-primary mt-2">Save</button>
+                                   </div>
+                               </div>
+                               <div class="col-md-6 mb-4">
+                                   <label class="form-label">Image 2</label>
+                                   <img src="" alt="" id="imgView2" style="max-width: 200px; display: none;" class="mb-2">
+                                   <input class="form-control" type="file" name="images" id="input2" accept="image/png, image/jpeg, image/jpg" onchange="viewImage2(event), viewImage(event, 2)">
+                                   <div class="image-cropper" style="display:none;">
+                                       <img src="" id="croppedImg2" alt="" style="max-width: 100%;">
+                                       <button type="button" id="saveButton2" class="btn btn-sm btn-primary mt-2">Save</button>
+                                   </div>
+                               </div>
+                           </div>
+                           
+                           <div class="row">
+                               <div class="col-md-6 mb-4">
+                                   <label class="form-label">Image 3</label>
+                                   <img src="" alt="" id="imgView3" style="max-width: 200px; display: none;" class="mb-2">
+                                   <input class="form-control" type="file" name="images" id="input3" accept="image/png, image/jpeg, image/jpg" onchange="viewImage3(event), viewImage(event, 3)">
+                                   <div class="image-cropper" style="display:none;">
+                                       <img src="" id="croppedImg3" alt="" style="max-width: 100%;">
+                                       <button type="button" id="saveButton3" class="btn btn-sm btn-primary mt-2">Save</button>
+                                   </div>
+                               </div>
+                               <div class="col-md-6 mb-4">
+                                   <label class="form-label">Image 4</label>
+                                   <img src="" alt="" id="imgView4" style="max-width: 200px; display: none;" class="mb-2">
+                                   <input class="form-control" type="file" name="images" id="input4" accept="image/png, image/jpeg, image/jpg" onchange="viewImage4(event), viewImage(event, 4)">
+                                   <div class="image-cropper" style="display:none;">
+                                       <img src="" id="croppedImg4" alt="" style="max-width: 100%;">
+                                       <button type="button" id="saveButton4" class="btn btn-sm btn-primary mt-2">Save</button>
+                                   </div>
+                               </div>
+                           </div>
+                           
+                           <div id="images-error" class="error-message"></div>
+                       </div>
+                   </div>
+
+                   <!-- Submit Button -->
+                   <div class="text-end">
+                       <button class="btn btn-primary" type="button" onclick="validateAndSubmit()">
+                           Publish Product
+                       </button>
+                   </div>
+               </form>
+           </div>
+       </div>
+   </section>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/cropperjs/dist/cropper.min.js"></script>
+
+<script>
+   // Add this script to handle sidebar integration
+   document.addEventListener('DOMContentLoaded', function() {
+       const mainContent = document.getElementById('mainContent');
+       const menuToggle = document.getElementById('menuToggle');
+       const sidebar = document.getElementById('sidebar');
+       
+       if (menuToggle && sidebar && mainContent) {
+           menuToggle.addEventListener('click', function() {
+               const isMobile = window.innerWidth <= 768;
+               
+               if (!isMobile) {
+                   mainContent.classList.toggle('expanded');
+               }
+           });
+       }
+   });
+</script>

@@ -4,6 +4,7 @@ const adminController = require('../controllers/admin/adminController');
 const brandController = require('../controllers/admin/brandController')
 const customerController = require('../controllers/admin/customerController')
 const categoryController = require('../controllers/admin/categoryController');
+const productController = require('../controllers/admin/productController')
 const {userAuth,adminAuth} = require('../middlewares/auth')
 const multer = require("multer");
 const storage = require('../helpers/multer');
@@ -36,13 +37,12 @@ router.get("/blockBrand",adminAuth,brandController.blockBrand)
 router.get('/unBlockBrand',adminAuth,brandController.unBlockBrand);
 router.get('/deleteBrand',adminAuth,brandController.deleteBrand);
 
+//product management
+router.get('/addProducts',adminAuth,productController.getProductAddPage)
+
+
 
 // router.get('/users',customerController.loadcustomerInfo)
-
-    
-
-
-
 // router.get('/dashboard',adminController.loaddashboard)
 // router.use('/admin/*',(req,res,next)=>{
 //     res.status(404).render('admin/adminpagenotfound')
