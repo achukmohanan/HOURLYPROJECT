@@ -1,0 +1,275 @@
+<%- include("../../views/partials/admin/sidebar") %>
+<head>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.css">
+    <style>
+        /* Products Page Specific Styles to match sidebar layout */
+        .main-content {
+            margin-top: var(--header-height, 70px);
+            margin-left: var(--sidebar-width, 250px);
+            padding: 30px;
+            transition: margin-left 0.3s ease;
+            min-height: calc(100vh - var(--header-height, 70px));
+            background-color: var(--bg-light, #f8f9fa);
+        }
+
+        .content-header {
+            margin-bottom: 25px;
+        }
+
+        .content-title {
+            color: var(--primary-color, #2c3e50);
+            font-size: 28px;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .search-header {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.08);
+        }
+
+        .search-form {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .search-input-group {
+            max-width: 500px;
+            width: 100%;
+            position: relative;
+        }
+
+        .search-input-group input {
+            border: 2px solid #e9ecef;
+            border-radius: 25px;
+            padding: 12px 20px;
+            padding-right: 50px;
+            width: 100%;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+        }
+
+        .search-input-group input:focus {
+            outline: none;
+            border-color: var(--accent-color, #3498db);
+            box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
+        }
+
+        .search-btn {
+            position: absolute;
+            right: 5px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: var(--accent-color, #3498db);
+            border: none;
+            border-radius: 20px;
+            color: white;
+            padding: 8px 15px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .search-btn:hover {
+            background: #2980b9;
+        }
+
+        .products-table-container {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.08);
+            overflow: hidden;
+        }
+
+        .table {
+            margin: 0;
+        }
+
+        .table thead th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 12px;
+            font-weight: 600;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .table tbody td {
+            padding: 15px 12px;
+            vertical-align: middle;
+            border-bottom: 1px solid #f1f3f4;
+            font-size: 14px;
+        }
+
+        .table tbody tr:hover {
+            background-color: #f8f9fa;
+        }
+
+        .action-btn {
+            border-radius: 20px;
+            padding: 6px 12px;
+            font-size: 11px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 2px;
+            min-width: 80px;
+        }
+
+        .action-btn a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .btn-offer {
+            background: #17a2b8;
+            color: white;
+        }
+
+        .btn-offer:hover {
+            background: #138496;
+            transform: translateY(-1px);
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+            transform: translateY(-1px);
+        }
+
+        .btn-success:hover {
+            background: #218838;
+            transform: translateY(-1px);
+        }
+
+        .btn-info:hover {
+            background: #138496;
+            transform: translateY(-1px);
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .main-content {
+                margin-left: 0;
+                padding: 20px 15px;
+            }
+
+            .search-input-group {
+                max-width: 100%;
+            }
+
+            .table-responsive {
+                font-size: 12px;
+            }
+
+            .action-btn {
+                min-width: 60px;
+                padding: 4px 8px;
+                font-size: 10px;
+            }
+        }
+    </style>
+</head>
+
+<!-- Main Content Area -->
+<div class="main-content">
+    <!-- Page Header -->
+    <div class="content-header">
+        <h2 class="content-title">Products Management</h2>
+    </div>
+
+    <!-- Search Section -->
+    <div class="search-header">
+        <form action="" method="get" class="search-form">
+            <div class="search-input-group">
+                <input type="text" class="form-control" placeholder="Search products or brands..." name="search">
+                <button class="search-btn" type="submit">
+                    <i class="fas fa-search"></i> Search
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Products Table -->
+    <div class="products-table-container">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th scope="col">Product Name</th>
+                        <th scope="col">Brand</th>
+                        <th scope="col">Category</th>
+                        <th scope="col">Sale Price</th>
+                        <th scope="col">Offer Price</th>
+                        <th scope="col">Offer Actions</th>
+                        <th scope="col">Quantity</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Edit</th>
+                    </tr>
+                </thead>
+                <tbody>
+                   <%for(let i=data.length-1; i>=0; i--) {%>
+                    <tr>
+                        <td><%=data[i].productName%> </td>
+                        <td><%=data[i].brand %></td>
+                        <td><%=data[i].category.name %></td>
+                        <td><%=data[i].salePrice %></td>
+                        <td></td>
+                        <td>
+                            <button class="action-btn btn-offer">
+                                <a href="#" class="text-white">Add Offer</a>
+                            </button>
+                            <button class="action-btn btn-offer">
+                                <a href="#" class="text-white">Remove</a>
+                            </button>
+                        </td>
+                        <td>50</td>
+                        <td>
+                            <button class="action-btn btn-danger">
+                                <a href="#" class="text-grey">Block</a>
+                            </button>
+                            <button class="action-btn btn-success">
+                                <a href="#" class="text-grey">Unblock</a>
+                            </button>
+                        </td>
+                        <td>
+                            <button class="action-btn btn-info">
+                                <a href="#" class="text-sucess">Edit</a>
+                            </button>
+                        </td>
+                    </tr>
+                <%}%>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="container mt-3">
+   <nav aria-label="Page navigation">
+       <ul class="pagination justify-content-center mb-20" style="margin-right: 200px;">
+
+
+           <% for (let i = 1; i <= totalPages; i++) { %>
+           <li class="page-item <%=(i === currentPage) ? 'active' : '' %>">
+               <a class="page-link" href="?page=<%= i %>"><%= i %></a>
+           </li>
+           <% } %>
+
+
+       </ul>
+   </nav>
+</div>
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>

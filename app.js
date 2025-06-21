@@ -51,7 +51,9 @@ app.use(express.static(path.join(__dirname, "public")))
 
 app.use('/', userRouter);
 app.use('/admin',adminRouter);
-
+app.use((req, res, next) => {
+    res.status(404).render('user/error404'); // render your 404.ejs
+});
 
 
 

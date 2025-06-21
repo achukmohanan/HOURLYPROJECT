@@ -133,7 +133,54 @@ const ensureUploadDirectory = () => {
 // Call this when the module is loaded
 ensureUploadDirectory();
 
+const getAllProducts = async (req,res) =>{
+    try {
+        const search =req.query.search || "";
+        const page = req.query.page ||1;
+        const limit = 4;
+
+        const productData = await Product.find({
+            $or:[
+            {productName:{$regex:new RegExp(".*"+search+".*","i")}},
+            {brand:{$regex: new RegExp(".*"+search+".*","i")}},
+            ]
+        }).limit(limit*1)
+        .skip((page-1)*limit)
+        .populate('category')
+        .exec();
+
+        const count = await Product.find({
+            $or:[
+                {productName:{$regex:new RegExp(".*"+search+".*","i")}},
+                {brand:{$regex:new RegExp(".*"+search+".*","i")}},
+            ],
+        }).countDocuments();
+
+        const category = await Category.find({isListed:true});
+        const brand = await Brand.find({isBlocked:false});
+
+        if(category && brand){
+            res.render('admin/products',{
+                data:productData,
+                currentPage:page,
+                totalPages:Math.ceil(count/limit),
+                cat:category,
+                brand:brand,
+
+            })
+        }else{
+            res.render('/pageerror')
+        }
+    } catch (error) {
+        
+    }
+}
+
+
+
+
 module.exports = {
     getProductAddPage,
-    addProducts
+    addProducts,
+    getAllProducts
 }
