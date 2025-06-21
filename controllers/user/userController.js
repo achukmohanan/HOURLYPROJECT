@@ -13,6 +13,7 @@ const pageNotFound = async (req, res) => {
     }
 }
 
+
 const loadHomepage = async (req, res) => {
     try {
 
@@ -115,7 +116,7 @@ const signup = async (req, res) => {
         
     } catch (error) {
         console.log("signup error",error);
-        res.redirect('/error404')
+        res.redirect('/pagenotfound')
     }
     const otpSent = true;
         if(otpSent){
@@ -208,7 +209,7 @@ const changePassword = async (req, res) => {
 
 const landingPage = async (req, res) => {
     try {
-        res.render('user/landing')
+        res.render('user/home')
     } catch (error) {
         res.status(500).send("enternal error happend")
     }
@@ -333,7 +334,7 @@ const logout = async (req,res) => {
         })
     } catch (error) {
         console.log("logout error ",error);
-        res.redirect('/error404')
+        res.redirect('/pagenotfound')
         
     }
 }
@@ -352,6 +353,6 @@ module.exports = {
     resendOtp,
     login,
     loadaccount,
-    logout
-} 
-
+    logout,
+   
+}

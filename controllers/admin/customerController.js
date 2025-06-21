@@ -41,27 +41,48 @@ const User = require('../../models/userSchema');
         res.status(500).send("Internal Server Error");
     }
 }
-
-const customerBlocked = async (req,res) =>{
+const customerBlocked = async (req, res) => {
     try {
         let id = req.query.id;
-        await User.updateOne({_id:id},{$set:{isBlocked:true}})
-        res.redirect("/admin/users")
+        await User.updateOne({_id: id}, {$set: {isBlocked: true}});
+        res.status(200).json({ success: true, message: 'User blocked successfully' });
     } catch (error) {
-        res.redirect('/pageerror')
+        console.error('Block error:', error);
+        res.status(500).json({ success: false, message: 'Server Error' });
     }
 }
 
-const customerunBlocked = async (req,res) =>{
+const customerunBlocked = async (req, res) => {
     try {
+        let id = req.query.id;
+        await User.updateOne({_id: id}, {$set: {isBlocked: false}});
+        res.status(200).json({ success: true, message: 'User unblocked successfully' });
+    } catch (error) {
+        console.error('Unblock error:', error);
+        res.status(500).json({ success: false, message: 'Server Error' });
+    }
+}
+// const customerBlocked = async (req,res) =>{
+//     try {
+//         let id = req.query.id;
+//         await User.updateOne({_id:id},{$set:{isBlocked:true}})
+//         res.status(200).json({ success: true });
+//     } catch (error) {
+//         res.status(500).json({ success: false, message: 'Server Error' });
+//         // res.redirect('/pageerror')
+//     }
+// }
+
+// const customerunBlocked = async (req,res) =>{
+//     try {
         
-        let id = req.query.id;
-        await User.updateOne({_id:id},{$set:{isBlocked:false}})
-        res.redirect('/admin/users')
-    } catch (error) {
-        res.redirect('/pageerror')
-    }
-}
+//         let id = req.query.id;
+//         await User.updateOne({_id:id},{$set:{isBlocked:false}})
+//         res.status(200).json({ success: true });
+//     } catch (error) {
+//         res.status(500).json({ success: false, message: 'Server Error' });
+//     }
+// }
 
 
 //  const loadcustomerInfo = async(req,res) =>{

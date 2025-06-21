@@ -17,6 +17,7 @@ router.get("/seconddash",adminAuth,adminController.loaddashboard)
 router.get('/pageerror',adminController.pageerror)
 router.get('/logout',adminController.logout)
 
+//customer management
 router.get('/users',adminAuth,customerController.customerInfo)
 router.get('/blockCustomer',adminAuth,customerController.customerBlocked)
 router.get('/unblockCustomer',adminAuth,customerController.customerunBlocked)
@@ -39,7 +40,7 @@ router.get('/deleteBrand',adminAuth,brandController.deleteBrand);
 
 //product management
 router.get('/addProducts',adminAuth,productController.getProductAddPage)
-
+router.post('/addProducts',adminAuth,uploads.array('images',4),productController.addProducts)
 
 
 // router.get('/users',customerController.loadcustomerInfo)

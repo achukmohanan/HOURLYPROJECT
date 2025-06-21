@@ -3,11 +3,14 @@ const User = require('../models/userSchema')
 
 const userAuth = (req,res,next) =>{
     if(req.session.user){
-        User.findById(req.session.session)
+        
+        User.findById(req.session.user )
         .then(data =>{
             if(data && !data.isBlocked){
                 next()
+                // res.redirect('/home')
             }else{
+                console.log('jfskdfs')
                 res.redirect('/login')
             }
         })
