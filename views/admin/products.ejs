@@ -242,12 +242,17 @@
                         </td>
                         <td><%= data[i].quantity %></td>
                         <td>
-                            <button class="action-btn btn-danger">
-                                <a href="#" class="text-grey">Block</a>
+                            <%if(data[i].isBlocked===false){%>
+                            <button class="action-btn btn-danger" onclick="confirmBlock('<%=data[i].id %>')" >
+                                <!-- <a href="/admin/blockProduct?id=<%=data[i]._id %>" class="text-grey">Block</a> -->
+                                Block
                             </button>
-                            <button class="action-btn btn-success">
-                                <a href="#" class="text-grey">Unblock</a>
+                            <%}else{%>
+                            <button class="action-btn btn-success" onclick="confirmUnblock('<%=data[i].id %>')">
+                            Unblock
+                                <!-- <a href="/admin/unblockProduct?id=<%= data[i]._id %>" class="text-grey">Unblock</a> -->
                             </button>
+                            <%}%>
                         </td>
                         <td>
                             <button class="action-btn btn-info">
@@ -372,4 +377,74 @@
         }
     }
 
+function confirmBlock(productId){
+    Swal.fire({
+        title:'Are you sure?',
+        text:"Do you want to block this product?",
+        icon:'warning',
+        showCancelButton:true,
+        confirmButtonColor:'#d33',
+        cancelButtonColor: '#aaa',
+        confirmButtonText: 'Yes, Block it!'
+    }).then((result)=>{
+        if(result.isConfirmed){
+            fetch(`/admin/blockProduct?id=${productId}`,{
+                method:'GET'
+            })
+            .then(response=>{
+                if(response.ok){
+                   Swal.fire({
+                    icon: 'success',
+                    title: 'Blocked!',
+                    text: 'Product has been blocked successfully.',
+                    timer: 1500,
+                     showConfirmButton: false
+                   }).then(()=>{
+                    location.reload()
+                   })
+                }
+            })
+            .catch(err=>{
+                Swal.fire('Error','Something went .Try again','error');
+                console.error(err);
+                
+            })
+        }
+    })
+}
+
+function confirmUnblock(productId){
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "Do you want to unblock this product?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#28a745',
+            cancelButtonColor: '#aaa',
+            confirmButtonText: 'Yes, Unblock it!'
+        }).then((result)=>{
+            if(result.isConfirmed){
+                fetch(`/admin/unblockProduct?id=${productId}`,{
+                    method:'GET'
+             })
+            .then(response=>{
+            if(response.ok){
+                Swal.fire({
+                    icon:'success',
+                    title:'Unblocked',
+                    text:'product has been unblocked successfully',
+                    timer:1500,
+                    showConfirmButton:false
+                }).then(()=>{
+                    location.reload();
+                })
+            }
+        })
+        .catch(err=>{
+              Swal.fire('Error!', 'Something went wrong. Try again.', 'error');
+              console.error(err);
+        });
+    }    
+});
+}
 </script>
