@@ -256,7 +256,7 @@
                         </td>
                         <td>
                             <button class="action-btn btn-info">
-                                <a href="#" class="text-sucess">Edit</a>
+                                <a href="/admin/editProduct?id=<%=data[i]._id %>" class="text-sucess">Edit</a>
                             </button>
                         </td>
                     </tr>
@@ -423,7 +423,7 @@ function confirmUnblock(productId){
             cancelButtonColor: '#aaa',
             confirmButtonText: 'Yes, Unblock it!'
         }).then((result)=>{
-            if(result.isConfirmed){
+            if(result.isConfirmed){ 
                 fetch(`/admin/unblockProduct?id=${productId}`,{
                     method:'GET'
              })

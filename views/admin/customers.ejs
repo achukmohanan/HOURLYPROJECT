@@ -445,60 +445,12 @@
 <% } %>
     </main>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
-    <!-- <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> -->
-    <!-- <script src="/js/adminActions.js"></script> -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
 
 
-        // // Sidebar toggle functionality
-        // const menuToggle = document.getElementById('menuToggle');
-        // const sidebar = document.getElementById('sidebar');
-        // const mainContent = document.getElementById('mainContent');
-        // const sidebarOverlay = document.getElementById('sidebarOverlay');
-
-        // menuToggle.addEventListener('click', function() {
-        //     if (window.innerWidth <= 768) {
-        //         // Mobile behavior
-        //         sidebar.classList.toggle('show');
-        //         sidebarOverlay.classList.toggle('show');
-        //     } else {
-        //         // Desktop behavior
-        //         sidebar.classList.toggle('collapsed');
-        //         mainContent.classList.toggle('expanded');
-        //     }
-        // });
-
-        // // Close sidebar when clicking overlay (mobile)
-        // sidebarOverlay.addEventListener('click', function() {
-        //     sidebar.classList.remove('show');
-        //     sidebarOverlay.classList.remove('show');
-        // });
-
-        // // Handle window resize
-        // window.addEventListener('resize', function() {
-        //     if (window.innerWidth > 768) {
-        //         sidebar.classList.remove('show');
-        //         sidebarOverlay.classList.remove('show');
-        //     }
-        // });
-
-        // // Update active menu item and breadcrumb
-        // const menuItems = document.querySelectorAll('.menu-item');
-        // const breadcrumbPage = document.getElementById('breadcrumbPage');
-
-        // menuItems.forEach(item => {
-        //     item.addEventListener('click', function(e) {
-        //         // Remove active class from all items
-        //         menuItems.forEach(i => i.classList.remove('active'));
-        //         // Add active class to clicked item
-        //         this.classList.add('active');
-        //         // Update breadcrumb
-        //         const pageName = this.getAttribute('data-page');
-        //         breadcrumbPage.textContent = pageName;
-        //     });
-        // });
+     
 
          async function toggleBlock(userId, shouldBlock, button) {
                 const action = shouldBlock ? 'block' : 'unblock';
