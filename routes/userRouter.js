@@ -22,7 +22,7 @@ router.post('/login',userController.login)
 router.get('/changepassword',userController.changePassword)
 
 //home page
-router.get('/', userController.landingPage)
+// router.get('/', userController.landingPage)
 router.get('/account',userController.loadaccount)
 router.get('/logout',userController.logout);
 

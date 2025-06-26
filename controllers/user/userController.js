@@ -1,4 +1,6 @@
 const User = require('../../models/userSchema');
+const Category = require('../../models/categorySchema');
+const Product = require('../../models/productSchema');
 const nodemailer = require("nodemailer");
 const env = require('dotenv').config();
 const bcrypt = require('bcrypt');
@@ -18,13 +20,24 @@ const loadHomepage = async (req, res) => {
     try {
 
         const user = req.session.user;
+        const categories = await Category.find({isListed:true});
+        let  productData = await Product.find({
+            isBlocked:false,
+                category:{$in:categories.map(category=>category._id)},quantity:{$gt:0}
+            
+        })
+        productData.sort((a,b)=>new Date(b.createdOn)-new Date(a.createdOn));
+        productData = productData.slice(0,4);
+
+
         if(user){
             const userData = await User.findById(user._id);
-            res.render('user/home',{user: userData});
+            res.render('user/home',{user: userData,products:productData});
         }else{
-            return res.render('user/home')
+            return res.render('user/home',{products:productData});
         }
         // return res.redi  rect('/login')
+        console.log("Products sent to EJS:,its working ", productData.length);
 
     } catch (error) {
         console.log("Home page is not loading", error);
@@ -199,13 +212,13 @@ const changePassword = async (req, res) => {
     }
 }
 
-const landingPage = async (req, res) => {
-    try {
-        res.render('user/home')
-    } catch (error) {
-        res.status(500).send("enternal error happend")
-    }
-}
+// const landingPage = async (req, res) => {
+//     try {
+//         res.render('user/home')
+//     } catch (error) {
+//         res.status(500).send("enternal error happend")
+//     }
+// }
 
 const securePassword = async (password)=>{
     try {
@@ -340,7 +353,7 @@ module.exports = {
     
     confirmWithOtp,
     changePassword,
-    landingPage,
+    // landingPage,
     confirmwithotp,
     resendOtp,
     login,
