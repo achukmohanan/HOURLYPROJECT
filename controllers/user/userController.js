@@ -180,15 +180,7 @@ const login = async (req,res) => {
     
 }
 
-const forgotPassword = async (req, res) => {
-    try {
-        return res.render('user/forgotpassword')
-    } catch (error) {
-        console.log('error happened in forgotpassword: ', error)
-        res.status(500).send('Server error')
 
-    }
-}
 
 const confirmWithOtp = async (req, res) => {
     try {
@@ -345,7 +337,7 @@ module.exports = {
     loadSignup,
     signup,
     loadLogin,
-    forgotPassword,
+    
     confirmWithOtp,
     changePassword,
     landingPage,
