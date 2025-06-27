@@ -37,7 +37,7 @@ const addProducts = async (req, res) => {
                 for (let i = 0; i < req.files.length; i++) {
                     try {
                         const originalImagePath = req.files[i].path;
-                        const resizedImagePath = path.join('public', 'uploads', 'product-images', req.files[i].filename);
+                        const resizedImagePath = path.join('public', 'uploads', 'reimage', req.files[i].filename+"_ cropped");
                         
                         // Ensure the directory exists
                         const uploadDir = path.dirname(resizedImagePath);
@@ -56,8 +56,7 @@ const addProducts = async (req, res) => {
                             })
                             .jpeg({ quality: 90 }) // Ensure good quality
                             .toFile(resizedImagePath);
-                        
-                        images.push(req.files[i].filename);
+                        images.push(path.basename   (resizedImagePath));
                         
                         // Clean up original file
                         if (fs.existsSync(originalImagePath)) {

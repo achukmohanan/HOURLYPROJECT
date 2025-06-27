@@ -520,7 +520,7 @@
               <div class="product-img-action-wrap">
                 <div class="product-img">
                   <a href="/productDetails?id=<%=products[i]._id %>">
-                    <img class="default-img" 
+                    <img class="default-img img-fluid" 
                          src="/uploads/reimage/<%= products[i].productImage[0]%>" 
                          alt="<%=products[i].productName %>"
                          loading="lazy">
@@ -535,7 +535,7 @@
               
               <div class="product-content-wrap">
                 <div class="product-info">
-                  <h6 class="product-name"><%=products[i].productName %></h6>
+                  <h6 class="product-name text-dark"><%=products[i].productName %></h6>
                   <div class="product-price">
                     <h5 class="price text-dark" >$<%=products[i].salePrice %></h5>
                     <% if(products[i].regularPrice && products[i].regularPrice > products[i].salePrice) { %>
@@ -571,7 +571,7 @@
     <% if(products && products.length > 0) { %>
       <div class="row mt-5">
         <div class="col-12 text-center">
-          <a href="/products" class="btn btn-outline-primary btn-lg">
+          <a href="/productsDetails" class="btn btn-outline-primary btn-lg">
             View All Products <i class="fas fa-arrow-right ms-2"></i>
           </a>
         </div>
