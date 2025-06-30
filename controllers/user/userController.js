@@ -19,7 +19,7 @@ const pageNotFound = async (req, res) => {
 const loadHomepage = async (req, res) => {
     try {
 
-        const user = req.session.user;
+        const userId = req.session.user;
         const categories = await Category.find({isListed:true});
         let  productData = await Product.find({
             isBlocked:false,
@@ -30,8 +30,8 @@ const loadHomepage = async (req, res) => {
         productData = productData.slice(0,4);
 
 
-        if(user){
-            const userData = await User.findById(user._id);
+        if(userId){
+            const userData = await User.findById(userId);
             res.render('user/home',{user: userData,products:productData});
         }else{
             return res.render('user/home',{products:productData});
@@ -180,9 +180,16 @@ const login = async (req,res) => {
 // console.log('Password:', password);
 // console.log('Found user:', findUser);
      
-        req.session.user = findUser;
-        
-      return  res.redirect('/home')
+        req.session.user = findUser._id;
+        if(req.session.user){
+            console.log("redirect is working")
+            return  res.redirect('/home')
+            
+        }else{
+            console.log("redirect is not working")
+            return res.render('user/login')
+        }
+      
 
 
     } catch (error) {

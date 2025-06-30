@@ -162,7 +162,8 @@ const postNewPassword = async (req,res) =>{
                 {email:email},
                 {$set:{password:passwordHash}}
             )
-            res.redirect('/login');
+            // res.redirect('/login',{message:"new password updated Successfully"});
+            res.status(200).json({message:"new password updated Successfully"})
         }else{
             res.render('user/resetpassword',{message:"Password do not match"});
 

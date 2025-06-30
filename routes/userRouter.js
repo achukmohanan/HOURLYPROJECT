@@ -2,6 +2,7 @@ const express = require('express')
 const router = express.Router()
 const userController = require('../controllers/user/userController');
 const passport = require('passport');
+const { userAuth,checksession} = require('../middlewares/userAuth');
 const profileController = require('../controllers/user/profileControllers')
 const productController = require('../controllers/user/productController')
 //error management
@@ -10,16 +11,27 @@ router.get('/pagenotfound', userController.pageNotFound);
 //signup management
 router.get('/signup', userController.loadSignup);
 router.post('/signup', userController.signup)
-router.get('/home', userController.loadHomepage);
+router.get('/home',userAuth,userController.loadHomepage);
 router.post('/resend-otp',userController.resendOtp)
 router.get('/confirmwithotp',userController.confirmWithOtp)
 router.post('/confirmwithotp',userController.confirmwithotp)
-router.get('/google', passport.authenticate('google', {scope: ['profile', 'email'],prompt: 'select_account',accessType:'offline'}));
+router.get('/google', passport.authenticate('google', {scope: ['profile', 'email']}));
+router.get('/google/callback',
+  passport.authenticate('google', {
+    failureRedirect: '/login',
+    session: true
+  }),
+  (req, res) => {
+    console.log("google login middleware");
+    req.session.user = req.session.passport.user;
+    res.redirect('/dashboard'); // or wherever you want to redirect
+  }
+);
 
 //login management
-router.get('/login' ,userController.loadLogin)
-router.post('/login',userController.login)
-router.get('/changepassword',userController.changePassword)
+router.get('/login' ,checksession,  userController.loadLogin)
+router.post('/login', userController.login)
+router.get('/changepassword', userController.changePassword)
 
 //home page
 // router.get('/', userController.landingPage)
@@ -38,6 +50,6 @@ router.post('/reset-password',profileController.postNewPassword);
 
 //product management
 router.get('/productDetails',productController.productDetails)
-
+router.get('/viewproduct',productController.viewProducts);
 
 module.exports = router; 

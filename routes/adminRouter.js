@@ -5,13 +5,14 @@ const brandController = require('../controllers/admin/brandController')
 const customerController = require('../controllers/admin/customerController')
 const categoryController = require('../controllers/admin/categoryController');
 const productController = require('../controllers/admin/productController')
-const {userAuth,adminAuth} = require('../middlewares/auth')
+const {adminAuth} = require('../middlewares/adminAuth')
 const multer = require("multer");
 const storage = require('../helpers/multer');
+const { checksession } = require('../middlewares/userAuth');
 const uploads = multer({storage:storage});
 
 
-router.get('/adminlogin',adminController.loadLogin);
+router.get('/adminlogin', checksession, adminController.loadLogin);
 router.post('/adminlogin',adminController.login)
 router.get("/seconddash",adminAuth,adminController.loaddashboard)
 router.get('/pageerror',adminController.pageerror)

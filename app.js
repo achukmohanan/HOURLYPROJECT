@@ -24,8 +24,8 @@ app.use(session({
     }
 }))
 
-app.use(passport.initialize());
 app.use(passport.session());
+app.use(passport.initialize());
 app.use(nocache())
 
 app.use((req,res,next)=>{
@@ -65,3 +65,6 @@ app.listen(process.env.PORT, () => console.log('http://localhost:3000'))
 
 module.exports = app;
     
+
+// admin@gmail.com
+// admin123
