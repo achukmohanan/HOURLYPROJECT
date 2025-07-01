@@ -211,13 +211,7 @@ const confirmWithOtp = async (req, res) => {
     }
 }
 
-const changePassword = async (req, res) => {
-    try {
-        return res.render('user/changepassword')
-    } catch (error) {
-        console.log('eroor happened in change password ', error)
-    }
-}
+
 
 // const landingPage = async (req, res) => {
 //     try {
@@ -359,7 +353,6 @@ module.exports = {
     loadLogin,
     
     confirmWithOtp,
-    changePassword,
     // landingPage,
     confirmwithotp,
     resendOtp,

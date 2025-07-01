@@ -31,7 +31,7 @@ router.get('/google/callback',
 //login management
 router.get('/login' ,checksession,  userController.loadLogin)
 router.post('/login', userController.login)
-router.get('/changepassword', userController.changePassword)
+
 
 //home page
 // router.get('/', userController.landingPage)
@@ -41,11 +41,12 @@ router.get('/logout',userController.logout);
 //profile management 
 router.get('/forgotpassword',profileController.forgotPassword)
 // router.post('/forgotpassword',profileController.forgotPasswordvalid)
-router.get('/forgotemailvalid',profileController.getforgotemail)
-router.post('/forgotemailvalid',profileController.forgotEmailValid)
+router.get('/forgotemailotp',profileController.getForgotEmailOtp)
+router.post('/forgotemailotp',profileController.forgotEmailOtp)
 router.post('/verify-passForgot-otp',profileController.verifyForgotPassOtp)
-router.get('/resetpassword',profileController.getResetPassPage);
 router.post('/resend-forgot-otp',profileController.resendOtp)
+//reset password
+router.get('/resetpassword',profileController.getResetPassPage);
 router.post('/reset-password',profileController.postNewPassword);
 
 //product management

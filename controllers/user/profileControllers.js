@@ -43,14 +43,7 @@ const sendVerificationEmail = async (email,otp)=>{
     }
 }
 
-const securePassword = async(req,res) =>{
-   try {
-    const passwordHash = await bcrypt.hash(password,10);
-    return passwordHash
-   } catch (error) {
-    
-   }
-}
+
 
 const forgotPassword = async (req, res) => {
     try {
@@ -69,7 +62,7 @@ const forgotPassword = async (req, res) => {
 //     }
 // }
 
-const getforgotemail = async (req,res) =>{
+const getForgotEmailOtp = async (req,res) =>{
     try {
         return res.render('user/forgotpassotp')
     } catch (error) {
@@ -78,7 +71,7 @@ const getforgotemail = async (req,res) =>{
     }
 }
 
-const forgotEmailValid = async (req, res) => {
+const forgotEmailOtp = async (req, res) => {
     console.log('Request body:', req.body); // Debug log
     
     try {
@@ -152,35 +145,50 @@ const resendOtp = async (req,res) =>{
     }
 }
 
+const securePassword = async(password) =>{
+   try {
+    const passwordHash = await bcrypt.hash(password,10);
+    return passwordHash;
+   } catch (error) {
+    
+   }
+}
+
 const postNewPassword = async (req,res) =>{
     try {
+        console.log(req.body)
         const {newPass1,newPass2} = req.body;
         const email = req.session.email;
+        console.log(newPass1);
+        
         if(newPass1 === newPass2){
             const passwordHash = await securePassword(newPass1);
             await User.updateOne(
                 {email:email},
                 {$set:{password:passwordHash}}
-            )
-            // res.redirect('/login',{message:"new password updated Successfully"});
-            res.status(200).json({message:"new password updated Successfully"})
+            ) 
+            
+         res.status(200).json({success:true, message:"new password updated Successfully"})
+        
         }else{
-            res.render('user/resetpassword',{message:"Password do not match"});
+            res.status(400).json({message:"Password do not match"});
 
         }
     } catch (error) {
-       res.redirect('/pagenotfound') 
+       res.status(500).json({message:"Internal Server error"})
+       console.log("error happened in reset password");
+       
     }
 }
 
 
 module.exports = {
     forgotPassword,
-    forgotEmailValid,
-    getforgotemail,
+    forgotEmailOtp,
+    getForgotEmailOtp,
     verifyForgotPassOtp,
     getResetPassPage,
     resendOtp,
-    postNewPassword,
+    postNewPassword, 
     securePassword
 }
