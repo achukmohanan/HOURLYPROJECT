@@ -16,16 +16,16 @@ app.use(express.urlencoded({ extended: true }));
 app.use(session({
     secret:process.env.SESSION_SECRET,
     resave:false,
-    saveUninitialized:true,
+    saveUninitialized:false,
     cookie:{
         secure:false,
         httpOnly:true,
         maxAge:72*60*60*1000    
     }
 }))
-
-app.use(passport.session());
 app.use(passport.initialize());
+app.use(passport.session());
+
 app.use(nocache())
 
 app.use((req,res,next)=>{
@@ -34,9 +34,9 @@ app.use((req,res,next)=>{
 })
 //google auth
 app.get('/auth/google',passport.authenticate('google',{scope:['profile','email']}))
-app.get('/google/callback',passport.authenticate('google',{failureRedirect:'/signup'}),(req,res)=>{
-    res.redirect('/home')
-})
+// app.get('/google/callback',passport.authenticate('google',{failureRedirect:'/'}),(req,res)=>{
+//     res.redirect('/home')
+// })
 
 app.use((req,res,next)=>{
     res.set('cache-control','no-store')

@@ -11,7 +11,6 @@ router.get('/pagenotfound', userController.pageNotFound);
 //signup management
 router.get('/signup', userController.loadSignup);
 router.post('/signup', userController.signup)
-router.get('/home',userAuth,userController.loadHomepage);
 router.post('/resend-otp',userController.resendOtp)
 router.get('/confirmwithotp',userController.confirmWithOtp)
 router.post('/confirmwithotp',userController.confirmwithotp)
@@ -24,19 +23,20 @@ router.get('/google/callback',
   (req, res) => {
     console.log("google login middleware");
     req.session.user = req.session.passport.user;
-    res.redirect('/dashboard'); // or wherever you want to redirect
+    res.redirect('/home'); // or wherever you want to redirect
   }
 );
 
 //login management
-router.get('/login' ,checksession,  userController.loadLogin)
-router.post('/login', userController.login)
+router.get('/login' ,checksession,  userController.loadLogin);
+router.post('/login', userController.login);
 
 
 //home page
 // router.get('/', userController.landingPage)
-router.get('/account',userController.loadaccount)
+router.get('/account',userController.loadaccount);
 router.get('/logout',userController.logout);
+router.get('/home',userAuth,userController.loadHomepage);
 
 //profile management 
 router.get('/forgotpassword',profileController.forgotPassword)
@@ -51,6 +51,10 @@ router.post('/reset-password',profileController.postNewPassword);
 
 //product management
 router.get('/productDetails',productController.productDetails)
-router.get('/viewproduct',productController.viewProducts);
+router.get('/shop',userAuth,productController.loadShoppingpage);
+router.get('/filter',userAuth,productController.filterProduct)
+
+// democart
+
 
 module.exports = router; 

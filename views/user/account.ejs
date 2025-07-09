@@ -337,18 +337,28 @@
     <header class="header">
         <div class="container">
             <nav class="nav">
-                <div class="logo"><a class="navbar-brand d-inline-flex" href=""><span style="font-family: 'Lakki Reddy'" class="text-dark fs-4 fw-bold ms-2" >HOURLY</span></a></div>
+                <div class="logo"><a class="navbar-brand d-inline-flex" href="/home"><span style="font-family: 'Lakki Reddy'" class="text-dark fs-4 fw-bold ms-2" >HOURLY</span></a></div>
                 <ul class="nav-links" id="navLinks">
                     <li><a href="/home">Home</a></li>
-                    <li><a href="#watches">Watches</a></li>
-                    <li><a href="#categories">Categories</a></li>
+                    <li><a href="/shop">Watches</a></li>
+
+                    <div class="dropdown">
+                       <li  > <a href="#" >Categories</a>
+                        <div class="dropdown-content">
+                            <a class="dropdown-item" href="#">Luxury</a>
+                            <a class="dropdown-item" href="#">Analog</a>
+                            <a class="dropdown-item" href="#">Smartwatch</a>
+                        </div>
+                        </li>
+                    </div>
                     <li><a href="#contact">Contact</a></li>
                 </ul>
-                <div class="hamburger" id="hamburger">
-                    <span></span>
-                    <span></span>
-                    <span></span>
                 </div>
+                <!-- <div class="hamburger" id="hamburger">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div> -->
             </nav>
         </div>
     </header>
@@ -417,23 +427,23 @@
                         
                         <form>
                             <div class="form-group">
-                                <label for="firstName">First Name</label>
-                                <input type="text" id="firstName" name="firstName" value="<%= locals.user ? locals.user.name: ''%>">
+                                <label for="firstName"> Name</label>
+                                <input type="text" id="firstName" name="firstName" placeholder="<%= locals.user ? locals.user.name: 'name'%>">
                             </div>
 
-                            <div class="form-group">
+                            <!-- <div class="form-group">
                                 <label for="lastName">Last Name</label>
                                 <input type="text" id="lastName" name="lastName" value="">
-                            </div>
+                            </div> -->
 
-                            <div class="form-group">
+                            <!-- <div class="form-group">
                                 <label for="displayName">Display Name</label>
                                 <input type="text" id="displayName" name="displayName" value="">
-                            </div>
+                            </div> -->
 
                             <div class="form-group">
                                 <label for="email">Email Address</label>
-                                <input type="email" id="email" name="email" value="">
+                                <input type="email" id="email" name="email" placeholder="<%=locals.user ? locals.user.email: 'email' %>">
                             </div>
 
                             <div class="form-group">

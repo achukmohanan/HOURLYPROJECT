@@ -25,13 +25,15 @@ const loadHomepage = async (req, res) => {
             isBlocked:false,
                 category:{$in:categories.map(category=>category._id)},quantity:{$gt:0}
             
-        })
+        });
         productData.sort((a,b)=>new Date(b.createdOn)-new Date(a.createdOn));
         productData = productData.slice(0,4);
 
 
         if(userId){
             const userData = await User.findById(userId);
+            // console.log("in home page rendering user data :",userData);
+            
             res.render('user/home',{user: userData,products:productData});
         }else{
             return res.render('user/home',{products:productData});
@@ -90,8 +92,9 @@ const signup = async (req, res) => {
 
     
     try {
+        console.log(req.body)
         const { name ,phone ,email, password, cPassword } = req.body
-
+    
         if (password !== cPassword) {
             return res.status(400).json({
                 success:false,
@@ -181,6 +184,7 @@ const login = async (req,res) => {
 // console.log('Found user:', findUser);
      
         req.session.user = findUser._id;
+        // console.log("userId stored in session / in login",req.session.user)
         if(req.session.user){
             console.log("redirect is working")
             return  res.redirect('/home')
@@ -317,10 +321,22 @@ const resendOtp = async (req,res)=>{
 
 const loadaccount = async (req,res) =>{
     try {
-        return res.render('user/account')
+        const userId =    req.session.user;  
+        // console.log("accessed user id is:",userId);
+        if(!userId){
+           return res.redirect('/login')
+        }
+        const user = await User.findById(userId);
+        // console.log("manually logged user is ",user)
+
+        return res.render('user/account',{
+            name:user.name,
+            email:user.email
+        });
     } catch (error) {
+         console.log("error occured in account",error);
         res.status(500).send("server error")
-        console.log("error occured in account",error);
+       
         
     }
 }
@@ -345,13 +361,15 @@ const logout = async (req,res) => {
     }
 }
 
+
+
 module.exports = {
     loadHomepage,
     pageNotFound,
     loadSignup,
     signup,
     loadLogin,
-    
+  
     confirmWithOtp,
     // landingPage,
     confirmwithotp,

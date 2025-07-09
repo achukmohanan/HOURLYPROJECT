@@ -1,6 +1,10 @@
 const Product = require('../../models/productSchema');
 const Category = require('../../models/categorySchema');
 const User = require('../../models/userSchema');
+const Brand = require('../../models/brandSchema');
+
+const { render } = require('ejs');
+const { search } = require('../../routes/userRouter');
 
 
 
@@ -35,17 +39,114 @@ res.redirect('/pagenotfound');
     }
 }
 
-const viewProducts = async(req,res) =>{
-    try {        
-        res.render('user/viewpage')
+const loadShoppingpage = async(req,res) =>{
+    try {   
+     
+        const user = req.session.user;
+        const userData = await User.findOne({_id:user})
+      const categories = await Category.find({isListed:true});
+      const categoryIds = categories.map((category)=>category._id.toString());
+
+     const page = parseInt(req.query.page) || 1;
+     const limit = 9;
+     const skip = (page -1) * limit;
+
+     const products = await Product.find({
+        isBlocked:false,
+        category:{$in:categoryIds},
+        quantity:{$gt:0}    
+     }).sort({createdOn:-1}).skip(skip).limit(limit);
+
+     const totalProducts =  await Product.find({
+        isBlocked:false,
+        category:{$in:categoryIds},
+        quantity:{$gt:0}
+
+     });
+     const totalPages = Math.ceil(totalProducts.length/limit)
+
+     const brands = await Brand.find({isBlocked:false});
+     const categoriesWithIds = categories.map(category=>({_id:category._id,name:category.name}));
+
+     res.render('user/shop',{
+        user:userData,
+        products:products,
+        category:categoriesWithIds,
+        brand:brands,
+        totalProducts:totalProducts,
+        currentPage:page,
+        totalPages:totalPages
+
+     })
     } catch (error) {
         console.error("error happemd in view image ",error);
         
     }
+}   
+
+const filterProduct = async(req,res) => {
+    try {
+        const user = req.session.user;  
+        const category  = req.query.category ? req.query.category.trim() : null;
+        const brand = req.query.brand ? req.query.brand.trim() : null;   
+        const findCategory  = category ? await Category.findOne({_id:category}) : null;
+        const findBrand = brand ? await Brand.findOne({_id:brand}) : null;
+        const brands = await Brand.find({}).lean(); 
+
+        const query = {
+            isBlocked:false,
+            quantity:{$gt:0}
+        }
+        if(findCategory){
+            query.category = findCategory._id;
+        }
+        if(findBrand){
+            query.brand = findBrand.brandName;
+        }
+        let findProducts = await Product.find(query).lean();
+        findProducts.sort((a,b)=> new Date (b.createdOn) - new Date(a.createdOn));
+        const categories = await Category.find({isListed:true});
+        let itemsPerPage = 6;
+        let currentPage = parseInt(req.query.page) || 1
+        let startIndex = (currentPage -1 ) * itemsPerPage;
+        let endIndex = startIndex + itemsPerPage;
+        let totalPages = Math.ceil(findProducts.length/itemsPerPage);
+        const currentProduct = findProducts.slice(startIndex,endIndex);
+        let userData = null;
+        if(user){
+            userData = await User.findOne({_id:user});
+            if(userData){
+                const searchEntry = {
+                    category : findCategory ? findCategory._id : null,
+                    brand : findBrand ? findBrand.brandName : null,
+                    searchedOn : new Date()
+
+                }
+                userData.searchHistory.push(searchEntry);
+                await userData.save();
+            }
+        }   
+        req.session.filteredProducts = currentProduct;
+        res.render('user/shop',{
+            user:userData,
+            products:currentProduct,
+            category:categories,
+            brand:brands,
+            totalPages,
+            currentPage,
+            selectedCategory : category || null,
+            selectedBrand : brand || null,
+
+        })        
+
+    } catch (error) {
+        console.log("error in filter product ",error)
+        res.redirect('/pagenotfound')
+    }
 }
-
-
+ 
 module.exports = {
     productDetails,
-    viewProducts
+    loadShoppingpage,
+    filterProduct
 }

@@ -9,13 +9,23 @@ passport.use(new GoogleStrategy({
     clientID: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     callbackURL: "http://localhost:3000/google/callback"
+  
+   
+    
 },
+
 async (accessToken, refreshToken, profile, done) => {
+    console.log("google profile",profile);
+    
     try {
         let user = await User.findOne({ googleId: profile.id });
         if (user) {
+            console.log("user found",user);
+            
             return done(null, user);
         } else {
+            console.log("creating user");
+            
             user = new User({
                 name: profile.displayName,
                 email: profile.emails[0].value,
@@ -25,9 +35,14 @@ async (accessToken, refreshToken, profile, done) => {
             return done(null, user);
         }
     } catch (err) {
+        console.log("error happened in google passport",err);
+        
         return done(err, null);
     }
 }));
+
+ console.log("google client id is ",process.env.GOOGLE_CLIENT_ID);
+
 
 passport.serializeUser((user,done)=>{
     done(null,user.id)
