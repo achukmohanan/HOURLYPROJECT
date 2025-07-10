@@ -360,9 +360,29 @@
             </div>
         </div>
     </div>
-
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
     <script>
+
+const urlParams = new URLSearchParams(window.location.search);
+const successMessage = urlParams.get('success');
+
+if (successMessage) {
+    Swal.fire({
+        title: 'Success!',
+        text: successMessage,
+        icon: 'success',
+        confirmButtonText: 'OK'
+    }).then(() => {
+        const cleanUrl = window.location.origin + window.location.pathname;
+        window.history.replaceState({}, document.title, cleanUrl);
+    });
+}
+
+
+
+
+
         let currentCropper = null;
         let currentImageIndex = 0;
         let croppedImages = {};

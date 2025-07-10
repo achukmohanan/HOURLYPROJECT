@@ -7,18 +7,26 @@ const categoryInfo  = async (req,res)=>{
         const page = parseInt(req.query.page) || 1;
         const limit = 4;
         const skip = (page-1)*limit
-        const categoryData = await Category.find({})
+
+        const search = req.query.search || "";
+        const searchResult = {
+            name:{$regex:".*" + search + ".*" , $options:"i"}
+        };  
+
+        const categoryData = await Category.find( search?searchResult :{})
         .sort({createdAt :-1})
         .skip(skip)
         .limit(limit)
 
-        const totalCategories = await Category.countDocuments();
+        const totalCategories = await Category.countDocuments(search ? searchResult : {});
         const totalPages = Math.ceil(totalCategories/limit);
+
         res.render('admin/category',{
             cat: categoryData,
             currentPage:page,
             totalPages:totalPages,
-            totalCategories:totalCategories
+            totalCategories:totalCategories,
+            searchValue:search  
         })
     } catch (error) {
         console.log("error happend in categoryInfo",error);
@@ -46,6 +54,9 @@ const addCategory = async (req,res) =>{
 
 const  addCategoryOffer = async (req,res) =>{
     try {
+        console.log("addCategoryOffer API hit", req.body);
+
+
         const percentage = parseInt(req.body.percentage);
         const categoryId = req.body.categoryId;
         const category = await Category.findById(categoryId);
@@ -75,8 +86,10 @@ const  addCategoryOffer = async (req,res) =>{
     }
 };
 
-const removeCategoryOffer = async (req,res)=>{
+const  removeCategoryOffer = async (req,res)=>{
     try {
+        console.log("removeOffer triggered", categoryId);
+
         const categoryId = req.body.categoryId;
         const category = await Category.findById(categoryId);
 

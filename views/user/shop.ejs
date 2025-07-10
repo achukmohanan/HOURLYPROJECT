@@ -334,7 +334,7 @@
         <div class="collapse navbar-collapse border-top border-lg-0 mt-4 mt-lg-0" id="navbarSupportedContent">
           <ul class="navbar-nav me-auto mb-2 mb-lg-0">
             <li class="nav-item px-2"><a class="nav-link fw-bold active" aria-current="page" href="/shop">STORE</a></li>
-            <li class="nav-item px-2"><a class="nav-link fw-bold" aria-current="page" href="#store">CATEGORY</a></li>
+            <!-- <li class="nav-item px-2"><a class="nav-link fw-bold" aria-current="page" href="#store">CATEGORY</a></li> -->
             <li class="nav-item px-2"><a class="nav-link fw-bold" href="/viewpremium">PREMIUM</a></li>
             <li class="nav-item px-2"><a class="nav-link fw-bold" href="#contact">CONTACT</a></li>
           </ul>
@@ -422,7 +422,7 @@
           <% for(let i=0; i<products.length; i++) {%>
             <div class="product-card">
               <span class="wishlist-btn" onclick="">❤️</span>
-              <a href="">
+              <a href="/productDetails?id=<%=products[i]._id %>">
                 <img src="/uploads/reimage/<%=products[i].productImage[0] %>" alt="<%=products[i].productName %>" />
                 <h4><%=products[i].productName %></h4>
                 <p>Brand:<%=products[i].brand %></p>

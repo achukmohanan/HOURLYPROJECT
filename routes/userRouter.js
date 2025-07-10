@@ -36,7 +36,7 @@ router.post('/login', userController.login);
 // router.get('/', userController.landingPage)
 router.get('/account',userController.loadaccount);
 router.get('/logout',userController.logout);
-router.get('/home',userAuth,userController.loadHomepage);
+router.get('/home',userAuth, userController.loadHomepage);
 
 //profile management 
 router.get('/forgotpassword',profileController.forgotPassword)
@@ -50,11 +50,11 @@ router.get('/resetpassword',profileController.getResetPassPage);
 router.post('/reset-password',profileController.postNewPassword);
 
 //product management
-router.get('/productDetails',productController.productDetails)
+router.get('/productDetails',userAuth,productController.productDetails)
 router.get('/shop',userAuth,productController.loadShoppingpage);
 router.get('/filter',userAuth,productController.filterProduct);
 router.get('/filterPrice',userAuth,productController.filterByPrice);
-router.post('/search',productController.searchProducts)
+router.post('/search',userAuth,productController.searchProducts)
 
 // democart
 

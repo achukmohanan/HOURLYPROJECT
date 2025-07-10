@@ -1,113 +1,134 @@
 <%- include("../../views/partials/user/header")%>
+
+
     <main class="main">
         <div class="page-header breadcrumb-wrap">
             <div class="container">
-                <div class="breadcrumb">
-                    <!-- <a href="/home">Home</a> -->
-                    <!-- <span>HOURLY</span>  -->
-                    <span></span>product detail page
-                </div>
+                
             </div>
         </div>
         <section class="mt-50 mb-50">
             <div class="container">
-                <div class="row">
+                <div class="row justify-content-center">
                     <div class="col-lg-9">
+                        <div class="breadcrumb">
+                   <span class="fw-bold fs-3" >PRODUCTS DETAILS PAGE</span>
+                   
+                </div>
+                        
                         <div class="product-detail accordion-detail">
-                            <div class="row mb-50">
-                                <div class="col-md-6 col-sm-12 col-xs-12">
-                                    <div class="detail-gallery">
+                            <div class="row g-4 align-items-start">
+
+                                <div class="col-md-6 ">                                
                                         <span class="zoom-icon"><i class="fi-rs-search"></i></span>
-                                        <div class="product-image-slider">
-                                            <figure class="border-radius-10">
-                                                <img class="img-fluid" src="/uploads/reimage/<%=product.productImage[0] %>" alt="product Image">
-                                            </figure>
-                                            <figure class="border-radius-10">
-                                                <img class="img-fluid" src="/uploads/reimage/<%=product.productImage[1] %>" alt="product Image">
-                                            </figure>
-                                            <figure class="border-radius-10">
-                                                <img class="img-fluid" src="/uploads/reimage/<%=product.productImage[2] %>" alt="product Image">
-                                            </figure>
-                                            <figure class="border-radius-10">
-                                                <img class="img-fluid" src="/uploads/reimage/<%=product.productImage[3] %>" alt="product Image">
-                                            </figure>
-                                            <!-- <figure class="border-radius-10">
-                                                <img src="/uploads/reimage/<%=product.productImage[4] %>" alt="product Image">
-                                            </figure> -->
+                                        <!-- images -->
+                                        <div class="detail-gallery">
+                                    <div class="product-image-slider">
+                                        <div class="main-image mb-3 zoom-container">
+                                        <img class="zoom-image img-fluid border-radius-10" src="/uploads/reimage/<%= product.productImage[0] %>" alt="Main Product Image" style="width:100%; object-fit:cover;">
                                         </div>
-                                        <!-- <div class="slider-nav-thumbnails pl-15 pr-15">
-                                            <%for(let i=0; i<product.productImage.length; i++){%>
-                                            <div>
-                                                <img class="img-fluid" style="object-fit:contain;" src="/uploads/reimage/<%=product.productImage[i] %>" alt="product Image">
+                                        <div class="slider-nav-thumbnails d-flex gap-2">
+                                        <% for(let i = 0; i < product.productImage.length; i++) { %>
+                                            <div class="thumb border" style="width:80px; height:80px; overflow:hidden;">
+                                            <img src="/uploads/reimage/<%= product.productImage[i] %>" class="img-fluid" style="object-fit:cover; width:100%; height:100%;" alt="Thumbnail">
                                             </div>
-                                            <%}%>
-                                        </div> -->
+                                        <% } %>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="col-md-6 col-sm-12 col-xs-12">
+                                    </div>
+                                    </div>
+                               
+                                <div class="col-md-6 ">
                                     <div class="detail-info">
-                                        <h2 class="title-detail"><%=product.productName %></h2>
-                                        <div class="product-detail-rating">
-                                            <div class="pro-details-brand">
-                                                <span> Brands: <a href="#"></a></span>
-                                            </div>
-                                            <div class="product-rate-cover text-end">
-                                                <div class="product-rate d-inline-block">
-                                                    <div class="product-rating" style="width:90%">
-                                                    </div>
+                                            <h2 class="title-detail mb-2"><%=product.productName %></h2>
+
+                                            <div class="product-detail-rating d-flex justify-content-between align-items-center mb-2">
+                                                <div class="pro-details-brand">
+                                                <span> Brand: <a href="#" class="text-white"><%=product.brand %></a></span>
                                                 </div>
-                                                <span class="font-small ml-5 text-muted"> (25 reviews)</span>
+                                                <div class="text-muted small">(25 reviews)</div>
                                             </div>
-                                        </div>
-                                        <div class="clearfix product-price-cover">
-                                            <div class="product-price primary-color float-left">
-                                                <ins><span class="text-brand"><%=product.salePrice%></span></ins>
-                                                <ins><span class="old-price font-md ml-15"><%=product.regularPrice %></span></ins>
-                                                <span class="save-price  font-md color3 ml-15">
-                                                   <% if(!totalOffer){%>
-                                                        No Offers
-                                                        <%}else{%>
-                                                            <%= totalOffer%> % Offer
-                                                            <%}%>
+
+                                            <div class="product-price mb-2">
+                                                <span class="text-brand fs-4 fw-bold"><%=product.salePrice %></span>
+                                                <del class="text-muted ms-3"><%=product.regularPrice %></del>
+                                                <span class="text-success ms-3">
+                                                <% if(!totalOffer){ %>
+                                                    No Offers
+                                                <% } else { %>
+                                                    <%= totalOffer %>% Offer
+                                                <% } %>
                                                 </span>
                                             </div>
-                                        </div>
-                                        <div class="bt-1 border-color-1 mt-15 mb-15"></div>
-                                        <div class="short-desc mb-30">
-                                            <p><%=product.description %></p>
-                                        </div>
-                                        <div class="product_sort_info font-xs mb-30">
-                                            <ul>
-                                                <li class="mb-10"><i class="fi-rs-crown mr-5"></i> 1 Year Brand Warranty</li>
-                                                <li class="mb-10"><i class="fi-rs-refresh mr-5"></i> 30 Day Return Policy</li>
-                                                <li><i class="fi-rs-credit-card mr-5"></i> Cash on Delivery available</li>
+
+                                            <p class="mb-3"><%=product.description %></p>
+
+                                            <ul class="list-unstyled small mb-3">
+                                                <li><i class="fi-rs-crown me-2"></i>1 Year Brand Warranty</li>
+                                                <li><i class="fi-rs-refresh me-2"></i>30 Day Return Policy</li>
+                                                <li><i class="fi-rs-credit-card me-2"></i>Cash on Delivery available</li>
                                             </ul>
-                                        </div>
-                                      
-                                        <div class="bt-1 border-color-1 mt-30 mb-30"></div>
-                                        <div class="detail-extralink">
-                                            <div class="detail-qty border radius">
-                                                <a href="#" class="qty-down" onclick=""><i class="fi-rs-angle-small-down"></i></a>
-                                                <span class="qty-val" id="quantity">1</span>
-                                                <a href="#" class="qty-up" onclick=""><i class="fi-rs-angle-small-up"></i></a>
+
+                                            <div class="d-flex align-items-center mb-3">
+                                                <div class="me-3">Qty:</div>
+                                                <div class="detail-qty border rounded d-inline-flex align-items-center">
+                                                <a href="#" class="qty-down"><i class="fi-rs-angle-small-down"></i></a>
+                                                <span class="qty-val px-3" id="quantity">1</span>
+                                                <a href="#" class="qty-up"><i class="fi-rs-angle-small-up"></i></a>
+                                                </div>
                                             </div>
-                                            <div class="product-extra-link2">
-                                                <button type="submit" class="button button-add-to-cart" onclick="">Add to cart</button>
-                                                <a aria-label="Add To Wishlist" class="action-btn hover-up" href="#"><i class="fi-rs-heart"></i></a>
+
+                                            <div class="product-extra-link2 d-flex gap-3">
+                                                <button type="submit" class="btn btn-primary">Add to cart</button>
+                                                <a class="btn btn-outline-secondary" href="#"><i class="fi-rs-heart"></i></a>
                                             </div>
-                                        </div>
-                                        <ul class="product-meta font-xs color-grey mt-50">
-                                            <li class="mb-5">Stock Code: <a href="#">FWM15VKT</a></li>
-                                            <li class="mb-5">Tags: <a href="#" rel="tag"></a> <a href="#" rel="tag"><%=category.name%></a> <a href="#" rel="tag"></a> </li>
-                                            <li>Availability:<span class="in-stock text-success ml-5"><%= quantity %> Items in Stock</span></li>
-                                        </ul>
-                                    </div>
+
+                                            <ul class="product-meta font-xs mt-4">
+                                                <li class="mb-1">Stock Code: <a href="#" class="text-white">FWM15VKT</a></li>
+                                                <li class="mb-1">Tags: <a href="#" class="text-white"><%=category.name%></a></li>
+                                                <li class="mb-1">Availability: <span class="text-success ms-2"><%= quantity %> in stock</span></li>
+                                            </ul>
+                                      </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    
                 </div>
             </div>
         </section>
     </main>
+ <script>
+document.addEventListener("DOMContentLoaded", function () {
+    const zoomContainer = document.querySelector('.zoom-container');
+    const zoomImage = document.querySelector('.zoom-image');
+    const thumbnails = document.querySelectorAll(".slider-nav-thumbnails img");
+
+    // Zoom follow mouse pointer
+    zoomContainer.addEventListener('mousemove', function (e) {
+        const rect = zoomContainer.getBoundingClientRect();
+        const x = ((e.clientX - rect.left) / rect.width) * 100;
+        const y = ((e.clientY - rect.top) / rect.height) * 100;
+        zoomImage.style.transformOrigin = `${x}% ${y}%`;
+    });
+
+    zoomContainer.addEventListener('mouseleave', function () {
+        zoomImage.style.transformOrigin = 'center center';
+    });
+
+    // Thumbnail click → change main image
+    thumbnails.forEach(thumbnail => {
+        thumbnail.addEventListener("click", function () {
+            zoomImage.src = this.src;
+            thumbnails.forEach(t => t.classList.remove("active-thumb"));
+            this.classList.add("active-thumb");
+        });
+    });
+});
+</script>
+
+
+
  <%- include("../../views/partials/user/footer") %>
+
+<!-- ...................................................................................... -->
+ .86

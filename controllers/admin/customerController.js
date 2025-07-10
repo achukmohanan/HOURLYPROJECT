@@ -17,6 +17,7 @@ const User = require('../../models/userSchema');
                 {email:{$regex:".*"+search+".*",$options:"i"}}
             ]
         })
+        .sort({ _id: -1 })
         .limit(limit)
         .skip((page - 1) * limit)
         .exec();

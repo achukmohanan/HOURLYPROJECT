@@ -6,7 +6,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cropperjs/dist/cropper.min.css">
-    
+    <link href="https://unpkg.com/cropperjs/dist/cropper.min.css" rel="stylesheet" />
     <style>
         :root {
             --sidebar-width: 250px;
@@ -196,6 +196,12 @@
                 padding: 15px;
             }
         }
+        .image-cropper {
+  width: 100%;
+  max-height: 300px;
+  overflow: hidden;
+}
+
     </style>
 </head>
 <body>
@@ -317,7 +323,7 @@
                                     </div>
                                     <input class="form-control" type="file" name="images" id="input1" 
                                            accept="image/png, image/jpeg, image/jpg" 
-                                           onchange="viewImage1(event), viewImage(event, 1)">
+                                           onchange=" viewImage(event, 1)">
                                     <div class="image-cropper d-none" id="cropper1">
                                         <img src="" id="croppedImg1" alt="">
                                         <div class="mt-2">
@@ -333,7 +339,7 @@
                                     </div>
                                     <input class="form-control" type="file" name="images" id="input2" 
                                            accept="image/png, image/jpeg, image/jpg" 
-                                           onchange="viewImage2(event), viewImage(event, 2)">
+                                           onchange=" viewImage(event, 2)">
                                     <div class="image-cropper d-none" id="cropper2">
                                         <img src="" id="croppedImg2" alt="">
                                         <div class="mt-2">
@@ -349,7 +355,7 @@
                                     </div>
                                     <input class="form-control" type="file" name="images" id="input3" 
                                            accept="image/png, image/jpeg, image/jpg" 
-                                           onchange="viewImage3(event), viewImage(event, 3)">
+                                           onchange=" viewImage(event, 3)">
                                     <div class="image-cropper d-none" id="cropper3">
                                         <img src="" id="croppedImg3" alt="">
                                         <div class="mt-2">
@@ -365,7 +371,7 @@
                                     </div>
                                     <input class="form-control" type="file" name="images" id="input4" 
                                            accept="image/png, image/jpeg, image/jpg" 
-                                           onchange="viewImage4(event), viewImage(event, 4)">
+                                           onchange=" viewImage(event, 4)">
                                     <div class="image-cropper d-none" id="cropper4">
                                         <img src="" id="croppedImg4" alt="">
                                         <div class="mt-2">
@@ -396,46 +402,105 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/cropperjs/dist/cropper.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
+    <script src="https://unpkg.com/cropperjs/dist/cropper.min.js"></script>
     
     <script>
         // Image preview functions
-        function viewImage1(event) {
-            const img = document.getElementById('imgView1');
-            if (event.target.files && event.target.files[0]) {
-                img.src = URL.createObjectURL(event.target.files[0]);
-                img.style.display = 'block';
-            }
-        }
+        // function viewImage1(event) {
+        //     const img = document.getElementById('imgView1');
+        //     if (event.target.files && event.target.files[0]) {
+        //         img.src = URL.createObjectURL(event.target.files[0]);
+        //         img.style.display = 'block';
+        //     }
+        // }
 
-        function viewImage2(event) {
-            const img = document.getElementById('imgView2');
-            if (event.target.files && event.target.files[0]) {
-                img.src = URL.createObjectURL(event.target.files[0]);
-                img.style.display = 'block';
-            }
-        }
+        // function viewImage2(event) {
+        //     const img = document.getElementById('imgView2');
+        //     if (event.target.files && event.target.files[0]) {
+        //         img.src = URL.createObjectURL(event.target.files[0]);
+        //         img.style.display = 'block';
+        //     }
+        // }
 
-        function viewImage3(event) {
-            const img = document.getElementById('imgView3');
-            if (event.target.files && event.target.files[0]) {
-                img.src = URL.createObjectURL(event.target.files[0]);
-                img.style.display = 'block';
-            }
-        }
+        // function viewImage3(event) {
+        //     const img = document.getElementById('imgView3');
+        //     if (event.target.files && event.target.files[0]) {
+        //         img.src = URL.createObjectURL(event.target.files[0]);
+        //         img.style.display = 'block';
+        //     }
+        // }
 
-        function viewImage4(event) {
-            const img = document.getElementById('imgView4');
-            if (event.target.files && event.target.files[0]) {
-                img.src = URL.createObjectURL(event.target.files[0]);
-                img.style.display = 'block';
-            }
-        }
+        // function viewImage4(event) {
+        //     const img = document.getElementById('imgView4');
+        //     if (event.target.files && event.target.files[0]) {
+        //         img.src = URL.createObjectURL(event.target.files[0]);
+        //         img.style.display = 'block';
+        //     }
+        // }
 
-        function viewImage(event, index) {
-            // Your existing cropping logic can be implemented here
-            console.log('Image selected for cropping:', index);
-        }
+        // function viewImage(event, index) {
+        //     // Your existing cropping logic can be implemented here
+        //     console.log('Image selected for cropping:', index);
+        // }
+
+        let croppedImagesReady = {
+  1: false,
+  2: false,
+  3: false,
+  4: false,
+};
+
+
+  let croppers = {}; // Store cropper instances per image
+  function viewImage(event, index) {
+    const image = event.target.files[0];
+    if (!image) return;
+
+    const imgView = document.getElementById(`imgView${index}`);
+    const cropperDiv = document.getElementById(`cropper${index}`);
+    const croppedImg = document.getElementById(`croppedImg${index}`);
+    const saveBtn = document.getElementById(`saveButton${index}`);
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      croppedImg.src = reader.result;
+      cropperDiv.classList.remove('d-none');
+
+      if (croppers[index]) {
+        croppers[index].destroy(); // Destroy old cropper if exists
+      }
+
+      croppers[index] = new Cropper(croppedImg, {
+        aspectRatio: 1,
+        viewMode: 1,
+        autoCropArea: 1,
+        movable: true,
+        zoomable: true,
+        scalable: true,
+        rotatable: false
+      });
+
+  saveBtn.onclick = function () {
+  const canvas = croppers[index].getCroppedCanvas();
+  canvas.toBlob(blob => {
+    const newFile = new File([blob], `cropped_${image.name}`, { type: image.type });
+    const dataTransfer = new DataTransfer();
+    dataTransfer.items.add(newFile);
+    document.getElementById(`input${index}`).files = dataTransfer.files;
+
+    imgView.src = URL.createObjectURL(blob);
+    imgView.style.display = 'block';
+    cropperDiv.classList.add('d-none');
+
+    croppedImagesReady[index] = true;  // ✅ Mark cropped
+  }, image.type);
+};
+
+    };
+    reader.readAsDataURL(image);
+  }
+
+
 
         // Adapt to sidebar toggle (if your sidebar has toggle functionality)
         // This will work with your existing sidebar JavaScript
@@ -454,10 +519,23 @@
 
 //validation
 function validateAndSubmit() {
-if (validateForm()) {
-   document.forms[0].submit();
+  const inputs = [1, 2, 3, 4];
+  let anyImageNeedsCropping = false;
+
+  for (let i of inputs) {
+    const input = document.getElementById(`input${i}`);
+    if (input.files.length > 0 && !croppedImagesReady[i]) {
+      anyImageNeedsCropping = true;
+      alert(`Please click 'Save' to crop Image ${i} before submitting.`);
+      break;
+    }
+  }
+
+  if (!anyImageNeedsCropping && validateForm()) {
+    document.forms[0].submit();
+  }
 }
-}
+
 
 
 
