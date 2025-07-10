@@ -54,7 +54,7 @@ router.get('/productDetails',productController.productDetails)
 router.get('/shop',userAuth,productController.loadShoppingpage);
 router.get('/filter',userAuth,productController.filterProduct);
 router.get('/filterPrice',userAuth,productController.filterByPrice);
-
+router.post('/search',productController.searchProducts)
 
 // democart
 
