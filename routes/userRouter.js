@@ -52,7 +52,9 @@ router.post('/reset-password',profileController.postNewPassword);
 //product management
 router.get('/productDetails',productController.productDetails)
 router.get('/shop',userAuth,productController.loadShoppingpage);
-router.get('/filter',userAuth,productController.filterProduct)
+router.get('/filter',userAuth,productController.filterProduct);
+router.get('/filterPrice',userAuth,productController.filterByPrice);
+
 
 // democart
 
