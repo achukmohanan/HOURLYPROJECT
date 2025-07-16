@@ -34,11 +34,11 @@ router.post('/login', userController.login);
 
 //home page
 // router.get('/', userController.landingPage)
-router.get('/account',userController.loadaccount);
-router.get('/logout',userController.logout);
+
+router.get('/logout',userAuth,userController.logout);
 router.get('/home',userAuth, userController.loadHomepage);
 
-//profile management 
+//profile management  
 router.get('/forgotpassword',profileController.forgotPassword)
 // router.post('/forgotpassword',profileController.forgotPasswordvalid)
 router.get('/forgotemailotp',profileController.getForgotEmailOtp)
@@ -48,6 +48,16 @@ router.post('/resend-forgot-otp',profileController.resendOtp)
 //reset password
 router.get('/resetpassword',profileController.getResetPassPage);
 router.post('/reset-password',profileController.postNewPassword);
+
+// profile & account
+router.get('/account',userAuth, profileController.userProfile);
+router.get('/profile',profileController.getProfilePage);
+
+//address management
+router.get('/addAddress',userAuth,profileController.addAddress);
+router.post('/addAddress',userAuth,profileController.postaddAddress)
+router.get('/editAddress', userAuth ,profileController.editAddress)
+router.post('/editAddress',userAuth,profileController.postEditAddress)
 
 //product management
 router.get('/productDetails',userAuth,productController.productDetails)

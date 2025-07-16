@@ -366,9 +366,11 @@
 
 const urlParams = new URLSearchParams(window.location.search);
 const successMessage = urlParams.get('success');
+const errorMessage = urlParams.get('error');
 
 if (successMessage) {
     Swal.fire({
+
         title: 'Success!',
         text: successMessage,
         icon: 'success',
@@ -377,7 +379,15 @@ if (successMessage) {
         const cleanUrl = window.location.origin + window.location.pathname;
         window.history.replaceState({}, document.title, cleanUrl);
     });
-}
+}else if(errorMessage){
+    Swal.fire({
+        title:'Oops',
+        text:errorMessage,
+        icon:'error',
+        confirmButtonText:'OK'
+    })
+    }
+
 
 
 

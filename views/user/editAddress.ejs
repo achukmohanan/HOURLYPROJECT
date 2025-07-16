@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Address - HOURLY</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #ffffff;
+            --secondary-color: #ffffff;
+            --accent-color: #20c997;
+            --text-dark: #333;
+            --bg-light: #f8f9fa;
+            --border-color: #e9ecef;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+        }
+
+        /* Header Styles */
+        .header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 1rem 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-family:sans-serif;
+            font-weight: bold;
+            text-decoration: none;
+            color: rgb(0, 0, 0) !important;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+            margin: 0;
+        }
+
+        .nav-links a {
+            color: rgb(0, 0, 0);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: gray
+        }
+
+        .dropdown {
+            position: relative;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background: white;
+            min-width: 160px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+            z-index: 1;
+            border-radius: 5px;
+            top: 100%;
+            left: 0;
+        }
+
+        .dropdown-content a {
+            color: var(--text-dark) !important;
+            padding: 10px 15px;
+            display: block;
+            text-decoration: none;
+        }
+
+        .dropdown-content a:hover {
+            background-color: var(--bg-light);
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        .user-dropdown {
+            position: relative;
+        }
+
+        .user-dropdown a {
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        /* Main Content */
+        .main-content {
+            min-height: calc(100vh - 200px);
+            padding: 2rem 0;
+        }
+
+        .form-container {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            padding: 2rem;
+            margin-top: 2rem;
+        }
+
+        .page-title {
+            color:rgb(91, 87, 87);
+            font-weight: 700;
+            margin-bottom: 2rem;
+            position: relative;
+        }
+
+        .page-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 50px;
+            height: 3px;
+            background: var(--accent-color);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .form-control {
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            padding: 0.75rem;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.2rem rgba(4, 105, 99, 0.25);
+        }
+
+        .form-control.is-invalid {
+            border-color: #dc3545;
+        }
+
+        .invalid-feedback {
+            display: block;
+            color: #dc3545;
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+        }
+
+        .btn-primary {
+            background: blue;
+            border: none;
+            padding: 0.75rem 2rem;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 8px;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-primary:hover {
+            background: rgb(152, 215, 229);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            border: none;
+            padding: 0.75rem 2rem;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 8px;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: white;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            color: white;
+        }
+
+        /* Footer */
+        .footer {
+            background: rgb(0, 0, 0);
+            color: white;
+            padding: 2rem 0;
+            margin-top: 3rem;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .footer-section h3 {
+            margin-bottom: 1rem;
+            color: rgb(161, 156, 156);
+        }
+
+        .footer-section ul {
+            list-style: none;
+        }
+
+        .footer-section ul li {
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-section a {
+            color: #ccc;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-section a:hover {
+            color: gainsboro;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .form-container {
+                padding: 1rem;
+            }
+
+            .footer-content {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+        }
+
+        /* Loading Animation */
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 1rem;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--primary-color);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <nav class="nav">
+                <div class="logo">
+                    <a href="/home" class="logo">HOURLY</a>
+                </div>
+                <ul class="nav-links">
+                    <li><a href="/home">Home</a></li>
+                    <li><a href="/shop">Watches</a></li>
+                    <li class="dropdown">
+                        <a href="#">Categories</a>
+                        <div class="dropdown-content">
+                            <a href="#">Luxury</a>
+                            <a href="#">Analog</a>
+                            <a href="#">Smartwatch</a>
+                        </div>
+                    </li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+                <div class="user-dropdown">
+                    <!-- User name would be populated by server -->
+                     <%if(name){ %>
+                    <a href="#" class="text-dark fw-semibold"><%= name.name %></a>
+                    <div class="dropdown-content">
+                        <a href="/logout" class="logout-btn">Logout</a>
+                    </div>
+                    <% } %>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-10">
+                    <div class="form-container">
+                        <h2 class="page-title">
+                            <i class="fas fa-edit me-2"></i>Edit Address
+                        </h2>
+                        
+                        <form id="addressForm"   novalidate>
+                            <input type="hidden" name="id" value="<%= address._id %>">
+                            
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="addressType">
+                                            <i class="fas fa-tag me-1"></i>Address Type
+                                        </label>
+                                        <input type="text" class="form-control border-3" value="<%= address.addressType %>" id="addressType" name="addressType" required>
+                                        <div class="invalid-feedback"></div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="name">
+                                            <i class="fas fa-user me-1"></i> Name
+                                        </label>
+                                        <input type="text" class="form-control" id="name" name="name" 
+                                               value="<%= address.name %>" required minlength="2" maxlength="50">
+                                        <div class="invalid-feedback"></div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="city">
+                                            <i class="fas fa-city me-1"></i>City
+                                        </label>
+                                        <input type="text" class="form-control" id="city" name="city" 
+                                               value="<%= address.city %>" required minlength="2" maxlength="50">
+                                        <div class="invalid-feedback"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="landMark">
+                                            <i class="fas fa-map-marker-alt me-1"></i>Landmark
+                                        </label>
+                                        <input type="text" class="form-control" id="landMark" name="landMark" 
+                                               value="<%= address.landMark%>" required maxlength="100">
+                                        <div class="invalid-feedback"></div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="state">
+                                            <i class="fas fa-map me-1"></i>State
+                                        </label>
+                                        <input type="text" class="form-control" id="state" name="state" 
+                                               value="<%= address.state %>" required minlength="2" maxlength="50">
+                                        <div class="invalid-feedback"></div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="pincode">
+                                            <i class="fas fa-mail-bulk me-1"></i>Pincode
+                                        </label>
+                                        <input type="text" class="form-control" id="pincode" name="pincode" 
+                                               value="<%= address.pincode %>" required pattern="[0-9]{5,6}" maxlength="6">
+                                        <div class="invalid-feedback"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="phone">
+                                            <i class="fas fa-phone me-1"></i>Phone Number
+                                        </label>
+                                        <input type="tel" class="form-control" id="phone" name="phone" 
+                                               value="<%= address.phone %>" required pattern="[0-9]{10}" maxlength="10">
+                                          
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="altPhone">
+                                            <i class="fas fa-phone-alt me-1"></i>Alternate Phone
+                                        </label>
+                                        <input type="tel" class="form-control" id="altPhone" name="altPhone" 
+                                               value="<%= address.altPhone %>" pattern="[0-9]{10}" maxlength="10">
+                                        <div class="invalid-feedback"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div class="d-flex gap-3 mt-4">
+                                  <button type="submit" id="submitButton" class="btn btn-primary">
+                                Update Address
+                                    <!-- <i class="fas fa-save me-2"></i> -->
+                                </button>
+                                <a href="/account" class="btn btn-secondary">
+                                    <i class="fas fa-arrow-left me-2"></i>Back to Addresses
+                                </a>
+                            </div>
+                        </form>
+                    </div> 
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>HOURLY</h3>
+                    <p>Premium watches for every occasion. Quality timepieces that last a lifetime.</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="/home">Home</a></li>
+                        <li><a href="/shop">Watches</a></li>
+                        <li><a href="#contact">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Customer Service</h3>
+                    <ul>
+                        <li><a href="#">Help Center</a></li>
+                        <li><a href="#">Returns</a></li>
+                        <li><a href="#">Shipping Info</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Follow Us</h3>
+                    <ul>
+                        <li><a href="#">Facebook</a></li>
+                        <li><a href="#">Instagram</a></li>
+                        <li><a href="#">Twitter</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        
+document.getElementById('addressForm').addEventListener('submit',async function (event) {
+        event.preventDefault()
+       if (!validateForm()) {
+           return;
+       }
+
+       const form = event.target;
+       const formData = new FormData(form);
+       const data = Object.fromEntries(formData.entries());
+
+    //    const addressId = "<%=address._id %>";
+
+       try {
+        const response =await fetch ("/editAddress?id=<%= address._id.toLocaleString() %>",{
+            method:'POST',
+            headers:{
+                'Content-Type' : 'application/json'
+            },
+            body:JSON.stringify(data)
+        })
+
+        const result = await response.json();
+        if(response.ok){
+            Swal.fire({
+                icon: 'success',
+                title: 'Success!',
+                text: result.message,
+                timer: 2000,
+                showConfirmButton: false
+            }).then(()=>{
+                window.location.href="/account"
+            })
+        }else{
+            Swal.fire({
+                icon: 'error',
+                title: 'Error!',
+                text: result.message || 'Failed to update address.'
+                });
+        }
+
+       } catch (error) {
+        console.error("Fetch error: in the edit address", error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error!',
+                text: 'Something went wrong. Try again.'
+            });
+       }
+
+   });
+
+
+   function validateForm() {
+    const requiredFields = ["addressType", "name", "city", "landMark", "state", "pincode", "phone", "altPhone"];
+
+    for (let field of requiredFields) {
+        const input = document.getElementById(field);
+        if (input.value.trim() === "") {
+            Swal.fire({
+                icon: 'error',
+                title: 'Validation Error',
+                text: `Please fill the ${field} field.`
+            });
+            return false;
+        }
+    }
+
+    return true;
+}
+        
+    </script>
+</body>
+</html>

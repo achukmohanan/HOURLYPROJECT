@@ -319,27 +319,7 @@ const resendOtp = async (req,res)=>{
     }
 }
 
-const loadaccount = async (req,res) =>{
-    try {
-        const userId =    req.session.user;  
-        // console.log("accessed user id is:",userId);
-        if(!userId){
-           return res.redirect('/login')
-        }
-        const user = await User.findById(userId);
-        // console.log("manually logged user is ",user)
 
-        return res.render('user/account',{
-            name:user.name,
-            email:user.email
-        });
-    } catch (error) {
-         console.log("error occured in account",error);
-        res.status(500).send("server error")
-       
-        
-    }
-}
 
 const logout = async (req,res) => {
     try {
@@ -375,7 +355,7 @@ module.exports = {
     confirmwithotp,
     resendOtp,
     login,
-    loadaccount,
+    
     logout,
    
 }

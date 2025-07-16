@@ -45,20 +45,21 @@
                                             <div class="product-detail-rating d-flex justify-content-between align-items-center mb-2">
                                                 <div class="pro-details-brand">
                                                 <span> Brand: <a href="#" class="text-white"><%=product.brand %></a></span>
-                                                </div>
                                                 <div class="text-muted small">(25 reviews)</div>
+                                            </div>
+                                                
                                             </div>
 
                                             <div class="product-price mb-2">
-                                                <span class="text-brand fs-4 fw-bold"><%=product.salePrice %></span>
+                                                <span class="text-brand fs-4 fw-bold">₹   <%=product.salePrice %></span>
                                                 <del class="text-muted ms-3"><%=product.regularPrice %></del>
-                                                <span class="text-success ms-3">
+                                                <!-- <span class="text-success ms-3">
                                                 <% if(!totalOffer){ %>
                                                     No Offers
                                                 <% } else { %>
                                                     <%= totalOffer %>% Offer
                                                 <% } %>
-                                                </span>
+                                                </span> -->
                                             </div>
 
                                             <p class="mb-3"><%=product.description %></p>
@@ -80,12 +81,12 @@
 
                                             <div class="product-extra-link2 d-flex gap-3">
                                                 <button type="submit" class="btn btn-primary">Add to cart</button>
-                                                <a class="btn btn-outline-secondary" href="#"><i class="fi-rs-heart"></i></a>
+                                                <!-- <a class="btn btn-outline-secondary" href="#"><i class="fi-rs-heart"></i></a> -->
                                             </div>
 
                                             <ul class="product-meta font-xs mt-4">
-                                                <li class="mb-1">Stock Code: <a href="#" class="text-white">FWM15VKT</a></li>
-                                                <li class="mb-1">Tags: <a href="#" class="text-white"><%=category.name%></a></li>
+                                                <li class="mb-1">Coupon number <a href="#" class="text-white">FWM15VKT</a></li>
+                                                <li class="mb-1">Category: <a href="#" class="text-white"><%=category.name%></a></li>
                                                 <li class="mb-1">Availability: <span class="text-success ms-2"><%= quantity %> in stock</span></li>
                                             </ul>
                                       </div>
@@ -131,4 +132,3 @@ document.addEventListener("DOMContentLoaded", function () {
  <%- include("../../views/partials/user/footer") %>
 
 <!-- ...................................................................................... -->
- .86

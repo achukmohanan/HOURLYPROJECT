@@ -1,4 +1,5 @@
 const User = require('../../models/userSchema')
+const Address = require('../../models/addressSchema')
 const nodemailer = require('nodemailer');
 const bcrypt = require('bcrypt')
 const env = require('dotenv').config();
@@ -42,9 +43,6 @@ const sendVerificationEmail = async (email,otp)=>{
         return false;
     }
 }
-
-
-
 const forgotPassword = async (req, res) => {
     try {
         return res.render('user/forgotpassword')
@@ -54,13 +52,6 @@ const forgotPassword = async (req, res) => {
 
     }
 }
-// const forgotPasswordvalid =  async (req,res) =>{
-//     try {
-//        const  
-//     } catch (error) {
-        
-//     }
-// }
 
 const getForgotEmailOtp = async (req,res) =>{
     try {
@@ -181,6 +172,139 @@ const postNewPassword = async (req,res) =>{
     }
 }
 
+const getProfilePage = async (req,res) => {
+    try {
+        return res.render('user/profile')
+    } catch (error) {
+        
+    }
+}
+const userProfile = async (req,res) =>{
+    try {
+        // console.log(req.session.user);
+        
+        const userId =    req.session.user;  
+        const userData = await User.findById(userId);
+        const addressData = await Address.findOne({userId:userId});
+             
+        res.render('user/account',{
+            user:userData,
+            userAddress:addressData
+        });
+    } catch (error) {
+         console.log("error occured in account",error);
+        res.status(500).send("server error")
+       
+        
+    }
+}
+
+const addAddress = async (req,res) =>{
+    try {
+        const user = req.session.user;
+        const userData = await User.findById(user)
+        res.render('user/addAddress',{
+            user:user,
+            name:userData
+        })
+    } catch (error) {
+        
+    }
+}
+
+const postaddAddress = async (req,res) =>{
+    try {
+        const userId = req.session.user;
+        const userData = await User.findOne({_id:userId});
+        const {addressType,name,city,landMark,state,pincode,phone,altPhone} = req.body;
+
+        const userAddress = await Address.findOne({userId:userData._id});
+
+        if(!userAddress){
+            const newAddress = new Address({
+                userId:userData._id,
+                address:[{addressType,name,city,landMark,state,pincode,phone,altPhone}]
+            })
+            await newAddress.save();
+        }else{
+            userAddress.address.push({addressType,name,city,landMark,state,pincode,phone,altPhone});
+            await userAddress.save();
+
+        }
+        res.status(200).json({message:"Updated Successfully!"})
+
+    } catch (error) {
+        console.log("error in the post addAddress",error);
+        res.status(500).json({message:"Something Went Wrong!"})
+        
+    }
+}
+const editAddress = async (req,res) =>{
+    try {
+        const addressId = req.query.id;
+        const user = req.session.user;
+        const currAddress = await Address.findOne({'address._id' : addressId})
+
+        if(!currAddress){
+            return res.status(400).json({message:"Address data not Found!"});
+        }
+        const addressData = currAddress.address.find((item)=>{
+            return item._id.toString() === addressId.toString();
+        });
+
+        if(!addressData){
+            return res.status(400).json({message:"Addess data not found"});
+        }
+
+        const userData = await User.findById(user)
+
+        // console.log("user data is ",  userData);
+        
+        res.render('user/editAddress',{
+            address:addressData,
+            user:user,
+            name:userData
+        })
+    } catch (error) {
+        console.log("error in edit Address",error);
+        res.redirect('pagenotfound');
+    }
+}
+
+const postEditAddress = async (req,res) =>{
+    try {
+        const data =  req.body;
+        const addressId = req.query.id;
+        const user =  req.session.user;
+        const findAddress = await Address.findOne({"address._id":addressId})
+
+        if(!findAddress){
+            return res.status(400).json({message:"No address data found"});
+        }
+
+        await Address.updateOne(
+            {"address._id" : addressId},
+            {$set:{
+                'address.$':{
+                    _id:addressId,
+                    addressType:data.addressType,
+                    name:data.name,
+                    city:data.city,
+                    landMark:data.landMark,
+                    state:data.state,
+                    pincode:data.pincode,
+                    phone:data.phone,
+                    altPhone:data.altPhone
+                }
+            }}
+        )
+        res.status(200).json({message:"Address updated Successfully"});
+    } catch (error) { 
+            console.error("Error in postEditAddress:", error);
+            res.status(500).json({ message: "Internal Server Error" });     
+    }
+}
+
 
 module.exports = {
     forgotPassword,
@@ -190,5 +314,11 @@ module.exports = {
     getResetPassPage,
     resendOtp,
     postNewPassword, 
-    securePassword
+    securePassword,
+    getProfilePage,
+    userProfile,
+    addAddress,
+    postaddAddress,
+    editAddress,
+    postEditAddress
 }

@@ -22,9 +22,8 @@
     .main-container {
       max-width: 1200px;
       margin: 0 auto;
-      padding: 20px;
-      margin-top: 80px; /* Add space for fixed navbar */
-      /* background-color: #ddd; */
+      padding: 15px;
+      margin-top: 80px;
     }
     
     .shop-topbar {
@@ -32,7 +31,6 @@
       justify-content: space-between;
       align-items: center;
       margin-bottom: 20px;
-      
     }
 
     .search-form {
@@ -41,21 +39,23 @@
       background-color: #f1f1f1;
       border-radius: 25px;
       overflow: hidden;
-      max-width: 250px;
+      width: 100%;
+      max-width: 300px;
       box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
     }
 
     .search-input {
       flex: 1;
-      padding: 8px 10px;
+      padding: 10px 15px;
       font-size: 14px;
       border: none;
       outline: none;
       background-color: transparent;
+      min-width: 0;
     }
 
     .search-button {
-      padding: 8px 15px;
+      padding: 10px 20px;
       background-color: #1e918b;
       color: #fff;
       border: none;
@@ -64,6 +64,7 @@
       border-radius: 15px;
       margin-right: 5px;
       transition: background-color 0.3s, transform 0.2s;
+      white-space: nowrap;
     }
 
     .search-button:hover {
@@ -72,13 +73,15 @@
     }
 
     .sidebar {
+      flex-shrink: 0;
+      width: 280px;
       padding: 20px;
       border: 1px solid #ddd;
       background-color: #f9f9f9;
       border-radius: 8px;
-      margin-bottom: 20px;
-      width: 250px;
-      text-align: center;
+      height: fit-content;
+      position: sticky;
+      top: 100px;
     }
 
     .filter-section {
@@ -87,18 +90,21 @@
 
     .filter-title {
       font-weight: bold;
-      margin-bottom: 10px;
-      font-size: 16px;
+      margin-bottom: 15px;
+      font-size: 18px;
       color: #333;
     }
 
     .filter-item {
-      margin: 5px 0;
+      margin: 8px 0;
     }
 
     .filter-item a {
       text-decoration: none;
       color: #333;
+      padding: 5px 0;
+      display: block;
+      transition: color 0.3s;
     }
 
     .filter-item a:hover {
@@ -107,81 +113,122 @@
 
     .product-list-container {
       display: flex;
-      gap: 20px;
+      gap: 30px;
+      align-items: flex-start;
     }
 
     .product-grid {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 20px;
-      width: calc(100% - 270px);
+      display: grid;
+      flex: 1;
+      gap: 25px;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     }
 
     .product-card {
-      width: calc(33.333% - 20px);
-      border: 1px solid #ddd;
-      padding: 15px;
-      border-radius: 8px;
+      border: 1px solid #cebfbf;
+      padding: 20px;
+      border-radius: 12px;
       text-align: center;
       position: relative;
       transition: all 0.3s ease-in-out;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      display: flex;
+      flex-direction: column;
+      height: 100%;
     }
+
     .product-card:hover {
-        transform: scale(1.03);
-         box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
-        background-color: #f9f9f9;
+      transform: translateY(-5px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+      background-color: #f9f9f9;
     }
 
     .product-card img {
-      max-width: 100%;
-      height: auto;
-      border-radius: 5px;
-     transition: transform 0.3s ease;
+      width: 100%;
+      height: 200px;
+      border-radius: 8px;
+      object-fit: cover;
+      transition: transform 0.3s ease;
     }
-    /* .product-card:hover img{
-        transform: scale(1.05);
-    } */
+
+    .product-card a {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .product-card h4 {
+      margin: 15px 0 10px 0;
+      font-size: 16px;
+      font-weight: 600;
+      line-height: 1.4;
+      min-height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .product-card p {
+      margin: 5px 0;
+      font-size: 14px;
+    }
 
     .wishlist-btn {
       position: absolute;
-      top: 8px;
-      right: 8px;
-      background-color: rgba(237, 247, 247, 0.8);
+      top: 15px;
+      right: 15px;
+      background-color: rgba(237, 247, 247, 0.9);
       color: #fff;
       padding: 8px;
       border-radius: 50%;
       cursor: pointer;
+      transition: transform 0.3s;
+    }
+
+    .wishlist-btn:hover {
+      transform: scale(1.1);
     }
 
     .add-to-cart-btn {
       background-color: #46698f;
       color: #fff;
-      padding: 10px;
+      padding: 12px;
       border: none;
-      border-radius: 5px;
+      border-radius: 8px;
       cursor: pointer;
       width: 100%;
-      margin-top: 10px;
+      margin-top: 15px;
       transition: background-color 0.3s;
+      font-weight: 500;
     }
- .add-to-cart-btn:hover {
-    background-color: #218838;
-  }
+
+    .add-to-cart-btn:hover {
+      background-color: #218838;
+    }
 
     .pagination {
       display: flex;
       justify-content: center;
       gap: 10px;
-      margin: 20px 0;
+      margin: 40px 0;
+      flex-wrap: wrap;
     }
 
     .pagination a {
-      padding: 8px 12px;
+      padding: 10px 15px;
       background-color: #f0f0f0;
       border: 1px solid #ddd;
       color: #333;
       text-decoration: none;
+      border-radius: 5px;
+      transition: all 0.3s;
+    }
+
+    .pagination a:hover {
+      background-color: #007bff;
+      color: #fff;
     }
 
     .pagination .active {
@@ -190,7 +237,7 @@
     }
 
     .price-filter {
-      padding: 10px;
+      padding: 15px;
       background-color: #f9f9f9;
       border-radius: 8px;
       margin-top: 20px;
@@ -199,7 +246,7 @@
     .price-filter .price-options {
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 12px;
     }
 
     .price-button {
@@ -209,23 +256,34 @@
       border: 1px solid #ddd;
       border-radius: 30px;
       cursor: pointer;
-      transition: background-color 0.3s, transform 0.2s;
+      transition: all 0.3s;
       text-align: center;
       font-size: 14px;
+      font-weight: 500;
     }
 
     .price-button:hover {
       background-color: #007bff;
       color: white;
-      transform: scale(1.05);
-    }
-
-    .price-button:active {
-      transform: scale(0.95);
+      transform: translateY(-2px);
     }
 
     .category-brand-container {
-      text-align: center;
+      text-align: left;
+    }
+
+    .category-brand-container ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .category-brand-container li {
+      padding: 8px 0;
+      border-bottom: 1px solid #eee;
+    }
+
+    .category-brand-container li:last-child {
+      border-bottom: none;
     }
 
     /* Dropdown styles for user menu */
@@ -284,36 +342,279 @@
       align-items: center;
     }
 
-    /* Responsive adjustments */
-    @media (max-width: 768px) {
+    a {
+      text-decoration: none !important;
+      color: inherit;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 992px) {
+      .main-container {
+        padding: 10px;
+        margin-top: 70px;
+      }
+
       .product-list-container {
         flex-direction: column;
+        gap: 20px;
       }
       
       .sidebar {
         width: 100%;
+        position: static;
+        top: auto;
+        order: 2;
       }
       
       .product-grid {
         width: 100%;
+        order: 1;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 20px;
       }
-      
-      .product-card {
-        width: calc(50% - 10px);
+
+      .search-form {
+        max-width: 250px;
+      }
+
+      .filter-section {
+        margin-bottom: 15px;
+      }
+
+      .sidebar {
+        padding: 15px;
       }
     }
-    a {
-  text-decoration: none !important;
-  color: inherit;
-  
-}
-.row a {
-  transform: scale(1.05);
-}
 
+    @media (max-width: 768px) {
+      .main-container {
+        margin-top: 60px;
+      }
+
+      .shop-topbar {
+        flex-direction: column;
+        gap: 15px;
+        align-items: stretch;
+      }
+
+      .search-form {
+        max-width: 100%;
+        width: 100%;
+      }
+
+      .product-grid {
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        gap: 15px;
+      }
+
+      .product-card {
+        padding: 15px;
+      }
+
+      .product-card img {
+        height: 180px;
+      }
+
+      .product-card h4 {
+        font-size: 14px;
+        min-height: 40px;
+      }
+
+      .sidebar {
+        padding: 15px;
+      }
+
+      .filter-title {
+        font-size: 16px;
+      }
+
+      .price-filter .price-options {
+        gap: 10px;
+      }
+
+      .price-button {
+        padding: 10px 15px;
+        font-size: 13px;
+      }
+
+      .pagination {
+        margin: 30px 0;
+      }
+
+      .pagination a {
+        padding: 8px 12px;
+        font-size: 14px;
+      }
+    }
+
+    @media (max-width: 576px) {
+      .main-container {
+        padding: 8px;
+      }
+
+      .product-grid {
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+        gap: 12px;
+      }
+
+      .product-card {
+        padding: 12px;
+      }
+
+      .product-card img {
+        height: 150px;
+      }
+
+      .product-card h4 {
+        font-size: 13px;
+        min-height: 36px;
+        margin: 10px 0 8px 0;
+      }
+
+      .product-card p {
+        font-size: 12px;
+        margin: 3px 0;
+      }
+
+      .add-to-cart-btn {
+        padding: 10px;
+        font-size: 13px;
+        margin-top: 10px;
+      }
+
+      .wishlist-btn {
+        top: 10px;
+        right: 10px;
+        padding: 6px;
+      }
+
+      .sidebar {
+        padding: 12px;
+      }
+
+      .filter-title {
+        font-size: 15px;
+        margin-bottom: 12px;
+      }
+
+      .filter-item {
+        margin: 6px 0;
+      }
+
+      .filter-item a {
+        font-size: 14px;
+      }
+
+      .price-button {
+        padding: 8px 12px;
+        font-size: 12px;
+      }
+
+      .search-input {
+        padding: 8px 12px;
+        font-size: 13px;
+      }
+
+      .search-button {
+        padding: 8px 15px;
+        font-size: 13px;
+      }
+    }
 
     @media (max-width: 480px) {
+      .product-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
+
+      .product-card img {
+        height: 120px;
+      }
+
+      .product-card h4 {
+        font-size: 12px;
+        min-height: 32px;
+      }
+
+      .product-card p {
+        font-size: 11px;
+      }
+
+      .add-to-cart-btn {
+        padding: 8px;
+        font-size: 12px;
+      }
+
+      .pagination a {
+        padding: 6px 10px;
+        font-size: 12px;
+      }
+
+      .sidebar {
+        padding: 10px;
+      }
+    }
+
+    @media (max-width: 360px) {
+      .product-grid {
+        grid-template-columns: 1fr;
+      }
+
       .product-card {
+        padding: 10px;
+      }
+
+      .product-card img {
+        height: 140px;
+      }
+
+      .main-container {
+        padding: 5px;
+      }
+    }
+
+    /* Navbar responsive fixes */
+    @media (max-width: 768px) {
+      .navbar-brand {
+        font-size: 1.2rem !important;
+      }
+
+      .navbar-nav .nav-link {
+        padding: 0.5rem 1rem !important;
+      }
+    }
+
+    /* Footer responsive fixes */
+    @media (max-width: 768px) {
+      .footer-section {
+        text-align: center;
+        margin-bottom: 20px;
+      }
+
+      .footer-section h5 {
+        font-size: 16px;
+      }
+
+      .footer-section ul {
+        padding: 0;
+      }
+
+      .footer-section ul li {
+        margin: 8px 0;
+      }
+
+      .input-group {
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .input-group .col-8,
+      .input-group .col-4 {
+        width: 100% !important;
+        flex: none !important;
+      }
+
+      .btn {
         width: 100%;
       }
     }
@@ -323,7 +624,7 @@
 <body>
   <main class="main" id="top">
     <!-- Navigation Bar -->
-    <nav class="navbar navbar-expand-lg navbar-light  fixed-top py-3 d-block" data-navbar-on-scroll="data-navbar-on-scroll">
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top py-3 d-block" data-navbar-on-scroll="data-navbar-on-scroll">
       <div class="container">
         <a class="navbar-brand d-inline-flex" href="/home">
           <span style="font-family: 'Lakki Reddy'" class="text-dark fs-4 fw-bold ms-2">HOURLY</span>
@@ -334,7 +635,6 @@
         <div class="collapse navbar-collapse border-top border-lg-0 mt-4 mt-lg-0" id="navbarSupportedContent">
           <ul class="navbar-nav me-auto mb-2 mb-lg-0">
             <li class="nav-item px-2"><a class="nav-link fw-bold active" aria-current="page" href="/shop">STORE</a></li>
-            <!-- <li class="nav-item px-2"><a class="nav-link fw-bold" aria-current="page" href="#store">CATEGORY</a></li> -->
             <li class="nav-item px-2"><a class="nav-link fw-bold" href="/viewpremium">PREMIUM</a></li>
             <li class="nav-item px-2"><a class="nav-link fw-bold" href="#contact">CONTACT</a></li>
           </ul>
@@ -352,11 +652,6 @@
                 <a href="/account">Profile</a>
                 <a href="/logout">Logout</a>
                 <%}%>
-            <!-- Alternative for non-logged in users -->
-            <!-- 
-            <a href="/signup"><div class="ms-4 text-light fw-bold">SIGN UP</div></a>
-            <a href="/login"><div class="ms-4 text-light fw-bold">LOGIN</div></a>
-            -->
           </form>
         </div>
       </div>
@@ -364,20 +659,18 @@
 
     <!-- Shop Page Content -->
     <div class="main-container">
-      <section class="shop-page container">
+      <section class="shop-page container-fluid">
         <div class="shop-topbar">
           <div class="search-bar">
-
             <form action="/search" method="POST" class="search-form">
               <input type="text" name="query" placeholder="Search items..." class="search-input" />
               <button type="submit" class="search-button">Search</button>
             </form>
-
           </div>
         </div>
         
         <div class="product-list-container">
-          <aside class="sidebar">
+          <aside class="sidebar"> 
             <div class="filter-section">
               <div class="filter-title">Categories</div>
               <div class="category-brand-container">
@@ -400,7 +693,6 @@
                     <a href="/filter?brand=<%=brand[i]._id %>"><%=brand[i].brandName %></a>
                   </li>
                   <%}%>
-                
                 </ul>
               </div> 
             </div>
@@ -425,27 +717,24 @@
               <a href="/productDetails?id=<%=products[i]._id %>">
                 <img src="/uploads/reimage/<%=products[i].productImage[0] %>" alt="<%=products[i].productName %>" />
                 <h4><%=products[i].productName %></h4>
-                <p>Brand:<%=products[i].brand %></p>
-                <p> Price: <%=products[i].salePrice.toLocaleString('en-IN') %><span class="text-muted"><strike>₹<%=products[i].regularPrice.toLocaleString('en-IN') %> </strike></span></p>
+                <p>Brand: <%=products[i].brand %></p>
+                <p>Price: ₹<%=products[i].salePrice.toLocaleString('en-IN') %><span class="text-muted"> <strike> ₹ <%=products[i].regularPrice.toLocaleString('en-IN') %> </strike></span></p>
               </a>
               <button class="add-to-cart-btn" onclick="">Add to Cart</button>
             </div>
             <%} %>
-            
         </main>
-        </div> 
-
+        </div>
+ 
         <!-- Pagination -->
         <div class="pagination">
      <% if (currentPage > 1) { %>
        <a class="btn" href="/shop?page=<%=currentPage-1 %>">Prev</a>
      <% } %>
 
-
      <% for (let i = 1; i <= totalPages; i++) { %>
        <a class="btn <%= currentPage === i ? 'active' : '' %>" href="/shop?page=<%=i %>"><%= i %></a>
      <% } %>
-
 
      <% if (currentPage < totalPages) { %>
        <a class="btn" href="/shop?page=<%= currentPage + 1 %>">Next</a>
@@ -454,15 +743,15 @@
 
       </section>
     </div>
-
+ </main>
     <!-- Footer Section -->
     <section class="py-0 pt-7 bg-black " id="contact">
-      <div class="container ">
+      <div class="container">
         <div class="row">
-          <div class="col-6 col-sm-4 col-xl-3 mb-3">
+          <div class="col-12 col-sm-6 col-md-3 mb-4 footer-section">
            <a href="/home"><h4 class="lh-lg fw-bold text-light">HOURLY WATCHES</h4></a> 
           </div>
-          <div class="col-6 col-sm-4 col-xl-3 mb-3">
+          <div class="col-12 col-sm-6 col-md-3 mb-4 footer-section">
             <h5 class="lh-lg fw-bold text-light">MENU</h5>
             <ul class="list-unstyled mb-md-4 mb-lg-0">
               <li class="lh-lg"><a class="text-800 text-decoration-none text-uppercase fw-bold" href="#!">Shipping Info</a></li>
@@ -472,14 +761,14 @@
               <li class="lh-lg"><a class="text-800 text-decoration-none text-uppercase fw-bold" href="#!">Size Guides</a></li>
             </ul>
           </div>
-          <div class="col-6 col-sm-4 col-xl-3 mb-3">
+          <div class="col-12 col-sm-6 col-md-3 mb-4 footer-section">
             <h5 class="mb-5"></h5>
             <ul class="list-unstyled mb-md-4 mb-lg-0">
               <li class="lh-lg"><a class="text-800 text-decoration-none text-uppercase fw-bold" href="#!">Contact Us</a></li>
               <li class="lh-lg"><a class="text-800 text-decoration-none text-uppercase fw-bold" href="/account">my account</a></li>
             </ul>
           </div>
-          <div class="col-12 col-xl-3">
+          <div class="col-12 col-sm-6 col-md-3 footer-section">
             <h5 class="lh-lg fw-bold text-light text-uppercase">Signup For our Latest News</h5>
             <div class="row input-group-icon mb-5">
               <div class="col-12">
@@ -499,11 +788,10 @@
           </div>
         </div>
         <div class="border-bottom border-700"></div>
-        <div class="row flex-center py-3" >
+        <div class="row flex-center py-3">
           <div class="col-md-6 order-1 order-md-0">
             <p class="my-2 text-800 text-center text-md-start"> "Where Time Meets Style"
               <svg class="bi bi-suit-heart-fill" xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="#EB6453" viewBox="0 0 16 16">
-                <!-- <path d="M4 1c2.21 0 4 1.755 4 3.92C8 2.755 9.79 1 12 1s4 1.755 4 3.92c0 3.263-3.234 4.414-7.608 9.608a.513.513 0 0 1-.784 0C3.234 9.334 0 8.183 0 4.92 0 2.755 1.79 1 4 1z"></path> -->
               </svg><a class="text-500" href="/home" target="_blank">- HOURLY </a>
             </p>
           </div>
@@ -518,7 +806,6 @@
         </div>
       </div>
     </section>
-  </main>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>

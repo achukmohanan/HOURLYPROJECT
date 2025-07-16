@@ -43,6 +43,9 @@ const loadShoppingpage = async(req,res) =>{
     try {   
      
         const user = req.session.user;
+
+        
+
         const userData = await User.findOne({_id:user})
       const categories = await Category.find({isListed:true});
       const categoryIds = categories.map((category)=>category._id.toString());
@@ -50,6 +53,8 @@ const loadShoppingpage = async(req,res) =>{
      const page = parseInt(req.query.page) || 1;
      const limit = 6;
      const skip = (page -1) * limit;
+
+
 
      const products = await Product.find({
         isBlocked:false,
@@ -106,7 +111,7 @@ const filterProduct = async(req,res) => {
         let findProducts = await Product.find(query).lean();
         findProducts.sort((a,b)=> new Date (b.createdOn) - new Date(a.createdOn));
         const categories = await Category.find({isListed:true});
-        let itemsPerPage = 6;
+        let itemsPerPage = 3;
         let currentPage = parseInt(req.query.page) || 1
         let startIndex = (currentPage -1 ) * itemsPerPage;
         let endIndex = startIndex + itemsPerPage;
@@ -232,10 +237,13 @@ const searchProducts = async (req,res) => {
     }
 }
  
+
+
 module.exports = {
     productDetails,
     loadShoppingpage,
     filterProduct,
     filterByPrice,
-    searchProducts
+    searchProducts,
+
 }

@@ -102,7 +102,8 @@ const addProducts = async (req, res) => {
             return res.redirect('/admin/addProducts?success=Product added successfully');
             
         } else {
-            return res.status(400).json({ error: "Product already exists, Please try with another name" });
+            // return res.status(400).json({ error: "Product already exists, Please try with another name" });
+            return res.redirect('/admin/addproducts?error="Product already exists, Please try with another name');
         }
         
     } catch (error) {

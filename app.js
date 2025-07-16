@@ -29,9 +29,12 @@ app.use(passport.session());
 app.use(nocache())
 
 app.use((req,res,next)=>{
+    
     res.locals.user = req.user;
     next()
 })
+
+
 //google auth
 app.get('/auth/google',passport.authenticate('google',{scope:['profile','email']}))
 // app.get('/google/callback',passport.authenticate('google',{failureRedirect:'/'}),(req,res)=>{

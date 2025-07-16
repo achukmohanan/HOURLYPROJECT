@@ -780,5 +780,46 @@
                 mainContent.classList.remove('expanded');
             }
         });
+
+
+        const urlParams = new URLSearchParams(window.location.search)
+const success = urlParams.get('success')
+const error = urlParams.get('error')
+if(error === 'exist'){
+    Swal.fire({
+        title:'Error!',
+        icon:'error',
+        text:'Category already exists. Please choose another name.',
+        confirmButtonText: 'OK'
+    }).then(()=>{
+        const cleanUrl = window.location.origin + window.location.pathname;
+        window.history.replaceState({},document.title,cleanUrl);
+    })
+}
+
+if(error === 'notfound'){
+    Swal.fire({
+        title:'Error!',
+        icon:'error',
+        text:'Category not found',
+        confirmButtonText: 'OK'
+    }).then(()=>{
+        const cleanUrl = window.location.origin + window.location.pathname;
+        window.history.replaceState({},document.title,cleanUrl);
+    })
+}
+
+if(success === 'updated'){
+    Swal.fire({
+        title:'Success',
+        icon:'success',
+        text:'Category Updated Successfully',
+        confirmButtonText: 'OK'
+    }).then(()=>{
+        const cleanUrl = window.location.origin + window.location.pathname;
+        window.history.replaceState({},document.title,cleanUrl);
+    })
+}
+
     </script>
 </html>
