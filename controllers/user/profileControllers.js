@@ -186,7 +186,7 @@ const userProfile = async (req,res) =>{
         const userId =    req.session.user;  
         const userData = await User.findById(userId);
         const addressData = await Address.findOne({userId:userId});
-             
+            //  console.log(userData)
         res.render('user/account',{
             user:userData,
             userAddress:addressData
@@ -305,6 +305,31 @@ const postEditAddress = async (req,res) =>{
     }
 }
 
+const deleteAddress = async (req,res) =>{
+    try {
+   
+        const addressId = req.query.id;
+        const findAddress = await Address.findOne({"address._id" : addressId});
+
+        if(!findAddress){
+            return res.status(404).json({message:"Address data not Found"});
+        }
+
+        await Address.updateOne(
+            {"address._id" : addressId},
+            {$pull:
+                {address:{_id:addressId}}
+            }
+        )
+        res.status(200).json({message:"Address Delected Successfully"});
+    } catch (error) {
+        console.log("error in delete Address", error);
+        res.status(500).json({message:"Internal Server Error"});
+        
+    }
+
+}
+
 
 module.exports = {
     forgotPassword,
@@ -320,5 +345,6 @@ module.exports = {
     addAddress,
     postaddAddress,
     editAddress,
-    postEditAddress
+    postEditAddress,
+    deleteAddress
 }

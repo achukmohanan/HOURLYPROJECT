@@ -54,10 +54,11 @@ router.get('/account',userAuth, profileController.userProfile);
 router.get('/profile',profileController.getProfilePage);
 
 //address management
-router.get('/addAddress',userAuth,profileController.addAddress);
-router.post('/addAddress',userAuth,profileController.postaddAddress)
+router.get('/addAddress', userAuth ,profileController.addAddress);
+router.post('/addAddress', userAuth ,profileController.postaddAddress)
 router.get('/editAddress', userAuth ,profileController.editAddress)
-router.post('/editAddress',userAuth,profileController.postEditAddress)
+router.post('/editAddress', userAuth ,profileController.postEditAddress)
+router.get('/deleteAddress', userAuth ,profileController.deleteAddress);
 
 //product management
 router.get('/productDetails',userAuth,productController.productDetails)
