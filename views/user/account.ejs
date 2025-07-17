@@ -647,8 +647,11 @@
                                                      
                                                     </address>
                                                     <div class="d-flex">
-                                                        <a href="/editAddress?id=<%=address._id %>" class="btn-small">Edit</a>
-                                                        <a href="/deleteAddress?id=<%=address._id %>" class="btn-small" onclick="return confirm('Are you sure you want delete this address')" >Delete</a>
+                                                        <a href="/editAddress?id=<%= address._id %>" class="btn-small">Edit</a>
+
+                                                        <a href="#" class="btn-small delete-btn" data-id="<%= address._id %>">Delete</a>
+
+                                                        <!-- <a href="/deleteAddress?id=<%=address._id %>" class="btn-small" onclick="return confirm('Are you sure you want delete this address')" >Delete</a> -->
                                                     </div>
                                                 </div>
                                             </div>
@@ -901,6 +904,52 @@
                         }, 2000);
                     }, 1000);
                 }
+            });
+        });
+
+        document.addEventListener('DOMContentLoaded',function (){
+            const deleteButtons = document.querySelectorAll('.delete-btn');
+
+            deleteButtons.forEach(button => {
+              button.addEventListener('click',function(e){
+                    e.preventDefault();
+
+                    const addressId = this.getAttribute('data-id');
+
+                      Swal.fire({
+                            title: 'Are you sure?',
+                            text: "Do you really want to delete this address?",
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonColor: '#d33',
+                            cancelButtonColor: '#3085d6',
+                            confirmButtonText: 'Yes, delete it!'
+                         }).then((result)=>{
+                            if(result.isConfirmed){
+                                fetch(`/deleteAddress?id=${addressId}`,{
+                                    method:'GET'
+                                })
+                                .then(response => response.json())
+                                .then(data =>{
+                                    if(data.message === "Address Delected Successfully"){
+                                        Swal.fire(
+                                            'Deleted!',
+                                            'Your address has been deleted.',
+                                            'success'
+                                        ).then(()=>{
+                                            window.location.reload()
+                                        });
+                                    }else{
+                                        Swal.fire('Error',data.message || "Something Went Wrong");
+                                    }
+                                })
+                                .catch(error =>{
+                                    console.log("error in fetch in deleteing address");
+                                    Swal.fire('Error', 'Server error occurred.', 'error');;
+                                });
+                            }
+                         });
+                });
             });
         });
 
