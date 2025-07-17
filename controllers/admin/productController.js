@@ -23,6 +23,7 @@ const getProductAddPage = async (req, res) => {
 const addProducts = async (req, res) => {
     try {
         const products = req.body;
+        imageUrls = req.body?.imageurls?.split(',')
         
         // Check if product already exists
         const productExists = await Product.findOne({
@@ -92,7 +93,7 @@ const addProducts = async (req, res) => {
                 createdOn: new Date(),
                 quantity: parseInt(products.quantity),
                 color: products.color,
-                productImage: images,
+                productImage: imageUrls,
                 status: 'Available',
             });
             

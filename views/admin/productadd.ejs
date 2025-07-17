@@ -329,7 +329,7 @@
                                         <input class="form-control" type="file" name="images" id="input4" accept="image/*" onchange="handleImageSelect(event, 4)">
                                     </div>
                                 </div>
-                                
+                                <input type="hidden" name="imageurls" id="imgurls">
                                 <div id="images-error" class="error-message"></div>
                             </div>
                         </div>
@@ -574,9 +574,28 @@ if (successMessage) {
         };
 
         // Validation functions
-        function validateAndSubmit() {
+        async function validateAndSubmit() {
+            const url = 'https://api.cloudinary.com/v1_1/dbl2eazti/image/upload';
+            const formData = new FormData();
+            const files = Object.values(croppedImages).map(d=>d.file)
+            const promises = []
+             for(let i = 0; i < files.length; i++) {
+                let file = files[i];
+                formData.append('file', file);
+                formData.append('cloud_name', "dbl2eazti");
+                formData.append('upload_preset', 'hourly');
+
+                promises.push(fetch(url, {method: 'POST',body: formData,}))
+            }
+
+            const headers = await Promise.all(promises)
+            const result_jsons = headers.map(h=>h.json());
+            const result = await Promise.all(result_jsons);
+            const urls = result.map(res=>res.secure_url);
+            document.getElementById("imgurls").value = urls
             if (validateForm()) {
                 document.forms[0].submit();
+
             }
         }
 
