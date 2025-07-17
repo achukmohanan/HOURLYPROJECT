@@ -12,9 +12,10 @@ const { search } = require('../../routes/userRouter');
 
 const productDetails = async (req,res) =>{
     try {
-        console.log("sessiondata", req.session)
+        // console.log("sessiondata", req.session)
        const userId = req.session.user;
        const userData = await User.findById(userId);
+
         const productId = req.query.id;
         const product = await Product.findById(productId).populate('category');
         const findCategory = product.category;
@@ -22,13 +23,22 @@ const productDetails = async (req,res) =>{
         const productOffer = product.productOffer || 0;
         const totalOffer = categoryOffer + productOffer;
 
+        const relatedProducts = await Product.find(
+            {_id:{$ne:product._id},
+           $or:[
+            {category:product.category._id},
+            {brand:product.brand},
+           ]     
+        }).limit(4);
+
         // console.log("userdata", userData)
         res.render('user/productdetails',{
             user:userData,
-            product:product,
+            product,
             quantity:product.quantity,
-            totalOffer:totalOffer,
-            category:findCategory
+            totalOffer,
+            category:findCategory,
+            relatedProducts
         });
 
 

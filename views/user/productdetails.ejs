@@ -1,5 +1,20 @@
 <%- include("../../views/partials/user/header")%>
-
+<style>
+    .related-product-card {
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 2px 6px rgb(112, 110, 110);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .related-product-card:hover {
+        transform: scale(1.03);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    }
+    .related-product-card img {
+        border-radius: 15px 15px 0 0;
+        
+    }
+</style>
 
     <main class="main">
         <div class="page-header breadcrumb-wrap">
@@ -92,11 +107,40 @@
                                       </div>
                                 </div>
                             </div>
-                        </div>
-                    
+                        </div>    
                 </div>
             </div>
         </section>
+      
+        <section> 
+              <hr class="color-light" >
+            <h3 class="text-center mb-3  " >Related Products</h3>
+            <hr>
+             
+        <div class="row m-3">
+            <% if (relatedProducts.length === 0) { %>
+                <p class="text-center">No related products found.</p>
+            <% } %>
+            
+            <% relatedProducts.forEach(p => { %>
+                <div class="col-md-3 mb-3">
+                    <div class="card related-product-card  h-100">
+                        <img src="/uploads/reimage/<%= p.productImage[0] %>" class="card-img-top border-radius-10" style="height:250px; object-fit:cover;">
+                        <div class="card-body text-center">
+                            <h5 class="card-title"><%= p.productName %></h5>
+                            <p class="card-text text-muted">SalePrice : ₹<%= p.salePrice %></p>
+                            <p class="card-text text-muted" >Brand : <%=p.brand %></p>
+                            <p class="card-text text-muted" >Color : <%=p.color %></p>
+                            <a href="/productDetails?id=<%= p._id %>" class="btn btn-outline-primary btn-sm">View Product</a>
+                        </div>
+                    </div>
+                </div>
+            <% }) %>
+        </div>
+
+        </section>
+
+        
     </main>
  <script>
 document.addEventListener("DOMContentLoaded", function () {

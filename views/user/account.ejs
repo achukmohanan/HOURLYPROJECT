@@ -493,7 +493,10 @@
     color: #a71d2a;
     border-radius: 8px;
 }
-
+.form-group{
+    background-color: #cccccc5a;
+    border-radius: 10px;
+}
     </style>
 </head>
 <body>
@@ -538,9 +541,10 @@
     <main class="main-content">
         <div class="container">
             <section class="account-section">
-                <div class="account-header">
-                    <h1>My Profile</h1>
-                    <div class="breadcrumb">Home / My Account</div>
+                <div class="account-header d-flex">
+                    <h5 class="text-muted" >Hello ,</h5>
+                    <h5><%= user.name %></h5>
+                    
                 </div>
 
                 <div class="account-content">
@@ -598,30 +602,36 @@
                         <div class="tab-pane show active" id="account">
                             <h2>Account Information</h2>
                             <div class="row">
-                                <div class="form-group">
-                                    <!-- <div class="form-group"> -->
+                                <div class="form-group1 col-lg-6">
+                                    <div class="form-group p-2">
                                        <% if(user){%>
-                                        <label for="firstName"> Name</label>
-                                        <input type="text" id="firstName" name="firstName" value="<%= user.name %>" >
-                                    <!-- </div> -->
-                                </div>
-                                <!-- <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="lastName">Last Name</label>
-                                        <input type="text" id="lastName" name="lastName" placeholder="Enter your last name">
+                                        <label for="firstName" class="mx-3  "> NAME</label>
+                                        <label   class="mx-3 text-dark text-muted"  ><%= user.name %></label>
                                     </div>
-                                </div> -->
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group p-2 ">
+                                        <label class="mx-3 ">GENDER</label>
+                                        <label> </label>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="form-group">
-                                <label for="email">Email Address</label>
-                                <input type="email" id="email" name="email" value="<%= user.email %>">
+                            <div class="row">
+                            <div class="form-group1   col-lg-6">
+                                <div class="form-group p-2">
+                                <label for="email" class="mx-3  ">EMAIL ADDRESS</label>
+                                <label class="mx-3 text-dark text-muted"><%= user.email %></label>
+                                </div>
                             </div>
-                            <div class="form-group">
-                                <label for="phone">Phone Number</label>
-                                <input type="tel" id="phone" name="phone" value="<%=user.phone %>">
+                            <div class="form-group1 col-lg-6">
+                                <div class="form-group p-2">
+                                <label >PHONE NUMBER</label>
+                                <label class="text-muted" ><%=user.phone %></label>
+                            </div>
                             </div>
                             <%}%>
-                            <button class="save-btn">Save Changes</button>
+                            </div>
+                            <button class="save-btn">Edit Profile</button>
                         </div>
 
                         <!-- Address Tab -->
