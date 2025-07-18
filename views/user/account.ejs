@@ -337,8 +337,8 @@
             transition: background 0.3s ease;
         }
 
-        .save-btn:hover {
-            background: #218838;
+        .btn:hover {
+            background: #004bbce0;
         }
 
         /* Footer */
@@ -509,14 +509,14 @@
                 <ul class="nav-links" id="navLinks">
                     <li><a href="/home">Home</a></li>
                     <li><a href="/shop">Watches</a></li>
-                    <li class="dropdown">
+                    <!-- <li class="dropdown">
                         <a href="#">Categories</a>
                         <div class="dropdown-content">
                             <a href="#">Luxury</a>
                             <a href="#">Analog</a>
                             <a href="#">Smartwatch</a>
                         </div>
-                    </li>
+                    </li> -->
                     <li><a href="#contact">Contact</a></li>
                    
                 </ul>
@@ -605,14 +605,14 @@
                                 <div class="form-group1 col-lg-6">
                                     <div class="form-group p-2">
                                        <% if(user){%>
-                                        <label for="firstName" class="mx-3  "> NAME</label>
+                                        <label for="firstName" class="mx-3  "> USERNAME</label>
                                         <label   class="mx-3 text-dark text-muted"  ><%= user.name %></label>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group p-2 ">
                                         <label class="mx-3 ">GENDER</label>
-                                        <label> </label>
+                                        <label class="text-muted mx-3">Not specified </label>
                                     </div>
                                 </div>
                             </div>
@@ -631,7 +631,8 @@
                             </div>
                             <%}%>
                             </div>
-                            <button class="save-btn">Edit Profile</button>
+                            <a href="/edit-profile" class="btn btn-primary"> Edit Profile </a>
+                            <!-- <button class="save-btn">Edit Profile</button> -->
                         </div>
 
                         <!-- Address Tab -->
@@ -880,42 +881,7 @@
             }
         });
 
-        // Save button functionality
-        document.querySelectorAll('.save-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                e.preventDefault();
-                
-                // Simple validation
-                const form = btn.closest('.tab-pane');
-                const inputs = form.querySelectorAll('input[required]');
-                let valid = true;
-                
-                inputs.forEach(input => {
-                    if (!input.value.trim()) {
-                        valid = false;
-                        input.style.borderColor = '#dc3545';
-                    } else {
-                        input.style.borderColor = '#ced4da';
-                    }
-                });
-                
-                if (valid) {
-                    btn.textContent = 'Saving...';
-                    btn.disabled = true;
-                    
-                    setTimeout(() => {
-                        btn.textContent = 'Saved!';
-                        btn.style.backgroundColor = '#28a745';
-                        
-                        setTimeout(() => {
-                            btn.textContent = 'Save Changes';
-                            btn.disabled = false;
-                            btn.style.backgroundColor = '';
-                        }, 2000);
-                    }, 1000);
-                }
-            });
-        });
+       
 
         document.addEventListener('DOMContentLoaded',function (){
             const deleteButtons = document.querySelectorAll('.delete-btn');

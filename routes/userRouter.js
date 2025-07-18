@@ -59,6 +59,10 @@ router.post('/addAddress', userAuth ,profileController.postaddAddress)
 router.get('/editAddress', userAuth ,profileController.editAddress)
 router.post('/editAddress', userAuth ,profileController.postEditAddress)
 router.get('/deleteAddress', userAuth ,profileController.deleteAddress);
+//edit profile
+router.get('/edit-profile',userAuth ,profileController.getEditProfile);
+router.post('/edit-profile',userAuth ,profileController.editProfile);
+
 
 //product management
 router.get('/productDetails',userAuth,productController.productDetails)

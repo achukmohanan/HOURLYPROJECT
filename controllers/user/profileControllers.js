@@ -330,6 +330,49 @@ const deleteAddress = async (req,res) =>{
 
 }
 
+//edit profile get route
+
+const getEditProfile = async (req,res) =>{
+    try {
+        const user =  req.session.user;
+        const findUser =  await User.findById(user)
+        // console.log("This is user",user)
+        // console.log("this is findUser",findUser);
+        
+        return res.render('user/editProfile',{
+            user:findUser
+        })
+    } catch (error) {
+        
+    }
+}
+
+const editProfile = async (req,res) =>{
+    try {
+        // console.log(req.body);
+        
+        const userId = req.session.user;
+        
+        const {username,gender,email,phone,} = req.body;
+        const userData = await User.findById(userId);
+        // console.log(userData);
+        
+        if(!userData){
+           return res.status(400).json({success:false,message:"User is not Found"})
+        }
+        await User.findByIdAndUpdate(userId,{
+            name:username,
+            email,
+            gender,
+            phone
+        })
+        
+        return res.status(200).json({message:"Details updated successfully",success:true})
+    } catch (error) {
+        console.log("error happend in the edit profile page",error);
+        return res.status(500).json({ message: "Internal server error", success: false });
+    }
+}
 
 module.exports = {
     forgotPassword,
@@ -346,5 +389,7 @@ module.exports = {
     postaddAddress,
     editAddress,
     postEditAddress,
-    deleteAddress
+    deleteAddress,
+    getEditProfile,
+    editProfile
 }

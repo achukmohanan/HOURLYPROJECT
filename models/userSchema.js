@@ -31,6 +31,10 @@ const userSchema = new Schema({
         type : String,
         required : false
        },
+       gender:{
+        type:String,
+        required:false
+       },
        isBlocked:{
         type : Boolean,
         default:false
