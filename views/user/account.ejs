@@ -612,7 +612,11 @@
                                 <div class="col-md-6">
                                     <div class="form-group p-2 ">
                                         <label class="mx-3 ">GENDER</label>
-                                        <label class="text-muted mx-3">Not specified </label>
+                                        <% if(user.gender){%>
+                                        <label class="text-muted mx-3"> <%=user.gender %> </label>
+                                        <%}else{%>
+                                        <label class="text-muted mx-3"> Not Specified </label>
+                                        <%}%>
                                     </div>
                                 </div>
                             </div>

@@ -338,7 +338,7 @@
         <div class="profile-card">
             <div class="profile-header">
                 <div class="profile-image-container">
-                    <img src="/assets/img/gallery/placeholderforimg.jpg" 
+                    <img src="<%=user.profileUrl%>" 
                          alt="Profile Picture" 
                          class="profile-image" 
                          id="profileImagePreview">
@@ -352,12 +352,12 @@
 
             <div class="form-container">
                 <form id="editForm" >
-                    <!-- <input type="file" 
+                    <input type="file" 
                            id="profileImageInput" 
                            name="profileImage" 
                            accept="image/*" 
                            class="file-input"
-                           onchange="previewImage(this)"> -->
+                           onchange="previewImage(this)">
 
                     <div class="form-row">
                         <div class="form-group">
@@ -409,16 +409,34 @@
             </div>
         </div>
     </div>
-<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<!-- <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script> -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
+        let fileImage = null;
         document.getElementById('editForm').addEventListener('submit', async function (event) {
             event.preventDefault();
             if(!validate){
                 return;
             }
-
+            
+            
+            
             const form = document.getElementById('editForm');
+            
+            const file = fileImage
             const formData = new FormData(form);
+            if(file){
+                const url = 'https://api.cloudinary.com/v1_1/dbl2eazti/image/upload';
+                const CformData = new FormData();
+                CformData.append('file', file);
+                CformData.append('cloud_name', "dbl2eazti");
+                CformData.append('upload_preset', 'hourly');
+
+                const response = await fetch(url, {method: 'POST',body: CformData,})
+                const result = await response.json()
+                const urls = result.secure_url
+                formData.append("profileUrl", urls)
+            }
             const data = Object.fromEntries(formData.entries());
 
             try {
@@ -432,9 +450,10 @@
                 
                 console.log("Response object:", response);
                 const result = await response.json();
-                console.log("Response JSON:", result);
-                alert("fetch id send data and the result :",result)
+                console.log("Response JSON:", result.success);
+                // alert("fetch id send data and the result :",result)
                 if(result.success){
+                    // alert("succes")
                     Swal.fire({
                         icon:'success',
                         title:"Success",
@@ -466,7 +485,7 @@
         function previewImage(input) {
             if (input.files && input.files[0]) {
                 const reader = new FileReader();
-                
+                fileImage = input.files[0]
                 reader.onload = function(e) {
                     document.getElementById('profileImagePreview').src = e.target.result;
                 };

@@ -244,12 +244,12 @@
                         <td><%= data[i].quantity %></td>
                         <td>
                             <%if(data[i].isBlocked===false){%>
-                            <button class="action-btn btn-danger" onclick="confirmBlock('<%=data[i].id %>')" >
+                            <button class="action-btn btn-danger" onclick="confirmBlock('<%=data[i]._id %>')" >
                                 <!-- <a href="/admin/blockProduct?id=<%=data[i]._id %>" class="text-grey">Block</a> -->
                                 Block
                             </button>
                             <%}else{%>
-                            <button class="action-btn btn-success" onclick="confirmUnblock('<%=data[i].id %>')">
+                            <button class="action-btn btn-success" onclick="confirmUnblock('<%=data[i]._id %>')">
                             Unblock
                                 <!-- <a href="/admin/unblockProduct?id=<%= data[i]._id %>" class="text-grey">Unblock</a> -->
                             </button>
@@ -263,8 +263,8 @@
                         <td>
 
                             <button type="submit" class="action-btn btn-danger" onclick="confirmDelete('<%=data[i]._id %>')">Delete
-                                <!-- <a href="/admin/deleteProduct?id=<%=data[i]._id %>" class="text-sucess">Delete</a> -->
                             </button>
+                                <!-- <a href="/admin/deleteProduct?id=<%=data[i]._id %>" class="text-sucess">Delete</a> -->
                         </td>
                     </tr>
                 <%}%>
@@ -464,17 +464,17 @@ function confirmDelete(productId){
         confirmButtonColor:'#d33',
         cancelButtonColor: '#3085d6',
         confirmButtonText: 'Yes, delete it!'
-    }).then((result)=>{
-        if(result.isConfirmed){
+    }).then((result)=>{ 
+        if(result.isConfirmed){         
             fetch(`/admin/deleteProduct/${productId}`,{
-               method:'POST',
+               method:'DELETE',
                 headers:{
-                   'Content:Type':'appliction/json' 
+                   'Content-Type':'application/json' 
                 }
             })
             .then(res =>{
                 if(res.ok){
-                    Swal.fire('Deleted, This product has been Deleted' , 'success'),then(()=>{
+                    Swal.fire('Deleted, This product has been Deleted' , 'success').then(()=>{
                         location.reload();
                     });
                 }else{

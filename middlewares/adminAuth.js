@@ -4,6 +4,8 @@ const User = require('../models/userSchema')
 
 
 const adminAuth = (req,res,next)=>{
+     
+
     User.findOne({isAdmin:true})
     .then(data =>{
         if(data){

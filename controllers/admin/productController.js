@@ -325,7 +325,13 @@ const deleteSingleImage = async (req,res) =>{
 
 const deleteProduct = async (req,res) =>{
     try {
-        await Product.findByIdAndDelete(req.params.id);
+          
+       const deleted =  await Product.findByIdAndDelete(req.params.id);
+       if(!deleted){
+        
+        return res.status(404).json({error:"Product not Found"});
+       }  
+       
          res.status(200).json({ message: 'Deleted' });
     } catch (error) {
         console.log('error happened in  Delete product:', error);
