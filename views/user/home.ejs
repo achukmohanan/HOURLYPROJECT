@@ -118,7 +118,7 @@ Experience the perfect fusion of sophisticated design and cutting-edge performan
               <div class="product-img-action-wrap">
                 <div class="product-img">
                   <a href="/productDetails?id=<%=products[i]._id %>">
-                    <img class="default-img img-fluid rounded-3 " 
+                    <img class="default-img img-fluid rounded-3 shadow-lg" 
                          src="<%= products[i].productImage[0]%>" 
                          alt="<%=products[i].productName %>"
                          loading="lazy">
@@ -135,9 +135,9 @@ Experience the perfect fusion of sophisticated design and cutting-edge performan
                 <div class="product-info">
                   <h5 class="product-name text-dark"><%=products[i].productName %></h5>
                   <div class="product-price">
-                    <h5 class="price text-dark" >$<%=products[i].salePrice %></h5>
+                    <h5 class="price text-dark d-flex justify-content-center" >$<%=products[i].salePrice %></h5>
                     <% if(products[i].regularPrice && products[i].regularPrice > products[i].salePrice) { %>
-                      <span class="old-price text-muted text-decoration-line-through">
+                      <span class="old-price text-muted text-decoration-line-through d-flex justify-content-center">
                         $<%=products[i].regularPrice %>
                       </span>
                     <% } %>
@@ -146,7 +146,7 @@ Experience the perfect fusion of sophisticated design and cutting-edge performan
                 
                 <div class="product-actions mt-3">
                   <!-- <a href="/addToCart?id=<%=products[i]._id %>"  -->
-                    <a href="#" class="btn btn-primary btn-add-cart">
+                    <a href="#" class="btn btn-primary btn-add-cart d d-flex justify-content-center">
                     <i class="fas fa-shopping-cart me-2"></i>Add to Cart
                   </a>
                 </div>

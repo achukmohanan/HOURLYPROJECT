@@ -187,7 +187,7 @@ const userProfile = async (req,res) =>{
         const userId =    req.session.user;  
         const userData = await User.findById(userId);
         const addressData = await Address.findOne({userId:userId});
-            //  console.log(userData)
+             console.log("user data is ",userData)
         res.render('user/account',{
             user:userData,
             userAddress:addressData
@@ -354,19 +354,29 @@ const editProfile = async (req,res) =>{
         
         const userId = req.session.user;
         
-        const {username,gender,email,phone,} = req.body;
+        const {profileUrl,username,gender,email,phone} = req.body;
         const userData = await User.findById(userId);
         // console.log(userData);
         
         if(!userData){
            return res.status(400).json({success:false,message:"User is not Found"})
         }
-        await User.findByIdAndUpdate(userId,{
+        // await User.findByIdAndUpdate(userId,{
+        //     name:username,
+        //     email,
+        //     gender,
+        //     phone
+        // })
+        const updateData = {
             name:username,
             email,
             gender,
             phone
-        })
+        }
+        if(profileUrl){
+            updateData.profileUrl = profileUrl;
+        }
+        await User.findByIdAndUpdate(userId,updateData);
         
         return res.status(200).json({message:"Details updated successfully",success:true})
     } catch (error) {

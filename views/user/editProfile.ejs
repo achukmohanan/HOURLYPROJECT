@@ -334,11 +334,12 @@
                 <%= message %>
             </div>
         <% } %> -->
-
+ 
         <div class="profile-card">
             <div class="profile-header">
                 <div class="profile-image-container">
-                    <img src="<%=user.profileUrl%>" 
+                    <% const profileImg = user.profileUrl || '/assets/img/gallery/placeholderforimg.jpg';  %>
+                    <img src="<%=profileImg %>" 
                          alt="Profile Picture" 
                          class="profile-image" 
                          id="profileImagePreview">
