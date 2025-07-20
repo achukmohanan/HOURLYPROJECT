@@ -174,6 +174,7 @@ const postNewPassword = async (req,res) =>{
 
 const getProfilePage = async (req,res) => {
     try {
+        //sample
         return res.render('user/profile')
     } catch (error) {
         

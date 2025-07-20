@@ -5,7 +5,7 @@ const Product = require('../../models/productSchema')
 const getBrandPage = async (req,res) =>{
     try {
         const page  = parseInt(req.query.page) || 1;
-        const limit = 4;
+        const limit = 2;
         const skip = (page-1)*limit;
         const brandData = await Brand.find({}).sort({createdAt:-1}).skip(skip).limit(limit);
         const totalBrands = await Brand.countDocuments();
@@ -66,10 +66,10 @@ const deleteBrand = async (req,res) =>{
     try {
         const {id} = req.query;
         if(!id){
-            return res.status(400).redirect('/admin/pageerror');
+            return res.status(400).json({success:false , message:"Brand Id is not Found"})
         }
         await Brand.deleteOne({_id:id});
-        res.redirect('/admin/brands');
+       return   res.json({ success: true, message: 'Brand deleted successfully' });
     } catch (error) {
         console.log("error deleting brand :",error);
         res.status(500).redirect('/admin/pageerror')

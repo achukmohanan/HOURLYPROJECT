@@ -18683,3 +18683,17 @@ Calaendar icon input[type="date"]::-webkit-calendar-picker-indicator {
 .zoom-container:hover .zoom-image {
   transition: transform 0.3s ease, transform-origin 0.3s ease;
 }
+.homeproduct {
+  /* border: 2px solid #000; */
+  border-radius: 3%;
+  transition: all 3 ease;
+ 
+} 
+.homeproduct:hover {
+  transform: scale(1.03); 
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); 
+  border-color: #007bff;  
+}
+ .product-cart-wrap {
+  padding: 12px;
+}

@@ -69,6 +69,9 @@ const userSchema = new Schema({
         type:Schema.Types.ObjectId,
         ref:"User"
       }],
+      profileUrl:{
+        type:String
+      },
       searchHistory:[{
         category :{
             type :Schema.Types.ObjectId,

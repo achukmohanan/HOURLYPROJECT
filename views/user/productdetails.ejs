@@ -40,12 +40,12 @@
                                         <div class="detail-gallery">
                                     <div class="product-image-slider">
                                         <div class="main-image mb-3 zoom-container">
-                                        <img class="zoom-image img-fluid border-radius-10" src="/uploads/reimage/<%= product.productImage[0] %>" alt="Main Product Image" style="width:100%; object-fit:cover;">
+                                        <img class="zoom-image img-fluid border-radius-10" src="<%= product.productImage[0] %>" alt="Main Product Image" style="width:100%; object-fit:cover;">
                                         </div>
                                         <div class="slider-nav-thumbnails d-flex gap-2">
                                         <% for(let i = 0; i < product.productImage.length; i++) { %>
                                             <div class="thumb border" style="width:80px; height:80px; overflow:hidden;">
-                                            <img src="/uploads/reimage/<%= product.productImage[i] %>" class="img-fluid" style="object-fit:cover; width:100%; height:100%;" alt="Thumbnail">
+                                            <img src="<%= product.productImage[i] %>" class="img-fluid" style="object-fit:cover; width:100%; height:100%;" alt="Thumbnail">
                                             </div>
                                         <% } %>
                                         </div>
@@ -115,8 +115,8 @@
         <section> 
               <hr class="color-light" >
             <h3 class="text-center mb-3  " >Related Products</h3>
-            <hr>
-             
+            <!-- <hr> -->
+             <p class="d-flex justify-content-center">"Explore More Like This"</p>
         <div class="row m-3">
             <% if (relatedProducts.length === 0) { %>
                 <p class="text-center">No related products found.</p>
