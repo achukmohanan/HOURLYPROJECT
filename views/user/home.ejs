@@ -23,7 +23,20 @@
         <div class="container">
           <div class="row justify-content-center">
             <div class="col-12 col-lg-10">
-              
+              <h3 class="p-4">CATEGORY in progress </h3>
+             <div class="img-fluid  d-flex flex-row p-3  ">
+              <%if(brand){%>
+              <%  for(let i=0; i<brand.length; i++){ %>
+              <div class="image-container me-3 mb-2">
+                <img src="/assets/img/gallery/placeholderforimg.jpg" alt="">
+                <h3 class="text-light"><%=brand[i].brandName %></h3>
+              </div>
+            <%}%>
+            <%}%>
+            </div>
+
+
+
               <div class="carousel slide carousel-fade" id="watchCarousel" data-bs-ride="carousel">
                 <h3>CATEGORY</h3>
                 <div class="carousel-inner">

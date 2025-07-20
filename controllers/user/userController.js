@@ -1,6 +1,7 @@
 const User = require('../../models/userSchema');
 const Category = require('../../models/categorySchema');
 const Product = require('../../models/productSchema');
+const Brand = require('../../models/brandSchema')
 const nodemailer = require("nodemailer");
 const env = require('dotenv').config();
 const bcrypt = require('bcrypt');
@@ -28,15 +29,22 @@ const loadHomepage = async (req, res) => {
         });
         productData.sort((a,b)=>new Date(b.createdOn)-new Date(a.createdOn));
         productData = productData.slice(0,4);
-
+        const brand = await Brand.find({})
 
         if(userId){
             const userData = await User.findById(userId);
             // console.log("in home page rendering user data :",userData);
-            
-            res.render('user/home',{user: userData,products:productData});
+            console.log("brand is ",brand)
+            res.render('user/home',{
+                user: userData,
+                products:productData,
+                brand:brand
+            });
         }else{
-            return res.render('user/home',{products:productData});
+            return res.render('user/home',{
+                products:productData,
+                brand:brand
+            });
         }
         // return res.redi  rect('/login')
         console.log("Products sent to EJS:,its working ", productData.length);
