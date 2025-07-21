@@ -4,7 +4,14 @@ const User = require('../models/userSchema')
 
 
 const adminAuth = (req,res,next)=>{
-     
+     if(!req.session.admin){
+        return res.redirect('/admin/adminlogin')
+     }
+         // ✅ Prevent browser from caching dashboard
+        res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+        res.setHeader('Pragma', 'no-cache');
+        res.setHeader('Expires', '0');
+
 
     User.findOne({isAdmin:true})
     .then(data =>{
@@ -21,7 +28,7 @@ const adminAuth = (req,res,next)=>{
     })
 }
 
-const checksession = (req,res,next) =>{
+const adminchecksession = (req,res,next) =>{
     if(req.session.admin){
         res.redirect('/admin/seconddash')
     }else{
@@ -32,5 +39,5 @@ const checksession = (req,res,next) =>{
 module.exports = {
     
     adminAuth,
-    checksession
+    adminchecksession
 }

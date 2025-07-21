@@ -67,20 +67,15 @@
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-3">
-                            <form method="post" action="/admin/addBrand" enctype="multipart/form-data">
+                            <form   id="brandform"   enctype="multipart/form-data">
                                 <div class="mb-4">
                                     <label for="product_name" class="form-label">Brand Name</label>
-                                    <input
-                                        type="text"
-                                        name="name"
-                                        placeholder="Type here"
-                                        class="form-control"
-                                    />
+                                    <input type="text" name="name" id="brandname" placeholder="Type here" class="form-control" />
                                 </div>
                                 <label for="product_name" class="form-label">Brand Image</label>
                                 <div class="input-upload"> 
                                     <img src="" alt=""/>
-                                    <input class="form-control border" name="image" type="file" />
+                                    <input class="form-control border" id="brandimg" name="image" type="file" />
                                 </div>
                                 <div class="d-grid">
                                     <button class="btn btn-primary mt-20" type="submit">
@@ -110,7 +105,7 @@
                                                     class="d-flex align-items-center justify-content-center"
                                                     style="width: 50px; height: 50px;">
                                                     <img
-                                                        src="/uploads/reimage/<%= brand.brandImage[0]%>"
+                                                        src="<%= brand.brandImage%>"
                                                         alt="<%=brand.brandName%>"
                                                         class="img-fluid rounded-circle"
                                                         style="width: 100%; height: auto"
@@ -228,6 +223,79 @@
         });
   }
 
+  document.getElementById('brandform').addEventListener('submit', async function(event) {
+    event.preventDefault();
+
+    const form = document.getElementById('brandform');
+    const brandImageInput = document.getElementById('brandimg');
+    const file = brandImageInput.files[0];
+
+    if (!file) {
+        Swal.fire({
+            icon: "error",
+            title: "No Image",
+            text: "Please select an image before submitting."
+        });
+        return;
+    }
+
+    const formData = new FormData(form);
+    
+    // Upload image to Cloudinary
+    const cloudUrl = 'https://api.cloudinary.com/v1_1/dbl2eazti/image/upload';
+    const cloudFormData = new FormData();
+    cloudFormData.append('file', file);
+    cloudFormData.append('upload_preset', 'hourly'); // Preset created in your Cloudinary settings
+
+    try {
+        const cloudResponse = await fetch(cloudUrl, {
+            method: 'POST',
+            body: cloudFormData
+        });
+
+        const cloudResult = await cloudResponse.json();
+
+        if (cloudResult.secure_url) {
+            const uploadedImageUrl = cloudResult.secure_url;
+            formData.append("brandImage", uploadedImageUrl);
+
+            // Send to backend
+            const response = await fetch('/admin/addBrand', {
+                method: 'POST',
+                body: formData
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                Swal.fire({
+                    icon: "success",
+                    title: "Brand Added",
+                    text: result.message,
+                    showConfirmButton: false,
+                    timer: 2000
+                }).then(() => {
+                    window.location.reload();
+                });
+            } else {
+                Swal.fire({
+                    icon: "error",
+                    title: "Oops",
+                    text: result.message || "Something went wrong",
+                });
+            }
+        } else {
+            throw new Error("Cloudinary upload failed");
+        }
+    } catch (error) {
+        console.error("Error during brand upload:", error);
+        Swal.fire({
+            icon: "error",
+            title: "Upload Failed",
+            text: "Something went wrong. Try again.",
+        });
+    }
+});
 
 </script>
 

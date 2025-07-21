@@ -5,7 +5,7 @@ const brandController = require('../controllers/admin/brandController')
 const customerController = require('../controllers/admin/customerController')
 const categoryController = require('../controllers/admin/categoryController');
 const productController = require('../controllers/admin/productController')
-const {adminAuth} = require('../middlewares/adminAuth')
+const {adminAuth, adminchecksession} = require('../middlewares/adminAuth')
 const multer = require("multer");
 const storage = require('../helpers/multer');
 const { checksession } = require('../middlewares/userAuth');
@@ -16,7 +16,7 @@ router.get('/adminlogin', checksession, adminController.loadLogin);
 router.post('/adminlogin',adminController.login)
 router.get("/seconddash",adminAuth,adminController.loaddashboard)
 router.get('/pageerror',adminController.pageerror)
-router.get('/logout',adminController.logout)
+router.get('/logout',  adminAuth , adminController.logout)
 
 //customer management
 router.get('/users',adminAuth,customerController.customerInfo)

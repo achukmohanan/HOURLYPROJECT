@@ -303,7 +303,7 @@ const confirmwithotp = async (req, res) => {
 
 const resendOtp = async (req,res)=>{
     try {
-        console.log(req.session.userData)
+        // console.log(req.session.userData)
         const {email} = req.session.userData;
         if(!email){
             return res.status(400).json({success:false,message:"Email not found in Session"})

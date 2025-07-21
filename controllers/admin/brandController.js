@@ -26,6 +26,9 @@ const addBrand = async (req,res) =>{
     try {
         const brand = req.body.name;
         const findBrand = await Brand.findOne({brand});
+        if(findBrand){
+            res.json({success:false,message:"Exsiting Brand "})
+        }
         if(!findBrand){
             const image = req.file.filename;
             const newBrand = new Brand({
@@ -33,11 +36,12 @@ const addBrand = async (req,res) =>{
                 brandImage:image,
             })
             await newBrand.save();
-            res.redirect('/admin/brands')
+            console.log(newBrand);
+            
+             res.status(200).json({success:true , message:"Brand Uploaded successfully"})
         }
      } catch (error) {
-        res.redirect('/admin/pageerror')
-        
+        res.status(500).json({success:false,message:"Internal Server Error"}); 
     }
 }
 const blockBrand = async (req,res) =>{
