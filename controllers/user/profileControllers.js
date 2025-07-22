@@ -187,7 +187,7 @@ const userProfile = async (req,res) =>{
         const userId =    req.session.user;  
         const userData = await User.findById(userId);
         const addressData = await Address.findOne({userId:userId});
-             console.log("user data is ",userData)
+            //  console.log("user data is ",userData)
         res.render('user/account',{
             user:userData,
             userAddress:addressData

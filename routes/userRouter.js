@@ -5,6 +5,7 @@ const passport = require('passport');
 const { userAuth,checksession} = require('../middlewares/userAuth');
 const profileController = require('../controllers/user/profileControllers')
 const productController = require('../controllers/user/productController')
+const changePassword = require('../controllers/user/changePassword');
 //error management
 router.get('/pagenotfound', userController.pageNotFound);
 
@@ -52,7 +53,6 @@ router.post('/reset-password',profileController.postNewPassword);
 // profile & account
 router.get('/account',userAuth, profileController.userProfile);
 router.get('/profile',profileController.getProfilePage);
-
 //address management
 router.get('/addAddress', userAuth ,profileController.addAddress);
 router.post('/addAddress', userAuth ,profileController.postaddAddress)
@@ -62,6 +62,10 @@ router.get('/deleteAddress', userAuth ,profileController.deleteAddress);
 //edit profile
 router.get('/edit-profile',userAuth ,profileController.getEditProfile);
 router.post('/edit-profile',userAuth ,profileController.editProfile);
+//Changepassword
+router.post('/changePassword', changePassword.changePassword);
+
+
 
 
 //product management

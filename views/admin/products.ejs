@@ -474,7 +474,7 @@ function confirmDelete(productId){
             })
             .then(res =>{
                 if(res.ok){
-                    Swal.fire('Deleted, This product has been Deleted' , 'success').then(()=>{
+                    Swal.fire('success','Deleted, This product has been Deleted' ).then(()=>{
                         location.reload();
                     });
                 }else{

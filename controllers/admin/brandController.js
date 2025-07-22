@@ -1,5 +1,5 @@
-const Brand = require('../../models/brandSchema')
-const Product = require('../../models/productSchema')
+const Brand = require('../../models/brandSchema');
+const Product = require('../../models/productSchema');
 
 
 const getBrandPage = async (req,res) =>{
@@ -29,14 +29,15 @@ const addBrand = async (req,res) =>{
         if(findBrand){
             res.json({success:false,message:"Exsiting Brand "})
         }
+        console.log(req.body.brandImage)
         if(!findBrand){
-            const image = req.file.filename;
+            // const image = req.file.filename;
             const newBrand = new Brand({
                 brandName:brand,
-                brandImage:image,
+                brandImage:req.body.brandImage,
             })
             await newBrand.save();
-            console.log(newBrand);
+            // console.log(newBrand);
             
              res.status(200).json({success:true , message:"Brand Uploaded successfully"})
         }

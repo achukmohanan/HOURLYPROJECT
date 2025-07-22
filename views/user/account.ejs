@@ -587,7 +587,7 @@
                       %>
                       <h6 class="text-muted mx-5" >Hi ,<%= user.name %></h6>
                 <div class="account-header d-flex justify-content-center m-2"> 
-                    <h5 ><%= user.name %></h5>
+                    <h5 class="text"><%= user.name %></h5>
                 </div>
 
                 <div class="account-content">
@@ -778,19 +778,21 @@
                         <!-- Password Tab -->
                         <div class="tab-pane" id="password">
                             <h2>Change Password</h2>
-                            <div class="form-group">
+                            <form id="changePassword" >
+                            <div class="form-group">         
                                 <label for="currentPassword">Current Password</label>
-                                <input type="password" id="currentPassword" name="currentPassword" placeholder="Enter current password">
+                                <input type="password" id="currentPassword" name="currentPassword" placeholder="Enter current password" required>
                             </div>
                             <div class="form-group">
                                 <label for="newPassword">New Password</label>
-                                <input type="password" id="newPassword" name="newPassword" placeholder="Enter new password">
+                                <input type="password" id="newPassword" name="newPassword" placeholder="Enter new password" required>
                             </div>
                             <div class="form-group">
                                 <label for="confirmPassword">Confirm Password</label>
-                                <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm new password">
+                                <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm new password" required>
                             </div>
-                            <button class="save-btn">Update Password</button>
+                            <button type="submit" class="save-btn">Update Password</button>
+                             </form>
                         </div>
 
                         <!-- Email Tab -->
@@ -867,11 +869,7 @@
      <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
        
-
-
-
-
-
+ 
         // Mobile menu toggle
         const hamburger = document.getElementById('hamburger');
         const navLinks = document.getElementById('navLinks');
@@ -919,27 +917,10 @@
             });
         });
 
-        // Form validation for password change
-        document.getElementById('newPassword')?.addEventListener('blur', function() {
-            const confirmPassword = document.getElementById('confirmPassword');
-            if (confirmPassword.value && this.value !== confirmPassword.value) {
-                confirmPassword.setCustomValidity('Passwords do not match');
-            } else {
-                confirmPassword.setCustomValidity('');
-            }
-        });
-
-        document.getElementById('confirmPassword')?.addEventListener('input', function() {
-            const newPassword = document.getElementById('newPassword');
-            if (this.value !== newPassword.value) {
-                this.setCustomValidity('Passwords do not match');
-            } else {
-                this.setCustomValidity('');
-            }
-        });
-
        
 
+       
+// <--------address deletion---------------->
         document.addEventListener('DOMContentLoaded',function (){
             const deleteButtons = document.querySelectorAll('.delete-btn');
 
@@ -986,6 +967,78 @@
             });
         });
 
+        // <---------------fetch for change password ----------------->
+
+             // Form validation for password change
+        // document.getElementById('newPassword')?.addEventListener('blur', function() {
+        //     const confirmPassword = document.getElementById('confirmPassword');
+        //     if (confirmPassword.value && this.value !== confirmPassword.value) {
+        //         confirmPassword.setCustomValidity('Passwords do notd match');
+        //     } else {
+        //         confirmPassword.setCustomValidity('');
+        //     }
+        // });
+
+        // document.getElementById('confirmPassword')?.addEventListener('input', function() {
+        //     const newPassword = document.getElementById('newPassword');
+        //     if (this.value !== newPassword.value) {
+        //         this.setCustomValidity('Passwords do not vqxkuhvgkumatch');
+        //     } else {
+        //         this.setCustomValidity('');
+        //     }
+        // });
+
+            document.getElementById('changePassword').addEventListener('submit', async (e)=>{
+                e.preventDefault();
+
+               try {
+                 const currentPassword = document.getElementById('currentPassword').value.trim();
+                const newPassword = document.getElementById('newPassword').value.trim();
+                const confirmPassword = document.getElementById('confirmPassword').value.trim();
+
+                if(newPassword !== confirmPassword){
+                    Swal.fire({
+                        icon:'error',
+                        title:"Oops",
+                        text:"Password do not Match",
+                        showConfrimButton:true
+                    })
+                }
+
+                const data = await fetch('/changePassword',{
+                    method:'POST',
+                    headers:{
+                        'Content-Type':'application/json'
+                    },
+                    body:JSON.stringify({currentPassword,newPassword,confirmPassword})
+                })
+
+                const response = await data.json();
+
+                if(response.success){
+                    Swal.fire({
+                        icon:'success',
+                        title:'Success',
+                        text:response.message
+                    }).then(()=>{
+                        window.location.reload();
+                    })
+                }else{
+                    Swal.fire({
+                        icon:'error',
+                        title:'Oops',
+                        text:response.message
+                    })
+                }
+               } catch (error) {
+                console.log("error in fecth",error)
+                        Swal.fire({
+                        icon:'error',
+                        title:'ERROR',
+                        text:response.message
+                    })
+               }
+            })
       
     </script>
    

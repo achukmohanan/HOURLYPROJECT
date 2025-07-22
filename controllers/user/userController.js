@@ -34,7 +34,7 @@ const loadHomepage = async (req, res) => {
         if(userId){
             const userData = await User.findById(userId);
             // console.log("in home page rendering user data :",userData);
-            console.log("brand is ",brand)
+            
             res.render('user/home',{
                 user: userData,
                 products:productData,
