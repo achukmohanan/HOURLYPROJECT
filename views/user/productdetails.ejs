@@ -66,8 +66,8 @@
                                             </div>
 
                                             <div class="product-price mb-2">
-                                                <span class="text-brand fs-4 fw-bold">₹   <%=product.salePrice %></span>
-                                                <del class="text-muted ms-3"><%=product.regularPrice %></del>
+                                                <span class="text-brand fs-4 fw-bold">₹   <%=product.salePrice.toLocaleString('en-IN') %></span>
+                                                <del class="text-muted ms-3"><%=product.regularPrice.toLocaleString('en-IN') %></del>
                                                 <!-- <span class="text-success ms-3">
                                                 <% if(!totalOffer){ %>
                                                     No Offers
@@ -128,7 +128,10 @@
                         <img src="  <%= p.productImage[0] %>" class="card-img-top border-radius-10" style="height:250px; object-fit:cover;">
                         <div class="card-body text-center">
                             <h5 class="card-title"><%= p.productName %></h5>
-                            <p class="card-text text-muted">SalePrice : ₹<%= p.salePrice %></p>
+
+                            <p class="card-text text-muted">SalePrice : ₹<%= p.salePrice.toLocaleString('en-IN') %></p>
+                            <del class="card-text text-muted">Price : ₹<%= p.regularPrice.toLocaleString('en-IN') %></del>
+
                             <p class="card-text text-muted" >Brand : <%=p.brand %></p>
                             <p class="card-text text-muted" >Color : <%=p.color %></p>
                             <a href="/productDetails?id=<%= p._id %>" class="btn btn-outline-primary btn-sm">View Product</a>
