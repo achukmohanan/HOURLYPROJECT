@@ -95,7 +95,7 @@
                                             </div>
 
                                             <div class="product-extra-link2 d-flex gap-3">
-                                                <button type="submit" class="btn btn-primary">Add to cart</button>
+                                                <button type="button" class="btn btn-primary add-to-cart" data-productId = "<%=product._id %>" >Add to cart</button>
                                                 <!-- <a class="btn btn-outline-secondary" href="#"><i class="fi-rs-heart"></i></a> -->
                                             </div>
 
@@ -146,6 +146,56 @@
         
     </main>
  <script>
+document.addEventListener('DOMContentLoaded',function(){
+    const addtocart = document.querySelectorAll('.add-to-cart')
+
+    addtocart.forEach(button =>{
+    button.addEventListener('click',async function(){
+                const  productId = this.getAttribute('data-productId') 
+
+                try {
+                    const response = await fetch('/addtocart',{
+                        method:'POST',
+                        headers:{
+                            'Content-Type':'application/json'
+                        },
+                        body:JSON.stringify({productId})
+                    })
+                    alert("fetch is send")
+                    const result = await response.json();
+                     if(result.success){
+                        Swal.fire({
+                        icon:'success',
+                        title:'Added to Cart',
+                        text:result.message
+                        })
+                     }else{
+                        Swal.fire({
+                        icon:'error',
+                        title:'Oops',
+                        text:result.message || "Something Went Wrong",
+                        showConfirmButton:true
+                        })
+                    }
+                    console.log("result is ",result)
+                        } catch (error) {
+                            console.log("error in add to cart in ejs",error)
+                            Swal.fire({
+                                icon:'error',
+                                title:"ERROR",
+                                text:result.message ||"ERROR HAPPPEND",
+                                showConfirmButton:true
+                            })
+                }
+
+    })
+})
+});
+
+
+
+
+
 document.addEventListener("DOMContentLoaded", function () {
     const zoomContainer = document.querySelector('.zoom-container');
     const zoomImage = document.querySelector('.zoom-image');

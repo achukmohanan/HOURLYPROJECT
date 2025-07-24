@@ -31,7 +31,7 @@ const productDetails = async (req,res) =>{
            ]     
         }).limit(4);
 
-        // console.log("userdata", userData)
+        // console.log("product", product)
         res.render('user/productdetails',{
             user:userData,
             product,

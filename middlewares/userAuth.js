@@ -6,6 +6,7 @@ const userAuth = (req,res,next) =>{
         User.findById(req.session.user)
         .then(data =>{
             if(data && !data.isBlocked){
+                res.locals.user = data;
                 next()
                 // res.redirect('/home')
             }else{

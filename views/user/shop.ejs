@@ -702,16 +702,22 @@
               <div class="filter-title">Filter by Price</div>
               <form id="price-filter-form">
                 <div class="price-options">
-                    <a href="/filterPrice?gt=0&lt=500"><button type="button" class="price-button">Under ₹500</button></a>
-                    <a href="/filterPrice?gt=500&lt=1000"><button type="button" class="price-button">₹500 - ₹1000</button></a>
-                    <a href="/filterPrice?gt=1000&lt=1500"><button type="button" class="price-button">₹1000- ₹1500</button></a>
-                    <a href="/filterPrice?gt=1500&lt=100000"><button type="button" class="price-button">Above ₹1500</button></a>
+        
+                    <a href="/filterPrice?gt=0&lt=5000"><button type="button" class="price-button">Under ₹5000</button></a>
+                    <a href="/filterPrice?gt=5000&lt=1000"><button type="button" class="price-button">₹5000 - ₹10000</button></a>
+                    <a href="/filterPrice?gt=10000&lt=15000"><button type="button" class="price-button">₹10000- ₹20000</button></a>
+                    <a href="/filterPrice?gt=15000&lt=1000000"><button type="button" class="price-button">Above ₹20000</button></a>
                 </div>
               </form>
             </div>
           </aside>
 
         <main class="product-grid">
+          <%if(products.length === 0){%>
+            <div class="col-12 text-center m-5 ">
+              <h3 class="text-muted">No products found</h3>
+            </div>
+          <%}else{%>
           <% for(let i=0; i<products.length; i++) {%>
             <div class="product-card">
               <span class="wishlist-btn" onclick="">❤️</span>
@@ -724,6 +730,7 @@
               <button class="add-to-cart-btn" onclick="">Add to Cart</button>
             </div>
             <%} %>
+            <%}%>
         </main>
         </div>
  

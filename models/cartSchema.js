@@ -4,7 +4,7 @@ const  {Schema} = mongoose;
 const cartSchema = new Schema({
     userId:{
         type:Schema.Types.ObjectId,
-        ref:'Users',
+        ref:'User',
         required:true
     },
     items:[{
@@ -15,26 +15,26 @@ const cartSchema = new Schema({
         },
         quantity:{
             type:Number,
+            required:true,
             default:1
         },
-        price:{
-            type:Number,
-            required:true
-
-        },
-        totalPrice:{
-            type:Number,
-            required:true
-        },
-        status:{
-            type:String,
-            default:'placed',
-
-        },
-        cancellationReason:{
-            type:String,
-            default:'none'
-        }
+        // price:{
+        //     type:Number,
+        //     required:true
+        // },
+        // totalPrice:{
+        //     type:Number,
+        //     required:true
+        // },
+        // status:{
+        //     type:String,
+        //     default:'placed',
+                                    // <place in orderschema later>
+        // },
+        // cancellationReason:{
+        //     type:String,
+        //     default:'none'
+        // }
     }]
 })
 
