@@ -1,13 +1,19 @@
 const User = require('../../models/userSchema')
 const Cart = require('../../models/cartSchema');
 const Product = require('../../models/productSchema');
+
+
 const getCart = async (req,res) =>{
     try {
         const userId = req.session.user
         const findUser = await User.findById(userId)
-        // console.log("User finded",findUser)  
+
+        const cart = await Cart.findOne({userId}).populate('items.productId');
+        // console.log("cart is ",cart)  
        return res.render('user/cart',{
-           user:findUser
+           user:findUser,
+           cart,
+
         })
     } catch (error) {
        console.log("error in get cart",error);
@@ -20,11 +26,14 @@ const addToCart = async (req,res) =>{
         const { productId } = req.body;
         const userId =  req.session.user;
         
-        const findProduct = await Product.findById(productId)
+        const product = await Product.findById(productId)
+        if(!product){
+            return res.status(400).res.json({success:false,message:"Product Not Found"})
+        }
          
         let cart = await Cart.findOne({userId});
 
-        if(!cart){
+        if(!cart){  
             cart = new Cart({userId , items:[]});
         }
 
@@ -39,7 +48,8 @@ const addToCart = async (req,res) =>{
 
             });
         }
-        // console.log("Cart before save:", cart);
+        // console.log("Cart before save:", cart)
+        // 6;
 
         await cart.save();
         // console.log("cart is ",cart)

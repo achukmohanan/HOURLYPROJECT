@@ -202,7 +202,9 @@
             letter-spacing: 1px;
         }
 
-        
+        .no-underline {
+  text-decoration: none;
+}
 
        
         
@@ -221,47 +223,41 @@
 
         <div class="cart-container">
             <!-- Cart Items -->
-            <div class="cart-section">  
+            <div class="cart-section"> 
+                <%if(cart && cart.items.length > 0) {%> 
+                    <% cart.items.forEach(item=>{%>
                 <div class="cart-item">
                     <div class="item-image">
-                        <div class="watch-classic"></div>
+                        <div class="watch-classic">
+                           <img src=" <%= item.productId.productImage[0] %>" alt=""></div>
                     </div>
+                    
                     <div class="item-details">
-                        <div class="item-name">Lanceta</div>
-                        <div class="item-subtitle">36mm SIMPLE</div>
+                        <div class="item-name"><%= item.productId.productName %></div>
+                        <div class="item-subtitle"> </div>
                     </div>
-                    <div class="item-price">Rs. 15,95,000</div>
+                    <div class="item-price">
+                       <a href="/productDetails?id=<%= item.productId._id %>" class="item-price no-underline">Tap here to see the Price</a> 
+                    </div>
                     <div class="quantity-controls">
                         <button class="quantity-btn" onclick="updateQuantity(0, -1)">-</button>
-                        <span class="quantity" id="qty-0">1</span>
+                        <span class="quantity" id="qty-0"><%=item.quantity %></span>
                         <button class="quantity-btn" onclick="updateQuantity(0, 1)">+</button>
                     </div>
                     <button class="remove-btn" onclick="removeItem(0)">×</button>
                 </div>
-
-                <div class="cart-item">
-                    <div class="item-image">
-                        <div class="watch-modern"></div>
-                    </div>
-                    <div class="item-details">
-                        <div class="item-name">ULYSESS NARDIN FREAK</div>
-                        <div class="item-subtitle">42mm SIMPLE</div>
-                    </div>
-                    <div class="item-price" id="price-1">₹2,20,000</div>
-                    <div class="quantity-controls">
-                        <button class="quantity-btn" onclick="updateQuantity(1, -1)">-</button>
-                        <span class="quantity" id="qty-1">1</span>
-                        <button class="quantity-btn" onclick="updateQuantity(1, 1)">+</button>
-                    </div>
-                    <button class="remove-btn" onclick="removeItem(1)">×</button>
-                </div>
-            </div>
+                   <% })%>
+            <%}else{%>
+                <p>YOUR CART IS EMPTY!</p>
+            <%}%>
+             </div>
+               
 
             <!-- Order Summary -->
             <div class="summary-section">
                 <h3>Order Summary</h3>
                 
-                <div class="summary-line">
+                <!-- <div class="summary-line">
                     <span>Subtotal</span>
                     <span id="subtotal">Rs. 18,15,000</span>
                 </div>
@@ -276,7 +272,7 @@
                 <div class="summary-line total">
                     <span>Total</span>
                     <span id="total">Rs. 18,65,000</span>
-                </div>
+                </div> -->
 
                 <button class="checkout-btn">CHECKOUT</button>
                 
@@ -291,20 +287,20 @@
 
     <script>
         // Cart data
-        let cartItems = [
-            {
-                name: "Lanceta",
-                subtitle: "36mm SIMPLE",
-                price: 1595000,
-                quantity: 1
-            },
-            {
-                name: "ULYSESS NARDIN FREAK",
-                subtitle: "42mm SIMPLE", 
-                price: 220000,
-                quantity: 1
-            }
-        ];
+        // let cartItems = [
+        //     {
+        //         name: "Lanceta",
+        //         subtitle: "36mm SIMPLE",
+        //         price: 1595000,
+        //         quantity: 1
+        //     },
+        //     {
+        //         name: "ULYSESS NARDIN FREAK",
+        //         subtitle: "42mm SIMPLE", 
+        //         price: 220000,
+        //         quantity: 1
+        //     }
+        // ];
 
         function formatPrice(price) {
             return `Rs. ${price.toLocaleString('en-IN')}`;
