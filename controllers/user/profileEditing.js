@@ -35,6 +35,27 @@ const changePassword = async (req,res) =>{
         res.status(500).json({success:false,message:"Internal Server Error"});   
     }
 }
+
+const  getEmailEditPage = async (req,res) =>{
+    try {
+        return res.render('user/edit-email')
+    } catch (error) {
+        
+    }
+}
+const postEmailEdit = async (req,res) =>{
+    try {
+        
+        const{currentEmail,newEmail} = req.body;
+        
+
+    } catch (error) {   
+        console.log("error in post emmail edit", error);
+        
+    }
+}
 module.exports = {
-    changePassword
+    changePassword,
+    getEmailEditPage,
+    postEmailEdit
 }

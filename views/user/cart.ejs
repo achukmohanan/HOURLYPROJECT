@@ -244,7 +244,7 @@
                         <span class="quantity" id="qty-0"><%=item.quantity %></span>
                         <button class="quantity-btn" onclick="updateQuantity(0, 1)">+</button>
                     </div>
-                    <button class="remove-btn" onclick="removeItem(0)">×</button>
+                    <button id="deletebtn" class="remove-btn" data-productId="<%= item.productId._id %>" type="submit" >×</button>
                 </div>
                    <% })%>
             <%}else{%>
@@ -286,6 +286,27 @@
     
 
     <script>
+        
+            document.addEventListener('submit',async function(){
+                const productId = this.getAttribute('data-productId')
+
+                Swal.fire({
+                    icon:warning,
+                    title:"You want to delete from cart",
+                    showConfirmButton:true
+                }).then(res => fetch('/deletedromcart',{
+                    method:'POST',
+                    headers:{
+                        'COntent-Type':'application/json'
+                    },
+                    body:JSON.stringify({productId})
+                }))
+            })
+      
+
+
+
+
         // Cart data
         // let cartItems = [
         //     {
@@ -314,19 +335,19 @@
             }
         }
 
-        function removeItem(index) {
-            if (cartItems[index]) {
-                const item = document.querySelector(`.cart-item:nth-child(${index + 1})`);
-                item.style.opacity = '0';
-                item.style.transform = 'translateX(-20px)';
-                item.style.transition = 'all 0.3s ease';
+        // function removeItem(index) {
+        //     if (cartItems[index]) {
+        //         const item = document.querySelector(`.cart-item:nth-child(${index + 1})`);
+        //         item.style.opacity = '0';
+        //         item.style.transform = 'translateX(-20px)';
+        //         item.style.transition = 'all 0.3s ease';
                 
-                setTimeout(() => {
-                    cartItems.splice(index, 1);
-                    location.reload(); // Simple reload for demo
-                }, 300);
-            }
-        }
+        //         setTimeout(() => {
+        //             cartItems.splice(index, 1);
+        //             location.reload(); // Simple reload for demo
+        //         }, 300);
+        //     }
+        // }
 
         function updateSummary() {
             const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);

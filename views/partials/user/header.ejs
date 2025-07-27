@@ -29,43 +29,53 @@
 </style>
     <body>
       <main class="main" id="top">
-        <nav class="navbar navbar-expand-lg navbar-light fixed-top py-3 d-block" data-navbar-on-scroll="data-navbar-on-scroll">
-          <div class="container"><a class="navbar-brand d-inline-flex" href="/home"><span style="font-family: 'Lakki Reddy'" class="text-light fs-4 fw-bold ms-2" >HOURLY</span></a>
-            <button class="navbar-toggler collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top py-3 d-block" data-navbar-on-scroll="data-navbar-on-scroll">
+        <div class="container">
+            <a class="navbar-brand d-inline-flex" href="/home">
+                <span style="font-family: 'Lakki Reddy'" class="text-light fs-4 fw-bold ms-2">HOURLY</span>
+            </a>
+            
+            <button class="navbar-toggler collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
             <div class="collapse navbar-collapse border-top border-lg-0 mt-4 mt-lg-0 justify-content-center" id="navbarSupportedContent">
-              <ul class="navbar-nav me-auto mb-2 mb-lg-0 text-center  d-flex flex-row justify-content-center">
-                <li class="nav-item px-2 "><a class="nav-link fw-bold " aria-current="page" href="/shop">Shop</a></li>
-                <!-- <li class="nav-item px-2"><a class="nav-link fw-bold " aria-current="page" href="#store">CATEGORY</a></li> -->
-                <li class="nav-item px-2"><a class="nav-link fw-bold active" href="/viewpremium">PREMIUM</a></li>
-                <li class="nav-item px-2"><a class="nav-link fw-bold" href="#contact">About Us</a></li>
-                <!-- <li class="nav-item px-2"><a class="nav-link fw-bold" href="#header">REQUEST VIRTUAL</a></li> -->
-              </ul>
-              <form class="d-flex">
-                  <!-- <svg class="feather feather-phone-call" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"> -->
-                    <!-- <path d="M15.05 5A5 5 0 0 1 19 8.95M15.05 1A9 9 0 0 1 23 8.94m-1 7.98v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path> -->
-                  
-                  <%
-                  if(locals.user){%>
-                    <div class="dropdown" >
-                      <a href="#" class="sign-in-link"><%=locals.user.name%></a>
-                      <div class="dropdown-content" >
-                        <a href="/cart">CART</a>
-                        <a href="/account">Profile</a>
-                        <a href="/logout">Logout</a>
-                      </div>
-                    </div>
-                    <%}else{%>
-                      <a href="/signup"> <div class="ms-4 text-light fw-bold">SIGN UP </div></a>
-                      <a href="/login"><div class="ms-4 text-light fw-bold">LOGIN</div></a>
-                      <%}
-                  %>
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0 text-center d-flex flex-row flex-lg-row justify-content-center">
+                    <li class="nav-item px-2">
+                        <a class="nav-link fw-bold" aria-current="page" href="/shop">Shop</a>
+                    </li>
+                    <li class="nav-item px-2">
+                        <a class="nav-link fw-bold active" href="#">PREMIUM</a>
+                    </li>
+                    <li class="nav-item px-2">
+                        <a class="nav-link fw-bold" href="#contact">About Us</a>
+                    </li>
+                </ul>
                 
-                <!-- <div class="ms-4 text-light fw-bold">1 (800) 862 6772 </div> -->
-              </form>
+                <form class="d-flex flex-column flex-lg-row align-items-center">
+                    <%
+                    if(locals.user){%>
+                        <div class="dropdown">
+                            <a href="#" class="sign-in-link text-light fw-bold text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><%=locals.user.name%></a>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li><a class="dropdown-item" href="/cart">CART</a></li>
+                                <li><a class="dropdown-item" href="/account">Profile</a></li>
+                                <li><a class="dropdown-item" href="/logout">Logout</a></li>
+                            </ul>
+                        </div>
+                    <%}else{%>
+                        <a href="/signup" class="text-decoration-none">
+                            <div class="ms-lg-4 ms-0 mt-2 mt-lg-0 text-light fw-bold">SIGN UP</div>
+                        </a>
+                        <a href="/login" class="text-decoration-none">
+                            <div class="ms-lg-4 ms-0 mt-2 mt-lg-0 text-light fw-bold">LOGIN</div>
+                        </a>
+                    <%}%>
+                </form>
             </div>
-          </div>
-        </nav>
-        </main>
+        </div>
+    </nav>
+</main>
     
           <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script> -->
       </body> 

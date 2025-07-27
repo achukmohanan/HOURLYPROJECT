@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">
+    <link rel="stylesheet" href="/assets/css/account.css">
     <style>
          .container {
             max-width: 1200px;
@@ -212,10 +213,12 @@
                         <% if (locals.user) { %>
                             <a href="#" class="text-dark fw-semibold no-underline" ><%= locals.user.name %></a>
                             <div class="dropdown-content">
-                                <a href="/logout" class="logout-btn">Logout</a>
+                                <a href="/logout" class="logout-btn">LOGOUT</a>
+                                <a class="dropdown-item" href="/cart">CART</a>
+                                <a class="dropdown-item" href="/account">PROFILE</a> 
                             </div>
                         <% }else{%>
-                            <a href="">login</a>
+                            <a href="/login">login</a>
                             <%}%>
                 </div>
   

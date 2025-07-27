@@ -5,7 +5,7 @@ const passport = require('passport');
 const { userAuth,checksession} = require('../middlewares/userAuth');
 const profileController = require('../controllers/user/profileControllers')
 const productController = require('../controllers/user/productController')
-const changePassword = require('../controllers/user/changePassword');
+const profileEditing = require('../controllers/user/profileEditing');
 const cartController = require('../controllers/user/cartController');
 //error management
 router.get('/pagenotfound', userController.pageNotFound);
@@ -64,8 +64,9 @@ router.get('/deleteAddress', userAuth ,profileController.deleteAddress);
 router.get('/edit-profile',userAuth ,profileController.getEditProfile);
 router.post('/edit-profile',userAuth ,profileController.editProfile);
 //Changepassword
-router.post('/changePassword', changePassword.changePassword);
-
+router.post('/changePassword', profileEditing.changePassword);
+router.get('/editEmail',userAuth,profileEditing.getEmailEditPage)
+router.post('/editEmail',userAuth , profileEditing.postEmailEdit)
 
 //product management
 router.get('/productDetails',userAuth,productController.productDetails)
@@ -78,5 +79,9 @@ router.post('/search',userAuth,productController.searchProducts)
 router.get('/cart', cartController.getCart)
 
 router.post('/addtocart', cartController.addToCart);
+// router.post('/deletedromcart',cartController.deletedromcart)
 
+
+
+router.get('/testing',cartController.gettest)
 module.exports = router; 

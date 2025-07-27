@@ -61,9 +61,26 @@ const addToCart = async (req,res) =>{
 }
 
 
+// const deletedromcart = async(req,res) =>{
+//     try {
+//         const user = req.session.user;
+//         const{productId} = req.body;
+//         const findProduct = 
+//     } catch (error) {
+        
+//     }
+// }
 
-
+const gettest = async (req,res) =>{
+    try {
+        return res.render('user/testing')
+    } catch (error) {
+        
+    }
+}
 module.exports = {
     getCart,
-    addToCart
+    addToCart,
+    // deletedromcart
+    gettest
 }

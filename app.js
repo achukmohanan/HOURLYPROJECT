@@ -1,9 +1,15 @@
 const express = require('express');
 const app = express();
+
+        app.use((req, res, next) => {
+          res.setHeader("Access-Control-Allow-Origin", "https://b293f2fd9eda.ngrok-free.app");
+          next();
+        });
+    
 const passport = require('./config/passport')
 const env = require('dotenv').config();
 const db = require('./config/db');
-const path = require('path') 
+const path = require('path');
 const session = require('express-session')   
 const userRouter = require('./routes/userRouter');
 const adminRouter = require('./routes/adminRouter');
