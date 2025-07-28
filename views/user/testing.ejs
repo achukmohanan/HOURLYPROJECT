@@ -1,0 +1,177 @@
+ <%- include("../../views/partials/user/supportheader") %>
+    <title>Enter Current Email </title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;
+           
+        }
+
+        .container1 {
+            max-width: 600px;
+            margin: 100px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #555;
+        }
+
+        input[type="email"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        input[type="email"]:focus {
+            outline: none;
+            border-color: #4CAF50;
+        }
+
+        .button-group {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            margin: 0 10px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .btn-primary {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #45a049;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        .message {
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+            display: none;
+        }
+
+        .message.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+    </style>
+</head>
+<body>
+    <div class="container1">
+        <h1>Enter Current Email</h1>
+        
+        <form id="emailForm">
+            <div class="form-group">
+                <label for="currentEmail">Current Email:</label>
+                <input type="email" id="currentEmail" name="currentEmail" placeholder="" >
+            </div>
+       <div class="button-group">
+                <button type="submit" class="btn btn-primary">Send OTP </button>
+                  </div>
+        </form>
+
+        <div id="message" class="message"></div>
+    </div>
+
+    <script>
+        document.getElementById('emailForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            if(!isValidEmail){
+                return; 
+            }
+            const currentEmail = document.getElementById('currentEmail').value;
+            
+            const messageDiv = document.getElementById('message');
+
+           try {
+
+            alert("starting fetch")
+             const response = await fetch('/editEmail',{
+                method:'POST',
+                headers:{
+                    'Content-Type':'application/json'
+                },
+                body:JSON.stringify({currentEmail})
+            })
+
+            const result = await response.json();
+            alert("fetch result",result)
+            if(response.ok){
+                Swal.fire({
+                    icon:'success',
+                    title:'OTP Send',
+                    text:response.message || "OTP Sended to your Current email",
+                    showconfirmButton:true
+                }).then(()=>{
+                    window.location.href('')
+                })
+            }
+           } catch (error) {
+            
+           }
+  });
+
+
+            function isValidEmail(email) {
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                return emailRegex.test(email);
+            }
+
+
+           
+
+       
+
+    </script>
+</body>
+</html>

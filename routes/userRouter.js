@@ -66,7 +66,13 @@ router.post('/edit-profile',userAuth ,profileController.editProfile);
 //Changepassword
 router.post('/changePassword', profileEditing.changePassword);
 router.get('/editEmail',userAuth,profileEditing.getEmailEditPage)
-router.post('/editEmail',userAuth , profileEditing.postEmailEdit)
+router.get('/verifyCurrentEmail',userAuth ,profileEditing.getCurrentEmail)
+router.post('/verifyCurrentEmail',userAuth, profileEditing.postCurrentEmail)
+router.get('/emailEditOtp',userAuth,profileEditing.getEmailEditOtp)
+router.post('/emailEditOtp',userAuth ,profileEditing.postEmailEditOtp)
+router.get('/updateEmail',userAuth , profileEditing.getUpdateEmail)
+router.post('/updateEmail' ,userAuth , profileEditing.postUpdateEmail)
+
 
 //product management
 router.get('/productDetails',userAuth,productController.productDetails)

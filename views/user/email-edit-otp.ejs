@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EMAIL -Confirm with OTP</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+         
+        *{
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background-color: #aae0d4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 600px;
+            display: flex;
+            flex-direction: row;
+            overflow: hidden;
+        }
+
+        .otp-section {
+            flex: 1;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background-color: #f5f5f5;
+        }
+
+        .brand-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background-color: #f0ebeb;
+            padding: 30px;
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        p {
+            margin-bottom: 20px;
+            text-align: center;
+            color: #555;
+        }
+
+        .otp-inputs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+            justify-content: center;
+        }
+
+        .otp-input {
+            width: 40px;
+            height: 40px;
+            text-align: center;
+            font-size: 1.2rem;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .confirm-btn {
+            background-color: #4c4ca6;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 12px;
+            width: 100%;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-bottom: 15px;
+        }
+
+        .confirm-btn:hover {
+            background-color: #3c3c8a;
+        }
+
+        .back-link {
+            color: #1987f6;
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        .watch-icon {
+            width: 80px;
+            margin-bottom: 20px;
+        }
+
+        .brand-name {
+            font-size: 1.8rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+                max-width: 400px;
+            }
+
+            .otp-section, .brand-section {
+                padding: 25px;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .otp-section, .brand-section {
+                padding: 20px 15px;
+            }
+
+            h2 {
+                font-size: 1.3rem;
+            }
+
+            .otp-input {
+                width: 35px;
+                height: 35px;
+            }
+
+            .watch-icon {
+                width: 60px;
+            }
+        }
+    </style>
+</head>
+<body>
+    
+    <div class="container">
+        <div class="otp-section">
+            <h2>Confirm with OTP</h2>
+            <p>Please check your mail address for OTP</p>
+            <form id="otpForm">
+            <div class="otp-inputs" id="otp">
+                <input type="text" id="otp1" name="otp1" class="otp-input"  maxlength="1">
+                <input type="text" id="otp2" name="otp2" class="otp-input"  maxlength="1">
+                <input type="text" id="otp3" name="otp3" class="otp-input" maxlength="1">
+                <input type="text" id="otp4" name="otp4" class="otp-input" maxlength="1">
+            </div>
+            <button class="confirm-btn" type="submit">Confirm</button>
+            </form>
+           <div id="otpTimer" class="otp-timer">
+            <button type="button"    style="color: rgb(42, 34, 34); border: none; cursor: pointer;" onclick="resendOTP()">Resend OTP</button>
+            <span id="timerValue" style="color: red;">60</span>
+           </div>
+
+            <a href="/login" class="back-link">Go back to Login page</a>
+        </div>
+        <div class="brand-section">
+            <img src="assets/img/gallery/HourlyYours.png" style="max-width: 150px;  border-radius: 10px" alt="img" >
+        </div>
+    </div>
+    
+    <script>
+
+        let timer = 60;
+        let timerInterval;
+
+        function startTimer(){
+            timerInterval = setInterval(()=>{
+                timer--;
+                document.getElementById("timerValue").textContent = timer;
+                if(timer<=0){
+                    clearInterval(timerInterval);
+                    document.getElementById("timerValue").classList.add("expired");
+                    document.getElementById("timerValue").textContent = "Expired"
+                    document.getElementById("otp").disabled = true;
+                }
+            },1000);
+        }
+
+document.querySelectorAll('.otp-input').forEach((input, index, inputs) => {
+    input.addEventListener('input', () => {
+        if (input.value.length === 1 && index < inputs.length - 1) {
+            inputs[index + 1].focus();
+        }
+    });
+
+    input.addEventListener('keydown', (e) => {
+        if (e.key === 'Backspace' && input.value === '' && index > 0) {
+            inputs[index - 1].focus();
+        }
+    });
+});
+
+
+startTimer()
+
+        document.getElementById("otpForm").addEventListener("submit", validateOTPForm);
+
+        async function validateOTPForm(e) {
+            e.preventDefault();
+
+            const otp1 = document.getElementById("otp1").value.trim();
+            const otp2 = document.getElementById("otp2").value.trim();
+            const otp3 = document.getElementById("otp3").value.trim();
+            const otp4 = document.getElementById("otp4").value.trim();
+
+            if (!otp1 || !otp2 || !otp3 || !otp4) {
+                Swal.fire("Please enter all 4 digits of the OTP");
+                return;
+            }
+
+            const data = { otp1, otp2, otp3, otp4 };
+            console.log("data otp is ",data)
+            try {
+                const res = await fetch("/emailEditOtp", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                const response = await res.json();
+                console.log(response.message)
+                
+                if (response.success) {
+                    Swal.fire({
+                        icon: "success",
+                        title: "OTP Verified Successfully" || response.message,
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(()=>{
+                        window.location.href = '/updateEmail'
+                    })
+                } else {
+                    Swal.fire({
+                        icon: "error",
+                        title: "Error",
+                        text: response.message
+                    });
+                }
+            } catch (error) {
+                console.log("ERROR IN EMAIL EDIT OTP PAGE",error);
+                Swal.fire({
+                    icon: "error",
+                    title: "Invalid OTP" || response.message,
+                    text: "Please try again"
+                });
+            }
+
+            return false;
+        }
+
+        
+        async function resendOTP() {
+            clearInterval(timerInterval);
+            time = 60;
+            document.getElementById('otp').disabled = false;
+            document.getElementById('timerValue').classList.remove("Expired");
+            startTimer();
+
+            try {
+                const response = await fetch('/resend-otp', {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    }
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    Swal.fire({
+                        icon: "success", // Fixed typo: "Sucess" -> "success"
+                        title: "OTP Sent Again",
+                        showConfirmButton: false,
+                        timer: 1000
+                    }).then(()=>{
+                        window.location.reload();
+                    })
+                } else {
+                    Swal.fire({
+                        icon: "error", // Fixed typo: "Error" -> "error"
+                        title: "Failed to Resend OTP",
+                        text: data.message || "Please try again"
+                    });
+                }
+            } catch (error) {
+                Swal.fire({
+                    icon: "error",
+                    title: "Network Error",
+                    text: "Something went wrong. Please try again"
+                });
+            }
+
+            return false;
+        }
+
+    </script>
+</body>
+</html>

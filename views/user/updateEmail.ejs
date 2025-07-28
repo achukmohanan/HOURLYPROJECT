@@ -1,5 +1,5 @@
  <%- include("../../views/partials/user/supportheader") %>
-    <title>Email Editor</title>
+    <title>Enter Current Email </title>
     <style>
         * {
             margin: 0;
@@ -108,117 +108,74 @@
 </head>
 <body>
     <div class="container1">
-        <h1>Email Editor</h1>
+        <h1>Enter New Email</h1>
         
         <form id="emailForm">
             <div class="form-group">
-                <label for="currentEmail">Current Email:</label>
-                <input type="email" id="currentEmail" name="currentEmail" value="<%=user.email%>" readonly>
+                <label for="currentEmail">New Email:</label>
+                <input type="email" id="newEmail" name="newEmail" placeholder="Enter your New Email " >
             </div>
-
-            <div class="form-group">
-                <label for="newEmail">New Email:</label>
-                <input type="email" id="newEmail" name="newEmail" placeholder="Enter new email address">
-            </div>
-
-            <div class="button-group">
-                <button type="submit" class="btn btn-primary">Send OTP </button>
-                <!-- <button type="button" class="btn btn-secondary" onclick="clearForm()">Clear</button> -->
-            </div>
+       <div class="button-group">
+                <button type="submit" class="btn btn-primary">Update </button>
+                  </div>
         </form>
-
-        <div id="message" class="message"></div>
     </div>
-
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         document.getElementById('emailForm').addEventListener('submit', async function(e) {
             e.preventDefault();
+            const newEmail = document.getElementById('newEmail').value;
             if(!isValidEmail){
+                Swal.fire({
+                icon: 'warning',
+                title: 'Invalid Email',
+                text: 'Please enter a valid email address.',
+                showConfirmButton: true
+                 });
                 return; 
             }
-            const currentEmail = document.getElementById('currentEmail').value;
-            const newEmail = document.getElementById('newEmail').value;
-            const messageDiv = document.getElementById('message');
-
-           try {
-
-            alert("starting fetch")
-             const response = await fetch('/editEmail',{
+            try {
+           
+             const response = await fetch('/updateEmail',{
                 method:'POST',
                 headers:{
                     'Content-Type':'application/json'
                 },
-                body:JSON.stringify({currentEmail,newEmail})
+                body:JSON.stringify({newEmail})
             })
 
             const result = await response.json();
-            alert("fetch result",result)
+           
             if(response.ok){
                 Swal.fire({
                     icon:'success',
-                    title:'OTP Send',
-                    text:response.message || "OTP Sended to your Current email",
+                    title:'SUCCESS',
+                    text:response.message || "Successfully updated your new email",
                     showconfirmButton:true
                 }).then(()=>{
-                    window.location.href('')
+                    window.location.href = '/account'
+                })
+            }else{
+                Swal.fire({
+                    icon:'error',
+                    title:"FAILED TO UPDATE",
+                    text:response.message || "Something Went Wrong"
                 })
             }
            } catch (error) {
-            
+            Swal.fire({
+                    icon:'error',
+                    title:"OOPS",
+                    text:response.message || "Internal Server Error",
+                    showConfirmButton:true
+                })
            }
-
-
-
-
-
-            // Validate inputs
-            if (!currentEmail || !newEmail) {
-                showMessage('Please fill in both email fields.', 'error');
-                return;
+            });
+            function isValidEmail(email) {
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                return emailRegex.test(email);
             }
 
-            if (currentEmail === newEmail) {
-                showMessage('Current email and new email cannot be the same.', 'error');
-                return;
-            }
-
-            // Validate email format
-            if (!isValidEmail(currentEmail) || !isValidEmail(newEmail)) {
-                showMessage('Please enter valid email addresses.', 'error');
-                return;
-            }
-
-            // Success message
-            // showMessage(`Email successfully updated from ${currentEmail} to ${newEmail}`, 'success');
-            
-            // Clear form after successful update
-        //     setTimeout(() => {
-        //         clearForm();
-        //         hideMessage();
-        //     }, 3000);
-        });
-
-        // function clearForm() {
-        //     document.getElementById('currentEmail').value = '';
-        //     document.getElementById('newEmail').value = '';
-        // }
-
-        function showMessage(text, type) {
-            const messageDiv = document.getElementById('message');
-            messageDiv.textContent = text;
-            messageDiv.className = `message ${type}`;
-            messageDiv.style.display = 'block';
-        }
-
-        function hideMessage() {
-            const messageDiv = document.getElementById('message');
-            messageDiv.style.display = 'none';
-        }
-
-        function isValidEmail(email) {
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            return emailRegex.test(email);
-        }
     </script>
 </body>
 </html>

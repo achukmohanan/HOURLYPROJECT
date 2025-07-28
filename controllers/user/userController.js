@@ -117,18 +117,14 @@ const signup = async (req, res) => {
             });
         }
         const otp = generateOtp();
-        const emailSent = await sendVerificationEmail(email, otp);
+        const emailSent = await sendVerificationEmail(email,    );
         if(!emailSent){
            return res.status(500).json({
             success:false,
             message:"Failed to send verification Email.Please try again"
            });
         } 
-
-        
-
-
-        req.session.userOtp = otp;
+         req.session.userOtp = otp;
         req.session.userData = {name,phone,email,password};
         
         // console.log(req.session.userData)
