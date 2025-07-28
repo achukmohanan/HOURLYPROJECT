@@ -85,9 +85,9 @@ router.post('/search',userAuth,productController.searchProducts)
 router.get('/cart', cartController.getCart)
 
 router.post('/addtocart', cartController.addToCart);
-// router.post('/deletedromcart',cartController.deletedromcart)
+router.delete('/delete-cart-item',cartController.deleteCartItem)
 
 
 
-router.get('/testing',cartController.gettest)
+// router.get('/testing',cartController.gettest)
 module.exports = router; 

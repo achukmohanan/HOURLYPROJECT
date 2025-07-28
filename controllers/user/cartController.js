@@ -1,3 +1,4 @@
+
 const User = require('../../models/userSchema')
 const Cart = require('../../models/cartSchema');
 const Product = require('../../models/productSchema');
@@ -61,26 +62,40 @@ const addToCart = async (req,res) =>{
 }
 
 
-// const deletedromcart = async(req,res) =>{
+const deleteCartItem = async(req,res) =>{
+    try {
+        const userId = req.session.user;
+        const{productId} = req.body;
+        console.log("productId is",productId, typeof productId);
+
+        
+
+        const cart = await Cart.findOne({userId});
+        if(!cart){
+            return res.status(404).json({status:false, message:" Cart not Found"});
+        }
+
+        cart.items = cart.items.filter(item=> item.productId.toString() !== productId)
+
+        await cart.save();
+        return res.status(200).json({success:true,message:"Item Removed from the cart"})
+    } catch (error) {
+        console.log("error in detecart item",error);
+        res.status(500).json({success:false,message:"Internal Server error"})
+        
+    }
+}
+
+// const gettest = async (req,res) =>{
 //     try {
-//         const user = req.session.user;
-//         const{productId} = req.body;
-//         const findProduct = 
+//         return res.render('user/testing')
 //     } catch (error) {
         
 //     }
 // }
-
-const gettest = async (req,res) =>{
-    try {
-        return res.render('user/testing')
-    } catch (error) {
-        
-    }
-}
 module.exports = {
     getCart,
     addToCart,
-    // deletedromcart
-    gettest
+    deleteCartItem,
+    // gettest
 }
