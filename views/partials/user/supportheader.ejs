@@ -213,9 +213,9 @@
                         <% if (locals.user) { %>
                             <a href="#" class="text-dark fw-semibold no-underline" ><%= locals.user.name %></a>
                             <div class="dropdown-content">
-                                <a href="/logout" class="logout-btn">LOGOUT</a>
                                 <a class="dropdown-item" href="/cart">CART</a>
                                 <a class="dropdown-item" href="/account">PROFILE</a> 
+                                <a href="/logout" class="logout-btn">LOGOUT</a>
                             </div>
                         <% }else{%>
                             <a href="/login">login</a>

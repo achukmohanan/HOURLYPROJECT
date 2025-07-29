@@ -83,9 +83,9 @@ router.post('/search',userAuth,productController.searchProducts)
 
 // cart
 router.get('/cart', cartController.getCart)
-
 router.post('/addtocart', cartController.addToCart);
 router.delete('/delete-cart-item',cartController.deleteCartItem)
+router.patch('/update-quantity-cart',cartController.updateCartQuantity)
 
 
 

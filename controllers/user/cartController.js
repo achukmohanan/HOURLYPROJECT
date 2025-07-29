@@ -27,10 +27,20 @@ const addToCart = async (req,res) =>{
         const { productId } = req.body;
         const userId =  req.session.user;
         
-        const product = await Product.findById(productId)
-        if(!product){
-            return res.status(400).res.json({success:false,message:"Product Not Found"})
+        // console.log("product id from frontend" ,productId ,  typeof productId)
+        const product = await Product.findOne({
+            _id:productId, 
+        }).populate('category');
+        
+        if(product.isBlocked===true){
+            return res.status(400).json({success:false,message:"Product is Blocked!"})
         }
+        if(!product){
+            return  res.status(400).json({success:false,message:"Product Not Found or Blocked!"})
+        }
+        if(!product.category || product.category.isListed === false || product.category.isBlocked){
+            return res.status(400).json({success:false,message:"Product Category is Blocked or Unlisted"})
+        }   
          
         let cart = await Cart.findOne({userId});
 
@@ -38,7 +48,7 @@ const addToCart = async (req,res) =>{
             cart = new Cart({userId , items:[]});
         }
 
-        const existingItem = cart.items.find(item => item.productId.toString() === productId)
+        const existingItem = cart.items.find(item => item.productId.toString() === productId.toString())
 
         if(existingItem){
             existingItem.quantity += 1;
@@ -49,8 +59,7 @@ const addToCart = async (req,res) =>{
 
             });
         }
-        // console.log("Cart before save:", cart)
-        // 6;
+    console.log("Cart items before saving:", cart.items);
 
         await cart.save();
         // console.log("cart is ",cart)
@@ -86,6 +95,35 @@ const deleteCartItem = async(req,res) =>{
     }
 }
 
+const updateCartQuantity = async (req,res) =>{
+    try {
+        const userId = req.session.user;
+        const {productId,change} = req.body;
+
+        const cart = await Cart.findOne({userId});
+        if(!cart){
+            return res.status(404).json({success:false,message:"Cart not Found"})
+        }
+        const item = cart.items.find(item=>item.productId.toString() === productId.toString())
+
+        if(!item){
+            return res.status(404).json({success:false,message:"product not in the Cart"})
+        }
+        item.quantity +=change;
+
+        if(item.quantity<=0){
+            return res.status(404).json({success:false,message:"Quantity unchanged as it’s already at minimum"})
+        }
+
+        cart.save();
+        return res.status(200).json({success:true,newQuantity:item.quantity || 1})
+
+    } catch (error) {
+        console.log("error in the updateCartQuantity",error);
+        res.status(500).json({success:false,message:"Internal Server Error"});
+    }
+}
+
 // const gettest = async (req,res) =>{
 //     try {
 //         return res.render('user/testing')
@@ -97,5 +135,6 @@ module.exports = {
     getCart,
     addToCart,
     deleteCartItem,
+    updateCartQuantity
     // gettest
 }
