@@ -7,7 +7,7 @@
       <meta name="viewport" content="width=device-width, initial-scale=1">
 
       <title>HOURLY |  WATCHES </title>
-
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
       <link rel="apple-touch-icon" sizes="180x180" href="/assets/img/favicons/apple-touch-icon.png">
       <link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicons/favicon-32x32.png">
       <link rel="icon" type="image/png" sizes="16x16" href="/assets/img/favicons/favicon-16x16.png">
@@ -17,7 +17,7 @@
       <meta name="theme-color" content="#ffffff">
       <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
       <link href="/assets/css/theme.css" rel="stylesheet" type="text/css">
-      
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
     </head>
 
 <style>
@@ -51,16 +51,18 @@
                         <a class="nav-link fw-bold" href="#contact">About Us</a>
                     </li>
                 </ul>
-                
+               <a class="text-light fw-bold" href="/cart"><i class="bi bi-cart"></i></a>
+              
                 <form class="d-flex flex-column flex-lg-row align-items-center">
                     <%
                     if(locals.user){%>
                         <div class="dropdown">
                             <a href="#" class="sign-in-link text-light fw-bold text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><%=locals.user.name%></a>
                             <ul class="dropdown-menu dropdown-menu-end">
-                                <li><a class="dropdown-item" href="/cart">CART</a></li>
-                                <li><a class="dropdown-item" href="/account">Profile</a></li>
-                                <li><a class="dropdown-item" href="/logout">Logout</a></li>
+                                
+                                <li><a class="dropdown-item" href="/wishlist"><i class="bi bi-suit-heart-fill mx-2"></i>WISHLIST</a></li>
+                                <li><a class="dropdown-item" href="/account"><i class="bi bi-person-circle mx-2 "></i>PROFILE</a></li>
+                                <li><a class="dropdown-item mx-4" href="/logout">Logout</a></li>
                             </ul>
                         </div>
                     <%}else{%>

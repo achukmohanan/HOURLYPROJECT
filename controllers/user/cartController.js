@@ -55,11 +55,11 @@ const addToCart = async (req,res) =>{
         }else{
             cart.items.push({
                 productId,
-                quantity:1,
+                quantity:1, 
 
             });
         }
-    console.log("Cart items before saving:", cart.items);
+    // console.log("Cart items before saving:", cart.items);
 
         await cart.save();
         // console.log("cart is ",cart)
@@ -75,7 +75,7 @@ const deleteCartItem = async(req,res) =>{
     try {
         const userId = req.session.user;
         const{productId} = req.body;
-        console.log("productId is",productId, typeof productId);
+        // console.log("productId is",productId, typeof productId);
 
         
 
@@ -109,14 +109,23 @@ const updateCartQuantity = async (req,res) =>{
         if(!item){
             return res.status(404).json({success:false,message:"product not in the Cart"})
         }
-        item.quantity +=change;
 
-        if(item.quantity<=0){
-            return res.status(404).json({success:false,message:"Quantity unchanged as it’s already at minimum"})
+        const product = await Product.findById(productId)
+        if(!product){
+            return res.status(400).json({success:false,message:"Product not Found"})
         }
 
-        cart.save();
-        return res.status(200).json({success:true,newQuantity:item.quantity || 1})
+
+        if(item.quantity + change < 1){
+            return res.status(400).json({success:false,message:"Minimum Quantity Should be 1"})
+        }
+        const maxLimit = Math.min(5,product.quantity)
+        if(item.quantity + change > maxLimit){
+            return res.status(400).json({success:false,message:"Maximum quantity limit reached"})
+        }
+        item.quantity +=change;
+         await cart.save();
+        return res.status(200).json({success:true,newQuantity:item.quantity})
 
     } catch (error) {
         console.log("error in the updateCartQuantity",error);
@@ -124,17 +133,22 @@ const updateCartQuantity = async (req,res) =>{
     }
 }
 
-// const gettest = async (req,res) =>{
-//     try {
-//         return res.render('user/testing')
-//     } catch (error) {
+const gettest = async (req,res) =>{
+    try {
+        const userId = req.session.user
+
+        const user = await User.findById(userId)
+        return res.render('user/testing',{
+            user:user
+        })
+    } catch (error) {
         
-//     }
-// }
+    }
+}
 module.exports = {
     getCart,
     addToCart,
     deleteCartItem,
-    updateCartQuantity
-    // gettest
+    updateCartQuantity,
+    gettest
 }

@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">
     <link rel="stylesheet" href="/assets/css/account.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
     <style>
          .container {
             max-width: 1200px;
@@ -209,13 +210,16 @@
                     <li><a href="/shop">Watches</a></li>
                     <li><a href="#contact">Contact</a></li>
                 </ul>
+                
                 <div class="user-dropdown">
-                        <% if (locals.user) { %>
+                       <% if (locals.user) { %>
                             <a href="#" class="text-dark fw-semibold no-underline" ><%= locals.user.name %></a>
                             <div class="dropdown-content">
-                                <a class="dropdown-item" href="/cart">CART</a>
-                                <a class="dropdown-item" href="/account">PROFILE</a> 
-                                <a href="/logout" class="logout-btn">LOGOUT</a>
+                                 <a class="dropdown-item" href="/account"><i class="bi bi-person-circle mx-2"></i>PROFILE</a>
+                                 <a class="dropdown-item" href="/cart"><i class="bi bi-cart mx-2" style="color: #000000"></i>CART</a>
+                                <a class="dropdown-item " href=""><i class="bi bi-suit-heart-fill mx-2"></i>WISHLIST</a>
+                                 
+                                <a href="/logout" class="logout-btn  "><i class="bi bi-box-arrow-right mx-2"></i>LOGOUT</a>
                             </div>
                         <% }else{%>
                             <a href="/login">login</a>

@@ -7,6 +7,7 @@ const profileController = require('../controllers/user/profileControllers')
 const productController = require('../controllers/user/productController')
 const profileEditing = require('../controllers/user/profileEditing');
 const cartController = require('../controllers/user/cartController');
+const wishlistController = require('../controllers/user/wishlistController');
 //error management
 router.get('/pagenotfound', userController.pageNotFound);
 
@@ -87,7 +88,9 @@ router.post('/addtocart', cartController.addToCart);
 router.delete('/delete-cart-item',cartController.deleteCartItem)
 router.patch('/update-quantity-cart',cartController.updateCartQuantity)
 
+// whishlist management
+router.get('/wishlist',userAuth , wishlistController.getWishList)
+router.post('/add-to-wishlist',userAuth , wishlistController.postWishList)
 
-
-// router.get('/testing',cartController.gettest)
+router.get('/testing',cartController.gettest)
 module.exports = router; 

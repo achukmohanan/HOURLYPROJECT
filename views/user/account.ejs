@@ -75,10 +75,10 @@
                                 </a>
                             </li>
                             <li>
-                                <a href="#" class="sidebar-link" data-tab="email">
+                                <!-- <a href="#" class="sidebar-link" data-tab="email">
                                     <span class="icon">✉️</span>
                                     Account Email
-                                </a>
+                                </a> -->
                             </li>
                             <li>
                                 <a href="#" class="sidebar-link" data-tab="wallet">
@@ -149,8 +149,8 @@
                             <div class="row">                                                 
                               <% if(userAddress  && userAddress.address &&  userAddress.address.length>0 ) { %>
                                     <% userAddress.address.forEach((address) => { %>
-                                        <div class="col-lg-6">
-                                            <div class="address-card">
+                                        <div class="col-lg-6 ">
+                                            <div class="address-card p-3">
                                                 <div class="card-header">
                                                     <h5><%= address.addressType %></h5>
                                                 </div>
@@ -252,7 +252,7 @@
                         </div>
 
                         <!-- Email Tab -->
-                        <div class="tab-pane" id="email">
+                        <!-- <div class="tab-pane" id="email">
                             <h2>Account Email</h2>
                             <div class="form-group">
                                 <label for="currentEmail">Current Email</label>
@@ -263,7 +263,7 @@
                                 <input type="email" id="newEmail" name="newEmail" placeholder="Enter new email">
                             </div>
                             <button class="save-btn">Update Email</button>
-                        </div>
+                        </div> -->
 
                         <!-- Wallet Tab -->
                         <div class="tab-pane" id="wallet">

@@ -54,7 +54,7 @@
     
     <div class="row   ">
       <% if(products && products.length > 0) { %>
-        <% for(let i=0; i<products.length; i++) { %>
+        <% for(let i=0; i<products.length; i++) {   %>
           <div class="col-lg-3 col-md-4 col-sm-6 col-12 homeproduct g-3   ">
             <div class="product-cart-wrap h-100">
               <div class="product-img-action-wrap">
@@ -87,11 +87,14 @@
                 </div>
                 
                 <div class="product-actions mt-3  d-flex justify-content-center">
-                  <!-- <a href="/addToCart?id=<%=products[i]._id %>"  -->
+                  
                     <button class="btn btn-primary addtocart" data-productId="<%= products[i]._id %>" type="button">
-                    <i class="fas fa-shopping-cart me-2"></i>Add to Cart          
+                    <i class="bi bi-cart-plus  "></i> Cart          
                   </button>
-                </div>
+                  <button class="btn btn-primary buy mx-1" type="button">
+                    <a href="/productDetails?id=<%=products[i]._id %> " class="text-light"><i class="bi bi-lightning-charge-fill"></i>BUY</a>
+                  </button>
+                </div>  
                 
               </div>
             </div>

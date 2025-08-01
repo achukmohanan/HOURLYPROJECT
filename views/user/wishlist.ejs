@@ -1,5 +1,5 @@
  <%- include("../../views/partials/user/supportheader") %>
-    <title>HOURLY | cart</title>
+    <title>HOURLY | WISHLIST</title>
     <style>
         * {
             margin: 0;
@@ -216,16 +216,16 @@
     <!-- Main Content -->
     <main class="main-content">
         <div class="breadcrumb">
-            <a href="#">Home</a> > Cart
+            <a href="#">Home</a> > Wishlist
         </div>
              <h3 class="text-muted" >Hi <%=user.name %></h3>
         <h1 class="page-title">Your Wishlist</h1>
 
         <div class="cart-container">
-            <!-- Cart Items -->
+            <!-- Wishlist Items -->
             <div class="cart-section"> 
-                <%if(cart && cart.items.length > 0) {%> 
-                    <% cart.items.forEach(item=>{%>
+                <%if(wishlist && wishlist.products.length >0){%>
+            <% wishlist.products.forEach(item =>{%> 
                 <div class="cart-item">
                     <div class="item-image">
                         <div class="watch-classic">
@@ -246,13 +246,13 @@
                     </div> -->
                     <button class="deletebtn remove-btn" data-productId="<%= item.productId._id %>" type="button" >×</button>
                 </div>
-                   <% })%>
-            <%}else{%>
+                  <%}) %> 
+                <%}else{%>
                 <div class="d-flex  justify-content-center border p-5">
                     <p>YOUR WISHLIST IS EMPTY!</p>
                 </div>
-               
-            <%}%>
+               <%}%> `1
+          
              </div>
                
 
@@ -291,69 +291,69 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         
-        document.addEventListener('DOMContentLoaded',function(){
-            const deletebutton = document.querySelectorAll('.deletebtn')
+//         document.addEventListener('DOMContentLoaded',function(){
+//             const deletebutton = document.querySelectorAll('.deletebtn')
 
-            deletebutton.forEach(button =>{
+//             deletebutton.forEach(button =>{
 
-                button.addEventListener('click',async function(){
-                    const productId = this.getAttribute('data-productId')
+//                 button.addEventListener('click',async function(){
+//                     const productId = this.getAttribute('data-productId')
 
                     
-                const result = await Swal.fire({
-                        icon:'warning',
-                        title:"You want to delete this item from cart ?",
-                        showConfirmButton:true,
-                        confirmButtonText:'Yes,delete it',
-                        showCancelButton:true,
-                        cancelButtonColor:'#ff0000'
-                    })
+//                 const result = await Swal.fire({
+//                         icon:'warning',
+//                         title:"You want to delete this item from cart ?",
+//                         showConfirmButton:true,
+//                         confirmButtonText:'Yes,delete it',
+//                         showCancelButton:true,
+//                         cancelButtonColor:'#ff0000'
+//                     })
 
-                    if(result.isConfirmed){
-                        try {
-                         const response= await fetch('/delete-cart-item',{
-                            method:'DELETE',
-                            headers:{
-                                'Content-Type':'application/json'
-                            },
-                            body:JSON.stringify({productId})
-                         });
+//                     if(result.isConfirmed){
+//                         try {
+//                          const response= await fetch('/delete-cart-item',{
+//                             method:'DELETE',
+//                             headers:{
+//                                 'Content-Type':'application/json'
+//                             },
+//                             body:JSON.stringify({productId})
+//                          });
                          
-                         const data = await  response.json()
+//                          const data = await  response.json()
 
-                         if(data.success){
-                            Swal.fire({
-                                icon:'success',
-                                title:"Removed",
-                                text:data.message
-                            }).then(()=>{
-                                window.location.reload();
-                            })
-                         }else{
-                            Swal.fire({
-                                icon:'error',
-                                title:"Failed",
-                                text:'data.message',
-                                showConfirmButton:true
-                            })
-                         }
+//                          if(data.success){
+//                             Swal.fire({
+//                                 icon:'success',
+//                                 title:"Removed",
+//                                 text:data.message
+//                             }).then(()=>{
+//                                 window.location.reload();
+//                             })
+//                          }else{
+//                             Swal.fire({
+//                                 icon:'error',
+//                                 title:"Failed",
+//                                 text:'data.message',
+//                                 showConfirmButton:true
+//                             })
+//                          }
 
-                        } catch (error) {
-                            console.log("error in frontend ",error);
-                            Swal.fire({
-                                icon:'error',
-                                title:'Oops',
-                                text: "Internal Server Error",
-                                showConfirmButton:true
-                            })
-                        }
+//                         } catch (error) {
+//                             console.log("error in frontend ",error);
+//                             Swal.fire({
+//                                 icon:'error',
+//                                 title:'Oops',
+//                                 text: "Internal Server Error",
+//                                 showConfirmButton:true
+//                             })
+//                         }
 
-                    }
+//                     }
                    
-                })
-            })
+//                 })
+//             })
       
-})
+// })
 
     //  async function updateQuantity(productId,change){
     //     try {
@@ -399,5 +399,5 @@
     //  }
 
        
-    </script>
+ </script>
   <!-- <%- include("../../views/partials/user/supportfooter") %> -->

@@ -234,17 +234,15 @@
                     
                     <div class="item-details">
                         <div class="item-name"><%= item.productId.productName %></div>
-                        <div class="item-subtitle"> </div>
+                        <div class="item-subtitle"> </div>  
                     </div>
                     <div class="item-price">
                        <a href="/productDetails?id=<%= item.productId._id %>" class="item-price no-underline">Tap here to see the Price</a> 
                     </div>
-                    <div class="quantity-controls">
-                        <%cart.items.forEach((item,index)=>{%> 
+                    <div class="quantity-controls">    
                         <button class="quantity-btn" onclick="updateQuantity('<%= item.productId._id %>', -1)">-</button>
                         <span class="quantity" id="qty-<%= item.productId._id %>"><%=item.quantity %></span>
-                        <button class="quantity-btn" onclick="updateQuantity('<%= item.productId._id %>', 1)">+</button>
-                        <%}) %>
+                        <button class="quantity-btn" onclick="updateQuantity('<%= item.productId._id %>', 1)">+</button>   
                     </div>
                     <button class="deletebtn remove-btn" data-productId="<%= item.productId._id %>" type="button" >×</button>
                 </div>
@@ -368,24 +366,25 @@
 
             const result = await response.json();
            
-            if(response.success){
+            if(result.success){
                 const qty = document.getElementById(`qty-${productId}`);
                 qty.textContent = result.newQuantity;
-                
-               
-            }
-            if(result.newQuantity === 0){
+                 setTimeout(()=>{
+                     window.location.reload();
+                },200)
+            }else{
                 Swal.fire({
                     icon:'warning',
-                    text:result.message || "Item Must Want 1 Quantity",
+                    text:result.message ,
                     showConfirmButton:"true"
 
                 })
+                .then(()=>{
+                    window.location.reload()
+                })
             }
              
-            setTimeout(()=>{
-                     window.location.reload();
-                },2000)
+           
 
         } catch (error) {
             console.log("error in frontend of update quantity in cart");
