@@ -68,13 +68,13 @@
                                             <div class="product-price mb-2">
                                                 <span class="text-brand fs-4 fw-bold">₹   <%=product.salePrice.toLocaleString('en-IN') %></span>
                                                 <del class="text-muted ms-3"><%=product.regularPrice.toLocaleString('en-IN') %></del>
-                                                <!-- <span class="text-success ms-3">
+                                                <span class="text-success ms-3">
                                                 <% if(!totalOffer){ %>
                                                     No Offers
                                                 <% } else { %>
                                                     <%= totalOffer %>% Offer
                                                 <% } %>
-                                                </span> -->
+                                                </span>
                                             </div>
 
                                             <p class="mb-3"><%=product.description %></p>
@@ -96,7 +96,8 @@
 
                                             <div class="product-extra-link2 d-flex gap-3">
                                                 <button type="button" class="btn btn-primary add-to-cart" data-productId ="<%=product._id %>" >Add to cart</button>
-                                                <!-- <a class="btn btn-outline-secondary" href="#"><i class="fi-rs-heart"></i></a> -->
+                                                <button type="button" class="btn btn-secondary" onclick="addToWishlist('<%=product._id %>')">Add to Wishlist</button>
+                                                
                                             </div>
 
                                             <ul class="product-meta font-xs mt-4">
@@ -126,6 +127,7 @@
                 <div class="col-md-3 mb-3">
                     <div class="card related-product-card  h-100">
                         <img src="  <%= p.productImage[0] %>" class="card-img-top border-radius-10" style="height:250px; object-fit:cover;">
+                         <span class="wishlist1-btn btn" onclick="addToWishlist('<%=product._id %>')">❤️</span>
                         <div class="card-body text-center">
                             <h5 class="card-title"><%= p.productName %></h5>
 
@@ -195,7 +197,39 @@
 });
 
 
+async function addToWishlist(productId) {
+    try {
+      const response = await fetch('/add-to-wishlist',{
+        method:'POST',
+        headers:{
+          'Content-Type':'application/json'
+        },
+        body:JSON.stringify({productId})
+      })
 
+      const result =await response.json();
+
+      if(result.success){
+        
+        Swal.fire({
+          icon:'success',
+          title:"Success",
+          text:result.message,
+        })
+      }else{
+        Swal.fire({
+          icon:'error',
+          title:'ERROR',
+          text:result.message,
+          showConfirmButton:true
+        })
+      }
+    } catch (error) {
+      console.log("error in frontend addtoWishlist",error)
+      Swal('OOPS','something Went Wrong','error')
+    }
+
+}
 
 
 document.addEventListener("DOMContentLoaded", function () {

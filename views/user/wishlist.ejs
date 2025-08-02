@@ -1,211 +1,404 @@
  <%- include("../../views/partials/user/supportheader") %>
     <title>HOURLY | WISHLIST</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Arial', sans-serif;
-            background-color: #f5f5f5;
-            color: #333;
-        }
-
-      
-        /* Main Content */
-        .main-content {
-            max-width: 1200px;
-            margin: 70px auto;
-            padding: 40px 20px;
-        }
-
-        .breadcrumb {
-            margin-bottom: 40px;
-            font-size: 14px;
-            color: #666;
-        }
-
-        .breadcrumb a {
-            text-decoration: none;
-            color: #666;
-        }
-
-        .page-title {
-            font-size: 32px;
-            font-weight: bold;
-            margin-bottom: 40px;
-            color: #333;
-        }
-
-        .cart-container {
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 60px;
-        }
-
-        /* Cart Items */
-        .cart-section h3 {
-            font-size: 18px;
-            font-weight: normal;
-            margin-bottom: 30px;
-            color: #333;
-        }
-
-        .cart-item {
-            display: flex;
-            align-items: center;
-            padding: 20px 0;
-            border-bottom: 1px solid #eee;
-        }
-
-        .item-image {
-            width: 80px;
-            height: 80px;
-            background-color: #f0f0f0;
-            border-radius: 8px;
-            margin-right: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-        }
-
-        .item-image img {
-            width: 60px;
-            height: 60px;
-            object-fit: contain;
-        }
-
-        .item-details {
-            flex: 1;
-        }
-
-        .item-name {
-            font-size: 16px;
-            font-weight: normal;
-            margin-bottom: 5px;
-            color: #333;
-        }
-
-        .item-subtitle {
-            font-size: 12px;
-            color: #999;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .item-price {
-            font-size: 16px;
-            color: #333;
-            margin-right: 20px;
-            min-width: 100px;
-        }
-
-        .quantity-controls {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-right: 20px;
-        }
-
-        .quantity-btn {
-            width: 30px;
-            height: 30px;
-            border: 1px solid #ddd;
-            background: white;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 16px;
-        }
-
-        .quantity-btn:hover {
-            background: #f5f5f5;
-        }
-
-        .quantity {
-            width: 40px;
-            text-align: center;
-            font-size: 14px;
-        }
-
-        .remove-btn {
-            background: none;
-            border: none;
-            font-size: 18px;
-            cursor: pointer;
-            color: #999;
-            width: 30px;
-            height: 30px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .remove-btn:hover {
-            color: #666;
-        }
-
-        /* Order Summary */
-        .summary-section h3 {
-            font-size: 18px;
-            font-weight: normal;
-            margin-bottom: 30px;
-            color: #333;
-        }
-
-        .summary-line {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 15px;
-            font-size: 14px;
-        }
-
-        .summary-line.total {
-            font-size: 16px;
-            font-weight: bold;
-            padding-top: 15px;
-            border-top: 1px solid #eee;
-            margin-top: 20px;
-        }
-
-        .checkout-btn {
-            width: 100%;
-            background-color: #333;
-            color: white;
-            border: none;
-            padding: 15px;
-            font-size: 14px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            cursor: pointer;
-            margin-top: 20px;
-        }
-
-        .checkout-btn:hover {
-            background-color: #555;
-        }
-
-        .continue-shopping {
-            text-align: center;
-            margin-top: 15px;
-        }
-
-        .continue-shopping a {
-            color: #666;
-            text-decoration: none;
-            font-size: 12px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .no-underline {
-  text-decoration: none;
+      * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f5f5f5;
+    color: #333;
+}
+
+/* Main Content */
+.main-content {
+    max-width: 1200px;
+    margin: 70px auto;
+    padding: 40px 20px;
+}
+
+.breadcrumb {
+    margin-bottom: 40px;
+    font-size: 14px;
+    color: #666;
+}
+
+.breadcrumb a {
+    text-decoration: none;
+    color: #666;
+}
+
+.page-title {
+    font-size: 32px;
+    font-weight: bold;
+    margin-bottom: 40px;
+    color: #333;
+}
+
+.cart-container {
+    display: flex;
+    align-items: flex-start;
+    flex-direction: column;
+}
+
+/* Cart Items */
+.cart-section {
+    width: 100%;
+}
+
+.cart-section h3 {
+    font-size: 18px;
+    font-weight: normal;
+    margin-bottom: 30px;
+    color: #333;
+}
+
+.cart-item {
+    display: flex;
+    align-items: center;
+    padding: 20px 0;
+    border-bottom: 1px solid #eee;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.item-image {
+    width: 80px;
+    height: 80px;
+    background-color: #f0f0f0;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.item-image img {
+    width: 60px;
+    height: 60px;
+    object-fit: contain;
+}
+
+.item-details {
+    flex: 1;
+    min-width: 200px;
+}
+
+.item-name {
+    font-size: 16px;
+    font-weight: normal;
+    margin-bottom: 5px;
+    color: #333;
+}
+
+.item-subtitle {
+    font-size: 12px;
+    color: #999;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.item-price {
+    font-size: 16px;
+    color: #333;
+    margin-right: 20px;
+    min-width: 100px;
+}
+
+.quantity-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-right: 20px;
+}
+
+.quantity-btn {
+    width: 30px;
+    height: 30px;
+    border: 1px solid #ddd;
+    background: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+}
+
+.quantity-btn:hover {
+    background: #f5f5f5;
+}
+
+.quantity {
+    width: 40px;
+    text-align: center;
+    font-size: 14px;
+}
+
+.remove-btn {
+    background: none;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+    color: #999;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.remove-btn:hover {
+    color: #666;
+}
+
+/* Order Summary */
+.summary-section h3 {
+    font-size: 18px;
+    font-weight: normal;
+    margin-bottom: 30px;
+    color: #333;
+}
+
+.summary-line {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 15px;
+    font-size: 14px;
+}
+
+.summary-line.total {
+    font-size: 16px;
+    font-weight: bold;
+    padding-top: 15px;
+    border-top: 1px solid #eee;
+    margin-top: 20px;
+}
+
+.checkout-btn {
+    width: 100%;
+    background-color: #333;
+    color: white;
+    border: none;
+    padding: 15px;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    cursor: pointer;
+    margin-top: 20px;
+}
+
+.checkout-btn:hover {
+    background-color: #555;
+}
+
+.continue-shopping {
+    text-align: center;
+    margin-top: 15px;
+}
+
+.continue-shopping a {
+    color: #666;
+    text-decoration: none;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.no-underline {
+    text-decoration: none;
+}
+
+/* Responsive Design */
+
+/* Tablet styles (768px and below) */
+@media (max-width: 768px) {
+    .main-content {
+        margin: 20px auto;
+        padding: 20px 15px;
+    }
+    
+    .page-title {
+        font-size: 28px;
+        margin-bottom: 30px;
+    }
+    
+    .breadcrumb {
+        margin-bottom: 20px;
+        font-size: 12px;
+    }
+    
+    .cart-item {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 15px 0;
+        gap: 10px;
+    }
+    
+    .item-image {
+        width: 60px;
+        height: 60px;
+        align-self: center;
+    }
+    
+    .item-image img {
+        width: 45px;
+        height: 45px;
+    }
+    
+    .item-details {
+        width: 100%;
+        text-align: center;
+        min-width: auto;
+    }
+    
+    .item-name {
+        font-size: 14px;
+    }
+    
+    .item-price {
+        margin-right: 0;
+        min-width: auto;
+        text-align: center;
+        width: 100%;
+    }
+    
+    .quantity-controls {
+        justify-content: center;
+        margin-right: 0;
+        width: 100%;
+    }
+    
+    .remove-btn {
+        align-self: center;
+    }
+}
+
+/* Mobile styles (480px and below) */
+@media (max-width: 480px) {
+    .main-content {
+        margin: 10px auto;
+        padding: 15px 10px;
+    }
+    
+    .page-title {
+        font-size: 24px;
+        margin-bottom: 20px;
+        text-align: center;
+    }
+    
+    .breadcrumb {
+        margin-bottom: 15px;
+        text-align: center;
+    }
+    
+    .cart-section h3 {
+        font-size: 16px;
+        margin-bottom: 20px;
+        text-align: center;
+    }
+    
+    .cart-item {
+        padding: 10px;
+        border-radius: 8px;
+        background-color: white;
+        margin-bottom: 15px;
+        border-bottom: none;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    .item-image {
+        width: 50px;
+        height: 50px;
+    }
+    
+    .item-image img {
+        width: 35px;
+        height: 35px;
+    }
+    
+    .item-name {
+        font-size: 13px;
+        margin-bottom: 8px;
+    }
+    
+    .item-subtitle {
+        font-size: 11px;
+    }
+    
+    .item-price {
+        font-size: 14px;
+    }
+    
+    .quantity-btn {
+        width: 35px;
+        height: 35px;
+        font-size: 18px;
+    }
+    
+    .quantity {
+        width: 50px;
+        font-size: 16px;
+    }
+    
+    .remove-btn {
+        width: 35px;
+        height: 35px;
+        font-size: 20px;
+    }
+    
+    /* Empty wishlist styling for mobile */
+    .d-flex.flex-column {
+        padding: 30px 15px !important;
+    }
+    
+    .fs-1 {
+        font-size: 2rem !important;
+    }
+    
+    .fs-4 {
+        font-size: 1.2rem !important;
+    }
+}
+
+/* Very small mobile styles (320px and below) */
+@media (max-width: 320px) {
+    .main-content {
+        padding: 10px 5px;
+    }
+    
+    .page-title {
+        font-size: 20px;
+    }
+    
+    .cart-item {
+        padding: 8px;
+        gap: 8px;
+    }
+    
+    .item-name {
+        font-size: 12px;
+    }
+    
+    .item-price {
+        font-size: 12px;
+    }
+    
+    .quantity-btn {
+        width: 30px;
+        height: 30px;
+        font-size: 16px;
+    }
+    
+    .quantity {
+        width: 40px;
+        font-size: 14px;
+    }
+}
        
         
     </style>
@@ -239,51 +432,18 @@
                     <div class="item-price">
                        <a href="/productDetails?id=<%= item.productId._id %>" class="item-price no-underline">Tap here to see the Price</a> 
                     </div>
-                    <!-- <div class="quantity-controls">    
-                        <button class="quantity-btn" onclick="updateQuantity('<%= item.productId._id %>', -1)">-</button>
-                        <span class="quantity" id="qty-<%= item.productId._id %>"><%=item.quantity %></span>
-                        <button class="quantity-btn" onclick="updateQuantity('<%= item.productId._id %>', 1)">+</button>   
-                    </div> -->
-                    <button class="deletebtn remove-btn" data-productId="<%= item.productId._id %>" type="button" >×</button>
+                    <button class="btn btn-primary add-to-cart" data-productId="<%= item.productId._id %>" type="button">Add to Cart </button>  
+                    <button class="deletebtn remove-btn" data-productId="<%= item.productId._id %>" type="button" ><i class="bi bi-x-circle text-danger"></i></button>
                 </div>
                   <%}) %> 
                 <%}else{%>
-                <div class="d-flex  justify-content-center border p-5">
-                    <p>YOUR WISHLIST IS EMPTY!</p>
+                <div class="d-flex flex-column justify-content-center align-items-center border p-5 bg-light rounded shadow">
+                    <i class="bi bi-heartbreak text-danger fs-1 mb-3"></i>
+                    <p class="mb-2 fw-bold fs-4 text-secondary">YOUR WISHLIST IS EMPTY!</p>
+                    <a href="/shop" class="btn btn-outline-primary">Tap to Discover</a>
                 </div>
-               <%}%> `1
-          
-             </div>
-               
-
-            <!-- Order Summary -->
-            <!-- <div class="summary-section">
-                <h3>Order Summary</h3>
-                 -->
-                <!-- <div class="summary-line">
-                    <span>Subtotal</span>
-                    <span id="subtotal">Rs. 18,15,000</span>
-                </div>
-                <div class="summary-line">
-                    <span>Shipping</span>
-                    <span>Free</span>
-                </div>
-                <div class="summary-line">
-                    <span>Tax</span>
-                    <span id="tax">Rs. 50,000</span>
-                </div>
-                <div class="summary-line total">
-                    <span>Total</span>
-                    <span id="total">Rs. 18,65,000</span>
-                </div> -->
-                
-                <!-- <button class="checkout-btn">CHECKOUT</button>
-                
-                <div class="continue-shopping">
-                    <a href="#">Continue Shopping</a>
-                </div>
-            </div>
-        </div> -->
+                <%}%> 
+            </div>       
     </main>
     
 </body>
@@ -291,112 +451,113 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         
-//         document.addEventListener('DOMContentLoaded',function(){
-//             const deletebutton = document.querySelectorAll('.deletebtn')
+        document.addEventListener('DOMContentLoaded',function(){
+            const deletebutton = document.querySelectorAll('.deletebtn')
 
-//             deletebutton.forEach(button =>{
+            deletebutton.forEach(button =>{
 
-//                 button.addEventListener('click',async function(){
-//                     const productId = this.getAttribute('data-productId')
+                button.addEventListener('click',async function(){
+                    const productId = this.getAttribute('data-productId')
 
                     
-//                 const result = await Swal.fire({
-//                         icon:'warning',
-//                         title:"You want to delete this item from cart ?",
-//                         showConfirmButton:true,
-//                         confirmButtonText:'Yes,delete it',
-//                         showCancelButton:true,
-//                         cancelButtonColor:'#ff0000'
-//                     })
+                const result = await Swal.fire({
+                        icon:'warning',
+                        title:"You want to delete this item from Wishlist ?",
+                        showConfirmButton:true,
+                        confirmButtonText:'Yes,delete it',
+                        showCancelButton:true,
+                        cancelButtonColor:'#ff0000'
+                    })
 
-//                     if(result.isConfirmed){
-//                         try {
-//                          const response= await fetch('/delete-cart-item',{
-//                             method:'DELETE',
-//                             headers:{
-//                                 'Content-Type':'application/json'
-//                             },
-//                             body:JSON.stringify({productId})
-//                          });
+                    if(result.isConfirmed){
+                        try {
+                         const response= await fetch('/delete-Wishlist-item',{
+                            method:'DELETE',
+                            headers:{
+                                'Content-Type':'application/json'
+                            },
+                            body:JSON.stringify({productId})
+                         });
                          
-//                          const data = await  response.json()
 
-//                          if(data.success){
-//                             Swal.fire({
-//                                 icon:'success',
-//                                 title:"Removed",
-//                                 text:data.message
-//                             }).then(()=>{
-//                                 window.location.reload();
-//                             })
-//                          }else{
-//                             Swal.fire({
-//                                 icon:'error',
-//                                 title:"Failed",
-//                                 text:'data.message',
-//                                 showConfirmButton:true
-//                             })
-//                          }
+                         const data = await  response.json()
+                          
+                         if(data.success){
+                            Swal.fire({
+                                icon:'success',
+                                title:"Removed",
+                                text:data.message
+                            }).then(()=>{
+                                window.location.reload();
+                            })
+                         }else{
+                            Swal.fire({
+                                icon:'error',
+                                title:"Failed",
+                                text:data.message,
+                                showConfirmButton:true
+                            })
+                         }
 
-//                         } catch (error) {
-//                             console.log("error in frontend ",error);
-//                             Swal.fire({
-//                                 icon:'error',
-//                                 title:'Oops',
-//                                 text: "Internal Server Error",
-//                                 showConfirmButton:true
-//                             })
-//                         }
+                        } catch (error) {
+                            console.log("error in frontend ",error);
+                            Swal.fire({
+                                icon:'error',
+                                title:'Oops',
+                                text: "Internal Server Error",
+                                showConfirmButton:true
+                            })
+                        }
 
-//                     }
+                    }
                    
-//                 })
-//             })
+                })
+            })
       
-// })
+})
 
-    //  async function updateQuantity(productId,change){
-    //     try {
-    //         const response = await fetch('/update-quantity-cart',{
-    //             method:'PATCH',
-    //             headers:{
-    //                 'Content-Type':'application/json'
-    //             },
-    //             body:JSON.stringify({productId,change})
-    //         })
+     document.querySelectorAll('.add-to-cart').forEach(button=>{
+        button.addEventListener('click',async function () {
+            const productId = this.getAttribute('data-productId');
 
-    //         const result = await response.json();
-           
-    //         if(result.success){
-    //             const qty = document.getElementById(`qty-${productId}`);
-    //             qty.textContent = result.newQuantity;
-    //              setTimeout(()=>{
-    //                  window.location.reload();
-    //             },200)
-    //         }else{
-    //             Swal.fire({
-    //                 icon:'warning',
-    //                 text:result.message ,
-    //                 showConfirmButton:"true"
+            try {
+                const response = await fetch('add-to-cart',{
+                    method:'POST',
+                    headers:{
+                        'Content-Type':'application/json'
+                    },
+                    body:JSON.stringify({productId})
+                })
+                 const result = await response.json();
 
-    //             })
-    //             .then(()=>{
-    //                 window.location.reload()
-    //             })
-    //         }
-             
-           
+                 if(result.success){
+                    Swal.fire({
+                        icon:'success',
+                        title:'Added to Cart',
+                        text:result.message || "Item added to cart"
+                    }).then(()=>{
+                        window.location.reload()
+                    })
+                 }else{
+                    Swal.fire({
+                        icon:'error',
+                        title:"Oops",
+                        text:result.message
 
-    //     } catch (error) {
-    //         console.log("error in frontend of update quantity in cart");
-    //         Swal.fire({
-    //             icon:'error',
-    //             title:"Oops",
-    //             text:response.message || "Internal Server Error"
-    //         })
-            
-    //     }
-    //  }
+                    })
+                 }
+            } catch (error) {
+               
+                console.log("eror in frontend of wishlist add to cart",error)
+                 Swal.fire({
+                        icon:'error',
+                        title:"Oops",
+                        text:result.message ||"Internal Server error"
+                    })
+            }
+
+        })
+     })
 
        
  </script>

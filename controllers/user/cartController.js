@@ -26,7 +26,7 @@ const addToCart = async (req,res) =>{
 
         const { productId } = req.body;
         const userId =  req.session.user;
-        
+         
         // console.log("product id from frontend" ,productId ,  typeof productId)
         const product = await Product.findOne({
             _id:productId, 
@@ -49,13 +49,17 @@ const addToCart = async (req,res) =>{
         }
 
         const existingItem = cart.items.find(item => item.productId.toString() === productId.toString())
+        
 
         if(existingItem){
             existingItem.quantity += 1;
         }else{
-            cart.items.push({
+            if(cart.items.length >= 6){
+            return res.status(400).json({success:false,message:"Cart Limit Reached!"})
+        }
+         cart.items.push({
                 productId,
-                quantity:1, 
+                quantity:1,
 
             });
         }
@@ -76,9 +80,6 @@ const deleteCartItem = async(req,res) =>{
         const userId = req.session.user;
         const{productId} = req.body;
         // console.log("productId is",productId, typeof productId);
-
-        
-
         const cart = await Cart.findOne({userId});
         if(!cart){
             return res.status(404).json({status:false, message:" Cart not Found"});

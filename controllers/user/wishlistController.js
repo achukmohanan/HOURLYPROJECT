@@ -1,5 +1,6 @@
 const Wishlist = require('../../models/wishlistSchema');
 const User = require('../../models/userSchema')
+const Cart = require('../../models/cartSchema')
 
 const getWishList = async(req,res)=>{
     try {
@@ -54,9 +55,67 @@ const postWishList = async (req,res) =>{
     }
 }
 
+const deleteWishlistItem = async(req,res) =>{
+    try {
+        const userId = req.session.user;
+        const{productId} = req.body;
+   
+        // console.log("productId is",productId, typeof productId);
+        const wishlist = await Wishlist.findOne({userId});
+        if(!wishlist){
+            return res.status(404).json({status:false, message:" Wishlist not Found"});
+        }
+
+        wishlist.products = wishlist.products.filter(item=> item.productId.toString() !== productId)
+        console.log("wishlist products ", wishlist.products)
+        await wishlist.save();
+        return res.status(200).json({success:true,message:"Item Removed from the cart"})
+    } catch (error) {
+        console.log("error in delete wishlist item",error);
+        res.status(500).json({success:false,message:"Internal Server error"})
+        
+    }
+}
+
+const addToCartFromWishlist = async (req,res) =>{
+    try {
+        const userId = req.session.user;
+        const {productId} = req.body;
+       
+        if(!userId || !productId){
+            return res.status(400).json({success:false,message:"Missing Data"})
+        }
+        const existingCart = await Cart.findOne({userId})
+       
+        if(existingCart){
+            const itemInCart = existingCart.items.some(item=>item.productId.toString() === productId)
+            if(itemInCart){
+                return res.status(400).json({success:false,message:"Item is already in the Cart"})
+            }else{
+                existingCart.items.push({productId,quantity:1});
+                await existingCart.save();
+            }
+        }else{
+            await Cart.create({
+                userId,
+                items:[{productId,quantity:1}]
+            })
+        }
+        await Wishlist.updateOne(
+            {userId},
+            {$pull:{products:{productId}}}
+        )
+        return res.status(200).json({success:true,message:"product Moved to Cart and removed from wishlist"})
+    } catch (error) {
+        console.log("error in the addToCartFromWishlist ",error);
+        return res.status(500).json({success:false,message:"Internal Server Error"})
+    }
+}
 
 
 module.exports ={
     getWishList,
-    postWishList
+    postWishList,
+    deleteWishlistItem,
+    addToCartFromWishlist
 }

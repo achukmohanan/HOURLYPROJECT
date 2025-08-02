@@ -91,6 +91,9 @@ router.patch('/update-quantity-cart',cartController.updateCartQuantity)
 // whishlist management
 router.get('/wishlist',userAuth , wishlistController.getWishList)
 router.post('/add-to-wishlist',userAuth , wishlistController.postWishList)
+router.delete('/delete-Wishlist-item',userAuth ,wishlistController.deleteWishlistItem)
+router.post('/add-to-cart',userAuth, wishlistController.addToCartFromWishlist)
+
 
 router.get('/testing',cartController.gettest)
 module.exports = router; 

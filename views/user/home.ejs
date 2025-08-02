@@ -57,27 +57,31 @@
         <% for(let i=0; i<products.length; i++) {   %>
           <div class="col-lg-3 col-md-4 col-sm-6 col-12 homeproduct g-3   ">
             <div class="product-cart-wrap h-100">
+              
               <div class="product-img-action-wrap">
+                
                 <div class="product-img">
+                   
                   <a href="/productDetails?id=<%=products[i]._id %>">
+                  
                     <img class="default-img img-fluid rounded-3 shadow-lg" 
                          src="<%= products[i].productImage[0]%>" 
                          alt="<%=products[i].productName %>"
                          loading="lazy">
                   </a> 
+                    <button class="wishlist1-btn btn" onclick="addToWishlist('<%= products[i]._id%>')">❤️</button>
                 </div>
-                <a href="/addToWishlist?id=<%=products[i]._id%>" 
-                   class="wishlist-btn" 
-                   title="Add to Wishlist">
-                  <i class="fas fa-heart"></i>
-                </a>
+              
+               
               </div>
               
               <div class="product-content-wrap">
                 <div class="product-info">
+                  
                   <h5 class="product-name text-dark text-center"><%=products[i].productName %></h5>
                   <div class="product-price">
                     <h5 class="price text-dark d-flex justify-content-center" >₹  <%=products[i].salePrice.toLocaleString('en-IN') %></h5>
+                    
                     <% if(products[i].regularPrice && products[i].regularPrice > products[i].salePrice ) { %>
                       <span class="old-price text-muted text-decoration-line-through d-flex justify-content-center">
                        ₹  <%=products[i].regularPrice.toLocaleString('en-IN') %>
@@ -414,7 +418,7 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
   // document.
-  
+  //addtocart
   document.addEventListener('DOMContentLoaded',function(){
    const addtocart =  document.querySelectorAll('.addtocart');
 
@@ -435,7 +439,7 @@
       // alert("reponse",response)
       const result = await response.json();
       
-      if(result.success){
+      if(result.success ){
         Swal.fire({
           icon:'success',
           title:'Added to Cart',
@@ -455,7 +459,7 @@
       Swal.fire({
         icon:'error',
         title:"ERROR",
-        text:result.message ||"ERROR HAPPPEND",
+        text: "ERROR HAPPPEND",
         showConfirmButton:true
       })
     }
@@ -463,4 +467,39 @@
    })
   })
 })
+
+//whislist
+async function addToWishlist(productId) {
+    try {
+      const response = await fetch('/add-to-wishlist',{
+        method:'POST',
+        headers:{
+          'Content-Type':'application/json'
+        },
+        body:JSON.stringify({productId})
+      })
+
+      const result =await response.json();
+
+      if(result.success){
+        
+        Swal.fire({
+          icon:'success',
+          title:"Success",
+          text:result.message,
+        })
+      }else{
+        Swal.fire({
+          icon:'error',
+          title:'ERROR',
+          text:result.message,
+          showConfirmButton:true
+        })
+      }
+    } catch (error) {
+      console.log("error in frontend addtoWishlist",error)
+      Swal('OOPS','something Went Wrong','error')
+    }
+
+}
 </script>

@@ -30,8 +30,9 @@
                     <%}
                       %>
                       <h6 class="text-muted mx-5" >Hi ,<%= user.name %></h6>
-                <div class="account-header d-flex justify-content-center m-2"> 
+                <div class="account-header d-flex  flex-column align-items-center     m-2"> 
                     <h5 class="text"><%= user.name %></h5>
+                    <p><strong>Joined On: </strong><%= new Date(user.createdOn).toLocaleDateString('en-IN')%></p>
                 </div>
 
                 <div class="account-content">

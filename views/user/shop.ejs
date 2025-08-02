@@ -840,7 +840,7 @@
              const result = await response.json();
            
                      
-                     if(result.success){
+                     if(result.success ){
                         Swal.fire({
                         icon:'success',
                         title:'Added to Cart',
@@ -850,7 +850,7 @@
                         Swal.fire({
                         icon:'error',
                         title:'Oops',
-                        text:result.message || "Something Went Wrong",
+                        text:result.message,
                         showConfirmButton:true
                         });
                     }
@@ -858,7 +858,7 @@
             Swal.fire({
                 icon:'error',
                 title:"ERROR",
-                text:result.message ||"ERROR HAPPPEND",
+                text: "ERROR HAPPPEND",
                 showConfirmButton:true
               })
            }

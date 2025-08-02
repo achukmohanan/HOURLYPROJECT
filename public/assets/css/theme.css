@@ -18721,3 +18721,27 @@ Calaendar icon input[type="date"]::-webkit-calendar-picker-indicator {
   transform: scale(1.1);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
+
+ .wishlist1-btn {
+      /* position: static; */
+      top: 10px;
+      right: 10px;
+      background-color: rgba(237, 247, 247, 0.9);
+      color: #fff;
+      padding: 8px;
+      border-radius: 50%;
+      cursor: pointer;
+      transition: transform 0.3s;
+      z-index: 10;
+    } 
+  .wishlist1-btn {
+        top: 10px;
+        right: 10px;
+        padding: 6px; 
+      }
+       .wishlist-btn1:hover {
+      transform: scale(1.1);
+    } 
+    /* .product-img {
+  position: relative;
+}   */

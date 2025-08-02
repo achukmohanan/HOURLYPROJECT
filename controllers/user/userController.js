@@ -100,7 +100,7 @@ const signup = async (req, res) => {
 
     
     try {
-        console.log(req.body)
+        // console.log(req.body)
         const { name ,phone ,email, password, cPassword } = req.body
     
         if (password !== cPassword) {
@@ -117,7 +117,7 @@ const signup = async (req, res) => {
             });
         }
         const otp = generateOtp();
-        const emailSent = await sendVerificationEmail(email,    );
+        const emailSent = await sendVerificationEmail(email,otp);
         if(!emailSent){
            return res.status(500).json({
             success:false,
@@ -140,7 +140,7 @@ const signup = async (req, res) => {
     }
     const otpSent = true;
         if(otpSent){
-            return res,json({
+            return res.json({
                 success: true,
                 message:"OTP sent to your Email"
 
