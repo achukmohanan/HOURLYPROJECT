@@ -120,7 +120,11 @@ const updateCartQuantity = async (req,res) =>{
         if(item.quantity + change < 1){
             return res.status(400).json({success:false,message:"Minimum Quantity Should be 1"})
         }
+        const newQuantity = product.quantity;
         const maxLimit = Math.min(5,product.quantity)
+        if(item.quantity + change > newQuantity){
+            return res.status(400).json({success:false,message:`This Product Only ${product.quantity} in Stock`})
+        }
         if(item.quantity + change > maxLimit){
             return res.status(400).json({success:false,message:"Maximum quantity limit reached"})
         }

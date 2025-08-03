@@ -18723,7 +18723,6 @@ Calaendar icon input[type="date"]::-webkit-calendar-picker-indicator {
 }
 
  .wishlist1-btn {
-      /* position: static; */
       top: 10px;
       right: 10px;
       background-color: rgba(237, 247, 247, 0.9);
