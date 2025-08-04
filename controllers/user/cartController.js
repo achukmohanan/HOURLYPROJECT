@@ -1,4 +1,3 @@
-
 const User = require('../../models/userSchema')
 const Cart = require('../../models/cartSchema');
 const Product = require('../../models/productSchema');
@@ -11,9 +10,17 @@ const getCart = async (req,res) =>{
 
         const cart = await Cart.findOne({userId}).populate('items.productId');
         // console.log("cart is ",cart)  
+        let total =0;
+         if(cart && cart.items.length >0){
+            cart.items.forEach(item => {
+            total += item.productId.salePrice * item.quantity;
+            });
+
+        }
        return res.render('user/cart',{
            user:findUser,
            cart,
+           totalPrice:total   
 
         })
     } catch (error) {
@@ -101,11 +108,11 @@ const updateCartQuantity = async (req,res) =>{
         const userId = req.session.user;
         const {productId,change} = req.body;
 
-        const cart = await Cart.findOne({userId});
+        const cart = await Cart.findOne({userId}).populate('items.productId');
         if(!cart){
             return res.status(404).json({success:false,message:"Cart not Found"})
         }
-        const item = cart.items.find(item=>item.productId.toString() === productId.toString())
+        const item = cart.items.find(item=>item.productId._id.toString() === productId.toString())
 
         if(!item){
             return res.status(404).json({success:false,message:"product not in the Cart"})
@@ -129,8 +136,24 @@ const updateCartQuantity = async (req,res) =>{
             return res.status(400).json({success:false,message:"Maximum quantity limit reached"})
         }
         item.quantity +=change;
+        const updatePrice = item.quantity * product.salePrice;
+
+     
+            let total = 0;
+                cart.items.forEach(item => {
+                total += item.productId.salePrice * item.quantity;
+                });
+
+        
          await cart.save();
-        return res.status(200).json({success:true,newQuantity:item.quantity})
+        //  console.log("Rendering cart with total:", total);
+
+        return res.status(200).json({
+            success:true,
+            newQuantity:item.quantity,
+            updatePrice,
+            total
+        })
 
     } catch (error) {
         console.log("error in the updateCartQuantity",error);
@@ -150,10 +173,34 @@ const gettest = async (req,res) =>{
         
     }
 }
+const getCheckOut = async (req,res) =>{
+    try {
+        const userId = req.session.user;
+
+        const findUser = await User.findById(userId);
+
+        const cart = await Cart.findOne({userId}).populate('items.productId')
+
+        let total = 0;
+        cart.items.forEach((item)=>{
+            total += item.productId.salePrice * item.quantity
+        })
+        return res.render('user/checkout',{
+             user:findUser,
+            cart,
+            totalPrice:total
+        })
+    } catch (error) {
+        console.log("error in get checkout ",error);
+        
+    }
+}
+
 module.exports = {
     getCart,
     addToCart,
     deleteCartItem,
     updateCartQuantity,
-    gettest
+    gettest,
+    getCheckOut
 }

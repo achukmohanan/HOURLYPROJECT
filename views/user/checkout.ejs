@@ -1,0 +1,424 @@
+<%- include('../../views/partials/user/supportheader')%>
+    <title>Checkout - HOURLY</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }   
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+
+        .main-content {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 60px;
+        }
+
+        .checkout-section h1 {
+            font-size: 28px;
+            margin-bottom: 8px;
+            color: #333;
+            padding: 20px;
+        }
+
+        .breadcrumb {
+            font-size: 12px;
+            color: #999;
+            margin-bottom: 40px;
+        }
+
+        .form-section {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .section-title {
+            font-size: 18px;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 14px;
+            color: #555;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            background: #f9f9f9;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #333;
+            background: white;
+        }
+
+        .edit-address-btn {
+            background: #333;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-top: 20px;
+        }
+
+        .edit-address-btn:hover {
+            background: #555;
+        }
+
+        .order-summary {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            height: fit-content;
+        }
+
+        .order-title {
+            font-size: 18px;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .product-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .product-images {
+            display: flex;
+            margin-right: 15px;
+        }
+
+        .product-image {
+            width: 60px;
+            height: 60px;
+            background: #e0e0e0;
+            border-radius: 4px;
+            margin-right: -10px;
+            border: 2px solid white;
+        }
+
+        .product-image:first-child {
+            background: #d4b896;
+        }
+
+        .product-image:last-child {
+            background: #333;
+        }
+
+        .product-details {
+            flex: 1;
+        }
+
+        .product-name {
+            font-size: 14px;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .price-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .price-row.total {
+            font-weight: bold;
+            font-size: 16px;
+            padding-top: 15px;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .shipping-section {
+            margin: 20px 0;
+            padding: 15px;
+            background: #f9f9f9;
+            border-radius: 4px;
+        }
+
+        .shipping-options {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .shipping-option {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            text-align: center;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .shipping-option.selected {
+            background: #333;
+            color: white;
+            border-color: #333;
+        }
+
+        .promo-section {
+            margin: 15px 0;
+        }
+
+        .promo-input {
+            display: flex;
+            gap: 10px;
+        }
+
+        .promo-input input {
+            flex: 1;
+            padding: 10px;
+            font-size: 12px;
+        }
+
+        .apply-btn {
+            background: #ff6b35;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .place-order-btn {
+            width: 100%;
+            background: #333;
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+
+        .place-order-btn:hover {
+            background: #555;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+   .breadcrumb {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.breadcrumb-item {
+  position: relative;
+  color: #888;
+}
+
+.breadcrumb-item:not(:first-child)::before {
+  content: "›";  /* or use ">" or "/" or any icon */
+  margin: 0 5px;
+  color: #ccc;
+}
+
+.breadcrumb-item.active {
+  font-weight: bold;
+  color: #000;
+}
+ /* Order Summary */
+ .summary-section{
+        background-color: #f6f6f6;
+        border-radius: 10px;
+       padding: 20px;
+       margin: 20px;
+
+ }
+        .summary-section h3 {
+            font-size: 18px;
+            font-weight: normal;
+            /* margin-bottom: 30px; */
+            color: #333;
+            
+        }
+
+        .summary-line {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+
+        .summary-line.total {
+            font-size: 16px;
+            font-weight: bold;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+            margin-top: 20px;
+        }
+
+        .checkout-btn {
+            width: 100%;
+            background-color: #333;
+            color: white;
+            border: none;
+            padding: 15px;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        .checkout-btn:hover {
+            background-color: #555;
+        }
+
+        .continue-shopping {
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        .continue-shopping a {
+            color: #666;
+            text-decoration: none;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .no-underline {
+  text-decoration: none;
+}
+   </style>
+</head>
+<body>
+    <main class="main-content">
+        <div class="checkout-section">
+            <h1>Checkout</h1>
+            <div class="breadcrumb">
+                <span class="breadcrumb-item ">Cart</span>
+                <span class="breadcrumb-item active" >Shipping</span>
+                <span class="breadcrumb-item">Payment</span>
+            </div>
+
+
+            <div class="form-section">
+                <h2 class="section-title">Select Address</h2>
+                
+               <a href="/addAddress" class="btn btn-primary" type="button">Add New Address</a>
+            </div>
+        </div>
+        <div class="summary-section  ">
+                <h3 class="text-dark fw-bold" >Order Summary</h3>
+                 <% cart.items.forEach(item=>{%>
+                <div class="summary-line">
+                    <span>Product :<%= item.productId.productName %></span>
+                    <span id="price-<%= item.productId._id %>"> ₹ <%= item.productId.salePrice * item.quantity  %></span>
+                </div>
+                <%})%>
+                <div class="summary-line">
+                    <span>Shipping</span>
+                    <span style="color: #0bdb15;">Free</span>
+                </div>
+                <!-- <div class="summary-line">
+                    <span>Tax</span>
+                    <span id="tax">Rs. 50,000</span>
+                </div> -->
+                <hr>
+                <div class="summary-line ">
+                    <span class="fw-bold">Total</span>
+                    <span  id="total"> ₹ <%= totalPrice.toLocaleString('en-IN') %></span>
+                </div>
+                
+                <button class="checkout-btn">CHECKOUT</button>
+                
+                <div class="continue-shopping">
+                    <a href="/cart">Back to Cart</a>
+                </div>
+            </div>
+    </main>
+
+    <script>
+        // Handle shipping option selection
+        document.querySelectorAll('.shipping-option').forEach(option => {
+            option.addEventListener('click', function() {
+                document.querySelectorAll('.shipping-option').forEach(opt => opt.classList.remove('selected'));
+                this.classList.add('selected');
+            });
+        });
+
+        // Handle form interactions
+        document.querySelector('.edit-address-btn').addEventListener('click', function() {
+            alert('Edit address functionality would be implemented here');
+        });
+
+        document.querySelector('.apply-btn').addEventListener('click', function() {
+            const couponInput = document.querySelector('.promo-input input');
+            if (couponInput.value.trim()) {
+                alert('Coupon code: ' + couponInput.value);
+            }
+        });
+
+        document.querySelector('.place-order-btn').addEventListener('click', function() {
+            alert('Order placement functionality would be implemented here');
+        });
+
+        // Form validation and interactions
+        document.querySelectorAll('input, select').forEach(field => {
+            field.addEventListener('focus', function() {
+                this.style.borderColor = '#333';
+                this.style.backgroundColor = 'white';
+            });
+
+            field.addEventListener('blur', function() {
+                this.style.borderColor = '#ddd';
+                this.style.backgroundColor = '#f9f9f9';
+            });
+        });
+    </script>
+</body>
+</html>

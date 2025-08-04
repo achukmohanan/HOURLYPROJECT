@@ -150,11 +150,18 @@
         }
 
         /* Order Summary */
+
+        .summary-section{
+            background-color: #f6f6f6;
+            border-radius: 10px;
+        }
+        
         .summary-section h3 {
             font-size: 18px;
             font-weight: normal;
             margin-bottom: 30px;
-            color: #333;
+            color: #363434;
+            
         }
 
         .summary-line {
@@ -205,9 +212,25 @@
         .no-underline {
   text-decoration: none;
 }
+.body-fade-out {
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+.breadcrumb {
+  font-size: 1rem;
+  color: #555;
+}
+
+.breadcrumb-item {
+  color: #888;
+}
+
+.breadcrumb-item.active {
+  font-weight: bold;
+  color: #000;
+}
 
        
-        
     </style>
 </head>
 <body>
@@ -215,11 +238,14 @@
 
     <!-- Main Content -->
     <main class="main-content">
-        <div class="breadcrumb">
-            <a href="#">Home</a> > Cart
-        </div>
-             <h3 class="text-muted" >Hi <%=user.name %></h3>
+        <h3 class="text-muted" >Hi <%=user.name %></h3>
         <h1 class="page-title">Your Shopping Cart</h1>
+        <div class="breadcrumb">
+            <span class="breadcrumb-item active">Cart</span> 
+            <span class="breadcrumb-item">Shipping </span> 
+            <span class="breadcrumb-item">Payment</span>
+        </div>
+
 
         <div class="cart-container">
             <!-- Cart Items -->
@@ -234,7 +260,7 @@
                     
                     <div class="item-details">
                         <div class="item-name"><%= item.productId.productName %></div>
-                        <div class="item-subtitle"><%= item.productId.description %> </div>  
+                        <div class="item-subtitle"><%= item.productId.description.split(' ').slice(0,10).join(' ') + '...'  %> </div>  
                         <div class="text-muted fs-6"><%=item.productId.color %></div>
                     </div>
                   
@@ -245,10 +271,10 @@
                     </div>
                     <div class="price ">
                         <div class="fw-bold">
-                       Rs: <%= (item.productId.salePrice * item.quantity).toLocaleString('en-IN')  %>
+                      ₹<%= (item.productId.salePrice * item.quantity).toLocaleString('en-IN')  %>
                     </div>
                     <div class="text-muted text-decoration-line-through">
-                        Rs:<%= item.productId.regularPrice.toLocaleString('en-IN')%>
+                        ₹<%= item.productId.regularPrice.toLocaleString('en-IN')%>
                     </div>
                     </div>
                     
@@ -266,30 +292,32 @@
                
 
             <!-- Order Summary -->
-            <div class="summary-section">
-                <h3>Order Summary</h3>
-                
-                <!-- <div class="summary-line">
-                    <span>Subtotal</span>
-                    <span id="subtotal">Rs. 18,15,000</span>
+            <div class="summary-section  p-3">
+                <h3 class="text-dark fw-bold" >Order Summary</h3>
+                 <% cart.items.forEach(item=>{%>
+                <div class="summary-line">
+                    <span>Product :<%= item.productId.productName %></span>
+                    <span id="price-<%= item.productId._id %>"> ₹ <%= item.productId.salePrice * item.quantity  %></span>
                 </div>
+                <%})%>
                 <div class="summary-line">
                     <span>Shipping</span>
-                    <span>Free</span>
+                    <span style="color: #0bdb15;">Free</span>
                 </div>
-                <div class="summary-line">
+                <!-- <div class="summary-line">
                     <span>Tax</span>
                     <span id="tax">Rs. 50,000</span>
-                </div>
-                <div class="summary-line total">
-                    <span>Total</span>
-                    <span id="total">Rs. 18,65,000</span>
                 </div> -->
-
-                <button class="checkout-btn">CHECKOUT</button>
+                <hr>
+                <div class="summary-line ">
+                    <span class="fw-bold">Total</span>
+                    <span  id="total"> ₹ <%= totalPrice.toLocaleString('en-IN') %></span>
+                </div>
+                
+                <a href="/checkout" class="btn checkout-btn">CHECKOUT</a>
                 
                 <div class="continue-shopping">
-                    <a href="#">Continue Shopping</a>
+                    <a href="/shop">Continue Shopping</a>
                 </div>
             </div>
         </div>
@@ -378,9 +406,24 @@
             if(result.success){
                 const qty = document.getElementById(`qty-${productId}`);
                 qty.textContent = result.newQuantity;
-                 setTimeout(()=>{
-                     window.location.reload();
+                
+                const price = document.getElementById(`price-${productId}`)
+                if(price){
+                    price.textContent = `Rs: ${result.updatePrice.toLocaleString('en-IN')}`
+                }  
+                const totalPrice = document.getElementById('total') 
+                if(totalPrice){ 
+                    totalPrice.textContent = `Rs . ${result.total.toLocaleString('en-IN')}`
+                }
+              
+                setTimeout(()=>{
+                     document.body.classList.add('body-fade-out');
+                     setTimeout(()=>{
+                    window.location.reload()
+                },100)
+
                 },200)
+
             }else{
                 Swal.fire({
                     icon:'warning',
@@ -401,86 +444,27 @@
                 icon:'error',
                 title:"Oops",
                 text: "Internal Server Error"
-            })
+            })  
             
         }
      }
 
-        // Cart data
-        // let cartItems = [
-        //     {
-        //         name: "Lanceta",
-        //         subtitle: "36mm SIMPLE",
-        //         price: 1595000,
-        //         quantity: 1
-        //     },
-        //     {
-        //         name: "ULYSESS NARDIN FREAK",
-        //         subtitle: "42mm SIMPLE", 
-        //         price: 220000,
-        //         quantity: 1
-        //     }
-        // ];
-
-        // function formatPrice(price) {
-        //     return `Rs. ${price.toLocaleString('en-IN')}`;
-        // }
-
-        // function updateQuantity(index, change) {
-        //     if (cartItems[index]) {
-        //         cartItems[index].quantity = Math.max(1, cartItems[index].quantity + change);
-        //         document.getElementById(`qty-${index}`).textContent = cartItems[index].quantity;
-        //         updateSummary();
-        //     }
-        // }
-
-        // function removeItem(index) {
-        //     if (cartItems[index]) {
-        //         const item = document.querySelector(`.cart-item:nth-child(${index + 1})`);
-        //         item.style.opacity = '0';
-        //         item.style.transform = 'translateX(-20px)';
-        //         item.style.transition = 'all 0.3s ease';
-                
-        //         setTimeout(() => {
-        //             cartItems.splice(index, 1);
-        //             location.reload(); // Simple reload for demo
-        //         }, 300);
-        //     }
-        // }
-
-        // function updateSummary() {
-        //     const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-        //     const tax = Math.floor(subtotal * 0.02); // 2% tax for demo
-        //     const total = subtotal + tax;
-
-        //     document.getElementById('subtotal').textContent = formatPrice(subtotal);
-        //     document.getElementById('tax').textContent = formatPrice(tax);
-        //     document.getElementById('total').textContent = formatPrice(total);
-
-        //     // Update cart count in header
-        //     const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
-        //     const cartLink = document.querySelector('.header-right a[href="#"]:last-child');
-        //     if (cartLink) {
-        //         cartLink.textContent = `CART (${totalItems})`;
-        //     }
-        // }
-
-        // Initialize
-        // updateSummary();
-
-        // Add smooth animations
-        // document.addEventListener('DOMContentLoaded', function() {
-        //     const cartItems = document.querySelectorAll('.cart-item');
-        //     cartItems.forEach((item, index) => {
-        //         item.style.opacity = '0';
-        //         item.style.transform = 'translateY(20px)';
-        //         setTimeout(() => {
-        //             item.style.transition = 'all 0.5s ease';
-        //             item.style.opacity = '1';
-        //             item.style.transform = 'translateY(0)';
-        //         }, index * 100);
-        //     });
-        // });
+      
+     
+     
+     // Add smooth animations
+        document.addEventListener('DOMContentLoaded', function() {
+            const cartItems = document.querySelectorAll('.cart-item');
+            cartItems.forEach((item, index) => {
+                item.style.opacity = '0';
+                item.style.transform = 'translateY(20px)';
+                setTimeout(() => {
+                    item.style.transition = 'all 0.5s ease';
+                    item.style.opacity = '1';
+                    item.style.transform = 'translateY(0)';
+                }, index * 100);
+            });
+        });
     </script>
 </body>
   <!-- <%- include("../../views/partials/user/supportfooter") %> -->

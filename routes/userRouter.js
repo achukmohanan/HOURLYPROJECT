@@ -88,6 +88,9 @@ router.post('/addtocart', cartController.addToCart);
 router.delete('/delete-cart-item',cartController.deleteCartItem)
 router.patch('/update-quantity-cart',cartController.updateCartQuantity)
 
+// checkout
+router.get('/checkout',userAuth ,cartController.getCheckOut)
+
 // whishlist management
 router.get('/wishlist',userAuth , wishlistController.getWishList)
 router.post('/add-to-wishlist',userAuth , wishlistController.postWishList)
@@ -95,5 +98,5 @@ router.delete('/delete-Wishlist-item',userAuth ,wishlistController.deleteWishlis
 router.post('/add-to-cart',userAuth, wishlistController.addToCartFromWishlist)
 
 
-router.get('/testing',cartController.gettest)
+router.get('/testing',userAuth,cartController.gettest)
 module.exports = router; 
