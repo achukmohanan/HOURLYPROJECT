@@ -346,11 +346,27 @@
             </div>
 
 
-            <div class="form-section">
+            <div class="form-section ">
                 <h2 class="section-title">Select Address</h2>
-                
-               <a href="/addAddress" class="btn btn-primary" type="button">Add New Address</a>
+                 
+                <div >
+                    <form id="checkoutform" action="/payment" method="post">
+                    <select name="addressId" id="">
+                        <% if(addressList.length > 0){ %>
+                        <% addressList[0].address.forEach((addr,index)=> {%>
+                            <option value="<%=index %>"><%=addr.addressType %> -<%= addr.city %> - <%= addr.pincode %> </option>
+                            <%}) %>
+                            <%}else{%>
+                                <p>No Address Found</p>
+                                <%}%>
+                    </select>
+                   
+                </div>
+
+               
+               <a href="/addAddress-checkout" class="btn btn-primary m-4" type="button">Add New Address</a>
             </div>
+             
         </div>
         <div class="summary-section  ">
                 <h3 class="text-dark fw-bold" >Order Summary</h3>
@@ -374,15 +390,17 @@
                     <span  id="total"> ₹ <%= totalPrice.toLocaleString('en-IN') %></span>
                 </div>
                 
-                <button class="checkout-btn">CHECKOUT</button>
+                <button type="submit" class="btn checkout-btn">Proceed to Pay </button>
                 
                 <div class="continue-shopping">
                     <a href="/cart">Back to Cart</a>
                 </div>
             </div>
+             </form>
     </main>
-
     <script>
+       
+
         // Handle shipping option selection
         document.querySelectorAll('.shipping-option').forEach(option => {
             option.addEventListener('click', function() {

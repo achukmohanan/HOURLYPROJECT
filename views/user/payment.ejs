@@ -1,0 +1,300 @@
+ <%- include("../../views/partials/user/supportheader") %>
+    <title>HOURLY | Choose Payment </title>
+    <style> 
+    
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box; 
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            
+        }
+
+        .checkout-container {
+            max-width: 500px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+            
+        }
+
+        .checkout-header {
+            background: #333;
+            color: white;
+            padding: 5px;
+            text-align: center;
+        }
+
+        .checkout-content {
+            padding: 30px;
+        }
+
+        .section {
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .section:last-child {
+            border-bottom: none;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .address-box, .order-box {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+
+        .address-item, .order-item {
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .order-item:last-child {
+            font-weight: bold;
+            border-top: 1px solid #ddd;
+            padding-top: 10px;
+            margin-top: 10px;
+        }
+
+        .payment-options {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .payment-option {
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .payment-option:hover {
+            border-color: #007bff;
+        }
+
+        .payment-option.selected {
+            border-color: #007bff;
+            background-color: #f0f8ff;
+        }
+
+        .payment-option.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            background-color: #f5f5f5;
+        }
+
+        .payment-option input[type="radio"] {
+            margin-right: 10px;
+        }
+
+        .payment-info {
+            flex-grow: 1;
+        }
+
+        .payment-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .payment-desc {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .coming-soon {
+            background: #ffc107;
+            color: #000;
+            padding: 2px 8px;
+            border-radius: 3px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .checkout-button {
+            width: 100%;
+            padding: 15px;
+            background: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        .checkout-button:hover {
+            background: #218838;
+        }
+
+        .checkout-button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        @media (max-width: 600px) {
+            .checkout-container {
+                margin: 10px;
+            }
+            
+            .checkout-content {
+                padding: 20px;
+            }
+            
+            .address-item, .order-item {
+                flex-direction: column;
+                gap: 5px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="checkout-container">
+        <div class="checkout-header">
+            <h1>Order Summary</h1>
+        </div>
+        
+        <div class="checkout-content">
+            <!-- Delivery Address Section -->
+            <div class="section">
+                <h2 class="section-title">Delivery Address</h2>
+                <div class="address-box">
+                    <div class="address-item">
+                        <strong>John Doe</strong>
+                    </div>
+                    <div class="address-item">
+                        <span>123 Main Street, Apartment 4B</span>
+                    </div>
+                    <div class="address-item">
+                        <span>New York, NY 10001</span>
+                    </div>
+                    <div class="address-item">
+                        <span>Phone: +1 (555) 123-4567</span>
+                    </div>
+                    <div class="address-item">
+                        <span>Email: john.doe@email.com</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Order Details Section -->
+            <div class="section">
+                <h2 class="section-title">Order Details</h2>
+                <div class="order-box">
+                    <div class="order-item">
+                        <span>Product 1 x 2</span>
+                        <span>$40.00</span>
+                    </div>
+                    <div class="order-item">
+                        <span>Product 2 x 1</span>
+                        <span>$25.00</span>
+                    </div>
+                    <div class="order-item">
+                        <span>Product 3 x 3</span>
+                        <span>$30.00</span>
+                    </div>
+                    <div class="order-item">
+                        <span>Subtotal</span>
+                        <span>$95.00</span>
+                    </div>
+                    <div class="order-item">
+                        <span>Delivery Fee</span>
+                        <span>$5.00</span>
+                    </div>
+                    <div class="order-item">
+                        <span>Total Amount</span>
+                        <span>$100.00</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Payment Method Section -->
+            <div class="section">
+                <h2 class="section-title">Payment Method</h2>
+                <div class="payment-options">
+                    
+                    <!-- Cash on Delivery -->
+                    <div class="payment-option selected" onclick="selectPayment('cod')">
+                        <input type="radio" name="payment" value="cod" checked>
+                        <div class="payment-info">
+                            <div class="payment-title">💰 Cash on Delivery</div>
+                            <div class="payment-desc">Pay when your order is delivered to your doorstep</div>
+                        </div>
+                    </div>
+
+                    <!-- Razorpay (Coming Soon) -->
+                    <div class="payment-option disabled">
+                        <input type="radio" name="payment" value="razorpay" disabled>
+                        <div class="payment-info">
+                            <div class="payment-title">
+                                💳 Online Payment (Card/UPI/Wallet)
+                                <span class="coming-soon">Coming Soon</span>
+                            </div>
+                            <div class="payment-desc">Pay securely using Razorpay - Cards, UPI, Net Banking & Wallets</div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Place Order Button -->
+            <button class="checkout-button" onclick="placeOrder()">
+                Place Order - $100.00
+            </button>
+        </div>
+    </div>
+
+    <script>
+        let selectedPayment = 'cod';
+
+        function selectPayment(method) {
+            if (method === 'razorpay') return; // Disabled for now
+            
+            selectedPayment = method;
+            
+            // Update radio buttons
+            document.querySelectorAll('input[name="payment"]').forEach(radio => {
+                radio.checked = radio.value === method;
+            });
+            
+            // Update visual selection
+            document.querySelectorAll('.payment-option').forEach(option => {
+                option.classList.remove('selected');
+            });
+            
+            event.currentTarget.classList.add('selected');
+        }
+
+        function placeOrder() {
+            if (selectedPayment === 'cod') {
+                alert('Order placed successfully! You will pay $100.00 when the order is delivered.');
+                // Here you would typically send the order data to your backend
+                console.log('Order placed with Cash on Delivery');
+            } else if (selectedPayment === 'razorpay') {
+                // Future Razorpay integration will go here
+                alert('Razorpay integration coming soon!');
+            }
+        }
+    </script>
+</body>

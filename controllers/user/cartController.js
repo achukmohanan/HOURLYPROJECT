@@ -1,7 +1,7 @@
 const User = require('../../models/userSchema')
 const Cart = require('../../models/cartSchema');
 const Product = require('../../models/productSchema');
-
+const Address = require('../../models/addressSchema')
 
 const getCart = async (req,res) =>{
     try {
@@ -161,13 +161,14 @@ const updateCartQuantity = async (req,res) =>{
     }
 }
 
-const gettest = async (req,res) =>{
+const addAddressInCheckout = async (req,res) =>{
     try {
         const userId = req.session.user
 
         const user = await User.findById(userId)
-        return res.render('user/testing',{
-            user:user
+        return res.render('user/checkoutaddress',{
+            user:userId,
+            name:user
         })
     } catch (error) {
         
@@ -176,19 +177,27 @@ const gettest = async (req,res) =>{
 const getCheckOut = async (req,res) =>{
     try {
         const userId = req.session.user;
+        const user = await User.findById(userId)
+        // console.log("User:", user);
+        
+        const cart = await Cart.findOne({userId}).populate('items.productId');
+        if(!cart || !cart.items ||  cart.items.length === 0){
+            // console.log("eroor in !user if case")
+            res.redirect('/cart')
+        }
 
-        const findUser = await User.findById(userId);
+        let total = cart.items.reduce((sum,item)=>{
+           return sum + item.productId.salePrice * item.quantity
+        },0)
 
-        const cart = await Cart.findOne({userId}).populate('items.productId')
+        const addressList = await Address.find({userId:userId});
+            // console.log("address",addressList)
 
-        let total = 0;
-        cart.items.forEach((item)=>{
-            total += item.productId.salePrice * item.quantity
-        })
         return res.render('user/checkout',{
-             user:findUser,
+            user:user,
             cart,
-            totalPrice:total
+            totalPrice:total,
+            addressList
         })
     } catch (error) {
         console.log("error in get checkout ",error);
@@ -201,6 +210,6 @@ module.exports = {
     addToCart,
     deleteCartItem,
     updateCartQuantity,
-    gettest,
+    addAddressInCheckout,
     getCheckOut
 }

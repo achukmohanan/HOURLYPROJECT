@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title> Add User Address - HOURLY</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <!-- <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet"> -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Lakki+Reddy&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      .header {
+        background-color: #ffffff;
+        color: white;
+        padding: 1rem 0;
+      }
+      .header .container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .nav {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+      }
+      .logo {
+        font-family: "Poppins", sans-serif;
+        font-size: 1.5rem;
+        color: rgb(11, 10, 10);
+        text-decoration: none;
+      }
+      .nav-links {
+        display: flex;
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        gap: 2rem;
+      }
+      .nav-links a {
+        color: rgb(0, 0, 0);
+        text-decoration: none;
+        transition: color 0.3s;
+      }
+      .nav-links a:hover {
+        color: #453535;
+      }
+      .dropdown {
+        position: relative;
+      }
+      .dropdown-content {
+        display: none;
+        position: absolute;
+        background-color: white;
+        min-width: 160px;
+        box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+        z-index: 1;
+        top: 100%;
+        left: 0;
+      }
+      .dropdown-content a {
+        color: black;
+        padding: 12px 16px;
+        text-decoration: none;
+        display: block;
+      }
+      .dropdown-content a:hover {
+        background-color: #f1f1f1;
+      }
+      .dropdown:hover .dropdown-content {
+        display: block;
+      }
+      .user-dropdown {
+        position: relative;
+      }
+      .user-dropdown .dropdown-content {
+        right: 0;
+        left: auto;
+      }
+      .hamburger {
+        display: none;
+        flex-direction: column;
+        cursor: pointer;
+      }
+      .hamburger span {
+        width: 25px;
+        height: 3px;
+        background-color: white;
+        margin: 3px 0;
+        transition: 0.3s;
+      }
+      .footer {
+        background-color: #333;
+        color: white;
+        padding: 2rem 0;
+        margin-top: 4rem;
+      }
+      .footer-content {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 2rem;
+      }
+      .footer-section h3 {
+        margin-bottom: 1rem;
+      }
+      .footer-section ul {
+        list-style: none;
+        padding: 0;
+      }
+      .footer-section ul li {
+        margin-bottom: 0.5rem;
+      }
+      .footer-section a {
+        color: white;
+        text-decoration: none;
+        transition: color 0.3s;
+      }
+      .footer-section a:hover {
+        color: #cccccc;
+      }
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 1rem;
+      }
+      .no-underline {
+        text-decoration: none;
+      }
+      .text-dark {
+        color: #333 !important;
+      }
+      .fw-semibold {
+        font-weight: 600;
+      }
+      .border-3 {
+        border-width: 3px !important;
+      }
+      @media (max-width: 768px) {
+        .nav-links {
+          display: none;
+        }
+        .hamburger {
+          display: flex;
+        }
+      }
+      .user-dropdown {
+        position: relative;
+        display: inline-block;
+      }
+
+      .user-dropdown a {
+        text-decoration: none;
+        padding: 8px;
+        display: inline-block;
+      }
+
+      .user-dropdown .dropdown-content {
+        display: none;
+        position: absolute;
+        background-color: #ffffff;
+        min-width: 120px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+        border-radius: 8px;
+        z-index: 10;
+        /* margin-top: 5px; */
+        right: 0;
+      }
+
+      .user-dropdown:hover .dropdown-content {
+        display: block;
+      }
+
+      .logout-btn {
+        display: block;
+        padding: 10px;
+        color: #dc3545;
+        text-decoration: none;
+        font-weight: 500;
+      }
+
+      .logout-btn:hover {
+        background-color: #f8d7da;
+        color: #a71d2a;
+        border-radius: 8px;
+      }
+    </style>
+  </head>
+  <body>
+    <header class="header">
+      <div class="container">
+        <nav class="nav">
+          <div class="logo">
+            <a href="/home" class="logo">HOURLY</a>
+          </div>
+          <ul class="nav-links" id="navLinks">
+            <li><a href="/home">Home</a></li>
+            <li><a href="/shop">Watches</a></li>
+            <li class="dropdown">
+              <a href="#">Categories</a>
+              <div class="dropdown-content">
+                <a href="#">Luxury</a>
+                <a href="#">Analog</a>
+                <a href="#">Smartwatch</a>
+              </div>
+            </li>
+            <li><a href="#contact">Contact</a></li>
+          </ul>
+          <div class="user-dropdown">
+            <% if (name) { %>
+            <a href="#" class="text-dark fw-semibold no-underline"
+              ><%= name.name %></a
+            >
+            <div class="dropdown-content">
+              <a href="/logout" class="logout-btn">Logout</a>
+            </div>
+            <% } %>
+          </div>
+
+          <!-- <div class="hamburger" id="hamburger">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div> -->
+        </nav>
+      </div>
+    </header>
+    <hr />
+    <div class="container mt-4">
+      <h3 class="mt-3" style="color: #046963; margin-bottom: 70px">
+        Create User Address
+      </h3>
+
+      <form id="addressForm" class="border-0 p-3">
+        <div class="row mb-5">
+          <div class="form-group col-md-4">
+            <label for="addressType" class="form-label">Address Type:</label>
+            <input
+              type="text"
+              class="form-control border-3"
+              id="addressType"
+              name="addressType"
+              required
+            />
+          </div>
+          <div class="form-group col-md-4">
+            <label for="name" class="form-label">Name:</label>
+            <input
+              type="text"
+              class="form-control border-3"
+              id="name"
+              name="name"
+              required
+            />
+          </div>
+          <div class="form-group col-md-4">
+            <label for="city" class="form-label">City:</label>
+            <input
+              type="text"
+              class="form-control border-3"
+              id="city"
+              name="city"
+              required
+            />
+          </div>
+        </div>
+        <div class="row mb-3">
+          <div class="form-group col-md-4">
+            <label for="landMark" class="form-label">Landmark:</label>
+            <input
+              type="text"
+              class="form-control border-3"
+              id="landMark"
+              name="landMark"
+              required
+            />
+          </div>
+          <div class="form-group col-md-4">
+            <label for="state" class="form-label">State:</label>
+            <input
+              type="text"
+              class="form-control border-3"
+              id="state"
+              name="state"
+              required
+            />
+          </div>
+          <div class="form-group col-md-4">
+            <label for="pincode" class="form-label">Pincode:</label>
+            <input
+              type="number"
+              class="form-control border-3"
+              id="pincode"
+              name="pincode"
+              required
+            />
+          </div>
+        </div>
+        <div class="row mb-3">
+          <div class="form-group col-md-4">
+            <label for="phone" class="form-label">Phone:</label>
+            <input
+              type="tel"
+              class="form-control border-3"
+              id="phone"
+              name="phone"
+              required
+            />
+          </div>
+          <div class="form-group col-md-4">
+            <label for="altPhone" class="form-label">Alternate Phone:</label>
+            <input
+              type="tel"
+              class="form-control border-3"
+              id="altPhone"
+              name="altPhone"
+              required
+            />
+          </div>
+        </div>
+        <button type="submit" id="submitButton" class="btn btn-primary">
+          Submit
+        </button>
+      </form>
+    </div>
+
+    <footer class="footer">
+      <div class="container">
+        <div class="footer-content">
+          <div class="footer-section">
+            <h3>HOURLY</h3>
+            <p>
+              Premium watches for every occasion. Quality timepieces that last a
+              lifetime.
+            </p>
+          </div>
+          <div class="footer-section">
+            <h3>Quick Links</h3>
+            <ul>
+              <li><a href="/home">Home</a></li>
+              <li><a href="/shop">Watches</a></li>
+              <li><a href="#contact">Contact</a></li>
+            </ul>
+          </div>
+          <div class="footer-section">
+            <h3>Customer Service</h3>
+            <ul>
+              <li><a href="#">Help Center</a></li>
+              <li><a href="#">Returns</a></li>
+              <li><a href="#">Shipping Info</a></li>
+            </ul>
+          </div>
+          <div class="footer-section">
+            <h3>Follow Us</h3>
+            <ul>
+              <li><a href="#">Facebook</a></li>
+              <li><a href="#">Instagram</a></li>
+              <li><a href="#">Twitter</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+      document
+        .getElementById("addressForm")
+        .addEventListener("submit", async function (event) {
+          event.preventDefault();
+          if (!validateForm()) {
+            return;
+          }
+          const addressType = document.getElementById("addressType").value;
+          const name = document.getElementById("name").value;
+          const city = document.getElementById("city").value;
+          const landMark = document.getElementById("landMark").value;
+          const state = document.getElementById("state").value;
+          const pincode = document.getElementById("pincode").value;
+          const phone = document.getElementById("phone").value;
+          const altPhone = document.getElementById("altPhone").value;
+
+          const data = await fetch("/addAddress", {
+            method: "post",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              addressType,
+              name,
+              city,
+              landMark,
+              state,
+              pincode,
+              phone,
+              altPhone,
+            }),
+          });
+
+          if (data.ok) {
+            const response = await data.json();
+            Swal.fire({
+              icon: "success",
+              title: "Success",
+              text: response.message,
+            }).then(() => {
+              window.location.href = "/checkout";
+            });
+          } else {
+            Swal.fire({
+              icon: "error",
+              title: "Oops...",
+              text: "Something went wrong!",
+            });
+          }
+        });
+
+      function validateForm() {
+        let isValid = true;
+        const requiredFields = [
+          "addressType",
+          "name",
+          "city",
+          "landMark",
+          "state",
+          "pincode",
+          "phone",
+          "altPhone",
+        ];
+
+        // Clear previous error messages
+        requiredFields.forEach(function (field) {
+          const errorElement = document.getElementById(field + "-error");
+          if (errorElement) {
+            errorElement.remove();
+          }
+        });
+
+        requiredFields.forEach(function (field) {
+          const input = document.getElementById(field);
+          const inputValue = input.value.trim();
+
+          if (inputValue === "") {
+            const errorMessage = "This field is required.";
+            const errorDiv = document.createElement("div");
+            errorDiv.className = "text-danger mt-1";
+            errorDiv.textContent = errorMessage;
+            errorDiv.id = field + "-error";
+            input.parentNode.appendChild(errorDiv);
+            isValid = false;
+          }
+        });
+
+        if (!isValid) {
+          return false;
+        }
+
+        const addressType = document.getElementById("addressType").value.trim();
+        const name = document.getElementById("name").value.trim();
+        const city = document.getElementById("city").value.trim();
+        const landMark = document.getElementById("landMark").value.trim();
+        const state = document.getElementById("state").value.trim();
+        const pincode = document.getElementById("pincode").value.trim();
+        const phone = document.getElementById("phone").value.trim();
+        const altPhone = document.getElementById("altPhone").value.trim();
+
+        const namePattern = /^[A-Za-z\s]+$/;
+        const pincodePattern = /^\d{6}$/;
+        const phonePattern = /^\d{10}$/;
+
+        if (!namePattern.test(name)) {
+          Swal.fire({
+            title: "Error",
+            text: "Name should contain alphabets and spaces only.",
+            icon: "error",
+          });
+          return false;
+        }
+
+        if (!namePattern.test(city)) {
+          Swal.fire({
+            title: "Error",
+            text: "City should contain alphabets and spaces only.",
+            icon: "error",
+          });
+          return false;
+        }
+
+        if (!namePattern.test(state)) {
+          Swal.fire({
+            title: "Error",
+            text: "State should contain alphabets and spaces only.",
+            icon: "error",
+          });
+          return false;
+        }
+
+        if (!pincodePattern.test(pincode)) {
+          Swal.fire({
+            title: "Error",
+            text: "Pincode should be a 6-digit number.",
+            icon: "error",
+          });
+          return false;
+        }
+
+        if (!phonePattern.test(phone)) {
+          Swal.fire({
+            title: "Error",
+            text: "Phone number should be a 10-digit number.",
+            icon: "error",
+          });
+          return false;
+        }
+
+        if (!phonePattern.test(altPhone)) {
+          Swal.fire({
+            title: "Error",
+            text: "Alternate phone number should be a 10-digit number.",
+            icon: "error",
+          });
+          return false;
+        }
+
+        if (phone === altPhone) {
+          Swal.fire({
+            title: "Error",
+            text: "Phone number and alternate phone number should be different.",
+            icon: "error",
+          });
+          return false;
+        }
+
+        return isValid;
+      }
+
+      // Mobile menu toggle
+      document
+        .getElementById("hamburger")
+        .addEventListener("click", function () {
+          const navLinks = document.getElementById("navLinks");
+          navLinks.style.display =
+            navLinks.style.display === "flex" ? "none" : "flex";
+        });
+    </script>
+  </body>
+</html>
