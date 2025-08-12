@@ -1,17 +1,19 @@
 const User = require('../../models/userSchema')
 const Cart = require('../../models/cartSchema')
 const Address = require('../../models/addressSchema');
+const Order = require('../../models/orderSchema');
 
 
-const getPaymentPage = async (req,res) =>{
-    try {
-        const userId  = req.session.user;
-     
-        return res.render('user/payment')
-    } catch (error) {
+
+// const getPaymentPage = async (req,res) =>{
+//     try {
+//         const userId  = req.session.user;
+//         console.log("user id is ",userId)
+//         return res.render('user/payment')
+//     } catch (error) {
         
-    }
-}
+//     }
+// }
 
 const postPayment = async (req,res) =>{
     try {
@@ -25,15 +27,78 @@ const postPayment = async (req,res) =>{
         const selectedAddress = address[0].address[selectedIndex];
         // console.log("selectedAddres is " ,selectedAddress)
 
+        const findUser = await User.findById(userId);
+        // console.log("user is ",findUser)
         const cart = await Cart.findOne({userId}).populate('items.productId')
+        if(!cart || !cart.items.length){
+            res.redirect('/cart')
+        }
 
+        let total = cart.items.reduce((sum,item)=>{
+           return sum + item.productId.salePrice * item.quantity
+        },0)
 
-        //    console.log("req.body is ",req.body.addressId)
+        // console.log("total Price is ",total)
+        const orderData = {
+            findUser,
+            userId,
+            address:selectedAddress,
+            items:cart.items,
+            totalPrice:total
+        }
+        // console.log("orderdata",orderData)
+        res.render('user/payment',{orderData});
+
     } catch (error) {
         console.log("error in the post payment ",error)
     }
 }
+
+const postOrder = async (req,res) =>{
+    try {
+        const  userId = req.session.user;
+        const {address,paymentMethod} = req.body;
+
+        const cart = await Cart.findOne({userId}).populate('items.productId');
+        if(!cart || cart.items.length === 0){
+            return res.status(400).json({success:false,message:"Cart is Empty"})
+        }
+
+        let totalPrice = cart.items.reduce((total,item)=>{
+            return total +  item.productId.salePrice * item.quantity;
+        },0)
+
+
+        const order = new Order({
+            userId,
+            address,
+            items:cart.items,
+            totalPrice,
+            paymentMethod,
+            status:'Pending'
+        })
+        // console.log("order is ",order)
+        await order.save();
+
+        await  Cart.deleteOne({userId});
+
+        res.json({success:true,orderId:order._id});
+
+    } catch (error) {
+        console.log("error in the postorder",error)
+        res.status(500).json({status:false,message:"Internal Server Error"});
+    }
+}
+const orderSuccess = async(req,res) =>{
+    try {
+        return res.render('user/order-success')
+    } catch (error) {
+        
+    }
+}
 module.exports ={
-    getPaymentPage,
-    postPayment
+    // getPaymentPage,
+    postPayment,
+    postOrder,
+    orderSuccess   
 }

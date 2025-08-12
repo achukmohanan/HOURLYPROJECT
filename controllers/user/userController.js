@@ -117,6 +117,7 @@ const signup = async (req, res) => {
             });
         }
         const otp = generateOtp();
+        
         const emailSent = await sendVerificationEmail(email,otp);
         if(!emailSent){
            return res.status(500).json({

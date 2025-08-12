@@ -33,7 +33,7 @@ const orderSchema = new Schema({
     },
     finalAmount:{
         type:Number,
-        required:true
+        required:false
     },
     address:{
         type:Schema.Types.ObjectId,

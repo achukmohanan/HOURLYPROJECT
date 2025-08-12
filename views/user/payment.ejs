@@ -57,19 +57,39 @@
             padding: 20px;
             border-radius: 5px;
             border: 1px solid #ddd;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+             
         }
 
+        .product-name{
+            flex: 1;
+            align-items: center;
+        }
+
+        .product-qty {
+        flex: 0 0 80px; /* fixed width for qty section */
+        text-align: center;
+        }
+        .product-amount {
+        flex: 0 0 100px; /* fixed width for amount */
+        text-align: right;
+        }
         .address-item, .order-item {
             margin-bottom: 8px;
             display: flex;
-            justify-content: space-between;
+            /* justify-content: space-between; */
+            gap: 10px;
         }
 
-        .order-item:last-child {
+        .order-item1{
             font-weight: bold;
             border-top: 1px solid #ddd;
             padding-top: 10px;
             margin-top: 10px;
+            display: flex;
+            justify-content: space-between;
         }
 
         .payment-options {
@@ -163,16 +183,22 @@
             }
             
             .address-item, .order-item {
-                flex-direction: column;
+                /* flex-direction: column; */
                 gap: 5px;
+                justify-content: space-between;
             }
         }
+      
+
+
+
     </style>
 </head>
 <body>
     <div class="checkout-container">
         <div class="checkout-header">
-            <h1>Order Summary</h1>
+            Hi <%= orderData.findUser.name %>
+           <h1>Your Order Summary</h1>
         </div>
         
         <div class="checkout-content">
@@ -180,21 +206,24 @@
             <div class="section">
                 <h2 class="section-title">Delivery Address</h2>
                 <div class="address-box">
+               
                     <div class="address-item">
-                        <strong>John Doe</strong>
+                        <strong> <%= orderData.address.name %> </strong>
+                    </div>
+                    
+                    <div class="address-item">
+                        <span><%= orderData.address.name %></span>
+                        <%= orderData.address.landMark  %>(H)
+                        <span><%= orderData.address.city  %>,</span>
+                        <span><%= orderData.address.state  %>,</span>
+                        <span><%= orderData.address.pincode  %></span>
                     </div>
                     <div class="address-item">
-                        <span>123 Main Street, Apartment 4B</span>
+                        <span>Mobile +91:  <%= orderData.address.phone  %></span>
                     </div>
-                    <div class="address-item">
-                        <span>New York, NY 10001</span>
-                    </div>
-                    <div class="address-item">
-                        <span>Phone: +1 (555) 123-4567</span>
-                    </div>
-                    <div class="address-item">
+                    <!-- <div class="address-item">
                         <span>Email: john.doe@email.com</span>
-                    </div>
+                    </div> -->
                 </div>
             </div>
 
@@ -202,33 +231,23 @@
             <div class="section">
                 <h2 class="section-title">Order Details</h2>
                 <div class="order-box">
+                    <% orderData.items.forEach(item => { %>   
                     <div class="order-item">
-                        <span>Product 1 x 2</span>
-                        <span>$40.00</span>
-                    </div>
-                    <div class="order-item">
-                        <span>Product 2 x 1</span>
-                        <span>$25.00</span>
-                    </div>
-                    <div class="order-item">
-                        <span>Product 3 x 3</span>
-                        <span>$30.00</span>
-                    </div>
-                    <div class="order-item">
-                        <span>Subtotal</span>
-                        <span>$95.00</span>
-                    </div>
-                    <div class="order-item">
-                        <span>Delivery Fee</span>
-                        <span>$5.00</span>
-                    </div>
-                    <div class="order-item">
+                        <span class="product-name" ><%= item.productId.productName%></span>
+                        *
+                        <span class="product-qty" ><%= item.productId.quantity%></span>
+                       <span class="product-amount" >₹<%= item.productId.salePrice * item.quantity %></span>
+                    </div>  
+                 
+                   <% }) %>
+                    
+                    <div class="order-item1">
                         <span>Total Amount</span>
-                        <span>$100.00</span>
+                        <span>₹ <%= orderData.totalPrice %></span>
                     </div>
                 </div>
             </div>
-
+        
             <!-- Payment Method Section -->
             <div class="section">
                 <h2 class="section-title">Payment Method</h2>
@@ -259,13 +278,45 @@
             </div>
 
             <!-- Place Order Button -->
-            <button class="checkout-button" onclick="placeOrder()">
-                Place Order - $100.00
+            <button class="checkout-button" id="paymentid">
+                Place Order - ₹ <%= orderData.totalPrice %>
             </button>
         </div>
     </div>
 
     <script>
+
+        document.getElementById('paymentid').addEventListener('click',function(){
+            const result = fetch('/place-order',{
+                method:'POST',
+                headers:{
+                    'Content-Type':'application/json'   
+                },
+                body:JSON.stringify({
+                    address:"<%=orderData.address._id %>",
+                    paymentMethod:"COD"
+                })
+            })
+            .then(res => res.json())
+            .then(data =>{
+                if(data.success){
+                    window.location.href="/order-success"
+                }else{
+                    Swal.fire({
+                        icon:'error',
+                        title:'OOPS',
+                        text:data.message,
+                        showConfirmButton:true
+                    })
+                }
+            })
+            .catch(err=>console.error(err))
+        })
+        
+
+
+
+
         let selectedPayment = 'cod';
 
         function selectPayment(method) {
@@ -286,15 +337,6 @@
             event.currentTarget.classList.add('selected');
         }
 
-        function placeOrder() {
-            if (selectedPayment === 'cod') {
-                alert('Order placed successfully! You will pay $100.00 when the order is delivered.');
-                // Here you would typically send the order data to your backend
-                console.log('Order placed with Cash on Delivery');
-            } else if (selectedPayment === 'razorpay') {
-                // Future Razorpay integration will go here
-                alert('Razorpay integration coming soon!');
-            }
-        }
+    
     </script>
 </body>

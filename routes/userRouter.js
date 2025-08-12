@@ -92,9 +92,10 @@ router.patch('/update-quantity-cart',cartController.updateCartQuantity)
 // checkout
 router.get('/checkout',userAuth ,cartController.getCheckOut)
 router.get('/addAddress-checkout' ,userAuth , cartController.addAddressInCheckout)
-router.get('/payment',userAuth,paymentController.getPaymentPage)
+// router.get('/payment',userAuth,paymentController.getPaymentPage)
 router.post('/payment',paymentController.postPayment)
-
+router.post('/place-order',paymentController.postOrder)
+router.get('/order-success',userAuth,paymentController.orderSuccess)
 // whishlist management
 router.get('/wishlist',userAuth , wishlistController.getWishList)
 router.post('/add-to-wishlist',userAuth , wishlistController.postWishList)
@@ -102,5 +103,5 @@ router.delete('/delete-Wishlist-item',userAuth ,wishlistController.deleteWishlis
 router.post('/add-to-cart',userAuth, wishlistController.addToCartFromWishlist)
 
 
-// router.get('/testing',userAuth,cartController.gettest)
+router.get('/testing',cartController.gettest)
 module.exports = router; 

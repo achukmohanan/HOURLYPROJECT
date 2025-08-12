@@ -8,14 +8,16 @@ const getCart = async (req,res) =>{
         const userId = req.session.user
         const findUser = await User.findById(userId)
 
-        const cart = await Cart.findOne({userId}).populate('items.productId');
+        let cart = await Cart.findOne({userId}).populate('items.productId');
+       
         // console.log("cart is ",cart)  
-        let total =0;
+        let total = 0;
          if(cart && cart.items.length >0){
             cart.items.forEach(item => {
             total += item.productId.salePrice * item.quantity;
-            });
-
+            })
+        }else{
+            cart = {items:[]}
         }
        return res.render('user/cart',{
            user:findUser,
@@ -204,6 +206,13 @@ const getCheckOut = async (req,res) =>{
         
     }
 }
+const gettest = async(req,res)=>{
+    try {
+        return res.render('user/testing')
+    } catch (error) {
+        
+    }
+}
 
 module.exports = {
     getCart,
@@ -211,5 +220,6 @@ module.exports = {
     deleteCartItem,
     updateCartQuantity,
     addAddressInCheckout,
-    getCheckOut
+    getCheckOut,
+    gettest
 }
