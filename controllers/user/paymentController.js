@@ -2,7 +2,7 @@ const User = require('../../models/userSchema')
 const Cart = require('../../models/cartSchema')
 const Address = require('../../models/addressSchema');
 const Order = require('../../models/orderSchema');
-
+const Product = require('../../models/productSchema')
 
 
 // const getPaymentPage = async (req,res) =>{
@@ -64,9 +64,16 @@ const postOrder = async (req,res) =>{
             return res.status(400).json({success:false,message:"Cart is Empty"})
         }
 
+        for(let item of cart.items){
+            if(item.productId.quantity < item.quantity){
+                return res.status(400).json({success:false,message:`${item.productId.productName} is Out Of Stock!`})
+            }
+        }
+
         let totalPrice = cart.items.reduce((total,item)=>{
             return total +  item.productId.salePrice * item.quantity;
         },0)
+        
 
 
         const order = new Order({
@@ -79,6 +86,13 @@ const postOrder = async (req,res) =>{
         })
         // console.log("order is ",order)
         await order.save();
+        
+        for(let item of cart.items){
+            await Product.updateOne(
+                {_id:item.productId._id},
+                {$inc:{quantity: -item.quantity}}
+            )
+        }
 
         await  Cart.deleteOne({userId});
 

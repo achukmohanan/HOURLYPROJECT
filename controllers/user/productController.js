@@ -50,7 +50,7 @@ res.redirect('/pagenotfound');
 }
 
 const loadShoppingpage = async(req,res) =>{
-    try {   
+    try {       
      
         const user = req.session.user;
 
@@ -68,14 +68,14 @@ const loadShoppingpage = async(req,res) =>{
 
      const products = await Product.find({
         isBlocked:false,
-        category:{$in:categoryIds},
-        quantity:{$gt:0}    
+        category:{$in:categoryIds}
+        // quantity:{$gt:0}    
      }).sort({createdOn:-1}).skip(skip).limit(limit);
 
      const totalProducts =  await Product.countDocuments({
         isBlocked:false,
-        category:{$in:categoryIds},
-        quantity:{$gt:0}
+        category:{$in:categoryIds}
+        // quantity:{$gt:0}
 
      });
      const totalPages = Math.ceil(totalProducts/limit);
@@ -110,7 +110,7 @@ const filterProduct = async(req,res) => {
 
         const query = {
             isBlocked:false,
-            quantity:{$gt:0}
+            // quantity:{$gt:0}
         }
         if(findCategory){
             query.category = findCategory._id;

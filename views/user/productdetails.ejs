@@ -14,6 +14,14 @@
         border-radius: 15px 15px 0 0;
         
     }
+    .outofstock{
+        color:red;
+        font-weight: bold;
+        background: #ffe6e6;
+        padding: 5px 10px;
+        border-radius: 5px;
+        
+    }
 </style>
 
     <main class="main">
@@ -86,20 +94,24 @@
                                             </ul>
 
                                             <div class="d-flex align-items-center mb-3">
-                                                <div class="me-3">Qty:</div>
-                                                <div class="detail-qty border rounded d-inline-flex align-items-center">
+                                                <!-- <div class="me-3">Qty:</div> -->
+                                                <!-- <div class="detail-qty border rounded d-inline-flex align-items-center"> -->
                                                 <a href="#" class="qty-down"><i class="fi-rs-angle-small-down"></i></a>
-                                                <span class="qty-val px-3" id="quantity">1</span>
+                                                <!-- <span class="qty-val px-3" id="quantity">1</span> -->
                                                 <a href="#" class="qty-up"><i class="fi-rs-angle-small-up"></i></a>
                                                 </div>
                                             </div>
 
                                             <div class="product-extra-link2 d-flex gap-3">
+                                                <%if(quantity>0){%>
                                                 <button type="button" class="btn btn-primary add-to-cart" data-productId ="<%=product._id %>" >Add to cart</button>
+                                                <% } else { %>
+                                                    <span class="outofstock" >Out of Stock</span>
+                                                <% } %>
                                                 <button type="button" class="btn btn-secondary" onclick="addToWishlist('<%=product._id %>')">Add to Wishlist</button>
                                                 
                                             </div>
-
+                                            
                                             <ul class="product-meta font-xs mt-4">
                                                 <li class="mb-1">Coupon number <a href="#" class="text-white">FWM15VKT</a></li>
                                                 <li class="mb-1">Category: <a href="#" class="text-white"><%=category.name%></a></li>

@@ -619,6 +619,16 @@
         width: 100%;
       }
     }
+    .outofstock{
+      background: #ffe6e6;
+      color: red;
+      font-weight: bold;
+      padding: 5px 10px;
+      border-radius: 5px;
+      display: inline-block;
+      margin-top: 5px;
+
+    }
   </style>
 </head>
 
@@ -730,7 +740,11 @@
                 <p>Brand: <%=products[i].brand %></p>
                 <p>Price: ₹<%=products[i].salePrice.toLocaleString('en-IN') %><span class="text-muted"> <strike> ₹ <%=products[i].regularPrice.toLocaleString('en-IN') %> </strike></span></p>
               </a>
+              <% if(products[i].quantity > 0){ %>
               <button class="add-to-cart-btn" data-productId="<%=products[i]._id%>" type="button" >Add to Cart</button>
+              <%} else {%>
+                  <span class="outofstock" >Out of Stock</span>
+             <% } %> 
             </div>
             <%} %>
             <%}%>
