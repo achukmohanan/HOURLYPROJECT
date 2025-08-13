@@ -142,24 +142,33 @@
                                 <th class="px-4 py-3">Order ID</th>
                                 <th class="py-3">Customer</th>
                                 <th class="py-3">Date</th>
-                                <th class="py-3">Items</th>
+                                <th class="py-3">Items QTY</th>
                                 <th class="py-3">Amount</th>
                                 <th class="py-3">Status</th>
                                 <th class="py-3">Actions</th>
                             </tr>
                         </thead>
                         <tbody id="ordersTableBody">
+                            <%orders.forEach(order => { %> 
                            <tr>
-                            <td>#ORD12345</td>
-                            <td>John Doe</td>
-                            <td>2025-08-13</td>
-                            <td>2 × iPhone 15, 1 × AirPods Pro</td>
-                            <td>₹1,25,000</td>
-                            <td><span class="badge bg-success">Delivered</span></td>
+                            <td><%=order.orderId %></td>
+                            <td><%= order.userId ? order.userId.name : 'Guest User' %></td>
+                            <td><%= order.createdOn.toLocaleDateString('en-IN') %></td>
+                            <td>
+                                <% order.orderedItems.forEach(item => { %>
+                                    <%= item.quantity %>  <%=item.product ? item.product.name : 'Unkown Product' %> <br>
+                                    <% }) %>
+                            </td>
+                            <td>₹<%= order.totalPrice%></td>
+                            <td><span class="badge bg-<%= order.status === 'Delivered' ? 'success' : 'warning' %>"></span>
+                            <%= order.status %>
+                            </td>
                             <td>
                                 <button class="btn btn-sm btn-primary">View</button>
                             </td>
                            </tr>
+                        <% }) %>
+                       
                         </tbody>
                     </table>
                 </div>
@@ -185,7 +194,7 @@
             </div>
         </div>
     </div>
-
+     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
     <script>
         function filterOrders() {
@@ -209,11 +218,12 @@
         
        
      function refreshOrders() {
-            alert('Orders refreshed successfully!', 'success');
+            Swal('Orders refreshed successfully!', 'success');
             loadOrders();
         }
 
      
     </script>
+   
 </body>
 </html>

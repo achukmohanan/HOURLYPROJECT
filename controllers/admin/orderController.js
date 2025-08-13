@@ -4,9 +4,14 @@ const getOrderPage = async (req,res) =>{
     try {
 
         const orders = await Order.find()
-
-        return res.render('admin/order')
+            .populate('userId','name email')
+            .populate('orderedItems.product','name price');
+        console.log("orders are ",orders)
+        return res.render('admin/order',{
+            orders
+        })  
     } catch (error) {
+        console.log("error in the get order page",error);
         
     }
 }
