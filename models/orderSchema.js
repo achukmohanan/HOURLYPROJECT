@@ -23,6 +23,11 @@ const orderSchema = new Schema({
             default:0
         }
     }],
+    userId: {
+    type: Schema.Types.ObjectId,
+    ref: 'User',
+    required: true
+    },
     totalPrice:{
         type:Number,
         required:true
@@ -37,7 +42,6 @@ const orderSchema = new Schema({
     },
     address:{
         type:Schema.Types.ObjectId,
-        ref:'User',
         required:true
     },
     invoiceDate:{

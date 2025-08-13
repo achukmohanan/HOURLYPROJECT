@@ -15,12 +15,12 @@ passport.use(new GoogleStrategy({
 },
 
 async (accessToken, refreshToken, profile, done) => {
-    console.log("google profile",profile);
+    // console.log("google profile",profile);
     
     try {
         let user = await User.findOne({ googleId: profile.id });
         if (user) {
-            console.log("user found",user);
+            // console.log("user found",user);
             
             return done(null, user);
         } else {
@@ -41,7 +41,7 @@ async (accessToken, refreshToken, profile, done) => {
     }
 }));
 
- console.log("google client id is ",process.env.GOOGLE_CLIENT_ID);
+//  console.log("google client id is ",process.env.GOOGLE_CLIENT_ID);
 
 
 passport.serializeUser((user,done)=>{

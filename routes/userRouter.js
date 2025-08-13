@@ -55,7 +55,7 @@ router.post('/reset-password',profileController.postNewPassword);
 
 // profile & account
 router.get('/account',userAuth, profileController.userProfile);
-router.get('/profile',profileController.getProfilePage);
+
 //address management
 router.get('/addAddress', userAuth ,profileController.addAddress);
 router.post('/addAddress', userAuth ,profileController.postaddAddress)

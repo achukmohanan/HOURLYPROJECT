@@ -79,7 +79,11 @@ const postOrder = async (req,res) =>{
         const order = new Order({
             userId,
             address,
-            items:cart.items,
+            orderedItems:cart.items.map(item => ({
+            product:item.productId._id,
+            quantity:item.quantity,
+            price:item.productId.salePrice
+            })),
             totalPrice,
             paymentMethod,
             status:'Pending'
@@ -110,9 +114,24 @@ const orderSuccess = async(req,res) =>{
         
     }
 }
+
+// const orderDetails = async(req,res) =>{
+//     try {
+//         const userId = req.session.user;
+
+//         const orders = await Order.find({userId:userId}).populate('orderedItems.product').sort({createdOn:-1})
+//         res.render('user/account',{
+//             orders
+//         })
+//     } catch (error) {
+//         console.log("eror in the order details");
+        
+//     }
+// }
 module.exports ={
     // getPaymentPage,
     postPayment,
     postOrder,
-    orderSuccess   
+    orderSuccess,
+    // orderDetails   
 }

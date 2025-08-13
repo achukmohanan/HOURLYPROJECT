@@ -1,5 +1,6 @@
 const User = require('../../models/userSchema')
 const Address = require('../../models/addressSchema')
+const Order = require('../../models/orderSchema');
 const nodemailer = require('nodemailer');
 const bcrypt = require('bcrypt')
 const env = require('dotenv').config();
@@ -172,14 +173,7 @@ const postNewPassword = async (req,res) =>{
     }
 }
 
-const getProfilePage = async (req,res) => {
-    try {
-        //sample
-        return res.render('user/profile')
-    } catch (error) {
-        
-    }
-}
+
 const userProfile = async (req,res) =>{
     try {
         // console.log(req.session.user);
@@ -187,10 +181,12 @@ const userProfile = async (req,res) =>{
         const userId =    req.session.user;  
         const userData = await User.findById(userId);
         const addressData = await Address.findOne({userId:userId});
+        const orders = await Order.find({userId:req.session.user }).populate('orderedItems.product').sort({createdOn:-1})
             //  console.log("user data is ",userData)
         res.render('user/account',{
             user:userData,
-            userAddress:addressData
+            userAddress:addressData,
+            orders:orders
         });
     } catch (error) {
          console.log("error occured in account",error);
@@ -394,7 +390,6 @@ module.exports = {
     resendOtp,
     postNewPassword, 
     securePassword,
-    getProfilePage,
     userProfile,
     addAddress,
     postaddAddress,
