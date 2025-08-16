@@ -183,6 +183,7 @@ const userProfile = async (req,res) =>{
         const addressData = await Address.findOne({userId:userId});
         const orders = await Order.find({userId:req.session.user }).populate('orderedItems.product').sort({createdOn:-1})
             //  console.log("user data is ",userData)
+            console.log("orders are ",orders)
         res.render('user/account',{
             user:userData,
             userAddress:addressData,

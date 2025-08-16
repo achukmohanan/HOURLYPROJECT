@@ -115,23 +115,26 @@ const orderSuccess = async(req,res) =>{
     }
 }
 
-// const orderDetails = async(req,res) =>{
-//     try {
-//         const userId = req.session.user;
-
-//         const orders = await Order.find({userId:userId}).populate('orderedItems.product').sort({createdOn:-1})
-//         res.render('user/account',{
-//             orders
-//         })
-//     } catch (error) {
-//         console.log("eror in the order details");
+const viewOrderPage = async(req,res) =>{
+    try {
+        const user = req.session.user;
+        const orders = await Order.find({userId:user})
+        .populate('userId')
+        .populate('orderedItems.product');
         
-//     }
-// }
+        // console.log("orders is ",orders)
+        return res.render('user/orderView',{
+            orders
+        });
+    } catch (error) {
+        console.log("error in view order page ",error);
+        
+    }
+}
 module.exports ={
     // getPaymentPage,
     postPayment,
     postOrder,
     orderSuccess,
-    // orderDetails   
+    viewOrderPage   
 }

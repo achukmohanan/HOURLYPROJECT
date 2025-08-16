@@ -94,8 +94,10 @@ router.get('/checkout',userAuth ,cartController.getCheckOut)
 router.get('/addAddress-checkout' ,userAuth , cartController.addAddressInCheckout)
 // router.get('/payment',userAuth,paymentController.getPaymentPage)
 router.post('/payment',paymentController.postPayment)
+// order management 
 router.post('/place-order',paymentController.postOrder)
 router.get('/order-success',userAuth,paymentController.orderSuccess)
+router.get('/viewOrder',userAuth,paymentController.viewOrderPage)
 // whishlist management
 router.get('/wishlist',userAuth , wishlistController.getWishList)
 router.post('/add-to-wishlist',userAuth , wishlistController.postWishList)
