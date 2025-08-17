@@ -183,7 +183,14 @@
                         Swal.fire({
                         icon:'success',
                         title:'Added to Cart',
-                        text:result.message
+                        text:result.message,
+                        showCancelmButton:true,
+                        confirmButtonText:'View Cart',
+                        cancelButtonText:'Continue Shopping'
+                        }).then((result)=>{
+                            if(result.isConfirmed){
+                                window.location.href = '/cart'
+                            }
                         })
                      }else{
                         Swal.fire({

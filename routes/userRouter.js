@@ -98,6 +98,9 @@ router.post('/payment',paymentController.postPayment)
 router.post('/place-order',paymentController.postOrder)
 router.get('/order-success',userAuth,paymentController.orderSuccess)
 router.get('/viewOrder',userAuth,paymentController.viewOrderPage)
+router.post('/cancelOrder/:orderId',paymentController.cancelOrder)
+
+
 // whishlist management
 router.get('/wishlist',userAuth , wishlistController.getWishList)
 router.post('/add-to-wishlist',userAuth , wishlistController.postWishList)

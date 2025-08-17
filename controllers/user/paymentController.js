@@ -120,7 +120,8 @@ const viewOrderPage = async(req,res) =>{
         const user = req.session.user;
         const orders = await Order.find({userId:user})
         .populate('userId')
-        .populate('orderedItems.product');
+        .populate('orderedItems.product')
+        .sort({createdOn:-1})
         
         // console.log("orders is ",orders)
         return res.render('user/orderView',{
@@ -131,10 +132,44 @@ const viewOrderPage = async(req,res) =>{
         
     }
 }
+
+const cancelOrder = async (req,res) =>{
+    try {
+        const { orderId } = req.params;
+        const userId = req.session.user;
+
+        const order = await Order.findOne({orderId,userId }).populate('orderedItems.product');
+
+        if(!order){
+            return res.status(404).json({success:false,message:"Order Not Found"})
+        }
+        if(order.status === "Delivered"){
+            return res.status(400).json({success:false,message:"Delivered Orders Can't Cancel"})
+        }
+        if(order.status === "Cancelled"){
+            return res.status(400).json({success:false,message:'Order Already Cancelled'})
+        }
+        
+        for(let item of order.orderedItems){
+            await Product.findByIdAndUpdate(item.product._id,{
+                $inc:{quantity:item.quantity}
+            })
+        }
+        order.status = "Cancelled";
+        await order.save();
+        // console.log("order cancelled");
+        return res.status(200).json({success:true,message:"Order Cancelled Successfully"})
+
+    } catch (error) {
+        console.log("error in the cancel order ",error);
+        return res.status(500).json({success:false,message:"Internal Server Error"})
+    }
+}
 module.exports ={
     // getPaymentPage,
     postPayment,
     postOrder,
     orderSuccess,
-    viewOrderPage   
+    viewOrderPage,
+    cancelOrder   
 }

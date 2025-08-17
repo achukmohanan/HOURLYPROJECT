@@ -61,6 +61,9 @@ const addToCart = async (req,res) =>{
         
 
         if(existingItem){
+            if(existingItem.quantity >= product.quantity){
+                return res.status(400).json({success:false,message:"Stock limit Reached"})
+            }
             existingItem.quantity += 1;
         }else{
             if(cart.items.length >= 6){

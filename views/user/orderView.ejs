@@ -59,12 +59,23 @@
                                     <h6>
                                         <%= item.price.toLocaleString('en-IN',{style:'currency',currency:'INR'})  %>
                                     </h6>
-                                <button type="button" 
+                               <% if(order.status === 'Cancelled'){ %>
+                                 <button type="button" 
                                         class="btn btn-danger mt-2" 
                                         data-bs-toggle="modal" 
-                                        data-bs-target="#cancelModal">
+                                        data-bs-target="#cancelModal"
+                                        onclick="setCancelOrderId('<%= order.orderId %>')" disabled>
                                     Cancel Order
                                 </button>
+                            <% }else {%>
+                                 <button type="button" 
+                                        class="btn btn-danger mt-2" 
+                                        data-bs-toggle="modal" 
+                                        data-bs-target="#cancelModal"
+                                        onclick="setCancelOrderId('<%= order.orderId %>')" >
+                                    Cancel Order
+                                </button>
+                                <%} %>
                             </div>
 
                             <% }) %>
@@ -82,7 +93,9 @@
         <!-- Cancel Order Section -->
         <div class="card">
             <div class="card-body cancel-section">
-                <h5 class="text-danger mb-3">Cancel Order</h5>
+                
+                    <h5 class="text-danger mb-3">Cancel Order</h5>
+             
                 <p class="mb-3">You can cancel this order if it hasn't been shipped yet. Once cancelled, you'll receive a full refund within 3-5 business days.</p>
                 
                 <!-- Cancel Button with Confirmation -->
@@ -96,12 +109,13 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title text-danger" id="cancelModalLabel">Cancel Order</h5>
+                    <h5 class="modal-title text-danger" id="cancelModalLabel"></h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <p>Are you sure you want to cancel order <strong>#ORD-2024-001847</strong>?</p>
-                    <p class="text-muted mb-0">This action cannot be undone. You will receive a full refund within 3-5 business days.</p>
+                    <p id="cancelText" > </p>
+                    <!-- <p class="text-muted mb-0">This action cannot be undone. You will receive a full refund within 3-5 business days.</p> -->
+                    <input type="hidden" id="cancelOrderId">
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Keep Order</button>
@@ -129,19 +143,59 @@
             </div>
         </div>
     </div>
-
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
     <script>
+
+    function setCancelOrderId(id){
+        document.getElementById('cancelOrderId').value = id;
+
+        document.getElementById('cancelText').innerHTML = `Are you Want to Cancel this Order Cancel this Order?`
+    }
+
+
+
         function cancelOrder() {
-            // Hide cancel confirmation modal
-            const cancelModal = bootstrap.Modal.getInstance(document.getElementById('cancelModal'));
-            cancelModal.hide();
+
+            const orderId = document.getElementById('cancelOrderId').value;
+
+            fetch(`/cancelOrder/${orderId}`,{
+                method:'POST'
+            })
+            .then(res=>res.json())
+            .then(data=>{
+                if(data.success){
+                    // Hide cancel confirmation modal
+                    const cancelModal = bootstrap.Modal.getInstance(document.getElementById('cancelModal'));
+                    cancelModal.hide();
+                    // Show success modal after a short delay
+                    // setTimeout(() => {
+                    //     const successModal = new bootstrap.Modal(document.getElementById('successModal'));
+                    //     successModal.show();
+                    // }, 300);
+                    Swal.fire({
+                        icon:'success',
+                        title:'Success',
+                        text:data.message,
+
+                    }).then(()=>{
+                        window.location.reload()
+                    })
+                }else{
+                    Swal.fire({
+                        icon:'error',
+                        title:'OOPS',
+                        text:data.message,
+                        showConfirmButton:true
+                    })
+                }
+            })
+            .catch(err=>{
+                alert("eeror in fetch cancel order");
+
+            })
+
             
-            // Show success modal after a short delay
-            setTimeout(() => {
-                const successModal = new bootstrap.Modal(document.getElementById('successModal'));
-                successModal.show();
-            }, 300);
             
             // Here you would typically make an API call to cancel the order
             console.log('Order cancelled');
@@ -149,8 +203,8 @@
         
         function goToOrders() {
             // Redirect to orders page
-            // window.location.href = '/orders';
-            console.log('Redirecting to orders page');
+            window.location.href = '/viewOrder';
+            
         }
     </script>
 </body>
