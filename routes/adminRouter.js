@@ -55,7 +55,7 @@ router.post('/deleteImage',adminAuth,productController.deleteSingleImage);
 router.delete('/deleteProduct/:id',adminAuth , productController.deleteProduct)    
 
 //order management
-router.get('/order', adminAuth , orderController.getOrderPage)
+router.get('/order', adminAuth , orderController.getOrderPage);
 
 // router.get('/users',customerController.loadcustomerInfo)
 // router.get('/dashboard',adminController.loaddashboard)
