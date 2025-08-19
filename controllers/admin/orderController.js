@@ -2,7 +2,7 @@ const Order = require('../../models/orderSchema')
 
 const getOrderPage = async (req,res) =>{
     try {
-        console.log(req.query)
+        // console.log(req.query)
          const {status,date,search} = req.query;
         let filter = {}
 
@@ -50,7 +50,7 @@ const getOrderPage = async (req,res) =>{
             .populate('userId','name email')
             .populate('orderedItems.product','name price')
             .sort({createdOn:-1})
-        console.log("orders are ",orders)
+        // console.log("orders are ",orders)
 
         if(req.xhr || req.headers.accept.indexOf('application/json') > -1){
             return res.json({orders});
@@ -64,6 +64,48 @@ const getOrderPage = async (req,res) =>{
         
     }
 }
+const viewOrderDetails = async (req,res) =>{
+    try {
+        const orderId = req.params.id;
+        // console.log("orderid",orderId)
+        const order = await Order.findOne({orderId:orderId})
+        .populate('userId','name email phone')
+        .populate('orderedItems.product','productName  salePrice productImage')
+        .populate('address')
+        if(!order){
+            return res.status(404).json({success:false,message:" order is not found"});
+        }
+        // console.log("orders in view order",orders)
+      return res.render('admin/vieworder',{order}) 
+    } catch (error) {
+        console.log("error in view get order details ",error)
+         return res.status(500).json({success:false,message:"Server Error"});
+    }
+}
+const updateOrderStatus = async (req, res) =>{
+    try {
+
+        const {orderId} = req.params;
+        const {status} = req.body;
+        // console.log("status",status)
+        // console.log("orderId",orderId)
+        const order = await Order.findOneAndUpdate(
+            {orderId},
+            {$set:{status}},
+            {new:true}
+        );
+        if(!order){
+            return res.status(404).json({success:false,message:"Order is Not Found"})
+        }
+        return res.json({success:true,message:`Order status updatd to ${status}`,order})
+    } catch (error) {
+        console.log("error in the backenndn===",error);
+        return res.status(500).json({ success: false, message: "Internal server error" });
+    }
+}
+
 module.exports = {
-    getOrderPage
+    getOrderPage,
+    viewOrderDetails,
+    updateOrderStatus
 }

@@ -1,0 +1,448 @@
+<%- include("../../views/partials/admin/sidebar") %>
+    <title>Order Details - Admin Panel</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* Main Content Layout Fix */
+        .main-content {
+            margin-top: var(--header-height, 70px);
+            margin-left: var(--sidebar-width, 250px);
+            transition: margin-left 0.3s ease;
+            min-height: calc(100vh - var(--header-height, 70px));
+            padding: 0;
+        }
+
+        .main-content.expanded {
+            margin-left: 0;
+        }
+
+        .order-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem;
+            margin: 0;
+        }
+
+        .order-content {
+            padding: 2rem;
+        }
+
+        .status-badge {
+            font-size: 0.9rem;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+        }
+        .status-pending { background-color: #ffc107; color: #000; }
+        .status-processing { background-color: #17a2b8; color: white; }
+        .status-shipped { background-color: #fd7e14; color: white; }
+        .status-out-for-delivery { background-color: #6f42c1; color: white; }
+        .status-delivered { background-color: #28a745; color: white; }
+        .status-payment-failed { background-color: #dc3545; color: white; }
+        .status-cancelled { background-color: #6c757d; color: white; }
+        .status-return-request { background-color: #e83e8c; color: white; }
+        .status-returned { background-color: #20c997; color: white; }
+        
+        .card {
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+            border: 1px solid rgba(0, 0, 0, 0.125);
+            margin-bottom: 1.5rem;
+        }
+        
+        .progress-step {
+            text-align: center;
+            position: relative;
+        }
+        
+        .progress-step.completed .step-icon {
+            background-color: #28a745;
+            color: white;
+        }
+        
+        .progress-step.active .step-icon {
+            background-color: #007bff;
+            color: white;
+        }
+        
+        .step-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #e9ecef;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 0.5rem;
+            font-size: 1.1rem;
+        }
+        
+        .timeline-line {
+            height: 2px;
+            background-color: #e9ecef;
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            right: -50%;
+            z-index: -1;
+        }
+        
+        .timeline-line.completed {
+            background-color: #28a745;
+        }
+        
+        .product-img {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 8px;
+            background-color: #e9ecef;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .main-content {
+                margin-left: 0;
+            }
+
+            .order-content {
+                padding: 1rem;
+            }
+
+            .order-header {
+                padding: 1.5rem 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Main Content -->
+    <main class="main-content" id="mainContent">
+        <!-- Order Header -->
+        <div class="order-header">
+            <div class="container-fluid">
+                <div class="row align-items-center">
+                    <div class="col-md-8">
+                        <h1 class="mb-2">Order# <%= order.orderId%></h1>
+                        <p class="mb-0"><%=order.createdOn.toLocaleDateString('en-IN') %></p>
+                    </div>
+                    <div class="col-md-4 text-end">
+                        <span class="status-badge status-shipped">
+                            <i class="fas fa-shipping-fast me-2"></i>Shipped
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="order-content">
+            <!-- Order Status Management -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="mb-0"><i class="fas fa-cog me-2"></i>Order Status Management</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row align-items-center">
+                                <div class="col-md-6">
+                                    <label for="orderStatus" class="form-label fw-bold">Update Order Status:</label>
+                                    <select class="form-select" id="orderStatus" onchange="updateOrderStatus()">
+                                        <option value="Pending">Pending</option>
+                                        <option value="Processing">Processing</option>
+                                        <option value="Shipped" selected>Shipped</option>
+                                        <option value="Out-for-delivery">Out for Delivery</option>
+                                        <option value="Delivered">Delivered</option>
+                                        <option value="Payment-failed">Payment Failed</option>
+                                        <option value="Cancelled">Cancelled</option>
+                                        <option value="Return Request">Return Request</option>
+                                        <option value="Returned">Returned</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <button class="btn btn-success mt-4" onclick="saveStatusUpdate()">
+                                        <i class="fas fa-save me-2"></i>Save Changes
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Order Progress Timeline -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="fas fa-route me-2"></i>Order Progress</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row" id="progressTimeline">
+                                <div class="col progress-step completed">
+                                    <div class="position-relative">
+                                        <div class="step-icon">
+                                            <i class="fas fa-check"></i>
+                                        </div>
+                                        <div class="timeline-line completed"></div>
+                                    </div>
+                                    <small class="fw-bold">Order Placed</small>
+                                    <br><small class="text-muted"><%= order.createdOn.toLocaleDateString('en-IN') %></small>
+                                </div>
+                                <div class="col progress-step completed">
+                                    <div class="position-relative">
+                                        <div class="step-icon">
+                                            <i class="fas fa-cog"></i>
+                                        </div>
+                                        <div class="timeline-line completed"></div>
+                                    </div>
+                                    <small class="fw-bold">Processing</small>
+                                    <!-- <br><small class="text-muted">Mar 15, 4:45 PM</small> -->
+                                </div>
+                                <div class="col progress-step active">
+                                    <div class="position-relative">
+                                        <div class="step-icon">
+                                            <i class="fas fa-shipping-fast"></i>
+                                        </div>
+                                        <div class="timeline-line"></div>
+                                    </div>
+                                    <small class="fw-bold">Shipped</small>
+                                    <!-- <br><small class="text-muted">Mar 16, 10:20 AM</small> -->
+                                </div>
+                                <div class="col progress-step">
+                                    <div class="position-relative">
+                                        <div class="step-icon">
+                                            <i class="fas fa-truck"></i>
+                                        </div>
+                                        <div class="timeline-line"></div>
+                                    </div>
+                                    <small class="fw-bold">Out for Delivery</small>
+                                    <!-- <br><small class="text-muted">Pending</small> -->
+                                </div>
+                                <div class="col progress-step">
+                                    <div class="step-icon">
+                                        <i class="fas fa-home"></i>
+                                    </div>
+                                    <small class="fw-bold">Delivered</small>
+                                    <!-- <br><small class="text-muted">Pending</small> -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <!-- Customer Information -->
+                <div class="col-lg-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="fas fa-user me-2"></i>Customer Information</h5>
+                        </div>
+                        <div class="card-body">
+                            <p><strong>Name:</strong> <%= order.userId ? order.userId.name : "Guest User" %></p>
+                            <p><strong>Email:</strong> <%= order.userId ? order.userId.email : "-" %>   </p>
+                            <p><strong>Phone:</strong> <%= order.userId ? order.userId.phone : "nill" %></p>
+                            <p><strong>Customer ID:</strong> <%= order.userId ? order.userId._id : "N/A" %></p>
+                        </div>
+                    </div>
+
+                    <!-- Payment Information -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="fas fa-credit-card me-2"></i>Payment Information</h5>
+                        </div>
+                        <div class="card-body">
+                            <p><strong>Payment Method:</strong><%= order.paymentMethod%></p>
+                            <p><strong>Payment Status:</strong> <span class="badge bg-<%= order.paymentStatus === 'Paid' ? 'success' : 'warning' %>"><%= order.paymentStatus %></span></p>
+                            <p><strong>Transaction ID:</strong> <%= order.transactionId %></p>
+                            <p><strong>Payment Date:</strong><%= order.paymentDate ? order.paymentDate.toLocaleDateString("en-IN") : "-" %> </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Shipping Information -->
+                <div class="col-lg-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="fas fa-truck me-2"></i>Shipping Information</h5>
+                        </div>
+                        <div class="card-body">
+                            <h6>Shipping Address:</h6>
+                            <p class="mb-2">
+                                <p><strong>Name:</strong> <%= order.address %></p>
+                                
+                        </div>
+                    </div>
+
+                    <!-- Order Summary -->  
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="fas fa-calculator me-2"></i>Order Summary</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <span>Subtotal:</span>
+                                <span><%= order.totalPrice.toLocaleString('en-IN',{style:'currency',currency:'INR'}) %></span>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <span>Shipping:</span>
+                                <span>free</span>
+                            </div>
+                            <!-- <div class="d-flex justify-content-between">
+                                <span>Tax:</span>
+                                <span>$7.20</span>
+                            </div> -->
+                            <hr>
+                            <div class="d-flex justify-content-between fw-bold">
+                                <span>Total:</span>
+                                <span><%= order.totalPrice.toLocaleString('en-IN',{style:'currency',currency:'INR'}) %></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Order Items -->
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="fas fa-box me-2"></i>Order Items</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Product</th>
+                                            <th>Quantity</th>
+                                            <th>Unit Price</th>
+                                            <th>Total</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <% order.orderedItems.forEach(item => { %>
+                                        <tr>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <div class="product-img me-3">
+                                                            <img src="<%= item.product.productImage[0]%>" alt=""
+                                                            style="width:80px; height:80px; object-fit:cover; border-radius:8px;">
+                                                    </div>
+                                                    <div>
+                                                        <h6 class="mb-1"><%= item.product.productName %></h6>
+                                                        <small class="text-muted">SKU: WBH-001</small>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td><%= item.quantity %> </td>
+                                            <td><%= item.price %></td>
+                                            <td><%= order.totalPrice %></td>
+                                        </tr>
+                                    
+                                        <% }) %>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function updateOrderStatus() {
+            const statusSelect = document.getElementById('orderStatus');
+            const selectedStatus = statusSelect.value;
+            const statusBadge = document.querySelector('.status-badge');
+            
+            // Update status badge
+            statusBadge.className = 'status-badge status-' + selectedStatus;
+            
+            // Update badge text and icon based on status
+            const statusInfo = {
+                'pending': { text: 'Pending', icon: 'fas fa-clock' },
+                'processing': { text: 'Processing', icon: 'fas fa-cog' },
+                'shipped': { text: 'Shipped', icon: 'fas fa-shipping-fast' },
+                'out-for-delivery': { text: 'Out for Delivery', icon: 'fas fa-truck' },
+                'delivered': { text: 'Delivered', icon: 'fas fa-check-circle' },
+                'payment-failed': { text: 'Payment Failed', icon: 'fas fa-exclamation-triangle' },
+                'cancelled': { text: 'Cancelled', icon: 'fas fa-times-circle' },
+                'return-request': { text: 'Return Request', icon: 'fas fa-undo' },
+                'returned': { text: 'Returned', icon: 'fas fa-arrow-left' }
+            };
+            
+            if (statusInfo[selectedStatus]) {
+                statusBadge.innerHTML = `<i class="${statusInfo[selectedStatus].icon} me-2"></i>${statusInfo[selectedStatus].text}`;
+            }
+        }
+// --------------
+      async  function saveStatusUpdate() {
+            const statusSelect = document.getElementById('orderStatus');
+            const selectedStatus = statusSelect.value;
+            
+          const orderId = "<%= order.orderId%>";
+          try {
+            const response = await fetch(`/admin/update-status/${orderId}`,{
+                method:'POST',
+                headers:{
+                    'Content-Type':'application/json'
+                },
+                body:JSON.stringify({status:selectedStatus})
+            });
+            const data = await response.json();
+            if(data.success){
+                Swal.fire({
+                    icon:'success',
+                    title:'Success',
+                    text:data.message,
+
+                })
+                updateOrderStatus();
+                updateTimeline(selectedStatus)
+            }else{
+                Swal.fire({
+                    icon:'error',
+                    title:'OOPS',
+                    text:data.message,
+                    showConfirmButton:true
+                })
+            }
+          } catch (error) {
+              console.log("error in frontend view order admin ",error)
+              alert("errror in frontend view Order")
+            Swal.fire({
+                icon:'error',
+                title:'ERROR',
+                text:data.message || "Internal server error"
+            })
+          }
+           
+        }
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Order view page loaded');
+        });
+
+        function updateTimeline(status) {
+        const steps = document.querySelectorAll(".progress-step");
+
+        steps.forEach(step => step.classList.remove("completed", "active"));
+
+        const statusOrder = ["pending","processing","shipped","out-for-delivery","delivered"];
+
+        let index = statusOrder.indexOf(status);
+
+        steps.forEach((step, i) => {
+            if (i < index) {
+                step.classList.add("completed");
+            } else if (i === index) {
+                step.classList.add("active");
+            }
+        });
+    }
+    </script>
+</body>
+</html>

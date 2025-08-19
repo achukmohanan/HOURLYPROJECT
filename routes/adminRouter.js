@@ -56,6 +56,8 @@ router.delete('/deleteProduct/:id',adminAuth , productController.deleteProduct)
 
 //order management
 router.get('/order', adminAuth , orderController.getOrderPage);
+router.get('/viewOrderDetails/:id',adminAuth , orderController.viewOrderDetails)
+router.post('/update-status/:orderId', adminAuth , orderController.updateOrderStatus )
 
 // router.get('/users',customerController.loadcustomerInfo)
 // router.get('/dashboard',adminController.loaddashboard)
