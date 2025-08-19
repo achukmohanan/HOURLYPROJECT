@@ -48,6 +48,12 @@ const orderSchema = new Schema({
     invoiceDate:{
         type:Date,
     },
+     paymentMethod: {
+        type: String,
+        required: true,
+        enum: ['COD', 'Razorpay', 'Wallet', 'Paypal'], // add what you use
+        default: 'COD'
+    },
     status:{
         type:String,
         required:true,

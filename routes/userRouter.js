@@ -98,7 +98,8 @@ router.post('/payment',paymentController.postPayment)
 router.post('/place-order',paymentController.postOrder)
 router.get('/order-success',userAuth,paymentController.orderSuccess)
 router.get('/viewOrder',userAuth,paymentController.viewOrderPage)
-router.post('/cancelOrder/:orderId',paymentController.cancelOrder)
+router.post('/cancelOrder/:orderId', userAuth,paymentController.cancelOrder)
+router.post('/return-order/:id',userAuth,paymentController.returnOrder )
 
 
 // whishlist management

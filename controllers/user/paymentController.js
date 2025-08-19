@@ -165,11 +165,42 @@ const cancelOrder = async (req,res) =>{
         return res.status(500).json({success:false,message:"Internal Server Error"})
     }
 }
+const returnOrder = async(req,res) =>{
+    try {
+        const {id} = req.params
+        const order = await Order.findOne({orderId:id}).populate('userId');
+        if(!order){
+            return res.status(404).json({success:false,message:"Order is not Found"})
+        }
+        if(!order.status === "Delivered"){
+            return res.json({ success: false, message: "Only delivered orders can be returned" });
+        }
+
+        order.status = "Returned"
+        await order.save()
+
+        if (order.paymentMethod === "COD" && order.status === "Returned") {
+            await User.findByIdAndUpdate(order.userId, {
+            $inc: { wallet: order.totalPrice }  
+    });
+             
+        }
+        // console.log("qgvqwkhdvwl");
+        
+       return res.json({ success: true });
+    } catch (error) {
+        console.log("error in the returnOrder",error);
+        return res.json({ success: false, message: "Server error" });
+        
+    }
+}   
+
 module.exports ={
     // getPaymentPage,
     postPayment,
     postOrder,
     orderSuccess,
     viewOrderPage,
-    cancelOrder   
+    cancelOrder,
+    returnOrder   
 }

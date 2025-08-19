@@ -59,7 +59,8 @@
                                     <h6>
                                         <%= item.price.toLocaleString('en-IN',{style:'currency',currency:'INR'})  %>
                                     </h6>
-                               <% if(order.status === 'Cancelled'){ %>
+                                    
+                               <% if(order.status === 'Cancelled' ||order.status === 'Delivered' || order.status === "Returned" ){ %>
                                  <button type="button" 
                                         class="btn btn-danger mt-2" 
                                         data-bs-toggle="modal" 
@@ -76,6 +77,23 @@
                                     Cancel Order
                                 </button>
                                 <%} %>
+
+                                
+                                <% if (order.status === 'Delivered') {%>
+                                <button type="button" 
+                                        class="btn btn-secondary mt-2" 
+                                        
+                                        onclick="returnOrder('<%= order.orderId %>')" >
+                                    Return Order
+                                </button>
+                           <% }else{%>
+                            <button type="button" 
+                                        class="btn btn-secondary mt-2" 
+                                        
+                                        disabled >
+                                    Return Order
+                                </button>
+                            <%}%>
                             </div>
 
                             <% }) %>
@@ -146,6 +164,36 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
     <script>
+        function returnOrder(orderId) {
+            Swal.fire({
+            title: "Are you sure?",
+            text: "Do you want to return this order?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Yes, return it",
+            cancelButtonText: "No, keep it"
+                 }).then((result) => {
+                    if (result.isConfirmed) {
+                        fetch(`/return-order/${orderId}`, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" }
+                        })
+                        .then(res => res.json())
+                        .then(data => {
+                        if(data.success){
+                            Swal.fire("Returned!", "Your order has been returned successfully.", "success")
+                            .then(() => location.reload());
+                        }else{
+                            Swal.fire("Error!", data.message, "error");
+                        }
+                        })
+                        .catch(() => Swal.fire("Error!", "Something went wrong.", "error"));
+            }
+    });
+  }
+
+
+
 
     function setCancelOrderId(id){
         document.getElementById('cancelOrderId').value = id;
