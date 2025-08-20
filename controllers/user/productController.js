@@ -128,8 +128,10 @@ const filterProduct = async(req,res) => {
         let totalPages = Math.ceil(findProducts.length/itemsPerPage);
         const currentProduct = findProducts.slice(startIndex,endIndex);
         let userData = null;
-        if(user){
+       
             userData = await User.findOne({_id:user});
+
+            console.log("user data is in filter product ",userData)
             if(userData){
                 const searchEntry = {
                     category : findCategory ? findCategory._id : null,
@@ -140,7 +142,7 @@ const filterProduct = async(req,res) => {
                 userData.searchHistory.push(searchEntry);
                 await userData.save();
             }
-        }   
+           
         req.session.filteredProducts = currentProduct;
         res.render('user/shop',{
             user:userData,

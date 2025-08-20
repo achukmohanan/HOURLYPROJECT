@@ -11,7 +11,7 @@
     <style>
          .container {
             max-width: 1200px;
-            margin: 0 auto;
+            margin: auto;
             padding: 0 30px;
         }
         /* Header */
@@ -130,36 +130,37 @@
                 font-size: 12px;
             }
         }
+       
         .user-dropdown {
-    position: relative;
-    display: inline-block;
+        display: flex;
+        align-items: center;
+        gap: 5px;
 }
 
 .user-dropdown a {
     text-decoration: none;
-    padding: 8px;
-    display: inline-block;
+    /* color: #000; */
    
 }
 
-.user-dropdown .dropdown-content {
-    display: none;
-    position: absolute;
+ .user-name .dropdown-content {
+    display: none; 
+    position: absolute; 
     background-color: #ffffff;
     min-width: 120px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
     border-radius: 8px;
-    z-index: 10;
+    z-index: 10; 
     /* margin-top: 5px; */
-    /* right: 0; */
-}
+    
+} 
 
-.user-dropdown:hover .dropdown-content {
+.user-name:hover .dropdown-content {
     display: block;
 }
 
 .logout-btn {
-    display: block;
+    /* display: block; */
     padding: 10px;
     color: #dc3545;
     text-decoration: none;
@@ -205,24 +206,28 @@
         <div class="container">
             <nav class="nav">
                 <div class="logo">
-                    <a href="/home" class="logo" style="font-family: 'Lakki Reddy'">HOURLY</a>
+                    <a href="/" class="logo" style="font-family: 'Lakki Reddy'">HOURLY</a>
                 </div>
                 <ul class="nav-links" id="navLinks">
-                    <li><a href="/home">Home</a></li>
+                    <li><a href="/">Home</a></li>
                     <li><a href="/shop">Watches</a></li>
                     <li><a href="#contact">Contact</a></li>
                 </ul>
                 
                 <div class="user-dropdown">
                        <% if (locals.user) { %>
-                            <a href="#" class="text-dark fw-semibold no-underline" ><%= locals.user.name %></a>
-                            <div class="dropdown-content">
-                                 <a class="dropdown-item" href="/account"><i class="bi bi-person-circle mx-2"></i>PROFILE</a>
-                                 <a class="dropdown-item" href="/cart"><i class="bi bi-cart mx-2" style="color: #000000"></i>CART</a>
-                                <a class="dropdown-item " href="/wishlist"><i class="bi bi-suit-heart-fill mx-2"></i>WISHLIST</a>
-                                 
-                                <a href="/logout" class="logout-btn  "><i class="bi bi-box-arrow-right mx-2"></i>LOGOUT</a>
+                            <a class="" href="/cart"><i class="bi bi-cart mx-2" style="color: #000000"></i></a>
+                            <a class="" href="/wishlist"><i class="bi bi-suit-heart-fill mx-2"></i></a>
+                             <a class="" href="/account"><i class="bi bi-person-circle mx-2"></i></a>
+                             <div class="user-name ">
+                                <a href="#" class="text-dark fw-semibold no-underline" ><%= locals.user.name %></a>
+                             <div class="dropdown-content">
+                                <a href="/logout" class="logout-btn dropdown-item ">
+                                    <i class="bi bi-box-arrow-right mx-2"></i>LOGOUT
+                                </a>
                             </div>
+                             </div>
+                             
                         <% }  %>
                 </div>
   

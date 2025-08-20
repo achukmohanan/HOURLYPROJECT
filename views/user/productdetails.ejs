@@ -103,13 +103,16 @@
                                             </div>
 
                                             <div class="product-extra-link2 d-flex gap-3">
-                                                <%if(quantity>0){%>
+                                                <% if(user){%>
+                                                <%if(quantity>0 ){%>
                                                 <button type="button" class="btn btn-primary add-to-cart" data-productId ="<%=product._id %>" >Add to cart</button>
                                                 <% } else { %>
                                                     <span class="outofstock" >Out of Stock</span>
                                                 <% } %>
                                                 <button type="button" class="btn btn-secondary" onclick="addToWishlist('<%=product._id %>')">Add to Wishlist</button>
-                                                
+                                                <%} else {%>
+                                                   <a href="/login" class="btn btn-outline-primary text-white"> Login to Explore </a>
+                                                    <%}%>
                                             </div>
                                             
                                             <ul class="product-meta font-xs mt-4">

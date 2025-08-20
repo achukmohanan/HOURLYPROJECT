@@ -192,7 +192,7 @@ const login = async (req,res) => {
         // console.log("userId stored in session / in login",req.session.user)
         if(req.session.user){
             console.log("redirect is working")
-            return  res.redirect('/home')
+            return  res.redirect('/')
             
         }else{
             console.log("redirect is not working")

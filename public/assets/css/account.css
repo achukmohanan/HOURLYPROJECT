@@ -315,47 +315,8 @@
                 font-size: 12px;
             }
         }
-        .user-dropdown {
-    position: relative;
-    display: inline-block;
-}
+        
 
-.user-dropdown a {
-    text-decoration: none;
-    padding: 8px;
-    display: inline-block;
-   
-}
-
-.user-dropdown .dropdown-content {
-    display: none;
-    position: absolute;
-    background-color: #ffffff;
-    min-width: 120px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
-    border-radius: 8px;
-    z-index: 10;
-    /* margin-top: 5px; */
-    /* right: 0; */
-}
-
-.user-dropdown:hover .dropdown-content {
-    display: block;
-}
-
-.logout-btn {
-    display: block;
-    padding: 10px;
-    color: #dc3545;
-    text-decoration: none;
-    font-weight: 500;
-}
-
-.logout-btn:hover {
-    background-color: #f8d7da;
-    color: #a71d2a;
-    border-radius: 8px;
-}
 .form-group{
     background-color: #cccccc5a;
     border-radius: 10px;
