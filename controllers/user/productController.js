@@ -52,25 +52,33 @@ res.redirect('/pagenotfound');
 const loadShoppingpage = async(req,res) =>{
     try {       
      
-        const user = req.session.user;
-
-        
-
-        const userData = await User.findOne({_id:user})
-      const categories = await Category.find({isListed:true});
-      const categoryIds = categories.map((category)=>category._id.toString());
+    const user = req.session.user;
+    const userData = await User.findOne({_id:user})
+    const categories = await Category.find({isListed:true});
+    const categoryIds = categories.map((category)=>category._id.toString());
 
      const page = parseInt(req.query.page) || 1;
      const limit = 6;
      const skip = (page -1) * limit;
 
+     const sortOption = req.query.sort || "default";
+     let sortQuery = {createdOn:-1};
 
+     if(sortOption === "price-low"){
+        sortQuery={salePrice:1}
+     }else if(sortOption === "price-high"){
+        sortQuery ={ salePrice: -1 }
+     }else if(sortOption === "nameAZ"){
+        sortQuery= {productName : 1}
+     }else if(sortOption === "nameZA"){
+        sortQuery = {productName : -1}
+     }
+     console.log("sortOption",sortOption);
 
      const products = await Product.find({
         isBlocked:false,
-        category:{$in:categoryIds}
-        // quantity:{$gt:0}    
-     }).sort({createdOn:-1}).skip(skip).limit(limit);
+        category:{$in:categoryIds}    
+     }).sort(sortQuery).skip(skip).limit(limit);
 
      const totalProducts =  await Product.countDocuments({
         isBlocked:false,
@@ -90,7 +98,8 @@ const loadShoppingpage = async(req,res) =>{
         brand:brands,
         totalProducts:totalProducts,
         currentPage:page,
-        totalPages:totalPages
+        totalPages:totalPages,
+        sortOption
 
      })
     } catch (error) {
@@ -132,16 +141,16 @@ const filterProduct = async(req,res) => {
             userData = await User.findOne({_id:user});
 
             console.log("user data is in filter product ",userData)
-            if(userData){
-                const searchEntry = {
-                    category : findCategory ? findCategory._id : null,
-                    brand : findBrand ? findBrand.brandName : null,
-                    searchedOn : new Date()
+            // if(userData){
+            //     let searchEntry = {
+            //         category : findCategory ? findCategory._id : null,
+            //         brand : findBrand ? findBrand.brandName : null,
+            //         searchedOn : new Date()
 
-                }
-                userData.searchHistory.push(searchEntry);
-                await userData.save();
-            }
+            //     }
+            //     userData.searchHistory.push(searchEntry);
+            //     await userData.save();
+            // }
            
         req.session.filteredProducts = currentProduct;
         res.render('user/shop',{
@@ -205,7 +214,8 @@ const searchProducts = async (req,res) => {
     try {
         const user = req.session.user;
         const userData = await User.findOne({_id:user})
-        let search = req.body.query;
+
+        let search = req.query.query || "";
         
         const brands = await Brand.find({}).lean();
         const categories = await Category.find({isListed:true}).lean()
@@ -249,7 +259,28 @@ const searchProducts = async (req,res) => {
     }
 }
  
+// const sortProducts = async(req,res) =>{
+//     try {
+//         const sortOption = req.query.sort || "newest";
 
+//         let sortQuery = {};
+        
+//         if(sortOption === "price-low"){
+//             sortQuery = {salePrice:1}
+//         }else if(sortOption === "price-high"){
+//             sortQuery = {salePrice:-1}
+//         }else if(sortOption === "name"){
+//             sortQuery = {productName:1}
+//         }
+
+//         const products = await Product.find().sort(sortQuery)
+//         res.json({products});
+//     } catch (error) {
+//         console.log("errror in sortProducts",error);
+//         res.status(500).json({ message: "Error sorting products" });
+//     }  
+
+// }
 
 module.exports = {
     productDetails,
@@ -257,5 +288,5 @@ module.exports = {
     filterProduct,
     filterByPrice,
     searchProducts,
-
+    // sortProducts
 }

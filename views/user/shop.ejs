@@ -563,7 +563,7 @@
       <section class="shop-page container-fluid">
         <div class="shop-topbar d-flex justify-content-center ">
           <div class="search-bar ">
-            <form action="/search" method="POST" class="search-form">
+            <form action="/search" method="GET" class="search-form">
               <input type="text" name="query" placeholder="Search items..." class="search-input" />
               <button type="submit" class="search-button">Search</button>
             </form>
@@ -571,12 +571,15 @@
         </div>
         <!-- ---------------------- -->
         <div class="results-bar">  
-          <select class="sort-dropdown">
-            <option value="default">Default sorting</option>
-            <option value="price-low">Price: Low to High</option>
-            <option value="price-high">Price: High to Low</option>
-            <option value="name">Name: A to Z</option>
+          <form action="/shop" method="get" >
+          <select class="sort-dropdown" name="sort" onchange="this.form.submit()">
+            <option value="default" <%= sortOption === 'default' ? 'selected':'' %>>Default sorting</option>
+            <option value="price-low"<%= sortOption === 'price-low' ? 'selected' : '' %> >Price: Low to High</option>
+            <option value="price-high" <%= sortOption === 'price-high' ? 'selected' : '' %>>Price: High to Low</option>
+            <option value="nameAZ" <%= sortOption === 'nameAZ' ? 'selected' : '' %>>Name: A to Z</option>
+            <option value="nameZA" <%= sortOption === 'nameZA' ? 'selected' : '' %>>Name: Z to A</option>
           </select>
+          </form>
         </div>
         <!-- ----------- -->
         <div class="product-list-container">
@@ -621,7 +624,7 @@
             </div>
           </aside>
 
-        <main class="product-grid">
+        <main class="product-grid" id="productContainer">
           <%if(products.length === 0){%>
             <div class="col-12 text-center m-5 ">
               <h3 class="text-muted">No products found</h3>
@@ -643,8 +646,6 @@
                   <span class="outofstock" >Out of Stock</span>
              <% } %> 
               <%}else{%>
-
-
                 <%}%>
             </div>
             <%} %>
@@ -753,6 +754,45 @@ async function addToWishlist(productId) {
     }
 
 }
+  //  document.getElementById('sortDropdown').addEventListener('change',function(){
+  //       const sortValue = this.value;
+  //       fetch(`/shop/sort?sort=${sortValue}`)
+  //       .then(res => res.json())
+  //       .then(data=>{
+  //         const container = document.getElementById('productContainer');
+  //         container.innerHTML = "";
+          
+
+  //         if(data.products.length === 0){
+  //           container.innerHTML = `<div class="col-12 text-center m-5">
+  //             <h3 class="text-muted" >No Produts Available</h3>
+  //             </div>`;
+  //             return;
+  //         }
+
+  //         data.products.forEach(p=>{
+  //           container.innerHTML += `div class="product-card">
+  //             <span class="wishlist-btn" onclick="addToWishlist('${p._id}')">❤️</span>
+  //               <a href="/productDetails?id=${p._id} %>">
+  //                 <img src="${p.productImage[0]}" alt="${p.productName }" />
+  //                   <h4>${p.productName}</h4>
+  //                   <p>Brand: ${p.brand}</p>
+  //                   <p>
+  //                     Price: ₹${p.salePrice.toLocaleString('en-IN')}
+  //                     <span class="text-muted"> <strike> ₹ ${p.regularPrice.toLocaleString('en-IN')}</strike>
+  //                       </span>
+  //                   </p>
+  //                   </a>
+  //                   ${p.quantity>0
+  //                     ?`<button class="add-to-cart-btn" data-productId="${p._id}" type="button" >Add to Cart</button> `:
+  //                       `<span class="outofstock" >Out of Stock</span>`
+  //                   }  
+  //                   </div>
+  //                   `;
+  //         });
+  //       })
+  //       .catch(err=>console.error(err));
+  //     });
 </script>
   
 
