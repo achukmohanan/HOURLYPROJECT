@@ -55,6 +55,7 @@ const getOrderPage = async (req,res) =>{
         if(req.xhr || req.headers.accept.indexOf('application/json') > -1){
             return res.json({orders});
         }
+        // console.log("orders is",orders)
 
         return res.render('admin/order',{
             orders
@@ -72,10 +73,11 @@ const viewOrderDetails = async (req,res) =>{
         .populate('userId','name email phone')
         .populate('orderedItems.product','productName  salePrice productImage')
         .populate('address')
+        
         if(!order){
             return res.status(404).json({success:false,message:" order is not found"});
         }
-        // console.log("orders in view order",orders)
+        console.log("orders in view order",order)
       return res.render('admin/vieworder',{order}) 
     } catch (error) {
         console.log("error in view get order details ",error)

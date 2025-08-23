@@ -54,6 +54,7 @@
                                 <p><strong>Category : </strong><%= item.product.category.name %></p>
                                 <p><strong>Category : </strong><%= item.product.color %></p>
                                 <small class="text-muted">Qty: <%= item.quantity %></small>
+                                <p><%= order.fullAddress%></p>
 
                                 <p style="color: rgb(223, 47, 2);" ><%= order.status %></p>
                                 <p>Order Placed On: <%= order.createdOn.toLocaleDateString('en-IN') %></p>

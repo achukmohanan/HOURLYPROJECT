@@ -146,9 +146,10 @@
                                 <div class="col-md-6">
                                     <label for="orderStatus" class="form-label fw-bold">Update Order Status:</label>
                                     <select class="form-select" id="orderStatus" onchange="updateOrderStatus()">
+                                        <option value=""><%= order.status%></option>
                                         <option value="Pending">Pending</option>
                                         <option value="Processing">Processing</option>
-                                        <option value="Shipped" selected>Shipped</option>
+                                        <option value="Shipped" >Shipped</option>
                                         <option value="Out-for-delivery">Out for Delivery</option>
                                         <option value="Delivered">Delivered</option>
                                         <option value="Payment-failed">Payment Failed</option>
@@ -410,6 +411,8 @@
                     title:'Success',
                     text:data.message,
 
+                }).then(()=>{
+                    window.location.reload()
                 })
                 updateOrderStatus();
                 updateTimeline(selectedStatus)

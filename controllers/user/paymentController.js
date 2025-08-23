@@ -59,6 +59,10 @@ const postOrder = async (req,res) =>{
         const  userId = req.session.user;
         const {address,paymentMethod} = req.body;
 
+        console.log("address is in post order",typeof address)
+        //eni ee id vech address fetch2. save cheyanam
+        const findAddress = await Address.findOne({"address._id":address},{"address.$":1})
+        console.log("findAddress is ",findAddress)
         const cart = await Cart.findOne({userId}).populate('items.productId');
         if(!cart || cart.items.length === 0){
             return res.status(400).json({success:false,message:"Cart is Empty"})
@@ -78,7 +82,7 @@ const postOrder = async (req,res) =>{
 
         const order = new Order({
             userId,
-            address,
+            address:findAddress,
             orderedItems:cart.items.map(item => ({
             product:item.productId._id,
             quantity:item.quantity,
@@ -99,7 +103,7 @@ const postOrder = async (req,res) =>{
         }
 
         await  Cart.deleteOne({userId});
-
+        console.log("order is placed",order)
         res.json({success:true,orderId:order._id});
 
     } catch (error) {
@@ -200,7 +204,16 @@ const returnOrder = async(req,res) =>{
 const viewOrderDetails = async (req,res) =>{
     try {
         const orderId = req.params.id;
-        const orders = await Order.find({orderId:orderId}).populate('orderedItems.product');
+        const orders = await Order.find({orderId:orderId}).populate('orderedItems.product')
+
+        for(let order of orders){
+            const parent = await Address.find(
+                {"address._id":order.address},
+                {"address.$":1}
+            ).lean();
+            order.fullAddress = parent?.address
+        }
+        console.log("orders is ",orders)
         return res.render('user/orderView',{orders})
     } catch (error) {
         console.log("error in the viewOrderDetails ",error);
