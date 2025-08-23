@@ -16,6 +16,42 @@ const pageNotFound = async (req, res) => {
     }
 }
 
+const landingPage = async(req,res) =>{
+    try {
+        const userId = req.session.user;
+        const categories = await Category.find({isListed:true});
+        let  productData = await Product.find({
+            isBlocked:false,
+                category:{$in:categories.map(category=>category._id)},quantity:{$gt:0}
+            
+        });
+        productData.sort((a,b)=>new Date(b.createdOn)-new Date(a.createdOn));
+        productData = productData.slice(0,4);
+        const brand = await Brand.find({})
+
+        if(userId){
+            const userData = await User.findById(userId);
+            // console.log("in home page rendering user data :",userData);
+            
+            res.render('user/home',{
+                user: userData,
+                products:productData,
+                brand:brand
+            });
+        }else{
+            return res.render('user/landingPage',{
+                products:productData,
+                brand:brand
+                
+            });
+        }
+        // return res.redi  rect('/login')
+        console.log("Products sent to EJS:,its working in landing page ", productData.length);
+    } catch (error) {
+        
+    }
+}
+
 
 const loadHomepage = async (req, res) => {
     try {
@@ -98,7 +134,6 @@ async function sendVerificationEmail(email, otp) {
 
 const signup = async (req, res) => {
 
-    
     try {
         // console.log(req.body)
         const { name ,phone ,email, password, cPassword } = req.body
@@ -130,11 +165,7 @@ const signup = async (req, res) => {
         
         // console.log(req.session.userData)
         console.log("Otp sent",otp);
-
-
         return res.status(200).json({success : true, message : 'Otp send Successfully...!'});
-
-        
     } catch (error) {
         console.log("signup error",error);
         res.redirect('/pagenotfound')
@@ -184,23 +215,16 @@ const login = async (req,res) => {
             return res.render("user/login",{message:"Incorrect Password"})
         }
 
-//            console.log('Email:', email);
-// console.log('Password:', password);
-// console.log('Found user:', findUser);
-     
         req.session.user = findUser._id;
         // console.log("userId stored in session / in login",req.session.user)
         if(req.session.user){
             console.log("redirect is working")
-            return  res.redirect('/')
+            return  res.redirect('/home');
             
         }else{
             console.log("redirect is not working")
             return res.render('user/login')
         }
-      
-
-
     } catch (error) {
         console.log("login error",error);
         res.render("user/login",{message:"login failed. Please try again later"})
@@ -356,7 +380,7 @@ module.exports = {
     loadLogin,
   
     confirmWithOtp,
-    // landingPage,
+    landingPage,
     confirmwithotp,
     resendOtp,
     login,

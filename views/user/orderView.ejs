@@ -19,7 +19,7 @@
         <!-- Header -->
         <div class="row mb-4">
             <div class="col">
-                <h2>Order Details page</h2>
+                <h2>Order Details page </h2>
                 
             </div>
         </div>
@@ -30,14 +30,13 @@
                 <h5 class="mb-0">Order Items</h5>
             </div>
             <div class="card-body">
-            <% if (orders && orders.length > 0) { %>
-
-
-                <% orders.forEach(order => { %>
-
+            <% if (orders) { %>
+              <% orders.forEach(order => { %>
+             
                     <!-- Loop through each item in the order -->
                     <div class="row align-items-center py-3 border-bottom">
                             <% order.orderedItems.forEach(item => { %>
+                                <hr>
                             <!-- Product Image -->
                             <div class="col-2">
                                 <img src="<%= item.product.productImage[0] %>" 
@@ -46,10 +45,16 @@
                             </div>
                             
                             <!-- Product Details -->
+                             
                             <div class="col-6">
-                                <h6 class="mb-1"><%= item.product.productName %></h6>
                                 <p><strong>Order Id:</strong> <%= order.orderId %></p>
+                               <strong> <p class="mb-1"><%= item.product.productName %></p></strong>
+                                <p><strong>Description : </strong><%= item.product.description%></p>
+                                <p><strong>Brand : </strong><%= item.product.brand%></p>
+                                <p><strong>Category : </strong><%= item.product.category.name %></p>
+                                <p><strong>Category : </strong><%= item.product.color %></p>
                                 <small class="text-muted">Qty: <%= item.quantity %></small>
+
                                 <p style="color: rgb(223, 47, 2);" ><%= order.status %></p>
                                 <p>Order Placed On: <%= order.createdOn.toLocaleDateString('en-IN') %></p>
                             </div>
@@ -167,16 +172,18 @@
         function returnOrder(orderId) {
             Swal.fire({
             title: "Are you sure?",
-            text: "Do you want to return this order?",
-            icon: "warning",
+            text: "Please provide a reason for returning this order:",
+            input: "textarea",
+            inputPlaceholder:"Write your Reason here....",
             showCancelButton: true,
-            confirmButtonText: "Yes, return it",
-            cancelButtonText: "No, keep it"
+            confirmButtonText: "Yes, Submit Return",
+            cancelButtonText: "Cancel"
                  }).then((result) => {
-                    if (result.isConfirmed) {
+                    if (result.isConfirmed && result.value.trim() !=="") {
                         fetch(`/return-order/${orderId}`, {
                         method: "POST",
-                        headers: { "Content-Type": "application/json" }
+                        headers: { "Content-Type": "application/json" },
+                        body:JSON.stringify({reason:result.value})
                         })
                         .then(res => res.json())
                         .then(data => {

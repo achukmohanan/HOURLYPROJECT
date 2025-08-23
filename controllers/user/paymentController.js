@@ -115,23 +115,23 @@ const orderSuccess = async(req,res) =>{
     }
 }
 
-const viewOrderPage = async(req,res) =>{
-    try {
-        const user = req.session.user;
-        const orders = await Order.find({userId:user})
-        .populate('userId')
-        .populate('orderedItems.product')
-        .sort({createdOn:-1})
+// const viewOrderPage = async(req,res) =>{
+//     try {
+//         const user = req.session.user;
+//         const orders = await Order.find({userId:user})
+//         .populate('userId')
+//         .populate('orderedItems.product')
+//         .sort({createdOn:-1})
         
-        // console.log("orders is ",orders)
-        return res.render('user/orderView',{
-            orders
-        });
-    } catch (error) {
-        console.log("error in view order page ",error);
+//         // console.log("orders is ",orders)
+//         return res.render('user/orderView',{
+//             orders
+//         });
+//     } catch (error) {
+//         console.log("error in view order page ",error);
         
-    }
-}
+//     }
+// }
 
 const cancelOrder = async (req,res) =>{
     try {
@@ -168,16 +168,19 @@ const cancelOrder = async (req,res) =>{
 const returnOrder = async(req,res) =>{
     try {
         const {id} = req.params
+        const {reason} = req.body;
+        // console.log("reason is ",reason)
         const order = await Order.findOne({orderId:id}).populate('userId');
         if(!order){
             return res.status(404).json({success:false,message:"Order is not Found"})
         }
-        if(!order.status === "Delivered"){
+        if(order.status !== "Delivered"){
             return res.json({ success: false, message: "Only delivered orders can be returned" });
         }
 
         order.status = "Returned"
-        await order.save()
+        order.returnReason = reason;
+        await order.save();
 
         if (order.paymentMethod === "COD" && order.status === "Returned") {
             await User.findByIdAndUpdate(order.userId, {
@@ -194,13 +197,24 @@ const returnOrder = async(req,res) =>{
         
     }
 }   
+const viewOrderDetails = async (req,res) =>{
+    try {
+        const orderId = req.params.id;
+        const orders = await Order.find({orderId:orderId}).populate('orderedItems.product');
+        return res.render('user/orderView',{orders})
+    } catch (error) {
+        console.log("error in the viewOrderDetails ",error);
+        
+    }
+}
 
 module.exports ={
     // getPaymentPage,
     postPayment,
     postOrder,
     orderSuccess,
-    viewOrderPage,
+    // viewOrderPage,
     cancelOrder,
-    returnOrder   
+    returnOrder,
+    viewOrderDetails   
 }

@@ -6,10 +6,6 @@ const Brand = require('../../models/brandSchema');
 const { render } = require('ejs');
 const { search } = require('../../routes/userRouter');
 
-
-
-
-
 const productDetails = async (req,res) =>{
     try {
         // console.log("sessiondata", req.session)
@@ -40,9 +36,6 @@ const productDetails = async (req,res) =>{
             category:findCategory,
             relatedProducts
         });
-
-
-
     } catch (error) {
         console.error("Error happened in fetching product details offer",error);
 res.redirect('/pagenotfound');
@@ -73,9 +66,8 @@ const loadShoppingpage = async(req,res) =>{
      }else if(sortOption === "nameZA"){
         sortQuery = {productName : -1}
      }
-     console.log("sortOption",sortOption);
-
-     const products = await Product.find({
+    //  console.log("sortOption",sortOption);
+      const products = await Product.find({
         isBlocked:false,
         category:{$in:categoryIds}    
      }).sort(sortQuery).skip(skip).limit(limit);
@@ -99,12 +91,11 @@ const loadShoppingpage = async(req,res) =>{
         totalProducts:totalProducts,
         currentPage:page,
         totalPages:totalPages,
-        sortOption
+        sortOption:sortOption
 
      })
     } catch (error) {
-        console.error("error happemd in view image ",error);
-        
+        console.error("error happemd in view image ",error);    
     }
 }   
 
@@ -152,6 +143,19 @@ const filterProduct = async(req,res) => {
             //     await userData.save();
             // }
            
+     const sortOption = req.query.sort || "default";
+     let sortQuery = {createdOn:-1};
+
+     if(sortOption === "price-low"){
+        sortQuery={salePrice:1}
+     }else if(sortOption === "price-high"){
+        sortQuery ={ salePrice: -1 }
+     }else if(sortOption === "nameAZ"){
+        sortQuery= {productName : 1}
+     }else if(sortOption === "nameZA"){
+        sortQuery = {productName : -1}
+     }
+    //  console.log("sortOption",sortOption);
         req.session.filteredProducts = currentProduct;
         res.render('user/shop',{
             user:userData,
@@ -162,7 +166,7 @@ const filterProduct = async(req,res) => {
             currentPage,
             selectedCategory : category || null,
             selectedBrand : brand || null,
-
+            sortOption
         })        
 
     } catch (error) {
@@ -195,13 +199,27 @@ const filterByPrice = async (req,res) =>{
 
         req.session.filteredProducts = findProducts;
 
+        const sortOption = req.query.sort || "default";
+     let sortQuery = {createdOn:-1};
+
+     if(sortOption === "price-low"){
+        sortQuery={salePrice:1}
+     }else if(sortOption === "price-high"){
+        sortQuery ={ salePrice: -1 }
+     }else if(sortOption === "nameAZ"){
+        sortQuery= {productName : 1}
+     }else if(sortOption === "nameZA"){
+        sortQuery = {productName : -1}
+     }
+    //  console.log("sortOption",sortOption);
         res.render('user/shop',{
             user:userData,
             products:currentProduct,
             category:categories,
             brand:brands,
             totalPages,
-            currentPage
+            currentPage,
+            sortOption
         })
 
     } catch (error) {
@@ -243,6 +261,19 @@ const searchProducts = async (req,res) => {
         let totalPages = Math.ceil(searchResult.length/itemsPerPage);
         const currentProduct = searchResult.slice(startIndex,endIndex);
 
+        const sortOption = req.query.sort || "default";
+     let sortQuery = {createdOn:-1};
+
+     if(sortOption === "price-low"){
+        sortQuery={salePrice:1}
+     }else if(sortOption === "price-high"){
+        sortQuery ={ salePrice: -1 }
+     }else if(sortOption === "nameAZ"){
+        sortQuery= {productName : 1}
+     }else if(sortOption === "nameZA"){
+        sortQuery = {productName : -1}
+     }
+    //  console.log("sortOption",sortOption);
         res.render('user/shop',{
             user:userData,
             products:currentProduct,
@@ -251,6 +282,7 @@ const searchProducts = async (req,res) => {
             totalPages,
             currentPage,
             count:searchResult.length, 
+            sortOption
         })
 
     } catch (error) {

@@ -573,7 +573,7 @@
         <div class="results-bar">  
           <form action="/shop" method="get" >
           <select class="sort-dropdown" name="sort" onchange="this.form.submit()">
-            <option value="default" <%= sortOption === 'default' ? 'selected':'' %>>Default sorting</option>
+            <option value="default" <%= sortOption === 'default' ? 'selected' : '' %>>Default sorting</option>
             <option value="price-low"<%= sortOption === 'price-low' ? 'selected' : '' %> >Price: Low to High</option>
             <option value="price-high" <%= sortOption === 'price-high' ? 'selected' : '' %>>Price: High to Low</option>
             <option value="nameAZ" <%= sortOption === 'nameAZ' ? 'selected' : '' %>>Name: A to Z</option>
@@ -691,14 +691,18 @@
               },
               body:JSON.stringify({productId})
             })
-             const result = await response.json();
-           
-                     
+             const result = await response.json();    
                      if(result.success ){
                         Swal.fire({
                         icon:'success',
                         title:'Added to Cart',
-                        text:result.message
+                        text:result.message,
+                        showConfirmButton:true,
+                        confirmButtonText:'View Cart'
+                        }).then((res)=>{
+                          if(res.isConfirmed){
+                            window.location.href = "/cart"
+                          }
                         })
                      }else{
                         Swal.fire({
@@ -754,45 +758,7 @@ async function addToWishlist(productId) {
     }
 
 }
-  //  document.getElementById('sortDropdown').addEventListener('change',function(){
-  //       const sortValue = this.value;
-  //       fetch(`/shop/sort?sort=${sortValue}`)
-  //       .then(res => res.json())
-  //       .then(data=>{
-  //         const container = document.getElementById('productContainer');
-  //         container.innerHTML = "";
-          
-
-  //         if(data.products.length === 0){
-  //           container.innerHTML = `<div class="col-12 text-center m-5">
-  //             <h3 class="text-muted" >No Produts Available</h3>
-  //             </div>`;
-  //             return;
-  //         }
-
-  //         data.products.forEach(p=>{
-  //           container.innerHTML += `div class="product-card">
-  //             <span class="wishlist-btn" onclick="addToWishlist('${p._id}')">❤️</span>
-  //               <a href="/productDetails?id=${p._id} %>">
-  //                 <img src="${p.productImage[0]}" alt="${p.productName }" />
-  //                   <h4>${p.productName}</h4>
-  //                   <p>Brand: ${p.brand}</p>
-  //                   <p>
-  //                     Price: ₹${p.salePrice.toLocaleString('en-IN')}
-  //                     <span class="text-muted"> <strike> ₹ ${p.regularPrice.toLocaleString('en-IN')}</strike>
-  //                       </span>
-  //                   </p>
-  //                   </a>
-  //                   ${p.quantity>0
-  //                     ?`<button class="add-to-cart-btn" data-productId="${p._id}" type="button" >Add to Cart</button> `:
-  //                       `<span class="outofstock" >Out of Stock</span>`
-  //                   }  
-  //                   </div>
-  //                   `;
-  //         });
-  //       })
-  //       .catch(err=>console.error(err));
-  //     });
+  
 </script>
   
 

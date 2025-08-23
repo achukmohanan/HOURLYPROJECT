@@ -27,7 +27,7 @@ router.get('/google/callback',
   (req, res) => {
     console.log("google login middleware");
     req.session.user = req.session.passport.user;
-    res.redirect('/'); // or wherever you want to redirect
+    res.redirect('/home'); // or wherever you want to redirect
   }
 );
 
@@ -37,10 +37,10 @@ router.post('/login', userController.login);
 
 
 //home page
-// router.get('/', userController.landingPage)
+router.get('/', userController.landingPage)
 
 router.get('/logout',userAuth,userController.logout);
-router.get('/', userController.loadHomepage);
+router.get('/home', userAuth ,userController.loadHomepage);
 
 //profile management  
 router.get('/forgotpassword',profileController.forgotPassword)
@@ -97,10 +97,10 @@ router.post('/payment',paymentController.postPayment)
 // order management 
 router.post('/place-order',paymentController.postOrder)
 router.get('/order-success',userAuth,paymentController.orderSuccess)
-router.get('/viewOrder',userAuth,paymentController.viewOrderPage)
+// router.get('/viewOrder',userAuth,paymentController.viewOrderPage)
 router.post('/cancelOrder/:orderId', userAuth,paymentController.cancelOrder)
 router.post('/return-order/:id',userAuth,paymentController.returnOrder )
-
+router.get('/viewOrderDetails/:id',userAuth,paymentController.viewOrderDetails)
 
 // whishlist management
 router.get('/wishlist',userAuth , wishlistController.getWishList)

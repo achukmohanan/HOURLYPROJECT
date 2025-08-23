@@ -176,6 +176,7 @@ const addAddressInCheckout = async (req,res) =>{
             name:user
         })
     } catch (error) {
+        console.log("error in add address in checkout controller ",error);
         
     }
 }
