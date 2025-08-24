@@ -59,10 +59,14 @@ const postOrder = async (req,res) =>{
         const  userId = req.session.user;
         const {address,paymentMethod} = req.body;
 
-        console.log("address is in post order",typeof address)
+        console.log("address is in post order", address)
         //eni ee id vech address fetch2. save cheyanam
         const findAddress = await Address.findOne({"address._id":address},{"address.$":1})
         console.log("findAddress is ",findAddress)
+
+        if(findAddress.address.length !== 1){
+            return res.status(400).json({success:false,message:"Address not found"})
+        }
         const cart = await Cart.findOne({userId}).populate('items.productId');
         if(!cart || cart.items.length === 0){
             return res.status(400).json({success:false,message:"Cart is Empty"})
@@ -82,7 +86,7 @@ const postOrder = async (req,res) =>{
 
         const order = new Order({
             userId,
-            address:findAddress,
+            address:findAddress.address[0],
             orderedItems:cart.items.map(item => ({
             product:item.productId._id,
             quantity:item.quantity,

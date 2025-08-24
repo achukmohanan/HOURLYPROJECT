@@ -37,6 +37,28 @@
             color: #2d3436;
             font-weight: 700;
         }
+        .pagination{
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        .pagination a{
+            padding: 8px 12px;
+            border: 1px solid #ccc;
+            text-decoration: none;
+            color: black;
+            border-radius: 5px;
+        }
+        .pagination a.active{
+            background-color: #007bff;
+            color: white;
+            font-weight: bold;
+        }
+        .pagination a:hover{
+            background-color: #ddd;
+        }
     </style>
 </head>
 <body>
@@ -122,14 +144,7 @@
                             <button class="btn btn-primary" type="button"><i class="fas fa-search"></i></button>
                         </div>
                     </div>
-                    <!-- <div class="col-md-2">
-                        <label class="form-label fw-bold">&nbsp;</label>
-                        <div class="d-grid">
-                            <button class="btn btn-success" onclick="refreshOrders()">
-                                <i class="fas fa-sync-alt me-2"></i>Refresh
-                            </button>
-                        </div>
-                    </div> -->
+                    
                 </div>
             </div>
 
@@ -172,8 +187,27 @@
                         </tbody>
                     </table>
                 </div>
+            
             </div>
-        </div>
+
+            <div class="pagination">
+                <% if(currentPage > 1){ %>
+                    <a href="?page=<%= currentPage - 1 %>">&laquo; Prev</a>
+                    <% } %>
+
+                    <% for(let i=1; i<=totalPages; i++){ %>
+                        <a href="?page=<%= i %>"
+                            class="<%= currentPage === i ? 'active' : '' %>">
+                            <%= i%>
+                        </a>
+                    <% } %>
+
+                    <% if(currentPage < totalPages){%>
+                        <a href="?page=<%=currentPage + 1%>">Next &raquo;</a>
+                    <% } %>
+            </div>
+
+        </div>                
     </main>
 
     <!-- Order Detail Modal -->
@@ -253,7 +287,7 @@
                     </span>
                 </td>  
                 <td>
-                <button class="btn btn-sm btn-primary">View</button>    
+                <a href="/admin/viewOrderDetails/${order.orderId}" class="btn btn-sm btn-primary">View</a>    
                 </td>  
                ` ;
                tableBody.appendChild(row);
@@ -280,10 +314,9 @@
 
         
        
-    //  function refreshOrders() {
-    //         Swal('Orders refreshed successfully!', 'success');
-    //         loadOrders();
-    //     }
+     function refreshOrders() {
+           window.location.reload()
+        }
 
      
     </script>

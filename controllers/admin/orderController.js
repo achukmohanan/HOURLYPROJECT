@@ -6,6 +6,7 @@ const getOrderPage = async (req,res) =>{
          const {status,date,search} = req.query;
         let filter = {}
 
+       
         //status
         if(status && status!== ""){
             filter.status = status          
@@ -45,21 +46,36 @@ const getOrderPage = async (req,res) =>{
         ];
        }
 
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 5;
+        
+        const totalOrders = await Order.countDocuments(filter)
+        const totalPages = Math.ceil(totalOrders/limit);
 
         const orders = await Order.find(filter)
             .populate('userId','name email')
             .populate('orderedItems.product','name price')
             .sort({createdOn:-1})
+            .skip((page - 1) * limit )
+            .limit(limit)
+
+
         // console.log("orders are ",orders)
 
         if(req.xhr || req.headers.accept.indexOf('application/json') > -1){
-            return res.json({orders});
+            return res.json({
+                orders
+                
+            });
         }
         // console.log("orders is",orders)
 
         return res.render('admin/order',{
-            orders
-        })  
+            orders,
+            currentPage:page,
+            totalOrders,
+            totalPages
+        });  
     } catch (error) {
         console.log("error in the get order page",error);
         

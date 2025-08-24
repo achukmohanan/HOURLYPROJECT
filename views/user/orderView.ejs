@@ -54,8 +54,10 @@
                                 <p><strong>Category : </strong><%= item.product.category.name %></p>
                                 <p><strong>Category : </strong><%= item.product.color %></p>
                                 <small class="text-muted">Qty: <%= item.quantity %></small>
-                                <p><%= order.fullAddress%></p>
-
+                                <p><strong>Address : </strong><%= order.address.addressType %> </p>
+                                <p><b><%= order.address.name %></b>   <%= order.address.landMark %>(H),<%= order.address.city %>,
+                                <%= order.address.state %> <%= order.address.pincode %>,
+                              MOB: <%= order.address.phone %>,<%=order.address.altPhone %></p>
                                 <p style="color: rgb(223, 47, 2);" ><%= order.status %></p>
                                 <p>Order Placed On: <%= order.createdOn.toLocaleDateString('en-IN') %></p>
                             </div>

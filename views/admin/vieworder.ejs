@@ -269,7 +269,10 @@
                         <div class="card-body">
                             <h6>Shipping Address:</h6>
                             <p class="mb-2">
-                                <p><strong>Name:</strong> <%= order.address %></p>
+                                <p><strong>Address : </strong><%= order.address.addressType %> </p>
+                                <p><b><%= order.address.name %></b>   <%= order.address.landMark %>(H),<%= order.address.city %>,
+                                <%= order.address.state %> <%= order.address.pincode %>,
+                              MOB: <%= order.address.phone %>,<%=order.address.altPhone %></p>
                                 
                         </div>
                     </div>
@@ -360,6 +363,7 @@
                     </div>
                 </div>
             </div>
+           
         </div>
     </main>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
