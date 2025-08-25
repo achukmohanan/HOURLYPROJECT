@@ -237,6 +237,7 @@
    
 
     <!-- Main Content -->
+    
     <main class="main-content">
         <h3 class="text-muted" >Hi <%=user.name %></h3>
         <h1 class="page-title">Your Shopping Cart</h1>
@@ -304,6 +305,7 @@
                 <% } else { %>
                     No Products Selected
                 <% } %>
+               <p class="text-muted " style="font-size: 10px;">*including all taxes</p> 
                 <div class="summary-line">
                     <span>Shipping</span>
                     <span style="color: #0bdb15;">Free</span>
@@ -332,7 +334,7 @@
             </div>
         </div>
     </main>
-
+  
     
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>

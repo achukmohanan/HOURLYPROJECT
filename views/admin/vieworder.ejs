@@ -252,7 +252,7 @@
                             <h5 class="mb-0"><i class="fas fa-credit-card me-2"></i>Payment Information</h5>
                         </div>
                         <div class="card-body">
-                            <p><strong>Payment Method:</strong><%= order.paymentMethod%></p>
+                            <p><strong>Payment Method : </strong><%= order.paymentMethod%></p>
                             <!-- <p><strong>Payment Status:</strong> <span class="badge bg-<%= order.paymentStatus === 'Paid' ? 'success' : 'warning' %>"><%= order.paymentStatus %></span></p> -->
                             <!-- <p><strong>Transaction ID:</strong> <%= order.transactionId %></p> -->
                             <!-- <p><strong>Payment Date:</strong><%= order.paymentDate ? order.paymentDate.toLocaleDateString("en-IN") : "-" %> </p> -->
@@ -351,8 +351,8 @@
                                                 </div>
                                             </td>
                                             <td><%= item.quantity %> </td>
-                                            <td><%= item.price %></td>
-                                            <td><%= order.totalPrice %></td>
+                                            <td><%= item.price.toLocaleString('en-IN',{style:'currency',currency:'INR'}) %></td>
+                                            <td><%= order.totalPrice.toLocaleString('en-IN',{style:'currency',currency:'INR'}) %></td>
                                         </tr>
                                     
                                         <% }) %>

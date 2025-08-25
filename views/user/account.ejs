@@ -273,7 +273,7 @@
                             <div class="card">
                                 <div class="card-body">
                                     <h5 class="card-title">Current Balance</h5>
-                                    <h3 class="text-success"><%= user.wallet %></h3>
+                                    <h3 class="text-success"><%= user.wallet.toLocaleString('en-IN',{style:'currency',currency:'INR'})   %></h3>
                                     <button class="btn btn-primary mt-3">Add Money</button>
                                 </div>
                             </div>

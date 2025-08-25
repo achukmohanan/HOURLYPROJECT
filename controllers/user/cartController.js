@@ -3,10 +3,12 @@ const Cart = require('../../models/cartSchema');
 const Product = require('../../models/productSchema');
 const Address = require('../../models/addressSchema')
 
-const getCart = async (req,res) =>{
+const  getCart = async (req,res) =>{
     try {
         const userId = req.session.user
         const findUser = await User.findById(userId)
+
+        if(!userId) return res.redirect('/login');
 
         let cart = await Cart.findOne({userId}).populate('items.productId');
        
@@ -18,7 +20,7 @@ const getCart = async (req,res) =>{
             })
         }else{
             cart = {items:[]}
-        }
+        } 
        return res.render('user/cart',{
            user:findUser,
            cart,
@@ -29,7 +31,7 @@ const getCart = async (req,res) =>{
        console.log("error in get cart",error);
         
     }
-}
+} 
 const addToCart = async (req,res) =>{
     try {
 

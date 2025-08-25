@@ -102,7 +102,12 @@
                                     Return Order
                                 </button>
                             <%}%>
+                            <% if(order.status === 'Delivered'){%>
+                            <a href="/invoice/<%= order.orderId%>" class="btn btn-primary mt-2">Download Invoice</a>
+                            <%}%>
                             </div>
+
+                            
 
                             <% }) %>
                         

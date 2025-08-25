@@ -9,6 +9,7 @@ const profileEditing = require('../controllers/user/profileEditing');
 const cartController = require('../controllers/user/cartController');
 const wishlistController = require('../controllers/user/wishlistController');
 const paymentController = require('../controllers/user/paymentController')
+const orderController = require('../controllers/user/orderController')
 //error management
 router.get('/pagenotfound', userController.pageNotFound);
 
@@ -101,7 +102,7 @@ router.get('/order-success',userAuth,paymentController.orderSuccess)
 router.post('/cancelOrder/:orderId', userAuth,paymentController.cancelOrder)
 router.post('/return-order/:id',userAuth,paymentController.returnOrder )
 router.get('/viewOrderDetails/:id',userAuth,paymentController.viewOrderDetails)
-
+router.get('/invoice/:id',orderController.invoice)
 // whishlist management
 router.get('/wishlist',userAuth , wishlistController.getWishList)
 router.post('/add-to-wishlist',userAuth , wishlistController.postWishList)
