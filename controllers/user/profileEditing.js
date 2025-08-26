@@ -8,10 +8,13 @@ const nodemailer = require('nodemailer');
 const changePassword = async (req,res) =>{
     try {
         const user = req.session.user;
-         console.log("userId from session",user)
+        //  console.log("userId from session",user)
+        const userId = await User.findById(user);
+        if(userId.password === undefined){
+            return res.status(400).json({success:false,message:"You are Login through Google, You Can't change Email and Password"})
+        }
         const {currentPassword,newPassword,confirmPassword} = req.body;
         
-        const userId = await User.findById(user);
         console.log("user from data base",userId)
         if(!userId){
            return res.status(400).json({success:false,message:"User is not found"})
@@ -92,7 +95,11 @@ const postCurrentEmail = async (req,res) =>{
         
         const{currentEmail} = req.body;
         const findEmail = await User.findOne({email:currentEmail})
-        // console.log("email finded",findEmail.email)
+        
+        if(findEmail.password === undefined){
+           return res.status(400).json({success:false,message:"Google user cant change Email and Password"})
+
+        }
         const otp = generateOtp();
         if(!findEmail){
         return res.status(404).json({success:false,message:"Email not Found"})
