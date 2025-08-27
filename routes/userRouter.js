@@ -10,15 +10,18 @@ const cartController = require('../controllers/user/cartController');
 const wishlistController = require('../controllers/user/wishlistController');
 const paymentController = require('../controllers/user/paymentController')
 const orderController = require('../controllers/user/orderController')
+const invoiceController = require('../controllers/user/invoiceController')
 //error management
 router.get('/pagenotfound', userController.pageNotFound);
 
 //signup management
 router.get('/signup', userController.loadSignup);
 router.post('/signup', userController.signup)
+//resend otp
 router.post('/resend-otp',userController.resendOtp)
 router.get('/confirmwithotp',userController.confirmWithOtp)
 router.post('/confirmwithotp',userController.confirmwithotp)
+//google login
 router.get('/google', passport.authenticate('google', {scope: ['profile', 'email']}));
 router.get('/google/callback',
   passport.authenticate('google', {
@@ -39,23 +42,21 @@ router.post('/login', userController.login);
 
 //home page
 router.get('/', userController.landingPage)
-
 router.get('/logout',userAuth,userController.logout);
 router.get('/home', userAuth ,userController.loadHomepage);
 
 //profile management  
 router.get('/forgotpassword',profileController.forgotPassword)
-// router.post('/forgotpassword',profileController.forgotPasswordvalid)
+
 router.get('/forgotemailotp',profileController.getForgotEmailOtp)
 router.post('/forgotemailotp',profileController.forgotEmailOtp)
 router.post('/verify-passForgot-otp',profileController.verifyForgotPassOtp)
 router.post('/resend-forgot-otp',profileController.resendOtp)
+
 //reset password
 router.get('/resetpassword',profileController.getResetPassPage);
 router.post('/reset-password',profileController.postNewPassword);
 
-// profile & account
-router.get('/account',userAuth, profileController.userProfile);
 
 //address management
 router.get('/addAddress', userAuth ,profileController.addAddress);
@@ -63,11 +64,15 @@ router.post('/addAddress', userAuth ,profileController.postaddAddress)
 router.get('/editAddress', userAuth ,profileController.editAddress)
 router.post('/editAddress', userAuth ,profileController.postEditAddress)
 router.get('/deleteAddress', userAuth ,profileController.deleteAddress);
+
+// profile & account
+router.get('/account',userAuth, profileController.userProfile);
 //edit profile
 router.get('/edit-profile',userAuth ,profileController.getEditProfile);
 router.post('/edit-profile',userAuth ,profileController.editProfile);
 //Changepassword
 router.post('/changePassword', profileEditing.changePassword);
+//edit email
 router.get('/editEmail',userAuth,profileEditing.getEmailEditPage)
 router.get('/verifyCurrentEmail',userAuth ,profileEditing.getCurrentEmail)
 router.post('/verifyCurrentEmail',userAuth, profileEditing.postCurrentEmail)
@@ -93,16 +98,17 @@ router.patch('/update-quantity-cart',cartController.updateCartQuantity)
 // checkout
 router.get('/checkout',userAuth ,cartController.getCheckOut)
 router.get('/addAddress-checkout' ,userAuth , cartController.addAddressInCheckout)
-// router.get('/payment',userAuth,paymentController.getPaymentPage)
+//payement and confirm order
 router.post('/payment',paymentController.postPayment)
 // order management 
-router.post('/place-order',paymentController.postOrder)
-router.get('/order-success',userAuth,paymentController.orderSuccess)
+
+router.post('/place-order',userAuth , orderController.postOrder)
+router.get('/order-success',userAuth,orderController.orderSuccess)
 // router.get('/viewOrder',userAuth,paymentController.viewOrderPage)
-router.post('/cancelOrder/:orderId', userAuth,paymentController.cancelOrder)
-router.post('/return-order/:id',userAuth,paymentController.returnOrder )
-router.get('/viewOrderDetails/:id',userAuth,paymentController.viewOrderDetails)
-router.get('/invoice/:id',orderController.invoice)
+router.post('/cancelOrder/:orderId', userAuth,orderController.cancelOrder)
+router.post('/return-order/:id',userAuth,orderController.returnOrder )
+router.get('/viewOrderDetails/:id',userAuth,orderController.viewOrderDetails)
+router.get('/invoice/:id',invoiceController.invoice)
  
 // whishlist management
 router.get('/wishlist',userAuth , wishlistController.getWishList)

@@ -6,8 +6,6 @@ const nodemailer = require("nodemailer");
 const env = require('dotenv').config();
 const bcrypt = require('bcrypt');
  
-
-
 const pageNotFound = async (req, res) => {
     try {
         return res.render("user/error404")
@@ -31,8 +29,6 @@ const landingPage = async(req,res) =>{
 
         if(userId){
             const userData = await User.findById(userId);
-            // console.log("in home page rendering user data :",userData);
-            
             res.render('user/home',{
                 user: userData,
                 products:productData,
@@ -41,27 +37,21 @@ const landingPage = async(req,res) =>{
         }else{
             return res.render('user/landingPage',{
                 products:productData,
-                brand:brand
-                
+                brand:brand     
             });
         }
-        // return res.redi  rect('/login')
         console.log("Products sent to EJS:,its working in landing page ", productData.length);
     } catch (error) {
-        
     }
 }
 
-
 const loadHomepage = async (req, res) => {
     try {
-
         const userId = req.session.user;
         const categories = await Category.find({isListed:true});
         let  productData = await Product.find({
             isBlocked:false,
                 category:{$in:categories.map(category=>category._id)},quantity:{$gt:0}
-            
         });
         productData.sort((a,b)=>new Date(b.createdOn)-new Date(a.createdOn));
         productData = productData.slice(0,4);
@@ -69,8 +59,6 @@ const loadHomepage = async (req, res) => {
 
         if(userId){
             const userData = await User.findById(userId);
-            // console.log("in home page rendering user data :",userData);
-            
             res.render('user/home',{
                 user: userData,
                 products:productData,
@@ -82,9 +70,7 @@ const loadHomepage = async (req, res) => {
                 brand:brand
             });
         }
-        // return res.redi  rect('/login')
         console.log("Products sent to EJS:,its working ", productData.length);
-
     } catch (error) {
         console.log("Home page is not loading", error);
        res.status(500).send("server error")
@@ -116,14 +102,12 @@ async function sendVerificationEmail(email, otp) {
                 pass: process.env.NODEMAILER_PASSWORD
             }
         })
-
         const info = await transporter.sendMail({
             from: process.env.NODEMAILER_EMAIL,
             to: email,
             subject: "Verify your account",
             text: `Your OTP is ${otp}`,
             html: `<b>Your OTP : ${otp}<b>`,
-
         })
         return info.accepted.length > 0
     } catch (error) {
@@ -135,9 +119,7 @@ async function sendVerificationEmail(email, otp) {
 const signup = async (req, res) => {
 
     try {
-        // console.log(req.body)
-        const { name ,phone ,email, password, cPassword } = req.body
-    
+        const { name ,phone ,email, password, cPassword } = req.body;
         if (password !== cPassword) {
             return res.status(400).json({
                 success:false,
@@ -152,7 +134,7 @@ const signup = async (req, res) => {
             });
         }
         const otp = generateOtp();
-        
+
         const emailSent = await sendVerificationEmail(email,otp);
         if(!emailSent){
            return res.status(500).json({
@@ -162,9 +144,9 @@ const signup = async (req, res) => {
         } 
          req.session.userOtp = otp;
         req.session.userData = {name,phone,email,password};
-        
-        // console.log(req.session.userData)
+
         console.log("Otp sent",otp);
+
         return res.status(200).json({success : true, message : 'Otp send Successfully...!'});
     } catch (error) {
         console.log("signup error",error);
@@ -175,9 +157,7 @@ const signup = async (req, res) => {
             return res.json({
                 success: true,
                 message:"OTP sent to your Email"
-
             });
-
         }else{
             return res.status(500).json({
                 success:false,
@@ -199,9 +179,6 @@ const loadLogin = async (req, res) => {
 const login = async (req,res) => {
     try {
         const {email ,password} = req.body;
-        
-// console.log(req.body);
-
         const findUser = await User.findOne({isAdmin:0,email:email})
         if(!findUser){
             return res.render('user/login',{message:"User not found"})
@@ -214,26 +191,19 @@ const login = async (req,res) => {
         if(!passwordMatch){
             return res.render("user/login",{message:"Incorrect Password"})
         }
-
         req.session.user = findUser._id;
-        // console.log("userId stored in session / in login",req.session.user)
         if(req.session.user){
             console.log("redirect is working")
             return  res.redirect('/home');
-            
         }else{
             console.log("redirect is not working")
             return res.render('user/login')
         }
     } catch (error) {
         console.log("login error",error);
-        res.render("user/login",{message:"login failed. Please try again later"})
-        
+        res.render("user/login",{message:"login failed. Please try again later"})  
     }
-    
 }
-
-
 
 const confirmWithOtp = async (req, res) => {
     try {
@@ -244,22 +214,10 @@ const confirmWithOtp = async (req, res) => {
     }
 }
 
-
-
-// const landingPage = async (req, res) => {
-//     try {
-//         res.render('user/home')
-//     } catch (error) {
-//         res.status(500).send("enternal error happend")
-//     }
-// }
-
 const securePassword = async (password)=>{
     try {
         const passwordHash = await bcrypt.hash(password,10)
         return passwordHash;
-
-
     } catch (error) {
         
     }
@@ -268,15 +226,11 @@ const securePassword = async (password)=>{
 const confirmwithotp = async (req, res) => {
     try {
         const { otp1, otp2, otp3, otp4 } = req.body;
-
-        // Ensure all fields are present
         if (!otp1 || !otp2 || !otp3 || !otp4) {
             return res.status(400).json({ success: false, message: "All 4 OTP digits are required" });
         }
-
         const otp = otp1 + otp2 + otp3 + otp4;
 
-        // Compare with session OTP
         if (otp === req.session.userOtp) {
             console.log('OTP verified successfully');
 
@@ -348,29 +302,20 @@ const resendOtp = async (req,res)=>{
     }
 }
 
-
-
 const logout = async (req,res) => {
     try {
         req.session.destroy ((err)=>{
             if(err){
                 console.log("Session destruction error",err.message);
-                return res.redirect('/error404')
-                
-                
-            }
-            
-            return res.redirect('/login')
-            
+                return res.redirect('/error404')     
+            }       
+            return res.redirect('/login')        
         })
     } catch (error) {
         console.log("logout error ",error);
-        res.redirect('/pagenotfound')
-        
+        res.redirect('/pagenotfound')  
     }
 }
-
-
 
 module.exports = {
     loadHomepage,
