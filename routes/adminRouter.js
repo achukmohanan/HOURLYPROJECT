@@ -92,6 +92,8 @@ router.post(
   adminAuth,
   orderController.updateOrderStatus
 );
+// approve return order ;
+router.put('/returnRequest/:orderId',adminAuth ,orderController.approveReturnRequest)
 
 // router.get('/users',customerController.loadcustomerInfo)
 // router.get('/dashboard',adminController.loaddashboard)

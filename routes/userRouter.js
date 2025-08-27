@@ -103,6 +103,7 @@ router.post('/cancelOrder/:orderId', userAuth,paymentController.cancelOrder)
 router.post('/return-order/:id',userAuth,paymentController.returnOrder )
 router.get('/viewOrderDetails/:id',userAuth,paymentController.viewOrderDetails)
 router.get('/invoice/:id',orderController.invoice)
+ 
 // whishlist management
 router.get('/wishlist',userAuth , wishlistController.getWishList)
 router.post('/add-to-wishlist',userAuth , wishlistController.postWishList)

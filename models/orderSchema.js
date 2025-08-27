@@ -66,11 +66,17 @@ const orderSchema = new Schema({
       "Shipped",
       "Delivered",
       "Cancelled",
-      "Return Request",
+      "Return Requested",
       "Returned",
       "Out-for-delivery",
       "Payment-failed",
+      "Return Approved",
+      "Return Rejected"
     ],
+  },returnRequest:{
+    requested:{type:Boolean,default:false},
+    requestedAt:{type:Date},
+    verified:{type:Boolean,default:false}
   },
   createdOn: {
     type: Date,

@@ -16,7 +16,7 @@ const changePassword = async (req,res) =>{
         const {currentPassword,newPassword,confirmPassword} = req.body;
         
         console.log("user from data base",userId)
-        if(!userId){
+        if(!userId){    
            return res.status(400).json({success:false,message:"User is not found"})
         }
 

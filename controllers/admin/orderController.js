@@ -93,7 +93,7 @@ const viewOrderDetails = async (req,res) =>{
         if(!order){
             return res.status(404).json({success:false,message:" order is not found"});
         }
-        console.log("orders in view order",order)
+        // console.log("orders in view order",order)
       return res.render('admin/vieworder',{order}) 
     } catch (error) {
         console.log("error in view get order details ",error)
@@ -122,8 +122,39 @@ const updateOrderStatus = async (req, res) =>{
     }
 }
 
+const   approveReturnRequest =async (req,res)=> {
+    try {
+        const {orderId} = req.params;
+        const {approve} = req.body;
+
+        const order = await Order.findOne({orderId:orderId});
+
+        if(!order){
+            return res.status(400).json({success:false,message:"No order Found"});
+        }
+        if(!order.returnRequest.requested){
+            return res.status(400).json({suceess:false,message:"No Return Request Found"})
+        }
+        if(approve){
+            order.returnRequest.verified = true;
+            order.status = "Return Approved";
+            await order.save();
+        }else{
+            order.returnRequest.verified = false;
+            order.status = "Return Rejected"
+            await order.save()
+        }
+        
+        return res.status(200).json({success:true,message:"Approved Successfully"})
+    } catch (error) {
+        console.log("error in the approve requst",error);
+
+    }
+}
+
 module.exports = {
     getOrderPage,
     viewOrderDetails,
-    updateOrderStatus
+    updateOrderStatus,
+    approveReturnRequest
 }

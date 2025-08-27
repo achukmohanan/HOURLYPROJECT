@@ -186,19 +186,24 @@ const returnOrder = async(req,res) =>{
             return res.json({ success: false, message: "Only delivered orders can be returned" });
         }
 
-        order.status = "Returned"
+        order.returnRequest={
+            requested:true,
+            requestedAt:new Date(),
+            verified:false
+        }
+        order.status = "Return Requested"
         order.returnReason = reason;
         await order.save();
 
-        if (order.paymentMethod === "COD" && order.status === "Returned") {
-            await User.findByIdAndUpdate(order.userId, {
-            $inc: { wallet: order.totalPrice }  
-    });
+    //     if (order.paymentMethod === "COD" && order.status === "Returned") {
+    //         await User.findByIdAndUpdate(order.userId, {
+    //         $inc: { wallet: order.totalPrice }  
+    // });
              
-        }
-        // console.log("qgvqwkhdvwl");
+        // }
+        console.log("order is ",order);
         
-       return res.json({ success: true });
+       return res.json({ success: true,message:"Return request submitted",order });
     } catch (error) {
         console.log("error in the returnOrder",error);
         return res.json({ success: false, message: "Server error" });

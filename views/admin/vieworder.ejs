@@ -146,7 +146,7 @@
                                 <div class="col-md-6">
                                     <label for="orderStatus" class="form-label fw-bold">Update Order Status:</label>
                                     <select class="form-select" id="orderStatus" onchange="updateOrderStatus()">
-                                        <option value=""><%= order.status%></option>
+                                        <option value="<%= order.status%>"><%= order.status%></option>
                                         <option value="Pending">Pending</option>
                                         <option value="Processing">Processing</option>
                                         <option value="Shipped" >Shipped</option>
@@ -154,14 +154,21 @@
                                         <option value="Delivered">Delivered</option>
                                         <option value="Payment-failed">Payment Failed</option>
                                         <option value="Cancelled">Cancelled</option>
-                                        <option value="Return Request">Return Request</option>
+                                        <option value="Return Requested">Return Request</option>
                                         <option value="Returned">Returned</option>
                                     </select>
                                 </div>
                                 <div class="col-md-6">
-                                    <button class="btn btn-success mt-4" onclick="saveStatusUpdate()">
-                                        <i class="fas fa-save me-2"></i>Save Changes
+                                   <% if(order.status === 'Return Requested'){%>
+                                     <button class="btn btn-success mt-4" onclick="approveRequest()">
+                                        <i class="bi bi-check2-circle"></i>Approve Request
                                     </button>
+                                   <%} %>
+                                    <button class="btn btn-success mt-4" onclick="saveStatusUpdate()">
+                                          <i class="fas fa-save me-2"></i>Save Changes
+                                </button>
+                                        
+                                  
                                 </div>
                             </div>
                         </div>
@@ -252,7 +259,7 @@
                             <h5 class="mb-0"><i class="fas fa-credit-card me-2"></i>Payment Information</h5>
                         </div>
                         <div class="card-body">
-                            <p><strong>Payment Method : </strong><%= order.paymentMethod%></p>
+                            <p><strong>Payment Method : </strong><%= order.paymentMethod %></p>
                             <!-- <p><strong>Payment Status:</strong> <span class="badge bg-<%= order.paymentStatus === 'Paid' ? 'success' : 'warning' %>"><%= order.paymentStatus %></span></p> -->
                             <!-- <p><strong>Transaction ID:</strong> <%= order.transactionId %></p> -->
                             <!-- <p><strong>Payment Date:</strong><%= order.paymentDate ? order.paymentDate.toLocaleDateString("en-IN") : "-" %> </p> -->
@@ -366,9 +373,32 @@
            
         </div>
     </main>
+    </body>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
     <script>
+           // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Order view page loaded');
+        });
+
+        function updateTimeline(status) {
+        const steps = document.querySelectorAll(".progress-step");
+
+        steps.forEach(step => step.classList.remove("completed", "active"));
+
+        const statusOrder = ["Pending","Processing","Shipped","Delivered","Cancelled","Return Requested","Returned","Out-for-delivery","Payment-failed"];
+
+        let index = statusOrder.indexOf(status);
+
+        steps.forEach((step, i) => {
+            if (i < index) {
+                step.classList.add("completed");
+            } else if (i === index) {
+                step.classList.add("active");
+            }
+        });
+    }
         function updateOrderStatus() {
             const statusSelect = document.getElementById('orderStatus');
             const selectedStatus = statusSelect.value;
@@ -440,28 +470,49 @@
            
         }
 
-        // Initialize page
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('Order view page loaded');
-        });
+       async function approveRequest(){
+            
+            const orderId = "<%= order.orderId %>";
+            try {
+                const response = await fetch(`/admin/returnRequest/${orderId}`,{
+                    method:'PUT',
+                    headers:{
+                        'Content-Type':'application/json'
+                    },
+                    body:JSON.stringify({approve:true})
+                })
+                const result = await response.json();
+                if(result.success){
+                    Swal.fire({
+                        icon:'success',
+                        title:'Success',
+                        text:result.message,
+                    }).then(()=>{
+                        window.location.reload()
+                    })
+                }else{
+                    Swal.fire({
+                        icon:'error',
+                        title:'Error',
+                        text:result.message
+                    }).then(()=>{
+                        window.location.reload();
+                    })
+                }
+            } catch (error) {
+                console.log("error in the approve status field",error)
+                Swal.fire({
+                    icon:'error',
+                    title:"OOPS",
+                    text:error.message || "Internal Server Error"
+                }).then(()=>{
+                    window.location.reload()
+                })
+            } 
+       } 
 
-        function updateTimeline(status) {
-        const steps = document.querySelectorAll(".progress-step");
 
-        steps.forEach(step => step.classList.remove("completed", "active"));
-
-        const statusOrder = ["pending","processing","shipped","out-for-delivery","delivered"];
-
-        let index = statusOrder.indexOf(status);
-
-        steps.forEach((step, i) => {
-            if (i < index) {
-                step.classList.add("completed");
-            } else if (i === index) {
-                step.classList.add("active");
-            }
-        });
-    }
+     
     </script>
-</body>
+
 </html>

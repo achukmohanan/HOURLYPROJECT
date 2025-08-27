@@ -196,7 +196,11 @@
                         .then(res => res.json())
                         .then(data => {
                         if(data.success){
-                            Swal.fire("Returned!", "Your order has been returned successfully.", "success")
+                            Swal.fire({
+                                icon:'success',
+                                title:"Requested",
+                                text:data.message
+                            })
                             .then(() => location.reload());
                         }else{
                             Swal.fire("Error!", data.message, "error");
