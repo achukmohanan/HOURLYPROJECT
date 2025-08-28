@@ -2,7 +2,8 @@ const User = require('../../models/userSchema')
 const Cart = require('../../models/cartSchema')
 const Address = require('../../models/addressSchema');
 const Order = require('../../models/orderSchema');
-const Product = require('../../models/productSchema')
+const Product = require('../../models/productSchema');
+const razorpayInstance = require('./razorpay');
 
 
 // const getPaymentPage = async (req,res) =>{
@@ -58,13 +59,14 @@ const postOrder = async (req,res) =>{
     try {
         const  userId = req.session.user;
         const {address,paymentMethod} = req.body;
-
-        console.log("address is in post order", address)
+        console.log("payment method",paymentMethod);
+        
+        // console.log("address is in post order", address)
         //eni ee id vech address fetch2. save cheyanam
         const findAddress = await Address.findOne({"address._id":address},{"address.$":1})
-        console.log("findAddress is ",findAddress)
+        // console.log("findAddress is ",findAddress)
 
-        if(findAddress.address.length !== 1){
+        if(!findAddress || findAddress.address.length !== 1){
             return res.status(400).json({success:false,message:"Address not found"})
         }
         const cart = await Cart.findOne({userId}).populate('items.productId');
@@ -82,7 +84,8 @@ const postOrder = async (req,res) =>{
             return total +  item.productId.salePrice * item.quantity;
         },0)
         
-
+        
+        if(paymentMethod === 'cod'){
 
         const order = new Order({
             userId,
@@ -108,8 +111,24 @@ const postOrder = async (req,res) =>{
 
         await  Cart.deleteOne({userId});
         console.log("order is placed",order)
-        res.json({success:true,orderId:order._id});
-
+       return res.json({success:true,orderId:order._id,payment,payment:'COD'});
+    }
+    if(paymentMethod === 'razorpay'){
+         // Razorpay Flow
+            const options = {
+                amount: totalPrice * 100, // amount in paisa
+                currency: "INR",
+                receipt: "order_rcptid_" + new Date().getTime(),
+            };
+            const razorpayOrder = await razorpayInstance.orders.create(options);
+            return res.json({
+                success:true,
+                razorpayOrderId:razorpayOrder._id,
+                amount:totalPrice * 100,
+                key:process.env.RAZORPAY_KEY_ID,
+                currency:"INR"
+            });
+    }
     } catch (error) {
         console.log("error in the postorder",error)
         res.status(500).json({status:false,message:"Internal Server Error"});
