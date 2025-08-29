@@ -4,7 +4,7 @@ const Address = require('../../models/addressSchema');
 const Order = require('../../models/orderSchema');
 const Product = require('../../models/productSchema');
 const razorpayInstance = require('./razorpay');
-
+const crypto = require("crypto");
 
 // const getPaymentPage = async (req,res) =>{
 //     try {
@@ -114,7 +114,7 @@ const postOrder = async (req,res) =>{
        return res.json({success:true,orderId:order._id,payment,payment:'COD'});
     }
     if(paymentMethod === 'razorpay'){
-         // Razorpay Flow
+         
             const options = {
                 amount: totalPrice * 100, // amount in paisa
                 currency: "INR",
@@ -123,11 +123,16 @@ const postOrder = async (req,res) =>{
             const razorpayOrder = await razorpayInstance.orders.create(options);
             return res.json({
                 success:true,
-                razorpayOrderId:razorpayOrder._id,
-                amount:totalPrice * 100,
-                key:process.env.RAZORPAY_KEY_ID,
-                currency:"INR"
+                payment:'razorpay',
+                order:{
+                    id:razorpayOrder.id,
+                    amount:totalPrice * 100,
+                    currency:'INR'
+                },
+                key:process.env.RAZORPAY_KEY_ID,            
+                orderId: razorpayOrder.id
             });
+            
     }
     } catch (error) {
         console.log("error in the postorder",error)
@@ -139,6 +144,65 @@ const orderSuccess = async(req,res) =>{
         return res.render('user/order-success')
     } catch (error) {
         
+    }
+}
+const confirmRazorpay = async (req,res) =>{
+    try {
+        const userId = req.session.user;
+         
+         
+        const {razorpay_order_id,razorpay_payment_id,razorpay_signature,address}  = req.body;
+        const body = razorpay_order_id + "|" + razorpay_payment_id;
+      
+        const expectedSignature = crypto
+        .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
+        .update(body.toString())
+        .digest("hex"); 
+
+        if (expectedSignature === razorpay_signature) {
+            const cart = await Cart.findOne({userId}).populate('items.productId')
+            let totalPrice = cart.items.reduce((total,item)=>{
+                return total + item.productId.salePrice * item.quantity
+            },0)    
+            
+            // fetch selected address snapshot
+      const selectedAddress = await Address.findOne(
+        { "address._id": address, userId },
+        { "address.$": 1 }
+      );
+      console.log("selected address",selectedAddress)
+      if (!selectedAddress) {
+        return res.json({ success: false, message: "Address not found" });
+      }
+            const order = new Order({
+                userId,
+                orderedItems:cart.items.map(item =>({
+                    product:item.productId._id,
+                    quantity:item.quantity,
+                    price:item.productId.salePrice,
+                })),
+                totalPrice,
+                paymentMethod:'Razorpay',
+                status:'Paid',
+                paymentId: razorpay_payment_id,
+                address: selectedAddress.address[0],
+            });
+
+            await order.save();
+
+            for(let item of cart.items){
+                await Product.updateOne(
+                    {_id:item.productId._id},
+                    {$inc:{quantity:-item.quantity}}
+                );
+            }
+            await Cart.deleteOne({userId})
+      return  res.json({ success: true, message: "Payment verified successfully" });
+    } else { 
+        res.json({ success: false, message: "Payment verification failed" });
+    }
+    } catch (error) {
+        console.log("error in the confirm razor pay ",error)    
     }
 }
 
@@ -244,6 +308,8 @@ const viewOrderDetails = async (req,res) =>{
     }
 }
 
+
+
 module.exports ={
     // getPaymentPage,
     postPayment,
@@ -252,5 +318,6 @@ module.exports ={
     // viewOrderPage,
     cancelOrder,
     returnOrder,
-    viewOrderDetails   
+    viewOrderDetails,
+    confirmRazorpay   
 }

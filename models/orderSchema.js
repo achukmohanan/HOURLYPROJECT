@@ -70,6 +70,7 @@ const orderSchema = new Schema({
       "Returned",
       "Out-for-delivery",
       "Payment-failed",
+      'Paid'
     ],
   },
   createdOn: {
