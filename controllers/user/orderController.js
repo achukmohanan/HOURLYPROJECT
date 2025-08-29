@@ -79,29 +79,40 @@ const orderSuccess = async(req,res) =>{
 }
 const cancelOrder = async (req,res) =>{
     try {
-        const { orderId } = req.params;
+        const { orderId,itemId } = req.params;
         const userId = req.session.user;
-
+        // console.log("item Id is",itemId)
         const order = await Order.findOne({orderId,userId }).populate('orderedItems.product');
 
         if(!order){
             return res.status(404).json({success:false,message:"Order Not Found"})
         }
+        const item = order.orderedItems.id(itemId);
+        if(!item){
+            return res.status(404).json({success:false,message:"Item not found in this order"})
+        }
+
         if(order.status === "Delivered"){
             return res.status(400).json({success:false,message:"Delivered Orders Can't Cancel"})
         }
-        if(order.status === "Cancelled"){
-            return res.status(400).json({success:false,message:'Order Already Cancelled'})
+        if(item.status === "Cancelled"){
+            return res.status(400).json({success:false,message:'This Item is  Already Cancelled'})
         }
         
-        for(let item of order.orderedItems){
-            await Product.findByIdAndUpdate(item.product._id,{
-                $inc:{quantity:item.quantity}
-            })
-        }
-        order.status = "Cancelled";
+       await Product.findByIdAndUpdate(item.product._id,{
+        $inc:{quantity:item.quantity}
+       });
+
+        item.status = "Cancelled";
+
+        if(order.orderedItems.every(i => i.status === "Cancelled")){
+            order.status = 'Cancelled'
+        }else if (order.orderedItems.some(i => i.status === "Cancelled")) {
+            order.status = "Cancelled";
+            }
+
         await order.save();
-        // console.log("order cancelled");
+        // console.log("order cancelled",order);
         return res.status(200).json({success:true,message:"Order Cancelled Successfully"})
 
     } catch (error) {

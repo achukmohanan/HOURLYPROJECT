@@ -23,6 +23,11 @@ const orderSchema = new Schema({
         type: Number,
         default: 0,
       },
+      status:{
+        type:String,
+        enum:["Pending", "Cancelled", "Delivered", "Returned"],
+        default:'Pending'
+      }
     },
   ],
   userId: {

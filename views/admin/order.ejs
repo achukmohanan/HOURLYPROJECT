@@ -178,7 +178,8 @@
                             <td><%= order.createdOn.toLocaleDateString('en-IN') %></td>
                             <td>
                                 <% order.orderedItems.forEach(item => { %>
-                                    <%= item.quantity %>  <%=item.product ? item.product.name : 'Unkown Product' %> <br>
+                                    <%= item.quantity %>  
+                                    <%= item.product.productName ? item.product.productName : '' %> <br>
                                     <% }) %>
                             </td>
                             <td>₹<%= order.totalPrice%></td>

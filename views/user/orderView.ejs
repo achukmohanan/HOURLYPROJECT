@@ -52,13 +52,13 @@
                                 <p><strong>Description : </strong><%= item.product.description%></p>
                                 <p><strong>Brand : </strong><%= item.product.brand%></p>
                                 <p><strong>Category : </strong><%= item.product.category.name %></p>
-                                <p><strong>Category : </strong><%= item.product.color %></p>
+                                <p><strong>Color : </strong><%= item.product.color %></p>
                                 <small class="text-muted">Qty: <%= item.quantity %></small>
                                 <p><strong>Address : </strong><%= order.address.addressType %> </p>
                                 <p><b><%= order.address.name %></b>   <%= order.address.landMark %>(H),<%= order.address.city %>,
                                 <%= order.address.state %> <%= order.address.pincode %>,
                               MOB: <%= order.address.phone %>,<%=order.address.altPhone %></p>
-                                <p style="color: rgb(223, 47, 2);" ><%= order.status %></p>
+                                <p style="color: rgb(223, 47, 2);" > <strong class="text-dark">Status :</strong> <%= order.status %></p>
                                 <p>Order Placed On: <%= order.createdOn.toLocaleDateString('en-IN') %></p>
                             </div>
 
@@ -68,21 +68,21 @@
                                         <%= item.price.toLocaleString('en-IN',{style:'currency',currency:'INR'})  %>
                                     </h6>
                                     
-                               <% if(order.status === 'Cancelled' ||order.status === 'Delivered' || order.status === "Returned" ){ %>
+                               <% if(item.status === 'Cancelled' ||order.status === 'Delivered' || item.status === "Returned" ){ %>
                                  <button type="button" 
                                         class="btn btn-danger mt-2" 
                                         data-bs-toggle="modal" 
                                         data-bs-target="#cancelModal"
-                                        onclick="setCancelOrderId('<%= order.orderId %>')" disabled>
-                                    Cancel Order
+                                        onclick="setCancelOrderId('<%= order.orderId %>','<%= item._id %>')" disabled>
+                                    Cancel Item
                                 </button>
                             <% }else {%>
                                  <button type="button" 
                                         class="btn btn-danger mt-2" 
                                         data-bs-toggle="modal" 
                                         data-bs-target="#cancelModal"
-                                        onclick="setCancelOrderId('<%= order.orderId %>')" >
-                                    Cancel Order
+                                        onclick="setCancelOrderId('<%= order.orderId %>','<%= item._id %>')" >
+                                    Cancel Item
                                 </button>
                                 <%} %>
 
@@ -147,6 +147,7 @@
                     <p id="cancelText" > </p>
                     <!-- <p class="text-muted mb-0">This action cannot be undone. You will receive a full refund within 3-5 business days.</p> -->
                     <input type="hidden" id="cancelOrderId">
+                    <input type="hidden" id="cancelItemId">
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Keep Order</button>
@@ -214,8 +215,9 @@
 
 
 
-    function setCancelOrderId(id){
-        document.getElementById('cancelOrderId').value = id;
+    function setCancelOrderId(orderId,itemId){
+        document.getElementById('cancelOrderId').value = orderId;
+        document.getElementById('cancelItemId').value = itemId;
 
         document.getElementById('cancelText').innerHTML = `Are you Want to Cancel this Order Cancel this Order?`
     }
@@ -225,8 +227,8 @@
         function cancelOrder() {
 
             const orderId = document.getElementById('cancelOrderId').value;
-
-            fetch(`/cancelOrder/${orderId}`,{
+            const itemId = document.getElementById('cancelItemId').value;
+            fetch(`/cancelOrder/${orderId}/${itemId}`,{
                 method:'POST'
             })
             .then(res=>res.json())
