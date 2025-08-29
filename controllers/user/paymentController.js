@@ -151,9 +151,10 @@ const confirmRazorpay = async (req,res) =>{
         const userId = req.session.user;
          
          
-        const {razorpay_order_id,razorpay_payment_id,razorpay_signature,address}  = req.body;
+        const {razorpay_order_id,razorpay_payment_id,razorpay_signature,addressId}  = req.body;
         const body = razorpay_order_id + "|" + razorpay_payment_id;
       
+        console.log("req.body is :",req.body)
         const expectedSignature = crypto
         .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
         .update(body.toString())
@@ -167,7 +168,7 @@ const confirmRazorpay = async (req,res) =>{
             
             // fetch selected address snapshot
       const selectedAddress = await Address.findOne(
-        { "address._id": address, userId },
+        { "address._id": addressId, userId },
         { "address.$": 1 }
       );
       console.log("selected address",selectedAddress)
