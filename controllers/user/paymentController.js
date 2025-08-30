@@ -48,7 +48,7 @@ const confirmRazorpay = async (req,res) =>{
          
         const {razorpay_order_id,razorpay_payment_id,razorpay_signature,address}  = req.body;
         const body = razorpay_order_id + "|" + razorpay_payment_id;
-      
+        console.log("address is ",address)
         const expectedSignature = crypto
         .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
         .update(body.toString())
