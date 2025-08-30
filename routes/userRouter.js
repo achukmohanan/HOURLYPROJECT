@@ -100,8 +100,8 @@ router.get('/checkout',userAuth ,cartController.getCheckOut)
 router.get('/addAddress-checkout' ,userAuth , cartController.addAddressInCheckout)
 //payement and confirm order
 router.post('/payment',paymentController.postPayment)
+router.post('/verify-payment',userAuth,paymentController.confirmRazorpay)
 // order management 
-
 router.post('/place-order',userAuth , orderController.postOrder)
 router.get('/order-success',userAuth,orderController.orderSuccess)
 // router.get('/viewOrder',userAuth,paymentController.viewOrderPage)

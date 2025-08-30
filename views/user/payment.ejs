@@ -253,27 +253,26 @@
                 <h2 class="section-title">Payment Method</h2>
                 <div class="payment-options">
                     
-                    <!-- Cash on Delivery -->
-                    <div class="payment-option selected" onclick="selectPayment('cod')">
-                        <input type="radio" name="payment" value="cod" checked>
-                        <div class="payment-info">
-                            <div class="payment-title">💰 Cash on Delivery</div>
-                            <div class="payment-desc">Pay when your order is delivered to your doorstep</div>
-                        </div>
-                    </div>
-
-                    <!-- Razorpay (Coming Soon) -->
-                    <div class="payment-option disabled">
-                        <input type="radio" name="payment" value="razorpay" disabled>
-                        <div class="payment-info">
-                            <div class="payment-title">
-                                💳 Online Payment (Card/UPI/Wallet)
-                                <span class="coming-soon">Coming Soon</span>
+                  <!-- Cash on Delivery -->
+                        <div class="payment-option " >
+                            <input type="radio" name="payment" value="cod">
+                            <div class="payment-info">
+                                <div class="payment-title">💰 Cash on Delivery</div>
+                                <div class="payment-desc">Pay when your order is delivered to your doorstep</div>
                             </div>
-                            <div class="payment-desc">Pay securely using Razorpay - Cards, UPI, Net Banking & Wallets</div>
                         </div>
-                    </div>
 
+                        <!-- Razorpay  -->
+                        <div class="payment-option ">
+                            <input type="radio" name="payment" value="razorpay" >
+                            <div class="payment-info">
+                                <div class="payment-title">
+                                    💳 Online Payment Razorpay
+                                    <!-- <span class="coming-soon">Coming Soon</span> -->
+                                </div>
+                                <div class="payment-desc">Pay securely using Razorpay </div>
+                            </div>
+                        </div>
                 </div>
             </div>
 
@@ -283,10 +282,24 @@
             </button>
         </div>
     </div>
-
+ <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+ <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
     <script>
 
         document.getElementById('paymentid').addEventListener('click',function(){
+            const selectedPayment = document.querySelector("input[name='payment']:checked").value;
+
+            // console.log("payment method is ",selectedPayment)
+            
+            if(!selectedPayment){
+                Swal.fire({
+                    icon:'warning',
+                    title:'Select Payment Method',
+                    text: 'Please choose a payment method before placing the order.'
+                })
+                return;  
+            }
+
             const result = fetch('/place-order',{
                 method:'POST',
                 headers:{
@@ -294,13 +307,50 @@
                 },
                 body:JSON.stringify({
                     address:"<%=orderData.address._id %>",
-                    paymentMethod:"COD"
+                    paymentMethod:selectedPayment
                 })
             })
             .then(res => res.json())
             .then(data =>{
                 if(data.success){
-                    window.location.href="/order-success"
+                   if(data.payment === 'razorpay'){
+                        var options = {
+                            "key":data.key,
+                            amount:data.order.amount,
+                            'currency':data.order.currency,
+                            'name':'HOURLY WATCHES',
+                            'description':'Order Payment',
+                            'order_id': data.order.id,
+                            'handler':function(response){
+                                fetch('/verify-payment',{
+                                    method:'POST',
+                                    headers:{
+                                        'Content-Type':'application/json'
+                                    },
+                                    body:JSON.stringify({
+                                        razorpay_order_id: response.razorpay_order_id,
+                                        razorpay_payment_id: response.razorpay_payment_id,
+                                        razorpay_signature: response.razorpay_signature,
+                                        orderId: data.orderId
+                                    })  
+                                })
+                                .then((res=>res.json()))
+                                .then(result=>{
+                                    if(result.success){
+                                        window.location.href = '/order-success';
+                                    }else{
+                                        Swal.fire({
+                                            icon:'error',
+                                            title:'Payment Failed',
+                                            text:result.message
+                                        });
+                                    }
+                                });
+                            }
+                        };
+                            var rzp1 = new Razorpay(options)
+                            rzp1.open()
+                    }
                 }else{
                     Swal.fire({
                         icon:'error',
@@ -312,26 +362,11 @@
             })
             .catch(err=>console.error(err))
         })
-    
-        let selectedPayment = 'cod';
-
-        function selectPayment(method) {
-            if (method === 'razorpay') return; // Disabled for now
-            
-            selectedPayment = method;
-            
-            // Update radio buttons
-            document.querySelectorAll('input[name="payment"]').forEach(radio => {
-                radio.checked = radio.value === method;
-            });
-            
-            // Update visual selection
-            document.querySelectorAll('.payment-option').forEach(option => {
-                option.classList.remove('selected');
-            });
-            
-            event.currentTarget.classList.add('selected');
+        
+        async function placeOrder(paymentMethod){
+            const address = document.querySelector("input[name='address']")
         }
+
 
     
     </script>

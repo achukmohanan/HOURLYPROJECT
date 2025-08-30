@@ -25,7 +25,7 @@ const orderSchema = new Schema({
       },
       status:{
         type:String,
-        enum:["Pending", "Cancelled", "Delivered", "Returned",'Processing','Return Requested',"Partially Returned","Return Rejected","Shipped","Out-for-delivery","Payment-failed","Return Approved","Partially Cancelled"],
+        enum:["Pending", "Cancelled", "Delivered", "Returned",'Processing','Return Requested',"Partially Returned","Return Rejected","Shipped","Out-for-delivery","Payment-failed","Return Approved","Partially Cancelled","Paid"],
         default:'Pending'
       }
     },
@@ -47,11 +47,6 @@ const orderSchema = new Schema({
     type: Number,
     required: false,
   },
-  // address:{
-  //     type:Schema.Types.ObjectId,
-  //     ref: 'Address',
-  //     required:true
-  // },
   address: singleAddress,
   invoiceDate: {
     type: Date,
@@ -78,7 +73,8 @@ const orderSchema = new Schema({
       "Return Approved",
       "Return Rejected",
       "Partially Returned",
-      "Partially Cancelled"
+      "Partially Cancelled",
+      "Paid"
     ],
   },returnRequest:{
     requested:{type:Boolean,default:false},
