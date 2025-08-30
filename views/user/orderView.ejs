@@ -58,7 +58,7 @@
                                 <p><b><%= order.address.name %></b>   <%= order.address.landMark %>(H),<%= order.address.city %>,
                                 <%= order.address.state %> <%= order.address.pincode %>,
                               MOB: <%= order.address.phone %>,<%=order.address.altPhone %></p>
-                                <p style="color: rgb(223, 47, 2);" > <strong class="text-dark">Status :</strong> <%= order.status %></p>
+                                <p style="color: rgb(223, 47, 2);" > <strong class="text-dark">Status :</strong> <%= item.status %></p>
                                 <p>Order Placed On: <%= order.createdOn.toLocaleDateString('en-IN') %></p>
                             </div>
 
@@ -68,7 +68,7 @@
                                         <%= item.price.toLocaleString('en-IN',{style:'currency',currency:'INR'})  %>
                                     </h6>
                                     
-                               <% if(item.status === 'Cancelled' ||order.status === 'Delivered' || item.status === "Returned" ){ %>
+                               <% if(item.status === 'Cancelled' ||order.status === 'Delivered' || item.status === "Returned" ||item.status ==='Return Approved' ){ %>
                                  <button type="button" 
                                         class="btn btn-danger mt-2" 
                                         data-bs-toggle="modal" 
@@ -87,7 +87,7 @@
                                 <%} %>
 
                                 
-                                <% if (order.status === 'Delivered') {%>
+                                <% if (item.status === 'Delivered') {%>
                                 <button type="button" 
                                         class="btn btn-secondary mt-2" 
                                         
@@ -102,7 +102,7 @@
                                     Return Order
                                 </button>
                             <%}%>
-                            <% if(order.status === 'Delivered'){%>
+                            <% if(item.status === 'Delivered' ){%>
                             <a href="/invoice/<%= order.orderId%>" class="btn btn-primary mt-2">Download Invoice</a>
                             <%}%>
                             </div>

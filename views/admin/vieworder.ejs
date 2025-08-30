@@ -340,6 +340,7 @@
                                             <th>Quantity</th>
                                             <th>Unit Price</th>
                                             <th>Total</th>
+                                            <th>Status</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -360,6 +361,7 @@
                                             <td><%= item.quantity %> </td>
                                             <td><%= item.price.toLocaleString('en-IN',{style:'currency',currency:'INR'}) %></td>
                                             <td><%= order.totalPrice.toLocaleString('en-IN',{style:'currency',currency:'INR'}) %></td>
+                                            <td><%= item.status %> </td>
                                         </tr>
                                     
                                         <% }) %>

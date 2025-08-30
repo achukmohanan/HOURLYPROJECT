@@ -88,9 +88,11 @@ const cancelOrder = async (req,res) =>{
             return res.status(404).json({success:false,message:"Order Not Found"})
         }
         const item = order.orderedItems.id(itemId);
+        console.log("item is ",item)
         if(!item){
             return res.status(404).json({success:false,message:"Item not found in this order"})
         }
+
 
         if(order.status === "Delivered"){
             return res.status(400).json({success:false,message:"Delivered Orders Can't Cancel"})
@@ -108,7 +110,7 @@ const cancelOrder = async (req,res) =>{
         if(order.orderedItems.every(i => i.status === "Cancelled")){
             order.status = 'Cancelled'
         }else if (order.orderedItems.some(i => i.status === "Cancelled")) {
-            order.status = "Cancelled";
+            order.status = "Partially Cancelled";
             }
 
         await order.save();
@@ -125,20 +127,31 @@ const returnOrder = async(req,res) =>{
         const {id} = req.params
         const {reason} = req.body;
         // console.log("reason is ",reason)
-        const order = await Order.findOne({orderId:id}).populate('userId');
+        let   order = await Order.findOne({orderId:id}).populate('userId');
         if(!order){
             return res.status(404).json({success:false,message:"Order is not Found"})
         }
-        if(order.status !== "Delivered"){
-            return res.json({ success: false, message: "Only delivered orders can be returned" });
-        }
-
         order.returnRequest={
             requested:true,
             requestedAt:new Date(),
             verified:false
         }
-        order.status = "Return Requested"
+         order.orderedItems.forEach(item =>{
+            if(item.status === 'Delivered'){
+                item.status = "Return Requested" 
+            }else if(item.status === 'Return Requested'){
+            order.status = 'Return Requested'
+           }
+        });
+            
+        const totalDelivered = order.orderedItems.filter(item=> item.status === 'Delivered').length;
+        const totalReturnRequest = order.orderedItems.filter(item => item.status === 'Return Requested').length;
+        if(totalDelivered === 0 && totalReturnRequest > 0){
+            order.status = "Return Requested";
+        }else if(totalDelivered > 0 && totalReturnRequest > 0){
+            order.status = "Partially Returned"
+        }
+           
         order.returnReason = reason;
         await order.save();
 

@@ -249,10 +249,10 @@ const searchProducts = async (req,res) => {
                 isBlocked:false,
                 quantity:{$gt:0},
                 category:{$in:categoryIds}
-            })
+            }).sort({productName:-1})
         }
 
-        searchResult.sort((a,b)=> new Date(b.createdOn)- new Date(a.createdOn));
+        // searchResult.sort((a,b)=> new Date(b.createdOn)- new Date(a.createdOn));
         
         let itemsPerPage = 6;
         let currentPage = parseInt(req.query.page) || 1;

@@ -87,7 +87,7 @@ const viewOrderDetails = async (req,res) =>{
         // console.log("orderid",orderId)
         const order = await Order.findOne({orderId:orderId})
         .populate('userId','name email phone')
-        .populate('orderedItems.product','productName  salePrice productImage')
+        .populate('orderedItems.product','productName  salePrice productImage status')
         .populate('address')
         
         if(!order){
@@ -109,9 +109,14 @@ const updateOrderStatus = async (req, res) =>{
         // console.log("orderId",orderId)
         const order = await Order.findOneAndUpdate(
             {orderId},
-            {$set:{status}},
-            {new:true}
+            {$set:{"orderedItems.$[elem].status":status,
+                status:status
+            }},
+            {new:true,
+                arrayFilters:[{"elem.status":{$ne:'Cancelled'}}]
+            }
         );
+        
         if(!order){
             return res.status(404).json({success:false,message:"Order is Not Found"})
         }
@@ -138,6 +143,12 @@ const   approveReturnRequest =async (req,res)=> {
         if(approve){
             order.returnRequest.verified = true;
             order.status = "Return Approved";
+            order.orderedItems.forEach(item=>{
+                if(item.status === 'Return Requested'){
+                    item.status = 'Return Approved'
+                }
+                });
+            
             await order.save();
         }else{
             order.returnRequest.verified = false;

@@ -25,7 +25,7 @@ const orderSchema = new Schema({
       },
       status:{
         type:String,
-        enum:["Pending", "Cancelled", "Delivered", "Returned"],
+        enum:["Pending", "Cancelled", "Delivered", "Returned",'Processing','Return Requested',"Partially Returned","Return Rejected","Shipped","Out-for-delivery","Payment-failed","Return Approved","Partially Cancelled"],
         default:'Pending'
       }
     },
@@ -76,7 +76,9 @@ const orderSchema = new Schema({
       "Out-for-delivery",
       "Payment-failed",
       "Return Approved",
-      "Return Rejected"
+      "Return Rejected",
+      "Partially Returned",
+      "Partially Cancelled"
     ],
   },returnRequest:{
     requested:{type:Boolean,default:false},
