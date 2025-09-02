@@ -27,7 +27,7 @@ const orderSchema = new Schema({
         type:String,
         enum:["Pending", "Cancelled", "Delivered", "Returned",'Processing','Return Requested',"Partially Returned","Return Rejected","Shipped","Out-for-delivery","Payment-failed","Return Approved","Partially Cancelled","Paid"],
         default:'Pending'
-      }
+      },
     },
   ],
   userId: {
@@ -54,7 +54,7 @@ const orderSchema = new Schema({
   paymentMethod: {
     type: String,
     required: true,
-    enum: ["COD", "Razorpay", "Wallet", "Paypal"], // add what you use
+    enum: ["COD", "Razorpay", "Wallet"], // add what you use
     default: "COD",
   },
   status: {
@@ -94,6 +94,10 @@ const orderSchema = new Schema({
     type: String,
     default: null,
   },
+  paymentStatus:{
+        type:String,
+        enum:["Paid","Cash on Delivery"]
+      }
 });
 
 const Order = mongoose.model("Order", orderSchema);

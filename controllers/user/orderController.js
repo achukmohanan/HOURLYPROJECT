@@ -39,9 +39,8 @@ const postOrder = async (req,res) =>{
             return total +  item.productId.salePrice * item.quantity;
         },0)
         
-        
-        if(paymentMethod === 'cod'){
-
+       
+        if(paymentMethod === 'COD'){
         const order = new Order({
             userId,
             address:findAddress.address[0],
@@ -52,7 +51,8 @@ const postOrder = async (req,res) =>{
             })),
             totalPrice,
             paymentMethod,
-            status:'Pending'
+            status:'Pending',
+            paymentStatus:"Cash on Delivery"
         })
         // console.log("order is ",order)
         await order.save();
@@ -66,7 +66,7 @@ const postOrder = async (req,res) =>{
 
         await  Cart.deleteOne({userId});
         console.log("order is placed",order)
-       return res.json({success:true,orderId:order._id,payment,payment:'COD'});
+       return res.json({success:true,orderId:order._id,payment:'COD'});
     }
     if(paymentMethod === 'razorpay'){
          
@@ -215,12 +215,21 @@ const returnOrder = async(req,res) =>{
            console.log("error in the viewOrderDetails ",error);
            
        }
-   }
+   };
+
+const orderFailure = async (req,res) =>{
+    try {
+        return res.render('user/order-failure')
+    } catch (error) {
+        
+    }
+}
    
 module.exports = {
    postOrder,
    orderSuccess,
    cancelOrder,
    returnOrder,
-   viewOrderDetails
+   viewOrderDetails,
+   orderFailure
 }

@@ -43,9 +43,7 @@ const postPayment = async (req,res) =>{
 }
 const confirmRazorpay = async (req,res) =>{
     try {
-        const userId = req.session.user;
-         
-         
+        const userId = req.session.user; 
         const {razorpay_order_id,razorpay_payment_id,razorpay_signature,address}  = req.body;
         const body = razorpay_order_id + "|" + razorpay_payment_id;
         console.log("address is ",address)
@@ -79,6 +77,7 @@ const confirmRazorpay = async (req,res) =>{
                 totalPrice,
                 paymentMethod:'Razorpay',
                 status:'Paid',
+                paymentStatus:'Paid',
                 paymentId: razorpay_payment_id,
                 address: selectedAddress.address[0],
             });
@@ -94,7 +93,8 @@ const confirmRazorpay = async (req,res) =>{
             await Cart.deleteOne({userId})
       return  res.json({ success: true, message: "Payment verified successfully" });
     } else { 
-        res.json({ success: false, message: "Payment verification failed" });
+        console.log("this else case is worked")
+      return res.redirect('/order-failure')
     }
     } catch (error) {
         console.log("error in the confirm razor pay ",error)    

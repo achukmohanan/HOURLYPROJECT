@@ -255,7 +255,7 @@
                     
                   <!-- Cash on Delivery -->
                         <div class="payment-option " >
-                            <input type="radio" name="payment" value="cod">
+                            <input type="radio" name="payment" value="COD">
                             <div class="payment-info">
                                 <div class="payment-title">💰 Cash on Delivery</div>
                                 <div class="payment-desc">Pay when your order is delivered to your doorstep</div>
@@ -337,20 +337,22 @@
                                 })
                                 .then((res=>res.json()))
                                 .then(result=>{
+                                    alert("enterd this block")
                                     if(result.success){
                                         window.location.href = '/order-success';
                                     }else{
-                                        Swal.fire({
-                                            icon:'error',
-                                            title:'Payment Failed',
-                                            text:result.message
-                                        });
+                                        alert("failed payment")
+                                        window.location.href = '/order-failure';
                                     }
                                 });
                             }
                         };
                             var rzp1 = new Razorpay(options)
                             rzp1.open()
+                    }
+                    if(data.payment === 'COD'){
+                        
+                        window.location.href = '/order-success'
                     }
                 }else{
                     Swal.fire({

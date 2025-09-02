@@ -47,8 +47,8 @@
                             <!-- Product Details -->
                              
                             <div class="col-6">
-                                <p><strong>Order Id:</strong> <%= order.orderId %></p>
-                               <strong> <p class="mb-1"><%= item.product.productName %></p></strong>
+                                <p><strong>Order Id : </strong> <%= order.orderId %></p>
+                               <strong> <h4 class="mb-1"><%= item.product.productName %></h4></strong>
                                 <p><strong>Description : </strong><%= item.product.description%></p>
                                 <p><strong>Brand : </strong><%= item.product.brand%></p>
                                 <p><strong>Category : </strong><%= item.product.category.name %></p>
@@ -57,26 +57,20 @@
                                 <p><strong>Address : </strong><%= order.address.addressType %> </p>
                                 <p><b><%= order.address.name %></b>   <%= order.address.landMark %>(H),<%= order.address.city %>,
                                 <%= order.address.state %> <%= order.address.pincode %>,
-                              MOB: <%= order.address.phone %>,<%=order.address.altPhone %></p>
-                                <p style="color: rgb(223, 47, 2);" > <strong class="text-dark">Status :</strong> <%= item.status %></p>
-                                <p>Order Placed On: <%= order.createdOn.toLocaleDateString('en-IN') %></p>
+                            <br>  MOB: <%= order.address.phone %>,<%=order.address.altPhone %></p>
+                                <p style="color: rgb(223, 47, 2);" > <strong class="text-dark">Order Status :</strong> <%= item.status %></p>
+                                <p><strong>Payment Method : </strong> <%= order.paymentMethod %></p>
+                                <p><strong>payment status : </strong> <%= order.paymentStatus %></p>
+                                <p><strong>Order Placed On : </strong><%= order.createdOn.toLocaleDateString('en-IN') %></p>
                             </div>
 
                             <!-- Price & Cancel Button -->
                             <div class="col-4 text-end">
                                     <h6>
-                                        <%= item.price.toLocaleString('en-IN',{style:'currency',currency:'INR'})  %>
+                                     <b>Price : </b>   <%= item.price.toLocaleString('en-IN',{style:'currency',currency:'INR'})  %>
                                     </h6>
                                     
-                               <% if(item.status === 'Cancelled' ||order.status === 'Delivered' || item.status === "Returned" ||item.status ==='Return Approved' ){ %>
-                                 <button type="button" 
-                                        class="btn btn-danger mt-2" 
-                                        data-bs-toggle="modal" 
-                                        data-bs-target="#cancelModal"
-                                        onclick="setCancelOrderId('<%= order.orderId %>','<%= item._id %>')" disabled>
-                                    Cancel Item
-                                </button>
-                            <% }else {%>
+                               <% if(!(item.status === 'Cancelled' ||order.status === 'Delivered' || item.status === "Returned" ||item.status ==='Return Approved'||item.status ==='Return Requested' )){ %>
                                  <button type="button" 
                                         class="btn btn-danger mt-2" 
                                         data-bs-toggle="modal" 
@@ -84,34 +78,31 @@
                                         onclick="setCancelOrderId('<%= order.orderId %>','<%= item._id %>')" >
                                     Cancel Item
                                 </button>
-                                <%} %>
-
-                                
-                                <% if (item.status === 'Delivered') {%>
+                            <% } %>  
+                                <% if ((item.status === 'Delivered')) {%>
                                 <button type="button" 
                                         class="btn btn-secondary mt-2" 
                                         
                                         onclick="returnOrder('<%= order.orderId %>')" >
                                     Return Order
                                 </button>
-                           <% }else{%>
-                            <button type="button" 
+                           <% } %>
+                           <% if ((item.status === 'Return Requested')) {%>
+                                <button type="button" 
                                         class="btn btn-secondary mt-2" 
                                         
-                                        disabled >
-                                    Return Order
+                                        onclick="" >
+                                    Cancel Return Request
                                 </button>
-                            <%}%>
+                           <% } %>
                             <% if(item.status === 'Delivered' ){%>
                             <a href="/invoice/<%= order.orderId%>" class="btn btn-primary mt-2">Download Invoice</a>
-                            <%}%>
+                            <% } %>
                             </div>
-
                             
-
                             <% }) %>
                         
-                            <!-- <p> <%= order.totalPrice %></p> -->
+                          
                         </div>
                         <% }) %>
            
