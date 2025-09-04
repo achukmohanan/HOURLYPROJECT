@@ -337,17 +337,21 @@
                                 })
                                 .then((res=>res.json()))
                                 .then(result=>{
-                                    alert("enterd this block")
+                                    
                                     if(result.success){
                                         window.location.href = '/order-success';
                                     }else{
-                                        alert("failed payment")
+                                        
                                         window.location.href = '/order-failure';
                                     }
                                 });
                             }
                         };
                             var rzp1 = new Razorpay(options)
+                            rzp1.on('payment.failed',function (response){
+                                console.log("payment Failed ",response.error)
+                                window.location.href = '/order-failure';
+                            })
                             rzp1.open()
                     }
                     if(data.payment === 'COD'){
@@ -363,7 +367,10 @@
                     })
                 }
             })
-            .catch(err=>console.error(err))
+            .catch(err=>{
+                console.error("Error in the verification:",err)
+                window.location.href = '/order-failure'
+        })
         })
         
         async function placeOrder(paymentMethod){

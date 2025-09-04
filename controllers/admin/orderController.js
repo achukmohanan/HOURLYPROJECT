@@ -1,5 +1,5 @@
 const Order = require('../../models/orderSchema')
-
+const User = require('../../models/userSchema')
 const getOrderPage = async (req,res) =>{
     try {
         // console.log(req.query)
@@ -150,6 +150,13 @@ const   approveReturnRequest =async (req,res)=> {
                 });
             
             await order.save();
+             if ((order.paymentMethod === "COD" || order.paymentMethod === 'Razorpay') &&
+              (order.status === "Return Approved" || order.status === "Partially Returned")) {
+            console.log("entered this block")
+            await User.findByIdAndUpdate(order.userId, {
+            $inc: { wallet: order.totalPrice }  
+    });        
+        }
         }else{
             order.returnRequest.verified = false;
             order.status = "Return Rejected"

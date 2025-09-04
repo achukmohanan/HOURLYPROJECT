@@ -93,8 +93,8 @@ const confirmRazorpay = async (req,res) =>{
             await Cart.deleteOne({userId})
       return  res.json({ success: true, message: "Payment verified successfully" });
     } else { 
-        console.log("this else case is worked")
-      return res.redirect('/order-failure')
+        console.log("this else case is worked which is payment failed")
+      return  res.json({success: false, message: "Payment Failed"});
     }
     } catch (error) {
         console.log("error in the confirm razor pay ",error)    

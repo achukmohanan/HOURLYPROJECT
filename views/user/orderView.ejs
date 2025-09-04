@@ -73,8 +73,7 @@
                                <% if(!(item.status === 'Cancelled' ||order.status === 'Delivered' || item.status === "Returned" ||item.status ==='Return Approved'||item.status ==='Return Requested' )){ %>
                                  <button type="button" 
                                         class="btn btn-danger mt-2" 
-                                        data-bs-toggle="modal" 
-                                        data-bs-target="#cancelModal"
+                                        
                                         onclick="setCancelOrderId('<%= order.orderId %>','<%= item._id %>')" >
                                     Cancel Item
                                 </button>
@@ -207,64 +206,98 @@
 
 
     function setCancelOrderId(orderId,itemId){
-        document.getElementById('cancelOrderId').value = orderId;
-        document.getElementById('cancelItemId').value = itemId;
-
-        document.getElementById('cancelText').innerHTML = `Are you Want to Cancel this Order Cancel this Order?`
-    }
-
-
-
-        function cancelOrder() {
-
-            const orderId = document.getElementById('cancelOrderId').value;
-            const itemId = document.getElementById('cancelItemId').value;
-            fetch(`/cancelOrder/${orderId}/${itemId}`,{
-                method:'POST'
+        Swal.fire({
+            title:"Are you Sure?",
+            text:'Do you really want to cancel this order?',
+            icon:'warning',
+            showCancelButton:true,
+            confirmButtonText:'Yes ,Cancel',
+            cancelButtonText:'No , Keep Order',
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6'
+        }).then((result)=>{
+            if(result.isConfirmed){
+                Swal.fire({
+                    title:'Reason For Cancel',
+                    input:'radio',
+                    inputOptions:{
+                        reason1:'I change my mind',
+                        reason2:'I dont’t like this color',
+                        reason3: 'Found a better price',
+                        reason4: 'Other'
+                    },
+                    inputValidator:(value)=>{
+                        if(!value){
+                            return 'You need to choose a reason!';
+                        }
+                    },
+                    showCancelButton:true,
+                    confirmButtonText:'Next',
+                    cancelButtonText: 'No, Keep Order',
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6'
+                }).then((result)=>{
+                    if(result.isConfirmed){
+                        if(result.value === 'reason4'){
+                            Swal.fire({
+                                title:'Please specify your reason',
+                                input:'textarea',
+                                inputPlaceholder: 'Type your feedback here...',
+                                showCancelButton: true,
+                                confirmButtonText: 'Submit'
+                            }).then((feedResult)=>{
+                                if(feedResult.isConfirmed){
+                                    cancelOrder(orderId,itemId,feedResult.value);
+                                }
+                            });
+                        }else{
+                            cancelOrder(orderId, itemId, result.value);
+                        }
+                    }
+                });
+            }
+        })
+    } 
+              function cancelOrder (orderId,itemId,reason) {
+                fetch(`/cancelOrder/${orderId}/${itemId}`,{
+                method:'POST',
+                headers:{
+                    'Content-Type':'application/json'
+                },
+                body:JSON.stringify({reason})
             })
             .then(res=>res.json())
             .then(data=>{
                 if(data.success){
-                    // Hide cancel confirmation modal
-                    const cancelModal = bootstrap.Modal.getInstance(document.getElementById('cancelModal'));
-                    cancelModal.hide();
-                    // Show success modal after a short delay
-                    // setTimeout(() => {
-                    //     const successModal = new bootstrap.Modal(document.getElementById('successModal'));
-                    //     successModal.show();
-                    // }, 300);
                     Swal.fire({
-                        icon:'success',
-                        title:'Success',
-                        text:data.message,
-
-                    }).then(()=>{
-                        window.location.reload()
-                    })
+                    icon: 'success',
+                    title: 'Order Cancelled',
+                    text: data.message,
+                    }).then(() => {
+                        window.location.reload();
+                    });
                 }else{
                     Swal.fire({
-                        icon:'error',
-                        title:'OOPS',
-                        text:data.message,
-                        showConfirmButton:true
-                    })
+                icon: 'error',
+                title: 'OOPS',
+                text: data.message,
+                showConfirmButton: true
+            });
                 }
             })
             .catch(err=>{
-                alert("eeror in fetch cancel order");
-
-            })
-
-            
-            
-            // Here you would typically make an API call to cancel the order
-            console.log('Order cancelled');
-        }
-        
+                Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Something went wrong while cancelling the order.'
+            });
+            }) 
+    }
         function goToOrders() {
             // Redirect to orders page
             window.location.href = '/viewOrder';
             
         }
+       
     </script>
 </body>

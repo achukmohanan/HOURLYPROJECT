@@ -152,7 +152,7 @@ const returnOrder = async(req,res) =>{
     try {
         const {id} = req.params
         const {reason} = req.body;
-        // console.log("reason is ",reason)
+        console.log("reason is ",reason)
         let   order = await Order.findOne({orderId:id}).populate('userId');
         if(!order){
             return res.status(404).json({success:false,message:"Order is not Found"})
@@ -180,13 +180,8 @@ const returnOrder = async(req,res) =>{
            
         order.returnReason = reason;
         await order.save();
-
-    //     if (order.paymentMethod === "COD" && order.status === "Returned") {
-    //         await User.findByIdAndUpdate(order.userId, {
-    //         $inc: { wallet: order.totalPrice }  
-    // });
-             
-        // }
+        console.log("payment method",order.paymentMethod)
+       
         console.log("order is ",order);
         
        return res.json({ success: true,message:"Return request submitted",order });
