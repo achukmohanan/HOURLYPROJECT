@@ -164,10 +164,22 @@
                                         <i class="bi bi-check2-circle"></i>Approve Request
                                     </button>
                                    <%} %>
+                                   <% order.orderedItems.forEach(item =>{%>
+                                       <% if(item.status === "Cancellation Requested"){ %>
+                                    <button class="btn btn-success mt-4" onclick="cancelApproveRequest('<%=order.orderId %>','<%= item._id %>')">
+                                        <i class="bi bi-check2-circle"></i>Approve Cancel Request
+                                    </button>
+                                    <button class="btn btn-success mt-4" onclick="">    
+                                        <i class="bi bi-check2-circle"></i>Reject Cancellation Request
+                                    </button>
+                                    <%} %>
+                               
+                              <% if(!(order.status === 'Return Requested' || item.status === "Cancellation Requested")){ %>
                                     <button class="btn btn-success mt-4" onclick="saveStatusUpdate()">
                                           <i class="fas fa-save me-2"></i>Save Changes
                                 </button>
-                                        
+                           <%} %>
+                                  <% }) %>      
                                   
                                 </div>
                             </div>
@@ -321,6 +333,12 @@
                             <div class="d-flex justify-content-between">    
                             <span> <strong>Reason is : </strong><%= order.returnReason%></span>
                             </div>
+                            <% order.orderedItems.forEach(item => { %>
+                                <span> <strong>Cancel Reason is : </strong><%= item.cancelRequest.reason %></span>
+                            <% }) %>
+                            
+
+                            
                         </div>
                     </div>
             <!-- ---------------------------------------------- -->
@@ -340,7 +358,7 @@
                                             <th>Quantity</th>
                                             <th>Unit Price</th>
                                             <th>Total</th>
-                                            <th>Status</th>
+                                            <th>Product Status</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -513,7 +531,41 @@
             } 
        } 
 
-
+async function cancelApproveRequest(orderId,itemId){
+        try {
+            const response = await fetch(`/admin/cancelApproveRequest/${orderId}/${itemId}`,{
+                method:'POST',
+                headers:{
+                    'Content-Type':'application/json'
+                }
+            })
+            const result = await response.json()
+            if(result.success){
+                Swal.fire({
+                    icon:'success',
+                    title:'Approved',
+                    text:result.message
+                }).then(()=>{
+                    window.location.reload()
+                })
+            }else{
+                Swal.fire({
+                    icon:'error',
+                    title:'OOPS',
+                    text:result.message,
+                    showConfirmButton:true
+                })
+            }
+        } catch (error) {
+            console.log("error in the cancel approves",error)
+             Swal.fire({
+                    icon:'error',
+                    title:'OOPS',
+                    text:"Something Went Wrong",
+                    showConfirmButton:true
+                })
+        }
+}
      
     </script>
 

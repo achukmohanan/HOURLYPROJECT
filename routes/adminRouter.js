@@ -95,6 +95,10 @@ router.post(
 // approve return order ;
 router.put('/returnRequest/:orderId',adminAuth ,orderController.approveReturnRequest)
 
+// approve order cancel
+router.post('/cancelApproveRequest/:orderId/:itemId',adminAuth,orderController.approveCancelRequest)
+
+
 // router.get('/users',customerController.loadcustomerInfo)
 // router.get('/dashboard',adminController.loaddashboard)
 // router.use('/admin/*',(req,res,next)=>{

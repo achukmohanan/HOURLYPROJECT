@@ -1,5 +1,6 @@
 const Order = require('../../models/orderSchema')
 const User = require('../../models/userSchema')
+const Product = require('../../models/productSchema')
 const getOrderPage = async (req,res) =>{
     try {
         // console.log(req.query)
@@ -170,9 +171,45 @@ const   approveReturnRequest =async (req,res)=> {
     }
 }
 
+const approveCancelRequest = async(req,res) =>{
+    try {
+        const {orderId,itemId} = req.params
+        
+        const order = await Order.findOne({orderId}).populate('userId');
+        if(!order){
+            return res.status(404).json({success:false,message:"Order not found"})
+        }
+      
+        
+        const item = order.orderedItems.id(itemId);
+        if(!item){
+            return res.status(404).json({success:false,message:'Item is not found'})
+        }
+        await Product.findByIdAndUpdate(item.product._id,{
+        $inc:{quantity:item.quantity}
+             });
+
+        item.status = 'Cancelled';
+        order.status = 'Partially Cancelled';
+             if(order.paymentMethod === 'Razorpay'){
+                const refundAmount = item.quantity * item.price;
+                  order.userId.wallet = (order.userId.wallet || 0) + refundAmount
+                  await order.userId.save()
+             }
+
+        await order.save()
+        return  res.status(200).json({success:true,message:"approved Successfully"})
+       
+    } catch (error) {
+        console.log("error in the approvecancel request",error);
+        
+    }
+}
+
 module.exports = {
     getOrderPage,
     viewOrderDetails,
     updateOrderStatus,
-    approveReturnRequest
+    approveReturnRequest,
+    approveCancelRequest
 }

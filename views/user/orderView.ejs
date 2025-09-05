@@ -70,7 +70,7 @@
                                      <b>Price : </b>   <%= item.price.toLocaleString('en-IN',{style:'currency',currency:'INR'})  %>
                                     </h6>
                                     
-                               <% if(!(item.status === 'Cancelled' ||order.status === 'Delivered' || item.status === "Returned" ||item.status ==='Return Approved'||item.status ==='Return Requested' )){ %>
+                               <% if(!(item.status === 'Cancelled' ||order.status === 'Delivered' || item.status === "Returned" ||item.status ==='Return Approved'||item.status ==='Return Requested' || item.status === 'Cancellation Requested' )){ %>
                                  <button type="button" 
                                         class="btn btn-danger mt-2" 
                                         
@@ -78,6 +78,15 @@
                                     Cancel Item
                                 </button>
                             <% } %>  
+                                <% if(item.status === 'Cancellation Requested'){%>
+                                    <button type="button" 
+                                        class="btn btn-danger mt-2" 
+                                        
+                                        onclick='' >
+                                    Cancel Request
+                                </button>
+                                <% } %>
+
                                 <% if ((item.status === 'Delivered')) {%>
                                 <button type="button" 
                                         class="btn btn-secondary mt-2" 
@@ -221,9 +230,9 @@
                     title:'Reason For Cancel',
                     input:'radio',
                     inputOptions:{
-                        reason1:'I change my mind',
-                        reason2:'I dont’t like this color',
-                        reason3: 'Found a better price',
+                        'I change my mind':'I change my mind',
+                        'I dont’t like this color':'I dont’t like this color',
+                        'Found a better price': 'Found a better price',
                         reason4: 'Other'
                     },
                     inputValidator:(value)=>{
