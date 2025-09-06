@@ -82,8 +82,8 @@
                                     <button type="button" 
                                         class="btn btn-danger mt-2" 
                                         
-                                        onclick='' >
-                                    Cancel Request
+                                        onclick='withdrawCancel("<%=order.orderId %>","<%= item._id%>")' >
+                                   Withdraw Cancel Request
                                 </button>
                                 <% } %>
 
@@ -273,7 +273,7 @@
                 headers:{
                     'Content-Type':'application/json'
                 },
-                body:JSON.stringify({reason})
+                body:JSON.stringify({action:'request', reason})
             })
             .then(res=>res.json())
             .then(data=>{
@@ -301,6 +301,45 @@
                 text: 'Something went wrong while cancelling the order.'
             });
             }) 
+    }
+
+
+    async function withdrawCancel(orderId,itemId){
+        
+            fetch(`/cancelOrder/${orderId}/${itemId}`,{
+                method:'POST',
+                headers:{
+                    'Content-Type':'application/json'
+                },
+                body:JSON.stringify({action:'withdraw'})
+            })
+            .then(res=>res.json())
+            .then(data =>{
+                if(data.success){
+                    Swal.fire({
+                        icon:'success',
+                        title:'Succesfully Withdraw',
+                        text:data.message
+                    }).then(()=>{
+                        window.location.reload()
+                    })
+                }else{
+                    Swal.fire({
+                        icon:'error',
+                        title:'OOPS',
+                        text:data.message,
+                        showConfirmButton:true
+                    })
+                }
+            })
+            .catch(err=>{
+                Swal.fire({
+                    icon:'error',
+                    title:"ERROR",
+                    text:"Something Went Wrong"
+                })
+            })
+       
     }
         function goToOrders() {
             // Redirect to orders page

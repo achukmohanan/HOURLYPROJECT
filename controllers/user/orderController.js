@@ -106,7 +106,7 @@ const orderSuccess = async(req,res) =>{
 const cancelOrder = async (req,res) =>{
     try {
         const { orderId,itemId } = req.params;
-        const {reason} = req.body;
+        const {action,reason} = req.body;
         console.log("reason is ",reason) 
         const userId = req.session.user;
         // console.log("item Id is",itemId)
@@ -116,33 +116,31 @@ const cancelOrder = async (req,res) =>{
             return res.status(404).json({success:false,message:"Order Not Found"})
         }
         const item = order.orderedItems.id(itemId);
-        console.log("item is ",item)
+        // console.log("item is ",item)
         if(!item){
             return res.status(404).json({success:false,message:"Item not found in this order"})
         }
 
-
+        if(action === 'request'){
         if(order.status === "Delivered"){
             return res.status(400).json({success:false,message:"Delivered Orders Can't Cancel"})
         }
         if(item.status === "Cancelled"){
             return res.status(400).json({success:false,message:'This Item is  Already Cancelled'})
         }
-        
-    //    
+          
         item.cancelRequest = {requested:true ,reason}
         item.status = "Cancellation Requested";
-
-        // if(order.orderedItems.every(i => i.status === "Cancelled")){
-        //     order.status = 'Cancelled'
-        // }else if (order.orderedItems.some(i => i.status === "Cancelled")) {
-        //     order.status = "Partially Cancelled";
-        //     }
-        // console.log("order in the cancellation is ",)
-        
+    }else if(action === 'withdraw'){
+        if(item.status !== 'Cancellation Requested'){
+            return res.status(404).json({success:false,message:"No Withdrawn Requested"})
+        }
+        item.cancelRequest = null;
+        item.status = 'Pending'
+    }   
         await order.save();
         // console.log("order cancelled requested",order);
-        return res.status(200).json({success:true,message:"Order Cancelled Requested"})
+        return res.status(200).json({success:true,message:`Cancel ${action} Processed Successfully`})
 
     } catch (error) {
         console.log("error in the cancel order ",error);
