@@ -76,7 +76,7 @@ const confirmRazorpay = async (req,res) =>{
                 })),
                 totalPrice,
                 paymentMethod:'Razorpay',
-                status:'Paid',
+                status:'Pending',
                 paymentStatus:'Paid',
                 paymentId: razorpay_payment_id,
                 address: selectedAddress.address[0],

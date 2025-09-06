@@ -78,7 +78,7 @@ const orderSchema = new Schema({
       "Return Rejected",
       "Partially Returned",
       "Partially Cancelled",
-      "Paid"
+      
     ],
   },returnRequest:{
     requested:{type:Boolean,default:false},

@@ -174,12 +174,12 @@
                                     </button>
                                     <%} %>
                                
-                              <% if(!(order.status === 'Return Requested' || item.status === "Cancellation Requested")){ %>
+                                    <% }) %>      
+                              <% if(!(order.status === 'Return Requested' || order.orderedItems.some(i=>i.status === "Cancellation Requested"))){ %>
                                     <button class="btn btn-success mt-4" onclick="saveStatusUpdate()">
                                           <i class="fas fa-save me-2"></i>Save Changes
                                 </button>
                            <%} %>
-                                  <% }) %>      
                                   
                                 </div>
                             </div>

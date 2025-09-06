@@ -177,6 +177,7 @@ const approveCancelRequest = async(req,res) =>{
         const { action } = req.body;
         
         const order = await Order.findOne({orderId}).populate('userId');
+        // console.log("ordered item testing is",order.orderedItems)
         if(!order){
             return res.status(404).json({success:false,message:"Order not found"})
         }
@@ -195,7 +196,16 @@ const approveCancelRequest = async(req,res) =>{
              });
 
         item.status = 'Cancelled';
-        order.status = 'Partially Cancelled';
+        const cancelledItems = order.orderedItems.filter(i => i.status ==='Cancelled').length;
+                console.log("cancelled item length is ",cancelledItems)
+                if(cancelledItems === order.orderedItems.length ){
+                    order.status = 'Cancelled';
+                }else if(cancelledItems > 0){
+                    order.status = 'Partially Cancelled'
+                }else{
+                    order.status = 'Pending'
+                }
+       
              if(order.paymentMethod === 'Razorpay'){
                 const refundAmount = item.quantity * item.price;
                   order.userId.wallet = (order.userId.wallet || 0) + refundAmount
@@ -205,8 +215,8 @@ const approveCancelRequest = async(req,res) =>{
                 return  res.status(200).json({success:true,message:"approved Successfully"})
             }
             if(action === 'reject'){
-                item.status = 'Cancellation Rejected',
-                order.status = 'Pending';
+                item.status = 'Cancellation Rejected'
+                
                 await order.save();
                 return res.status(200).json({ success: true, message: "Cancel request rejected successfully" });
             }
