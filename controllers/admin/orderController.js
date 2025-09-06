@@ -174,6 +174,7 @@ const   approveReturnRequest =async (req,res)=> {
 const approveCancelRequest = async(req,res) =>{
     try {
         const {orderId,itemId} = req.params
+        const { action } = req.body;
         
         const order = await Order.findOne({orderId}).populate('userId');
         if(!order){
@@ -185,6 +186,10 @@ const approveCancelRequest = async(req,res) =>{
         if(!item){
             return res.status(404).json({success:false,message:'Item is not found'})
         }
+        if(item.status !== 'Cancellation Requested' ){
+            return res.status(404).json({success:false,message:'NO Cancelation Requested'})
+        }
+        if( action === 'approve'){
         await Product.findByIdAndUpdate(item.product._id,{
         $inc:{quantity:item.quantity}
              });
@@ -195,10 +200,16 @@ const approveCancelRequest = async(req,res) =>{
                 const refundAmount = item.quantity * item.price;
                   order.userId.wallet = (order.userId.wallet || 0) + refundAmount
                   await order.userId.save()
-             }
-
-        await order.save()
-        return  res.status(200).json({success:true,message:"approved Successfully"})
+                }
+                await order.save()
+                return  res.status(200).json({success:true,message:"approved Successfully"})
+            }
+            if(action === 'reject'){
+                item.status = 'Cancellation Rejected',
+                order.status = 'Pending';
+                await order.save();
+                return res.status(200).json({ success: true, message: "Cancel request rejected successfully" });
+            }
        
     } catch (error) {
         console.log("error in the approvecancel request",error);

@@ -166,10 +166,10 @@
                                    <%} %>
                                    <% order.orderedItems.forEach(item =>{%>
                                        <% if(item.status === "Cancellation Requested"){ %>
-                                    <button class="btn btn-success mt-4" onclick="cancelApproveRequest('<%=order.orderId %>','<%= item._id %>')">
+                                    <button class="btn btn-success mt-4" onclick="handleCancelRequest('<%=order.orderId %>','<%= item._id %>','approve')">
                                         <i class="bi bi-check2-circle"></i>Approve Cancel Request
                                     </button>
-                                    <button class="btn btn-success mt-4" onclick="">    
+                                    <button class="btn btn-success mt-4" onclick="handleCancelRequest('<%=order.orderId %>','<%= item._id %>','reject')">    
                                         <i class="bi bi-check2-circle"></i>Reject Cancellation Request
                                     </button>
                                     <%} %>
@@ -531,19 +531,20 @@
             } 
        } 
 
-async function cancelApproveRequest(orderId,itemId){
+async function handleCancelRequest(orderId,itemId,action){
         try {
             const response = await fetch(`/admin/cancelApproveRequest/${orderId}/${itemId}`,{
                 method:'POST',
                 headers:{
                     'Content-Type':'application/json'
-                }
+                },
+                body:JSON.stringify({action})
             })
             const result = await response.json()
             if(result.success){
                 Swal.fire({
-                    icon:'success',
-                    title:'Approved',
+                    icon:action === 'approve' ? 'success':'info',
+                    title:action === 'approve' ? 'Approved' : 'Rejected',
                     text:result.message
                 }).then(()=>{
                     window.location.reload()
@@ -566,6 +567,8 @@ async function cancelApproveRequest(orderId,itemId){
                 })
         }
 }
+
+
      
     </script>
 

@@ -58,7 +58,8 @@
                                 <p><b><%= order.address.name %></b>   <%= order.address.landMark %>(H),<%= order.address.city %>,
                                 <%= order.address.state %> <%= order.address.pincode %>,
                             <br>  MOB: <%= order.address.phone %>,<%=order.address.altPhone %></p>
-                                <p style="color: rgb(223, 47, 2);" > <strong class="text-dark">Order Status :</strong> <%= item.status %></p>
+                                <p style="color: rgb(223, 47, 2);" > <strong class="text-dark">Item Status :</strong> <%= item.status %></p>
+                                <p style="color: rgb(5, 235, 32);"><strong class="text-dark">Order Status : </strong> <%= order.status %></p>
                                 <p><strong>Payment Method : </strong> <%= order.paymentMethod %></p>
                                 <p><strong>payment status : </strong> <%= order.paymentStatus %></p>
                                 <p><strong>Order Placed On : </strong><%= order.createdOn.toLocaleDateString('en-IN') %></p>
@@ -86,7 +87,12 @@
                                    Withdraw Cancel Request
                                 </button>
                                 <% } %>
-
+                                <br>
+                                <!-- -------------------------message for admin reject the cancel order -->
+                                <% if(item.status === 'Cancellation Rejected'){%>
+                                   <span class="text-danger" >'Your cancel request was rejected by admin.Order is still active.'</span> 
+                                <% } %>
+                                    
                                 <% if ((item.status === 'Delivered')) {%>
                                 <button type="button" 
                                         class="btn btn-secondary mt-2" 
@@ -280,7 +286,7 @@
                 if(data.success){
                     Swal.fire({
                     icon: 'success',
-                    title: 'Order Cancelled',
+                    title: 'Order Cancellation Request Send...',
                     text: data.message,
                     }).then(() => {
                         window.location.reload();

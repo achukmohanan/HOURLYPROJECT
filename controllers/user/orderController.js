@@ -135,6 +135,7 @@ const cancelOrder = async (req,res) =>{
         if(item.status !== 'Cancellation Requested'){
             return res.status(404).json({success:false,message:"No Withdrawn Requested"})
         }
+        order.status = 'Pending';
         item.cancelRequest = null;
         item.status = 'Pending'
     }   

@@ -25,7 +25,7 @@ const orderSchema = new Schema({
       },
       status:{
         type:String,
-        enum:["Pending", "Cancelled", "Delivered", "Returned",'Processing','Return Requested',"Partially Returned","Return Rejected","Shipped","Out-for-delivery","Payment-failed","Return Approved","Partially Cancelled","Paid","Cancellation Requested"],
+        enum:["Pending", "Cancelled", "Delivered", "Returned",'Processing','Return Requested',"Partially Returned","Return Rejected","Shipped","Out-for-delivery","Payment-failed","Return Approved","Partially Cancelled","Paid","Cancellation Requested","Cancellation Rejected"],
         default:'Pending'
       },
       cancelRequest:{
