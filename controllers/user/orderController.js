@@ -9,6 +9,7 @@ const Order = require('../../models/orderSchema');
 const Product = require('../../models/productSchema');
 const razorpayInstance = require('./razorpay');
 const crypto = require("crypto");
+const { model } = require('mongoose');
 
 const postOrder = async (req,res) =>{
     try {
@@ -107,7 +108,7 @@ const cancelOrder = async (req,res) =>{
     try {
         const { orderId,itemId } = req.params;
         const {action,reason} = req.body;
-        console.log("reason is ",reason) 
+        
         const userId = req.session.user;
         // console.log("item Id is",itemId)
         const order = await Order.findOne({orderId,userId }).populate('orderedItems.product');
@@ -152,7 +153,7 @@ const returnOrder = async(req,res) =>{
     try {
         const {id} = req.params
         const {reason} = req.body;
-        console.log("reason is ",reason)
+        
         let   order = await Order.findOne({orderId:id}).populate('userId');
         if(!order){
             return res.status(404).json({success:false,message:"Order is not Found"})
@@ -179,11 +180,7 @@ const returnOrder = async(req,res) =>{
         }
            
         order.returnReason = reason;
-        await order.save();
-        console.log("payment method",order.paymentMethod)
-       
-        console.log("order is ",order);
-        
+        await order.save();   
        return res.json({ success: true,message:"Return request submitted",order });
     } catch (error) {
         console.log("error in the returnOrder",error);
@@ -195,7 +192,7 @@ const returnOrder = async(req,res) =>{
    const viewOrderDetails = async (req,res) =>{
        try {
            const orderId = req.params.id;
-           const orders = await Order.find({orderId:orderId}).populate('orderedItems.product')
+           const orders = await Order.find({orderId:orderId}).populate({path:'orderedItems.product',populate:{path:'category',model:'Category'}})
    
            for(let order of orders){
                const parent = await Address.find(
@@ -204,7 +201,7 @@ const returnOrder = async(req,res) =>{
                ).lean();
                order.fullAddress = parent?.address
            }
-           console.log("orders is ",orders)
+
            return res.render('user/orderView',{orders})
        } catch (error) {
            console.log("error in the viewOrderDetails ",error);

@@ -553,6 +553,23 @@
       font-size: 14px;
       background-color: white;
     }
+    .offer-badge {
+    position: absolute;
+    top: 20px;
+    background: #ff4d4d;
+    color: #fff;
+    font-weight: bold;
+    font-size: 14px;
+    padding: 12px 18px;
+clip-path: polygon(
+  0 0, 100% 0, 100% 70%, 
+  50% 100%, 0 70%
+);
+
+
+
+    box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+  }
   </style>
 </head>
 
@@ -632,9 +649,14 @@
           <%}else{%>
           <% for(let i=0; i<products.length; i++) {%>
             <div class="product-card">
+              <%if(products[i].productOffer){%>
+               <div class="offer-badge "><%= products[i].productOffer %>% OFF</div>
+              <% } %>
+              
               <span class="wishlist-btn" onclick="addToWishlist('<%= products[i]._id%>')">❤️</span>
               <a href="/productDetails?id=<%=products[i]._id %>">
                 <img src="<%=products[i].productImage[0] %>" alt="<%=products[i].productName %>" />
+               
                 <h4><%=products[i].productName %></h4>
                 <p>Brand: <%=products[i].brand %></p>
                 <p>Price: ₹<%=products[i].salePrice.toLocaleString('en-IN') %><span class="text-muted"> <strike> ₹ <%=products[i].regularPrice.toLocaleString('en-IN') %> </strike></span></p>

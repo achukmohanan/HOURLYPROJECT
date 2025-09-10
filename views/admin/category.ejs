@@ -484,7 +484,7 @@
                         <td class="text-start"><%=category.description %></td>
                         <td>
                             <%if(category.categoryOffer){%>
-                                <%= category.categoryOffer  %>
+                                <%= category.categoryOffer  %>%
                                 <%}else{%>
                                    0%
                                     <%} %>
@@ -497,7 +497,7 @@
                         </button>
                         <%}else{ %>
                         <button class="btn btn-info"style="width: 100px">
-                            <a href="#" class="text-white text-decoration-none " onclick="removeOffer('<%= category._id %>')">Remove</a>
+                            <a href="#" class="text-white text-decoration-none " onclick="removeOffer('<%= category._id%>')">Remove</a>
                         </button>
                         <%} %>
                         </td>
@@ -609,7 +609,7 @@
                     text: 'Category added successfully',
                     timer: 1500
                 }).then(() => {
-                    location.reload();
+                    window.location.reload();
                 });
             })
             .catch(error => {
@@ -643,8 +643,8 @@
                 isValid = false;
             }
             
-            if (description === "") {
-                displayErrorMessage("description-error", "Please enter a description");
+            if (description === "" || !/^[a-zA-z\s]+$/.test(description)) {
+                displayErrorMessage("description-error", "Please enter a description with alphabets");
                 isValid = false;
             }
             
@@ -729,7 +729,7 @@
                 const response = await fetch("/admin/removeCategoryOffer",{
                     method:"POST",
                     headers:{
-                        "content-type" : "application/json",
+                        "Content-Type" : "application/json"
                     },
                     body:JSON.stringify({
                         categoryId:categoryId,
@@ -737,14 +737,14 @@
                 })
 
                 const data =  await response.json()
-
+                console.log("data is in category ",data)
                 if(response.ok && data.status === true){
                     Swal.fire(
                     "Offer removed",
                     "The offer has been removed",
                     "success"
                 ).then(()=>{
-                    location.reload();
+                    window.location.reload();
                 });
             }else{
                 Swal.fire("Failed",data.message || "Removing offer failed", "error")

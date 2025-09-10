@@ -18,23 +18,7 @@ const cartSchema = new Schema({
             required:true,
             default:1
         },
-        // totalPrice:{
-        //     type:Number,
-        //     required:true
-        // }
-        // price:{
-        //     type:Number,
-        //     required:true
-        // },
-        // status:{
-        //     type:String,
-        //     default:'placed',
-                                    // <place in orderschema later>
-        // },
-        // cancellationReason:{
-        //     type:String,
-        //     default:'none'
-        // }
+        
     }]
 })
 

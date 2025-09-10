@@ -18641,48 +18641,7 @@ Calaendar icon input[type="date"]::-webkit-calendar-picker-indicator {
 /*# sourceMappingURL=theme.css.map */
 
 /* // product details page  */
-    .zoom-wrapper {
-  position: relative;
-  overflow: hidden;
-}
 
-.zoom-wrapper img {
-  transition: transform 0.3s ease;
-}
-
-.zoom-wrapper:hover img {
-  transform: scale(1.6); /* You can increase/decrease the zoom */
-  cursor: zoom-in;
-}
-.active-thumb {
-  border: 2px solid #007bff !important;
-  border-radius: 5px;
-}
-.zoom-container {
-  position: relative;
-  overflow: hidden;
-}
-
-.zoom-image {
-  transition: transform 0.2s ease;
-  transform-origin: center center;
-}
-
-.zoom-container:hover .zoom-image {
-  transform: scale(2); /* Zoom level */
-}
-
-.zoom-container {
-  cursor: crosshair;
-}
-.active-thumb {
-  border: 2px solid #007bff !important;
-  border-radius: 5px;
-}
-
-.zoom-container:hover .zoom-image {
-  transition: transform 0.3s ease, transform-origin 0.3s ease;
-}
 .homeproduct {
   /* border: 2px solid #000; */
   border-radius: 3%;

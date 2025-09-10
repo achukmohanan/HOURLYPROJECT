@@ -61,9 +61,12 @@
               <div class="product-img-action-wrap">
                 
                 <div class="product-img">
-                   
-                  <a href="/productDetails?id=<%=products[i]._id %>">
                   
+
+                  <a href="/productDetails?id=<%=products[i]._id %>">
+                 <% if(products[i].productOffer){%>
+                    <div class="offer-badge1 "><%= products[i].productOffer %>% OFF</div>
+                   <% } %>
                     <img class="default-img img-fluid rounded-3 shadow-lg" 
                          src="<%= products[i].productImage[0]%>" 
                          alt="<%=products[i].productName %>"

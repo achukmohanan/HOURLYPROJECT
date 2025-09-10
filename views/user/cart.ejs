@@ -302,10 +302,8 @@
                     <span id="price-<%= item.productId._id %>"> ₹ <%= item.productId.salePrice * item.quantity  %></span>
                 </div>
                 <% }) %>
-                <% } else { %>
-                    No Products Selected
-                <% } %>
-               <p class="text-muted " style="font-size: 10px;">*including all taxes</p> 
+              
+               <p class="text-muted " style="font-size: 10px;">*including all taxes and offer </p> 
                 <div class="summary-line">
                     <span>Shipping</span>
                     <span style="color: #0bdb15;">Free</span>
@@ -316,9 +314,13 @@
                 </div> -->
                 <hr>
                 <div class="summary-line ">
-                    <span class="fw-bold">Total</span>
+                    <span class="fw-bold">Offer Price</span>
                     <span  id="total"> ₹ <%= totalPrice.toLocaleString('en-IN') %></span>
                 </div>
+                  <% } else { %>
+                    No Products Selected
+                <% } %>
+
                 <% let iscartEmpty = !cart || !cart.items || cart.items.length === 0 %>
                 <% if(iscartEmpty){ %>
                      <a class="btn  checkout-btn disabled" href="javascript:void(0)" style="pointer-events:none; opacity:0.5;">

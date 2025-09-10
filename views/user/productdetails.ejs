@@ -1,4 +1,4 @@
-<%- include("../../views/partials/user/header")%>
+<%- include("../../views/partials/user/supportheader")%>
 <style>
     .related-product-card {
         border-radius: 15px;
@@ -22,9 +22,18 @@
         border-radius: 5px;
         
     }
+    .offer-badge-product{
+    display: inline-block;
+    padding: 5px 10px;
+    border-radius: 12px;
+    background: linear-gradient(45deg, #ff6b6b, #f06595);
+    color: #fff;
+    font-weight: bold;
+    font-size: 0.9rem;
+}
 </style>
 
-    <main class="main">
+    <main class="main bg">
         <div class="page-header breadcrumb-wrap">
             <div class="container">
                 
@@ -42,12 +51,12 @@
                         <div class="product-detail accordion-detail">
                             <div class="row g-4 align-items-start">
 
-                                <div class="col-md-6 ">                                
+                                <div class="col-md-6 bg-grey">                                
                                         <span class="zoom-icon"><i class="fi-rs-search"></i></span>
                                         <!-- images -->
                                         <div class="detail-gallery">
                                     <div class="product-image-slider">
-                                        <div class="main-image mb-3 zoom-container">
+                                        <div class="main-image mb-3 zoom-container border">
                                         <img class="zoom-image img-fluid border-radius-10" src="<%= product.productImage[0] %>" alt="Main Product Image" style="width:100%; object-fit:cover;">
                                         </div>
                                         <div class="slider-nav-thumbnails d-flex gap-2">
@@ -67,8 +76,8 @@
 
                                             <div class="product-detail-rating d-flex justify-content-between align-items-center mb-2">
                                                 <div class="pro-details-brand">
-                                                <span> Brand: <a href="#" class="text-white"><%=product.brand %></a></span>
-                                                <div class="text-muted small">(25 reviews)</div>
+                                                <span class="text-dark"><strong> Brand: </strong><%=product.brand %></span>
+                                                <!-- <div class="text-muted small">(25 reviews)</div> -->
                                             </div>
                                                 
                                             </div>
@@ -76,12 +85,12 @@
                                             <div class="product-price mb-2">
                                                 <span class="text-brand fs-4 fw-bold">₹   <%=product.salePrice.toLocaleString('en-IN') %></span>
                                                 <del class="text-muted ms-3"><%=product.regularPrice.toLocaleString('en-IN') %></del>
-                                                <span class="text-success ms-3">
-                                                <!-- <% if(!totalOffer){ %>
-                                                    No Offers
-                                                <% } else { %>
-                                                    <%= totalOffer %>% Offer
-                                                <% } %> -->
+                                                <span class="offer-badge-product">
+                                                <% if(productOffers){ %>
+                                                   Product  <%= productOffers %>% Offer
+                                                <% } else if(categoryOffers) { %>
+                                                   Category <%= categoryOffers %>% Offer
+                                                <% } %>
                                                 </span>
                                             </div>
 
@@ -92,7 +101,7 @@
                                                 <li><i class="fi-rs-refresh me-2"></i>30 Day Return Policy</li>
                                                 <li><i class="fi-rs-credit-card me-2"></i>Cash on Delivery available</li>
                                             </ul>
-
+                                                <span class="mb-1 text-dark">Category: <%=category.name%></span>
                                             <div class="d-flex align-items-center mb-3">
                                                 <!-- <div class="me-3">Qty:</div> -->
                                                 <!-- <div class="detail-qty border rounded d-inline-flex align-items-center"> -->
@@ -111,14 +120,14 @@
                                                 <% } %>
                                                 <button type="button" class="btn btn-secondary" onclick="addToWishlist('<%=product._id %>')">Add to Wishlist</button>
                                                 <%} else {%>
-                                                   <a href="/login" class="btn btn-outline-primary text-white"> Buy Now </a>
+                                                   <a href="/login" class="btn btn-primary text-light"> Buy Now </a>
                                                     <%}%>
                                             </div>
                                             
                                             <ul class="product-meta font-xs mt-4">
-                                                <li class="mb-1">Coupon number <a href="#" class="text-white">FWM15VKT</a></li>
-                                                <li class="mb-1">Category: <a href="#" class="text-white"><%=category.name%></a></li>
-                                                <li class="mb-1">Availability: <span class="text-success ms-2"><%= quantity %> in stock</span></li>
+                                                <li class="mb-1">Coupon number <a href="#" class="text-dark ">FWM15VKT</a></li>
+                                                
+                                                <li class="mb-1">Availability :<span class="<%= quantity <=3 ? 'text-danger':'text-success' %> ms-2"><strong><%=quantity %> in stock</strong></span></li>
                                             </ul>
                                       </div>
                                 </div>
@@ -127,12 +136,12 @@
                 </div>
             </div>
         </section>
-      
+      <div class="p-5"></div>
         <section> 
               <hr class="color-light" >
-            <h3 class="text-center mb-3  " >Related Products</h3>
-            <!-- <hr> -->
-             <p class="d-flex justify-content-center">"Explore More Like This"</p>
+            <h3 class="text-center mb-3 p-3 " >Related Products</h3>
+            <hr>
+             <p class="d-flex justify-content-center p-5">"Explore More Like This"</p>
         <div class="row m-3">
             <% if (relatedProducts.length === 0) { %>
                 <p class="text-center">No related products found.</p>
@@ -284,6 +293,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 
- <%- include("../../views/partials/user/footer") %>
+
 
 <!-- ...................................................................................... -->

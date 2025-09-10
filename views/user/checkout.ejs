@@ -373,6 +373,7 @@
                  <% cart.items.forEach(item=>{%>
                 <div class="summary-line">
                     <span>Product :<%= item.productId.productName %></span>
+
                     <span id="price-<%= item.productId._id %>"> ₹ <%= item.productId.salePrice * item.quantity  %></span>
                 </div>
                 <%})%>

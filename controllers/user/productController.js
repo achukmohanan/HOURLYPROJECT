@@ -17,8 +17,16 @@ const productDetails = async (req,res) =>{
         const findCategory = product.category;
         const categoryOffer = findCategory ?.categoryOffer || 0;
         const productOffer = product.productOffer || 0;
-        const totalOffer = categoryOffer + productOffer;
-
+        // const totalOffer = categoryOffer + productOffer;
+        console.log("category offer is ",categoryOffer)
+        console.log("product offer is ",productOffer)
+        let productOffers = null
+        let categoryOffers = null
+        if(categoryOffer > productOffer){
+             categoryOffers = categoryOffer 
+        }else{
+            productOffers = productOffer
+        }
         const relatedProducts = await Product.find(
             {_id:{$ne:product._id},
            $or:[
@@ -32,7 +40,8 @@ const productDetails = async (req,res) =>{
             user:userData,
             product,
             quantity:product.quantity,
-            totalOffer,
+            categoryOffers,
+            productOffers,
             category:findCategory,
             relatedProducts
         });
@@ -71,7 +80,7 @@ const loadShoppingpage = async(req,res) =>{
         isBlocked:false,
         category:{$in:categoryIds}    
      }).sort(sortQuery).skip(skip).limit(limit);
-
+        // console.log("products is in shop ",products)
      const totalProducts =  await Product.countDocuments({
         isBlocked:false,
         category:{$in:categoryIds}

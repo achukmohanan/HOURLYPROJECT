@@ -153,7 +153,7 @@ const   approveReturnRequest =async (req,res)=> {
             await order.save();
              if ((order.paymentMethod === "COD" || order.paymentMethod === 'Razorpay') &&
               (order.status === "Return Approved" || order.status === "Partially Returned")) {
-            console.log("entered this block")
+            
             await User.findByIdAndUpdate(order.userId, {
             $inc: { wallet: order.totalPrice }  
     });        
@@ -197,7 +197,7 @@ const approveCancelRequest = async(req,res) =>{
 
         item.status = 'Cancelled';
         const cancelledItems = order.orderedItems.filter(i => i.status ==='Cancelled').length;
-                console.log("cancelled item length is ",cancelledItems)
+                
                 if(cancelledItems === order.orderedItems.length ){
                     order.status = 'Cancelled';
                 }else if(cancelledItems > 0){

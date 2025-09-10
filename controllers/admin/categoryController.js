@@ -65,20 +65,23 @@ const  addCategoryOffer = async (req,res) =>{
             return res.status(404).json({status:false, message:"Category not found"});
         }
         const products =  await Product.find({category:category._id})
-        const hasProductOffer = products.some((product)=>product.productOffer > percentage);
+        // const hasProductOffer = products.some((product)=>product.productOffer > percentage);
 
-        if(hasProductOffer){
-            return res.json({status:false,message:"Products within this category already have product offers"})
-        }
+        // if(hasProductOffer){
+        //     return res.json({status:false,message:"Products within this category already have product offers"})
+        // }
         await Category.updateOne({_id:categoryId},{$set:{categoryOffer:percentage}});
 
         for(const product of products){
-            product.productOffer = 0;
-            product.salePrice = product.regularPrice;
+            // product.productOffer = 0;
+            
+           
+            product.salePrice = product.regularPrice - Math.floor(product.regularPrice * percentage/100);
+            
             await product.save();
         }
+        console.log("product sale price",products)
         res.json({status:true});
-
     } catch (error) {
         res.status(500).json({status:false,message:"Internal Server Error"});
         console.log("error in add category offer",error);
@@ -88,9 +91,9 @@ const  addCategoryOffer = async (req,res) =>{
 
 const  removeCategoryOffer = async (req,res)=>{
     try {
-        console.log("removeOffer triggered", categoryId);
-
+        // console.log("data is passsssss");
         const categoryId = req.body.categoryId;
+        // console.log("category id is ",categoryId);
         const category = await Category.findById(categoryId);
 
         if(!category){
@@ -101,8 +104,12 @@ const  removeCategoryOffer = async (req,res)=>{
 
         if(products.length >0){
             for(const product of products){
-                product.salePrice +=Math.floor(product.regularPrice * (percentage/100));
-                product.productOffer = 0
+                if(product.productOffer > 0){
+                product.salePrice = product.regularPrice - Math.floor(product.regularPrice * (product.productOffer/100));
+                }else{
+                    product.salePrice = product.regularPrice
+                }
+                // product.productOffer = 0
                 await product.save();
             }
         }

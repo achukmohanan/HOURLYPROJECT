@@ -83,7 +83,7 @@ const confirmRazorpay = async (req,res) =>{
             });
 
             await order.save();
-
+ 
             for(let item of cart.items){
                 await Product.updateOne(
                     {_id:item.productId._id},
