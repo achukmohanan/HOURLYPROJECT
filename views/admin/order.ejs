@@ -266,7 +266,7 @@
                     const data = await res.json();
                     renderTable(data.orders)
                 } catch (error) {
-                    alert("error in frontend order ejs ")
+                    Swal("error in frontend order ejs ")
                     console.log("error in order ejs ",error)
                 }
         }
@@ -285,7 +285,7 @@
                 <td>${new Date(order.createdOn).toLocaleDateString('en-IN')}</td>
                 <td>
                     ${(order.orderedItems || []).map(item=>
-                    `${item.quantity} ${item.product ? item.product.name :'Unkown Product'}`
+                    `${item.quantity} * ${item.product ? item.price :'Unkown Product'}`
                     ).join("<br>")}    
                 </td> 
                 <td>₹${order.totalPrice}</td>  

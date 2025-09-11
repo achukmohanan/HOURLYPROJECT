@@ -18,8 +18,7 @@ const productDetails = async (req,res) =>{
         const categoryOffer = findCategory ?.categoryOffer || 0;
         const productOffer = product.productOffer || 0;
         // const totalOffer = categoryOffer + productOffer;
-        console.log("category offer is ",categoryOffer)
-        console.log("product offer is ",productOffer)
+      
         let productOffers = null
         let categoryOffers = null
         if(categoryOffer > productOffer){

@@ -5,6 +5,7 @@ const Order = require('../../models/orderSchema');
 const Product = require('../../models/productSchema')
 const razorpayInstance = require('./razorpay');
 const crypto = require("crypto");
+const Transaction = require('../../models/transactionSchema')
 
 const postPayment = async (req,res) =>{
     try {
@@ -83,7 +84,7 @@ const confirmRazorpay = async (req,res) =>{
             });
 
             await order.save();
- 
+            
             for(let item of cart.items){
                 await Product.updateOne(
                     {_id:item.productId._id},
@@ -91,6 +92,14 @@ const confirmRazorpay = async (req,res) =>{
                 );
             }
             await Cart.deleteOne({userId})
+            await Transaction.create({
+                userId,
+                type:'Debit',
+                amount:totalPrice,
+                paymentMethod:'Razorpay',
+                description:`Order is Placed`,
+
+            })
       return  res.json({ success: true, message: "Payment verified successfully" });
     } else { 
         console.log("this else case is worked which is payment failed")

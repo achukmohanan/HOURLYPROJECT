@@ -57,7 +57,7 @@ const postOrder = async (req,res) =>{
         })
         // console.log("order is ",order)
         await order.save();
-        
+      
         for(let item of cart.items){
             await Product.updateOne(
                 {_id:item.productId._id},
@@ -66,7 +66,7 @@ const postOrder = async (req,res) =>{
         }
 
         await  Cart.deleteOne({userId});
-        console.log("order is placed",order)
+
        return res.json({success:true,orderId:order._id,payment:'COD'});
     }
     if(paymentMethod === 'razorpay'){
@@ -89,6 +89,42 @@ const postOrder = async (req,res) =>{
                 orderId: razorpayOrder.id
             });
             
+    }
+    if(paymentMethod === 'wallet'){
+        const user = await User.findById(userId)
+        if(user.wallet < totalPrice ){
+            return res.status(404).json({message:"Insufficent Balance in Wallet"})
+        }
+        user.wallet -= totalPrice;
+        await user.save();
+        const order = new Order({
+            userId,
+            address:findAddress.address[0],
+            orderedItems:cart.items.map(item => ({
+            product:item.productId._id,
+            quantity:item.quantity,
+            price:item.productId.salePrice
+            })),
+            totalPrice,
+            paymentMethod:'Wallet',
+            status:'Pending',
+            paymentStatus:"Paid"
+        });
+        // console.log("order is ",order)
+        await order.save();
+      console.log("order in the wallet ",order)
+        for(let item of cart.items){
+            await Product.updateOne(
+                {_id:item.productId._id},
+                {$inc:{quantity: -item.quantity}}
+            )
+        }
+
+        await  Cart.deleteOne({userId});
+        console.log("order is placed",order)
+        console.log("user is in wallet ",user)
+        return res.json({success:true,orderId:order._id,payment:'Wallet'});
+   
     }
     } catch (error) {
         console.log("error in the postorder",error)

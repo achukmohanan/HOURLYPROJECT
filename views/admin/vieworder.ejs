@@ -334,7 +334,7 @@
                             <span> <strong>Reason is : </strong><%= order.returnReason%></span>
                             </div>
                             <% order.orderedItems.forEach(item => { %>
-                                <span> <strong>Cancel Reason is : </strong><%= item.cancelRequest.reason %></span>
+                                <span> <strong>Cancel Reason for the product  : </strong><%= item.cancelRequest.reason %> </span><br>
                             <% }) %>
                             
 

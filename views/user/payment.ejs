@@ -273,6 +273,16 @@
                                 <div class="payment-desc">Pay securely using Razorpay </div>
                             </div>
                         </div>
+                        <div class="payment-option ">
+                            <input type="radio" name="payment" value="wallet">
+                            <div class="payment-info">
+                                <div class="payment-title">
+                                    <i class="bi bi-wallet"></i> Wallet Payment 
+                                    <!-- <span class="coming-soon">Coming Soon</span> -->
+                                </div>
+                                <div class="payment-desc"> Payment using Wallet</div>
+                            </div>
+                        </div>
                 </div>
             </div>
 
@@ -354,8 +364,11 @@
                             })
                             rzp1.open()
                     }
-                    if(data.payment === 'COD'){
+                     if(data.payment === 'COD'){
                         
+                        window.location.href = '/order-success'
+                    }
+                    if(data.payment === 'Wallet'){
                         window.location.href = '/order-success'
                     }
                 }else{
