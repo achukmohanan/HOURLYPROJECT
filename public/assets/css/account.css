@@ -377,3 +377,37 @@
                 box-shadow: 0 4px 8px rgba(0,0,0,0.1);
             }
         } 
+        table {
+        width: 100%;
+        margin: 20px auto;
+        border-collapse: collapse;
+        font-family: Arial, sans-serif;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    th {
+        background-color: #4CAF50;
+        color: white;
+        text-align: center  ;
+        padding: 12px;
+        font-size: 16px;
+        letter-spacing: 1px;
+    }
+
+    td {
+        text-align: center;
+        padding: 12px;
+        font-size: 15px;
+        border-bottom: 1px solid #ddd;
+    }
+
+    tr:nth-child(even) {
+        background-color: #f9f9f9;
+    }
+
+    tr:hover {
+        background-color: #f1f1f1;
+        cursor: pointer;
+    }

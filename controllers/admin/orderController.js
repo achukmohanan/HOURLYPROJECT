@@ -1,13 +1,14 @@
 const Order = require('../../models/orderSchema')
 const User = require('../../models/userSchema')
 const Product = require('../../models/productSchema')
+const Transaction = require('../../models/transactionSchema');
+
 const getOrderPage = async (req,res) =>{
     try {
         // console.log(req.query)
          const {status,date,search} = req.query;
         let filter = {}
 
-       
         //status
         if(status && status!== ""){
             filter.status = status          
@@ -177,7 +178,7 @@ const approveCancelRequest = async(req,res) =>{
         const { action } = req.body;
         
         const order = await Order.findOne({orderId}).populate('userId');
-        // console.log("ordered item testing is",order.orderedItems)
+        // console.log("ordered item testing is",order.userId._id)
         if(!order){
             return res.status(404).json({success:false,message:"Order not found"})
         }
@@ -210,6 +211,15 @@ const approveCancelRequest = async(req,res) =>{
                 const refundAmount = item.quantity * item.price;
                   order.userId.wallet = (order.userId.wallet || 0) + refundAmount
                   await order.userId.save()
+                  await Transaction.create({
+                    userId:order.userId._id,
+                    orderId:orderId,
+                    type:'Credit',
+                    amount:refundAmount,
+                    paymentMethod:'Razorpay',
+                    description:null,
+
+                  })
                 }
                 await order.save()
                 return  res.status(200).json({success:true,message:"approved Successfully"})

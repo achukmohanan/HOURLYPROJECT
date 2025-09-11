@@ -5,6 +5,7 @@ const nodemailer = require('nodemailer');
 const bcrypt = require('bcrypt')
 const env = require('dotenv').config();
 const session = require('express-session');
+const Transaction = require('../../models/transactionSchema')
 
 function generateOtp(){
     const digits = '1234567890';
@@ -182,16 +183,19 @@ const userProfile = async (req,res) =>{
         const userData = await User.findById(userId);
         const addressData = await Address.findOne({userId:userId});
         const orders = await Order.find({userId:req.session.user }).populate('orderedItems.product').sort({createdOn:-1})
+        const transaction = await Transaction.find({userId:userId})
+        console.log("transactions in accout ",transaction)
             //  console.log("user data is ",userData)
             // console.log("orders are ",orders)
         res.render('user/account',{
             user:userData,
             userAddress:addressData,
-            orders:orders
+            orders:orders,
+            transaction:transaction
         });
     } catch (error) {
          console.log("error occured in account",error);
-        res.status(500).send("server error")
+        res.status(500).json("server error")
        
         
     }

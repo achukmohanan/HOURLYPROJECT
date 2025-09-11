@@ -279,7 +279,32 @@
                             </div>
                             <div class="mt-4">
                                 <h5>Transaction History</h5>
-                                <p class="text-muted">No transactions yet.</p>
+                                <table>
+                                    <tr>
+                                        <th>OrderId</th>
+                                        <td>Product Name</td>
+                                        <th>Type</th>
+                                        <th>Amount</th>
+                                        <th>paymentMethod</th>
+                                        <th>Date</th>
+                                    </tr>
+                                    <tr>
+                                        <td><%= transaction[0].orderId %></td>
+                                        <td><%= transaction[0].orderId. %></td>
+                                        <td><%= transaction[0].type %></td>
+                                        <td><%= transaction[0].amount %></td>
+                                        <td><%= transaction[0].paymentMethod %></td>
+                                      <td> <%= new Date(transaction[0].date).toLocaleString("en-IN", {
+                                                        day: "2-digit",
+                                                        month: "2-digit",
+                                                        year: "numeric",
+                                                        hour: "2-digit",
+                                                        minute: "2-digit",
+                                                        second: "2-digit"
+                                                    }) %>
+                                                    </td>
+                                    </tr>
+                                </table>
                             </div>
                         </div>
                     </div>

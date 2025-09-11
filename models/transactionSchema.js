@@ -7,6 +7,10 @@ const transactionSchema = new Schema({
         ref:'User',
         required:true
     },
+    orderId:{
+        type:String,
+        required:false
+    },
     type:{
         type:String,
         enum:['Credit','Debit'],
@@ -19,7 +23,7 @@ const transactionSchema = new Schema({
     paymentMethod:{
         type:String,
         enum:['Wallet','Razorpay','COD'],
-        required:true
+        required:false
     },
     description:{
         type:String
