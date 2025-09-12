@@ -9,6 +9,7 @@ const transactionSchema = new Schema({
     },
     orderId:{
         type:String,
+        ref:'Order',
         required:false
     },
     type:{

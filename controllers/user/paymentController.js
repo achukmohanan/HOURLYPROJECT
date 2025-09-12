@@ -47,7 +47,7 @@ const confirmRazorpay = async (req,res) =>{
         const userId = req.session.user; 
         const {razorpay_order_id,razorpay_payment_id,razorpay_signature,address}  = req.body;
         const body = razorpay_order_id + "|" + razorpay_payment_id;
-        console.log("address is ",address)
+        // console.log("address is ",address)
         const expectedSignature = crypto
         .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
         .update(body.toString())
@@ -94,12 +94,14 @@ const confirmRazorpay = async (req,res) =>{
             await Cart.deleteOne({userId})
             await Transaction.create({
                 userId,
+                orderId:order.orderId,
                 type:'Debit',
                 amount:totalPrice,
                 paymentMethod:'Razorpay',
                 description:`Order is Placed`,
 
             })
+            // console.log("transaction is in the razor pay is success")
       return  res.json({ success: true, message: "Payment verified successfully" });
     } else { 
         console.log("this else case is worked which is payment failed")

@@ -11,6 +11,7 @@ const wishlistController = require('../controllers/user/wishlistController');
 const paymentController = require('../controllers/user/paymentController')
 const orderController = require('../controllers/user/orderController')
 const invoiceController = require('../controllers/user/invoiceController')
+const walletController = require('../controllers/user/walletController')
 //error management
 router.get('/pagenotfound', userController.pageNotFound);
 
@@ -116,7 +117,8 @@ router.get('/wishlist',userAuth , wishlistController.getWishList)
 router.post('/add-to-wishlist',userAuth , wishlistController.postWishList)
 router.delete('/delete-Wishlist-item',userAuth ,wishlistController.deleteWishlistItem)
 router.post('/add-to-cart',userAuth, wishlistController.addToCartFromWishlist)
-
+//wallet top up
+router.post('/wallet-top-up',userAuth, walletController.walletTopUp)
 
 router.get('/testing',cartController.gettest)
 module.exports = router; 

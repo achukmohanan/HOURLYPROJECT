@@ -217,7 +217,7 @@ const approveCancelRequest = async(req,res) =>{
                     type:'Credit',
                     amount:refundAmount,
                     paymentMethod:'Razorpay',
-                    description:null,
+                    description:'Order Cancelled',
 
                   })
                 }

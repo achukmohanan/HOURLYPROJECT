@@ -184,7 +184,13 @@ const userProfile = async (req,res) =>{
         const addressData = await Address.findOne({userId:userId});
         const orders = await Order.find({userId:req.session.user }).populate('orderedItems.product').sort({createdOn:-1})
         const transaction = await Transaction.find({userId:userId})
-        console.log("transactions in accout ",transaction)
+
+        for(let txn of transaction){
+            const order = await Order.findOne({orderId:txn.orderId}).populate('orderedItems.product','productName productImage').lean()
+
+            txn.orderDetails = order
+        }
+        // console.log("transactions in accout ",transaction)
             //  console.log("user data is ",userData)
             // console.log("orders are ",orders)
         res.render('user/account',{
