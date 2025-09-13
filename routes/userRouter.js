@@ -119,7 +119,7 @@ router.delete('/delete-Wishlist-item',userAuth ,wishlistController.deleteWishlis
 router.post('/add-to-cart',userAuth, wishlistController.addToCartFromWishlist)
 //wallet top up
 router.post('/wallet-top-up',userAuth, walletController.walletTopUp)
-router.post('verify-wallet-topup',userAuth ,walletController.verifyWalletTopup)
+router.post('/verify-wallet-topup',userAuth ,walletController.verifyWalletTopup)
 
 router.get('/testing',cartController.gettest)
 module.exports = router; 

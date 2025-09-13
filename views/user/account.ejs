@@ -332,6 +332,7 @@
  
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
      <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
     <script>
        
  document.addEventListener('DOMContentLoaded',()=>{
@@ -547,7 +548,7 @@
             showCancelButton:true,
             confirmButtonText:'ADD',
             cancelButtonText:'Cancel',
-            inputValidatot:(value)=>{
+            inputValidator:(value)=>{
                 if(!value || value<=0){
                     return "Please Enter a Valid Amount";
                 }
@@ -556,20 +557,24 @@
 
         if(amount){
             const userId = '<%= user._id%>';
-            try { alert("data")
+            try { 
+                
                 const response = await fetch('/wallet-top-up',{
                     method:'POST',
                     headers:{
                         'Content-Type':'application/json'
                     },
                     body:JSON.stringify({userId,amount})
-                })
+                });
+               
                     const data = await response.json()
+     
                     if(!data.orderId){
                         Swal.fire('Error','Something Went Wrong ,Please try again')
                     }
+                     
                     var options = {
-                        'key' : key.data,
+                        'key' : data.key,
                         'amount':data.amount,
                         'currency':'INR',
                         'name':'HOURLY WATCHES',
@@ -582,8 +587,15 @@
                                     'Content-Type':'application/json'
                                 },
                                 body:JSON.stringify({...response,amount,userId})
-                            }).then(res => res.json())
-                              .then(result =>{
+                            })
+                            .then(res => {
+                                 if(!res.ok){
+                                throw new Error("Network response was not ok")
+                                 } 
+                                 return res.json();
+                            })
+                            .then(result =>{
+                                
                                 if(result.success){
                                     Swal.fire('Success',"Money Added To wallet",'success').then(()=>{
                                         window.location.reload()
@@ -591,16 +603,20 @@
                                 }else{
                                     Swal.fire('Failed','Payment Verification Failed','error')
                                 }
-                              });
+                              })
+                              .catch(err =>{
+                                        console.error("Error in verify-wallet-topup:", err);
+                                        Swal.fire("OOPS","Something Went Wrong in verification",'error');
+                                    });
                         },
-                        'theme':{'color':'#3399cc'}
+                        // 'theme':{'color':'#3399cc'}
                     };
                     var rzp1 = new Razorpay(options);
                     rzp1.open();
 
             } catch (error) {
                 console.log("errror in the razorpay verification",error);
-                Swal.fire("OOPS","Something Went Wrong",'error')
+                Swal.fire("OoOPS","Something Went Wrong",'error')
                 
             }
         }
