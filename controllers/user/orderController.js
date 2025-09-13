@@ -10,6 +10,7 @@ const Product = require('../../models/productSchema');
 const razorpayInstance = require('./razorpay');
 const crypto = require("crypto");
 const { model } = require('mongoose');
+const Transaction = require('../../models/transactionSchema');
 
 const postOrder = async (req,res) =>{
     try {
@@ -112,6 +113,16 @@ const postOrder = async (req,res) =>{
         });
         // console.log("order is ",order)
         await order.save();
+        await Transaction.create({
+            userId:userId,
+            orderId:order.orderId,
+            type:'Debit',
+            amount:totalPrice,
+            paymentMethod:'Wallet',
+            description:'Payment Using Wallet',
+
+        });
+        
       console.log("order in the wallet ",order)
         for(let item of cart.items){
             await Product.updateOne(

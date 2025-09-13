@@ -90,9 +90,11 @@
                                 <br>
                                 <!-- -------------------------message for admin reject the cancel order -->
                                 <% if(item.status === 'Cancellation Rejected'){%>
-                                   <span class="text-danger" >'Your cancel request was rejected by admin.Order is still active.'</span> 
+                                   <span class="text-danger" >‘ Your cancel request was rejected by admin.Order is still active.’</span> 
                                 <% } %>
-                                    
+                                    <% if(item.status === 'Cancellation Rejected' || order.status === 'Return Rejected'){%>
+                                   <span class="text-danger" >‘ Your Order Return request was rejected by admin ’ </span> 
+                                <% } %>
                                 <% if ((item.status === 'Delivered')) {%>
                                 <button type="button" 
                                         class="btn btn-secondary mt-2" 

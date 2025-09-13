@@ -133,7 +133,7 @@ const   approveReturnRequest =async (req,res)=> {
     try {
         const {orderId} = req.params;
         const {approve} = req.body;
-
+            console.log("approve is ",approve)
         const order = await Order.findOne({orderId:orderId});
 
         if(!order){
@@ -152,12 +152,21 @@ const   approveReturnRequest =async (req,res)=> {
                 });
             
             await order.save();
+
              if ((order.paymentMethod === "COD" || order.paymentMethod === 'Razorpay') &&
               (order.status === "Return Approved" || order.status === "Partially Returned")) {
             
             await User.findByIdAndUpdate(order.userId, {
             $inc: { wallet: order.totalPrice }  
     });        
+    await Transaction.create({
+        userId:order.userId,
+        orderId:orderId,
+        type:'Credit',
+        amount:order.totalPrice,
+        paymentMethod:order.paymentMethod,
+        description:'Order is Returned'
+    })
         }
         }else{
             order.returnRequest.verified = false;

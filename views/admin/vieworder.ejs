@@ -160,8 +160,11 @@
                                 </div>
                                 <div class="col-md-6">
                                    <% if(order.status === 'Return Requested'){%>
-                                     <button class="btn btn-success mt-4" onclick="approveRequest()">
-                                        <i class="bi bi-check2-circle"></i>Approve Request
+                                     <button class="btn btn-success mt-4" onclick="approveRequest(true)">
+                                        <i class="bi bi-check2-circle"></i> Approve Request
+                                    </button>
+                                    <button class="btn btn-success mt-4" onclick="approveRequest(false)">
+                                        <i class="bi bi-x-circle"></i></i> Reject Request
                                     </button>
                                    <%} %>
                                    <% order.orderedItems.forEach(item =>{%>
@@ -490,7 +493,7 @@
            
         }
 
-       async function approveRequest(){
+       async function approveRequest(approve){
             
             const orderId = "<%= order.orderId %>";
             try {
@@ -499,7 +502,7 @@
                     headers:{
                         'Content-Type':'application/json'
                     },
-                    body:JSON.stringify({approve:true})
+                    body:JSON.stringify({approve:approve})
                 })
                 const result = await response.json();
                 if(result.success){

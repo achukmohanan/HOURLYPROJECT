@@ -94,6 +94,8 @@ router.post(
 );
 // approve return order ;
 router.put('/returnRequest/:orderId',adminAuth ,orderController.approveReturnRequest)
+//reject return
+
 
 // approve order cancel
 router.post('/cancelApproveRequest/:orderId/:itemId',adminAuth,orderController.approveCancelRequest)
