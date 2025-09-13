@@ -549,13 +549,12 @@
             cancelButtonText:'Cancel',
             inputValidatot:(value)=>{
                 if(!value || value<=0){
-                    return "Please Enter a Valid Amount"
+                    return "Please Enter a Valid Amount";
                 }
             }
         });
 
         if(amount){
-           
             const userId = '<%= user._id%>';
             try { alert("data")
                 const response = await fetch('/wallet-top-up',{
@@ -570,16 +569,43 @@
                         Swal.fire('Error','Something Went Wrong ,Please try again')
                     }
                     var options = {
-                        'key' : '<%= RAZORPAY_KEY_ID %>',
-                        
-                    }
+                        'key' : key.data,
+                        'amount':data.amount,
+                        'currency':'INR',
+                        'name':'HOURLY WATCHES',
+                        'description':'Add to Wallet',
+                        'order_id':data.orderId,
+                        'handler':function(response){
+                            fetch('/verify-wallet-topup',{
+                                method:'POST',
+                                headers:{
+                                    'Content-Type':'application/json'
+                                },
+                                body:JSON.stringify({...response,amount,userId})
+                            }).then(res => res.json())
+                              .then(result =>{
+                                if(result.success){
+                                    Swal.fire('Success',"Money Added To wallet",'success').then(()=>{
+                                        window.location.reload()
+                                    })
+                                }else{
+                                    Swal.fire('Failed','Payment Verification Failed','error')
+                                }
+                              });
+                        },
+                        'theme':{'color':'#3399cc'}
+                    };
+                    var rzp1 = new Razorpay(options);
+                    rzp1.open();
 
             } catch (error) {
+                console.log("errror in the razorpay verification",error);
+                Swal.fire("OOPS","Something Went Wrong",'error')
                 
             }
         }
         
-    })  
+    });  
 
     </script>
    
