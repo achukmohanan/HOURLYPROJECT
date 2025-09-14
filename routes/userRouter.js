@@ -121,5 +121,9 @@ router.post('/add-to-cart',userAuth, wishlistController.addToCartFromWishlist)
 router.post('/wallet-top-up',userAuth, walletController.walletTopUp)
 router.post('/verify-wallet-topup',userAuth ,walletController.verifyWalletTopup)
 
+//coupon management
+router.post('/apply-coupon',userAuth , cartController.applyCoupon)
+
+
 router.get('/testing',cartController.gettest)
 module.exports = router; 

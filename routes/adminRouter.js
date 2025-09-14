@@ -104,6 +104,7 @@ router.post('/cancelApproveRequest/:orderId/:itemId',adminAuth,orderController.a
 //coupon management 
 router.get('/coupon',adminAuth, couponController.getCouponPage)
 router.post('/coupon',adminAuth, couponController.postCoupon)
+router.delete('/deleteCoupon/:code',adminAuth , couponController.deleteCoupon)
 // router.get('/users',customerController.loadcustomerInfo)
 // router.get('/dashboard',adminController.loaddashboard)
 // router.use('/admin/*',(req,res,next)=>{

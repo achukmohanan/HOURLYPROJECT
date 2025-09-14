@@ -2,6 +2,7 @@ const User = require('../../models/userSchema')
 const Cart = require('../../models/cartSchema');
 const Product = require('../../models/productSchema');
 const Address = require('../../models/addressSchema')
+const Coupon = require('../../models/couponSchema');
 
 const  getCart = async (req,res) =>{
     try {
@@ -201,7 +202,10 @@ const getCheckOut = async (req,res) =>{
         const addressList = await Address.find({userId:userId});
             // console.log("address",addressList)
 
+        const coupons = await Coupon.find({})
+
         return res.render('user/checkout',{
+            coupons,
             user:user,
             cart,
             totalPrice:total,
@@ -212,6 +216,32 @@ const getCheckOut = async (req,res) =>{
         
     }
 }
+const applyCoupon = async(req,res)=>{
+    try {
+        const {code} = req.body;
+
+        const coupon = await Coupon.findOne({code});
+        
+        if(!coupon){    
+            return res.json({ success: false, message: 'Invalid coupon code' });
+        }
+        if(!coupon.isActive){
+             return res.json({ success: false, message: 'Coupon is not active' });
+        }
+        if(new Date() > coupon.expireOn){
+            return res.json({ success: false, message: 'Coupon has expired' });
+        }
+        console.log("whebflwejq",coupon.discountValue)
+
+        res.json({ success: true, discount: coupon.discountValue });
+
+    } catch (error) {
+        
+    }
+}
+
+
+
 const gettest = async(req,res)=>{
     try {
         return res.render('user/testing')
@@ -227,5 +257,6 @@ module.exports = {
     updateCartQuantity,
     addAddressInCheckout,
     getCheckOut,
-    gettest
+    gettest,
+    applyCoupon
 }

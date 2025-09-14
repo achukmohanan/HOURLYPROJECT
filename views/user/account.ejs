@@ -296,7 +296,7 @@
                                         <%if(txn.orderDetails && txn.orderDetails.orderedItems ){ %>
                                         <% txn.orderDetails.orderedItems.forEach(i=>{ %>
                                         <td><img class="p-2" src="<%= i.product.productImage[0] %>" alt="">
-                                        <%= i.product.productName %></td>
+                                        <%= i.product?.productName ? i.product.productName : 'No product'%></td>
                                         <% }) %>
                                         <% } %>
                                         <td class="<%= txn.type ==='Credit' ? 'text-success' :'text-danger' %>"><%= txn.type %></td>
@@ -321,40 +321,40 @@
                                 <% } %>
                                   </table>
                                   <!-- 🔹 Pagination Controls -->
-<div style="margin-top: 20px;">
-  <% if (pagination.totalPages > 1) { %>
-    <nav>
-      <ul style="display: flex; list-style: none; gap: 8px;">
+                                <div style="margin-top: 20px;">
+                                <% if (pagination.totalPages > 1) { %>
+                                    <nav1>
+                                    <ul style="display: flex; list-style: none; gap: 8px;">
 
-        <!-- Prev -->
-<% if (pagination.page > 1) { %>
-  <li>
-    <a href="?tab=wallet&page=<%= pagination.page - 1 %>">⬅ Prev</a>
-  </li>
-<% } %>
+                                        <!-- Prev -->
+                                <% if (pagination.page > 1) { %>
+                                <li>
+                                    <a href="?tab=wallet&page=<%= pagination.page - 1 %>">⬅ Prev</a>
+                                </li>
+                                <% } %>
 
-<!-- Pages -->
-<% for (let i = 1; i <= pagination.totalPages; i++) { %>
-  <li>
-    <% if (i === pagination.page) { %>
-      <strong>[<%= i %>]</strong>
-    <% } else { %>
-      <a href="?tab=wallet&page=<%= i %>"><%= i %></a>
-    <% } %>
-  </li>
-<% } %>
+                                <!-- Pages -->
+                                <% for (let i = 1; i <= pagination.totalPages; i++) { %>
+                                <li>
+                                    <% if (i === pagination.page) { %>
+                                    <strong>[<%= i %>]</strong>
+                                    <% } else { %>
+                                    <a href="?tab=wallet&page=<%= i %>"><%= i %></a>
+                                    <% } %>
+                                </li>
+                                <% } %>
 
-<!-- Next -->
-<% if (pagination.page < pagination.totalPages) { %>
-  <li>
-    <a href="?tab=wallet&page=<%= pagination.page + 1 %>">Next ➡</a>
-  </li>
-<% } %>
+                                <!-- Next -->
+                                <% if (pagination.page < pagination.totalPages) { %>
+                                <li>
+                                    <a href="?tab=wallet&page=<%= pagination.page + 1 %>">Next ➡</a>
+                                </li>
+                                <% } %>
 
-      </ul>
-    </nav>
-  <% } %>
-</div>
+                                    </ul>
+                                    </nav1>
+                                <% } %>
+                                </div>
                             </div>
                         </div>
                     </div>

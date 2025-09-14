@@ -15,8 +15,10 @@ const Transaction = require('../../models/transactionSchema');
 const postOrder = async (req,res) =>{
     try {
         const  userId = req.session.user;
-        const {address,paymentMethod} = req.body;
+        const {address,paymentMethod,totalAmount} = req.body;
+        
         console.log("payment method",paymentMethod);
+        console.log("total amount",totalAmount);
         
         // console.log("address is in post order", address)
         //eni ee id vech address fetch2. save cheyanam
@@ -37,9 +39,8 @@ const postOrder = async (req,res) =>{
             }
         }
 
-        let totalPrice = cart.items.reduce((total,item)=>{
-            return total +  item.productId.salePrice * item.quantity;
-        },0)
+        let totalPrice = Number(totalAmount);
+
         
        
         if(paymentMethod === 'COD'){

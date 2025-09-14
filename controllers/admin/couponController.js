@@ -45,8 +45,21 @@ const postCoupon = async (req,res) =>{
         
     }
 }
+const deleteCoupon = async (req,res) =>{
+    const code = req.params.code;
+       
+    const deleted = await Coupon.findOneAndDelete({code});
+
+    if(!deleted){
+        return res.status(404).json({success:false,message:"Coupon is not Found"})
+    }
+
+    return res.status(200).json({success:true,message:'Deleted Successfully'})
+    
+}
 
 module.exports = {
     getCouponPage,
-    postCoupon
+    postCoupon,
+    deleteCoupon
 }

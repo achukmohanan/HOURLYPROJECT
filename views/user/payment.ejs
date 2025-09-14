@@ -235,7 +235,7 @@
                     <div class="order-item">
                         <span class="product-name" ><%= item.productId.productName%></span>
                         *
-                        <span class="product-qty" ><%= item.productId.quantity%></span>
+                        <span class="product-qty" ><%= item.quantity%></span>
                        <span class="product-amount" >₹<%= item.productId.salePrice * item.quantity %></span>
                     </div>  
                  
@@ -309,7 +309,7 @@
                 })
                 return;  
             }
-
+            const totalAmount = '<%= orderData.totalPrice %>';
             const result = fetch('/place-order',{
                 method:'POST',
                 headers:{
@@ -317,7 +317,8 @@
                 },
                 body:JSON.stringify({
                     address:"<%=orderData.address._id %>",
-                    paymentMethod:selectedPayment
+                    paymentMethod:selectedPayment,
+                    totalAmount:totalAmount
                 })
             })
             .then(res => res.json())
@@ -342,7 +343,9 @@
                                         razorpay_payment_id: response.razorpay_payment_id,
                                         razorpay_signature: response.razorpay_signature,
                                         orderId: data.orderId,
-                                        address:"<%=orderData.address._id %>"
+                                        address:"<%=orderData.address._id %>",
+                                        amount:data.order.amount,
+
                                     })  
                                 })
                                 .then((res=>res.json()))

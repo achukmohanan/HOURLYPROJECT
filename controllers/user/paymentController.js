@@ -11,6 +11,7 @@ const postPayment = async (req,res) =>{
     try {
         const userId = req.session.user;
         const selectedIndex = req.body.addressId;
+        const discount = req.body.discount
 
         const address = await Address.find({userId:userId});
         if(!address || !address.length){
@@ -28,6 +29,8 @@ const postPayment = async (req,res) =>{
         let total = cart.items.reduce((sum,item)=>{
            return sum + item.productId.salePrice * item.quantity
         },0)
+
+        total-=discount;
         const orderData = {
             findUser,
             userId,
@@ -45,7 +48,9 @@ const postPayment = async (req,res) =>{
 const confirmRazorpay = async (req,res) =>{
     try {
         const userId = req.session.user; 
-        const {razorpay_order_id,razorpay_payment_id,razorpay_signature,address}  = req.body;
+        const {razorpay_order_id,razorpay_payment_id,razorpay_signature,address,amount}  = req.body;
+        console.log("amount in the confirm ",amount);
+        
         const body = razorpay_order_id + "|" + razorpay_payment_id;
         // console.log("address is ",address)
         const expectedSignature = crypto
@@ -55,10 +60,9 @@ const confirmRazorpay = async (req,res) =>{
 
         if (expectedSignature === razorpay_signature) {
             const cart = await Cart.findOne({userId}).populate('items.productId')
-            let totalPrice = cart.items.reduce((total,item)=>{
-                return total + item.productId.salePrice * item.quantity
-            },0)    
-            
+           
+            let totalPrice = amount/100
+            console.log("after checking amount is ",totalPrice)
             // fetch selected address snapshot
       const selectedAddress = await Address.findOne(
         { "address._id": address, userId },
@@ -73,7 +77,7 @@ const confirmRazorpay = async (req,res) =>{
                 orderedItems:cart.items.map(item =>({
                     product:item.productId._id,
                     quantity:item.quantity,
-                    price:item.productId.salePrice,
+                    price:totalPrice,
                 })),
                 totalPrice,
                 paymentMethod:'Razorpay',

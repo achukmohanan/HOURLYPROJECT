@@ -126,7 +126,7 @@
                             <td><%= c.expireOn.toLocaleDateString('en-GB') %></td>
                             <td><%= c.isActive %></td>
                             <td><%= c.description %></td>
-                            <td><button class="btn btn-update btn-sm">Delete</button></td>
+                            <td><button class="btn btn-update btn-sm" onclick="deleteCoupon('<%= c.code %>')">Delete</button></td>
                         </tr>
                     <% }) %>
                         <% }else{%>
@@ -197,6 +197,56 @@
        
         const formData = new FormData(event.target);
         const data = Object.fromEntries(formData.entries());
+          // ✅ Validation
+                    let errors = [];
+
+                    if (!data.code || !/^[A-Za-z0-9]{4,10}$/.test(data.code)) {
+                        errors.push("Coupon code is required (4–10 letters/numbers).");
+                    }
+
+                    if (!data.couponType) {
+                        errors.push("Coupon type is required.");
+                    }
+
+                    if (!data.discountValue || Number(data.discountValue) <= 0) {
+                        errors.push("Discount value must be greater than 0.");
+                    }
+
+                    if (data.maxDiscount && Number(data.maxDiscount) <= 0) {
+                        errors.push("Max discount must be greater than 0.");
+                    }
+
+                    if (data.description && data.description.length > 100) {
+                        errors.push("Description must be less than 100 characters.");
+                    }
+
+                    if (!data.limit || Number(data.limit) <= 0) {
+                        errors.push("Usage limit must be greater than 0.");
+                    }
+
+                    if (!data.expiryDate) {
+                        errors.push("Expiry date is required.");
+                    } else {
+                        const today = new Date();
+                        const expDate = new Date(data.expiryDate);
+                        if (expDate < today) {
+                            errors.push("Expiry date must be in the future.");
+                        }
+                    }
+
+                    if (!data.minPurchase || Number(data.minPurchase) <= 0) {
+                        errors.push("Minimum purchase must be greater than 0.");
+                    }
+
+                    // ✅ Show errors if any
+                    if (errors.length > 0) {
+                        Swal.fire({
+                            icon: "error",
+                            title: "Validation Error",
+                            html: errors.join("<br>"),  // show nicely formatted list
+                        });
+                        return; // ⛔ stop fetch call
+                    }
         try {
           
             const response = await fetch('/admin/coupon',{
@@ -239,6 +289,56 @@
         }
     })
 
+   async function deleteCoupon(code){
+       const result = await Swal.fire({
+                            title:"Are You Sure,You want to Delete",
+                            icon:'waring',
+                            showCancelButton:true,
+                            ConfirmButtonColor:'#DD6B55',
+                            confirmButtonText:'YES,Delete it',
+                            cancelButtonText:'No'
+                            });
+
+                if(result.isConfirmed){
+                    try {
+                        const response = await fetch(`/admin/deleteCoupon/${code}`,{
+                            method:'DELETE',
+
+                        });
+
+                        const data = await response.json();
+                        if(data.success){
+                            Swal.fire({
+                                icon:'success',
+                                title:"Deleted",
+                                text:data.message,
+
+                            }).then(()=>{
+                                window.location.reload()
+                            })
+                        }else{
+                            Swal.fire({
+                                icon:'error',
+                                title:'Error',
+                                text:data.message,
+                                showConfirmButton:true
+                            }).then(()=>{
+                                window.location.reload()
+                            })
+                        }
+                    } catch (error) {
+                        console.log("error in the fontend delete coupon ",error);
+                        Swal.fire({
+                            icon:'error',
+                            title:'OOPS',
+                            text:'Something Went Wrong',
+                            showConfirmButton:true
+                        })
+                        
+                    }
+                }
+                        
+    }
 
 </script>
 </body>
