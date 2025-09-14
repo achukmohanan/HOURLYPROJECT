@@ -415,3 +415,41 @@
         width: 50px;
         height: 50px;
     }
+    nav ul {
+  display: flex;
+  list-style: none;
+  gap: 8px;
+  padding: 0;
+  margin: 0;
+  justify-content: center; /* center the pagination */
+}
+
+nav ul li {
+  display: inline-block;
+}
+
+nav ul li a,
+nav ul li strong {
+  display: block;
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  text-decoration: none;
+  font-size: 14px;
+  color: #333;
+  background: #fff;
+  transition: all 0.3s ease;
+}
+
+nav ul li a:hover {
+  background: #007bff;
+  color: #fff;
+  border-color: #007bff;
+}
+
+nav ul li strong {
+  background: #007bff;
+  color: #fff;
+  border-color: #007bff;
+  font-weight: bold;
+}

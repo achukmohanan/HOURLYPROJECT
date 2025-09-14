@@ -183,7 +183,18 @@ const userProfile = async (req,res) =>{
         const userData = await User.findById(userId);
         const addressData = await Address.findOne({userId:userId});
         const orders = await Order.find({userId:req.session.user }).populate('orderedItems.product').sort({createdOn:-1})
-        const transaction = await Transaction.find({userId:userId}).sort({date:-1})
+        
+        const page = parseInt(req.query.page) || 1;
+        const limit = 3;
+        const skip = (page -1) * limit;
+        
+        const totalTransaction = await Transaction.countDocuments({userId})
+        let  transaction = await Transaction.find({userId:userId})
+        .sort({date:-1})
+        .skip(skip)
+        .limit(limit)
+        .lean()
+
 
         for(let txn of transaction){
             const order = await Order.findOne({orderId:txn.orderId}).populate('orderedItems.product','productName productImage').lean()
@@ -197,7 +208,12 @@ const userProfile = async (req,res) =>{
             user:userData,
             userAddress:addressData,
             orders:orders,
-            transaction:transaction
+            transaction:transaction,
+            pagination:{
+                page,
+                totalPages:Math.ceil(totalTransaction/limit),
+                totalTransaction
+            }
         });
     } catch (error) {
          console.log("error occured in account",error);

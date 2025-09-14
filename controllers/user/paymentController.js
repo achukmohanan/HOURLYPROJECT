@@ -64,7 +64,7 @@ const confirmRazorpay = async (req,res) =>{
         { "address._id": address, userId },
         { "address.$": 1 }
       );
-      console.log("selected address",selectedAddress)
+    //   console.log("selected address",selectedAddress)
       if (!selectedAddress) {
         return res.json({ success: false, message: "Address not found" });
       }

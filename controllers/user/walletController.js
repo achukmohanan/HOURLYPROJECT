@@ -7,7 +7,7 @@ const Transaction = require("../../models/transactionSchema");
 
 const walletTopUp = async (req,res) =>{
     try {
-        const {userId,amount} = req.body
+        const {userId,amount} = req.body;
         
         const options = {
             amount: amount * 100,
@@ -31,7 +31,7 @@ const walletTopUp = async (req,res) =>{
 }
 const verifyWalletTopup = async (req,res)=>{
     try {
-        console.log("req.body is ,", req.body)
+       
         const {razorpay_order_id, razorpay_payment_id,razorpay_signature,amount,userId} = req.body;
         
         const body = razorpay_order_id + "|" + razorpay_payment_id;
@@ -39,10 +39,6 @@ const verifyWalletTopup = async (req,res)=>{
                 .createHmac('sha256',process.env.RAZORPAY_KEY_SECRET)
                 .update(body.toString())
                 .digest('hex')
-
-                console.log("Generated Signature:", expectedSignature);
-console.log("Razorpay Signature:", razorpay_signature);
-
 
                 if(expectedSignature !== razorpay_signature){
                     return res.status(400).json({success:false,message:"Invalid payment signature"})
@@ -53,7 +49,7 @@ console.log("Razorpay Signature:", razorpay_signature);
                     return res.status(404).json({success:false,message:"User is not found"})
                 }
                 user.wallet = (user.wallet || 0) + parseInt(amount)
-               await user.save()
+                await user.save()
                //transaction
                 await Transaction.create({
                     userId:userId,

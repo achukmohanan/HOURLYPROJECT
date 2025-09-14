@@ -139,7 +139,7 @@ const filterProduct = async(req,res) => {
        
             userData = await User.findOne({_id:user});
 
-            console.log("user data is in filter product ",userData)
+            // console.log("user data is in filter product ",userData)
             // if(userData){
             //     let searchEntry = {
             //         category : findCategory ? findCategory._id : null,

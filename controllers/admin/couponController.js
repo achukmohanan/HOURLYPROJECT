@@ -1,0 +1,52 @@
+const Coupon = require('../../models/couponSchema')
+
+
+const getCouponPage = async(req,res) =>{
+    try {
+        const coupon = await Coupon.find({})
+        return res.render('admin/coupon',{coupon})
+    } catch (error) {
+        console.log("error in the getCouponPage",error);
+        
+    }
+
+}
+const postCoupon = async (req,res) =>{
+    try {
+        console.log("data is received ",req.body)
+        const {code,couponType,discountValue,maxDiscount,description,limit,expiryDate,minPurchase,} = req.body
+
+        if(!code || !couponType || !expiryDate){
+            return res.status(400).json({success:false,message:"Required fields are missing"})
+        }
+
+        if(new Date(expiryDate) <= new Date()){
+            return res.status(400).json({success:false,message:"Expiry date must be future"})
+        }
+        const existing = await Coupon.findOne({code})
+        if(existing){
+            return res.status(400).json({success:false,message:"Coupon code already exists"})
+        }
+
+        const coupon = new Coupon({
+            code,
+            couponType,
+            discountValue,
+            maxDiscount,
+            description,
+            limit,
+            expireOn:expiryDate,
+            minPurchase
+        })
+        await coupon.save()
+        return res.status(200).json({success:true,message:"Coupon Created Successfully"})
+    } catch (error) {
+        console.log("error in the backend of post coupon",error);
+        
+    }
+}
+
+module.exports = {
+    getCouponPage,
+    postCoupon
+}

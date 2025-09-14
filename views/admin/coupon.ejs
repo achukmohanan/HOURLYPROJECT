@@ -1,0 +1,245 @@
+<%- include('../../views/partials/admin/sidebar') %>
+    <title>Coupon Management Dashboard</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .table-container {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+        .add-coupon-section {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 25px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .btn-update {
+            background-color: #6c757d;
+            color: white;
+            border: none;
+            padding: 4px 12px;
+            font-size: 12px;
+        }
+        .btn-update:hover {
+            background-color: #5a6268;
+            color: white;
+        }
+        .btn-add {
+            background-color: #000;
+            color: white;
+            border: none;
+            padding: 8px 30px;
+            font-weight: bold;
+        }
+        .btn-add:hover {
+            background-color: #333;
+            color: white;
+        }
+        .controls-section {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .form-select, .form-control {
+            border: 1px solid #ced4da;
+        }
+        th {
+            background-color: #f8f9fa;
+            border-top: 1px solid #dee2e6;
+        }
+    </style>
+</head>
+
+<!-- Sidebar Overlay for Mobile -->
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<!-- Main Content -->
+<div class="main-content" id="mainContent">
+    <div class="container-fluid">
+        <!-- Controls Section -->
+        <div class="controls-section">
+            <div class="row align-items-center">
+                <div class="col-md-3">
+                    <div class="d-flex align-items-center">
+                        <label class="me-2 fw-bold">Sort</label>
+                        <select class="form-select form-select-sm">
+                            <option>Coupon Amt</option>
+                            <option>Code</option>
+                            <option>Expiry Date</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="d-flex align-items-center">
+                        <label class="me-2 fw-bold">By</label>
+                        <select class="form-select form-select-sm">
+                            <option>Ascending</option>
+                            <option>Descending</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="d-flex align-items-center">
+                        <label class="me-2 fw-bold">Filter</label>
+                        <select class="form-select form-select-sm">
+                            <option>All</option>
+                            <option>Active</option>
+                            <option>Expired</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Coupons Table -->
+        <div class="table-container">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th>Code</th>
+                            <th>Coupon type</th>
+                            <th>minimum purchase</th>
+                            <th>Maximum discount</th>
+                            <th>Usage Limit</th>
+                            <th>Created On</th>
+                            <th>Expiry Date</th>
+                            <th>Status</th>
+                            <th>Description</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <%if(coupon){%>
+                            <% coupon.forEach(c=>{  %>
+                        <tr>
+                            <td><strong><%= c.code %></strong></td>
+                            <td><%= c.couponType %></td>
+                            <td><%= c.minPurchase %></td>
+                            <td><%= c.maxDiscount %></td>
+                            <td><%= c.limit%></td>
+                            <td><%= c.createdOn.toLocaleDateString('en-GB') %></td>
+                            <td><%= c.expireOn.toLocaleDateString('en-GB') %></td>
+                            <td><%= c.isActive %></td>
+                            <td><%= c.description %></td>
+                            <td><button class="btn btn-update btn-sm">Delete</button></td>
+                        </tr>
+                    <% }) %>
+                        <% }else{%>
+                            No Coupons Found
+                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Add Coupon Section -->
+        <div class="add-coupon-section">
+                <h5 class="mb-4">Add Coupon</h5>
+                <form id="couponForm">
+                <div class="row">
+                    <div class="col-md-3 mb-3">
+                        <label class="form-label">Code</label>
+                        <input type="text" name="code" class="form-control" placeholder="Enter coupon code">
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label class="form-label">Coupon Type</label>
+                        <select name="couponType" class="form-select" required>
+                        <option value="percentage">Percentage</option>
+                        <option value="fixed">Fixed Amount</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label class="form-label">Discount Value</label>
+                        <input type="number" name="discountValue" class="form-control" placeholder="Enter discount value" required>
+                    </div>
+
+                    <div class="col-md-3 mb-3">
+                        <label class="form-label">Max Discount</label>
+                        <input type="number" name="maxDiscount" class="form-control" placeholder="Enter max discount">
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label class="form-label">Description</label>
+                        <input type="text" name="description" class="form-control" placeholder="Enter description">
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label class="form-label">Limit</label>
+                        <input type="number" name="limit" class="form-control" placeholder="Enter usage limit">
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label class="form-label">Expiry Date</label>
+                        <input type="date" name="expiryDate" class="form-control">
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label class="form-label">minimum purchase</label>
+                        <input type="number" name="minPurchase" class="form-control" placeholder="Enter minimum purchase">
+                    </div>
+                    <div class="col-md-3 mb-3 d-flex align-items-end">
+                        <button type="submit" class="btn btn-add w-100">ADD</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+<script>
+    
+    //coupon adding
+    
+    document.getElementById('couponForm').addEventListener('submit', async (event) => {
+        event.preventDefault();
+       
+        const formData = new FormData(event.target);
+        const data = Object.fromEntries(formData.entries());
+        try {
+          
+            const response = await fetch('/admin/coupon',{
+                method:'POST',
+                headers:{
+                    'Content-Type':'application/json'
+                },
+                body:JSON.stringify(data)
+            });
+
+            const result = await response.json()
+            
+            if(result.success){
+                Swal.fire({
+                    icon:'success',
+                    title:'Coupon Created',
+                    text:result.message,
+                }).then(()=>{
+                    window.location.reload()
+                })
+            }else{
+                Swal.fire({
+                    icon:'error',
+                    title:'ERROR',
+                    text:result.message,
+                    showConfirmButton:true
+                }).then(()=>{
+                    window.location.reload()
+                })
+            }
+        } catch (error) {
+            
+            console.log("error in the frontend ",error)
+            Swal.fire({
+                icon:'error',
+                title:'OOPS',
+                text:"Internal server Error",
+                showConfirmButton:true
+            })
+        }
+    })
+
+
+</script>
+</body>
+</html>

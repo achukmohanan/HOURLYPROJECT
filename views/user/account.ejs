@@ -302,7 +302,7 @@
                                         <td class="<%= txn.type ==='Credit' ? 'text-success' :'text-danger' %>"><%= txn.type %></td>
                                         <td><%= txn.amount %></td>
                                         <td><%= txn.paymentMethod %></td>
-                                        <td><%= txn.description %></td>
+                                        <td><%= txn.description %></td> 
                                       <td> <%= new Date(txn.date).toLocaleString("en-IN", {
                                                         day: "2-digit",
                                                         month: "2-digit",
@@ -320,6 +320,41 @@
                                     No transaction Found
                                 <% } %>
                                   </table>
+                                  <!-- 🔹 Pagination Controls -->
+<div style="margin-top: 20px;">
+  <% if (pagination.totalPages > 1) { %>
+    <nav>
+      <ul style="display: flex; list-style: none; gap: 8px;">
+
+        <!-- Prev -->
+<% if (pagination.page > 1) { %>
+  <li>
+    <a href="?tab=wallet&page=<%= pagination.page - 1 %>">⬅ Prev</a>
+  </li>
+<% } %>
+
+<!-- Pages -->
+<% for (let i = 1; i <= pagination.totalPages; i++) { %>
+  <li>
+    <% if (i === pagination.page) { %>
+      <strong>[<%= i %>]</strong>
+    <% } else { %>
+      <a href="?tab=wallet&page=<%= i %>"><%= i %></a>
+    <% } %>
+  </li>
+<% } %>
+
+<!-- Next -->
+<% if (pagination.page < pagination.totalPages) { %>
+  <li>
+    <a href="?tab=wallet&page=<%= pagination.page + 1 %>">Next ➡</a>
+  </li>
+<% } %>
+
+      </ul>
+    </nav>
+  <% } %>
+</div>
                             </div>
                         </div>
                     </div>
@@ -398,7 +433,22 @@
             });
         });
 
-       
+       document.addEventListener('DOMContentLoaded',()=>{
+    const urlParams = new URLSearchParams(window.location.search);
+    const tab = urlParams.get('tab');
+    if(tab){
+        document.querySelectorAll('.sidebar-link').forEach(l=>l.classList.remove('active'));
+        document.querySelectorAll('.tab-pane').forEach(p=>p.classList.remove('show','active'));
+
+        const targetLink = document.querySelector(`.sidebar-link[data-tab="${tab}"]`);
+        const targetPane = document.getElementById(tab);
+        
+        if(targetLink && targetPane){
+            targetLink.classList.add('active');
+            targetPane.classList.add('show','active');
+        }
+    }
+})
 
        
 // <--------address deletion---------------->

@@ -6,6 +6,7 @@ const customerController = require("../controllers/admin/customerController");
 const categoryController = require("../controllers/admin/categoryController");
 const productController = require("../controllers/admin/productController");
 const orderController = require("../controllers/admin/orderController");
+const couponController = require('../controllers/admin/couponController')
 const { adminAuth, adminchecksession } = require("../middlewares/adminAuth");
 const multer = require("multer");
 const storage = require("../helpers/multer");
@@ -100,7 +101,9 @@ router.put('/returnRequest/:orderId',adminAuth ,orderController.approveReturnReq
 // approve order cancel
 router.post('/cancelApproveRequest/:orderId/:itemId',adminAuth,orderController.approveCancelRequest)
 
-
+//coupon management 
+router.get('/coupon',adminAuth, couponController.getCouponPage)
+router.post('/coupon',adminAuth, couponController.postCoupon)
 // router.get('/users',customerController.loadcustomerInfo)
 // router.get('/dashboard',adminController.loaddashboard)
 // router.use('/admin/*',(req,res,next)=>{
