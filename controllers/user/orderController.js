@@ -249,7 +249,7 @@ const returnOrder = async(req,res) =>{
                ).lean();
                order.fullAddress = parent?.address
            }
-
+console.log("orders ",orders)
            return res.render('user/orderView',{orders})
        } catch (error) {
            console.log("error in the viewOrderDetails ",error);

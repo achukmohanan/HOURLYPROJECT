@@ -21,10 +21,13 @@ const postPayment = async (req,res) =>{
 
         const findUser = await User.findById(userId);
         
+       
+
         const cart = await Cart.findOne({userId}).populate('items.productId')
         if(!cart || !cart.items.length){
             res.redirect('/cart')
         }
+        
 
         let total = cart.items.reduce((sum,item)=>{
            return sum + item.productId.salePrice * item.quantity
@@ -61,7 +64,8 @@ const confirmRazorpay = async (req,res) =>{
         if (expectedSignature === razorpay_signature) {
             const cart = await Cart.findOne({userId}).populate('items.productId')
            
-            let totalPrice = amount/100
+            const price = Number(amount/100)
+            let totalPrice =price
             console.log("after checking amount is ",totalPrice)
             // fetch selected address snapshot
       const selectedAddress = await Address.findOne(
@@ -77,7 +81,7 @@ const confirmRazorpay = async (req,res) =>{
                 orderedItems:cart.items.map(item =>({
                     product:item.productId._id,
                     quantity:item.quantity,
-                    price:totalPrice,
+                    price:item.productId.salePrice,
                 })),
                 totalPrice,
                 paymentMethod:'Razorpay',

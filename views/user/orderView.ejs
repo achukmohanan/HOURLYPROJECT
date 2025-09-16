@@ -128,8 +128,25 @@
 </div>
 
  </div>
+<!-- --------------------order total---------------------- -->
+ <div class="card mt-2">
+            <div class="card-body cancel-section">
+                
+                    <h5 class="text-danger mb-3"> Order Total</h5>
+             
+                <!-- <p class="mb-3">You can cancel this order if it hasn't been shipped yet. Once cancelled, you'll receive a full refund within 3-5 business days.</p> -->
+                <p><strong>Order Total</strong> : <%=  orders[0].totalPrice.toLocaleString('en-IN',{style:'currency',currency:'INR'}) %></p>
+                <!-- Cancel Button with Confirmation -->
+               
+            </div>
+        </div>
+
+<!-- ------------------------------------------------ -->
+
+
+
         <!-- Cancel Order Section -->
-        <div class="card">
+        <div class="card mt-3">
             <div class="card-body cancel-section">
                 
                     <h5 class="text-danger mb-3">Cancel Order</h5>

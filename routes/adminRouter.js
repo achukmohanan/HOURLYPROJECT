@@ -6,7 +6,8 @@ const customerController = require("../controllers/admin/customerController");
 const categoryController = require("../controllers/admin/categoryController");
 const productController = require("../controllers/admin/productController");
 const orderController = require("../controllers/admin/orderController");
-const couponController = require('../controllers/admin/couponController')
+const couponController = require("../controllers/admin/couponController");
+const salesController = require("../controllers/admin/salesController");
 const { adminAuth, adminchecksession } = require("../middlewares/adminAuth");
 const multer = require("multer");
 const storage = require("../helpers/multer");
@@ -94,17 +95,29 @@ router.post(
   orderController.updateOrderStatus
 );
 // approve return order ;
-router.put('/returnRequest/:orderId',adminAuth ,orderController.approveReturnRequest)
+router.put(
+  "/returnRequest/:orderId",
+  adminAuth,
+  orderController.approveReturnRequest
+);
 //reject return
 
-
 // approve order cancel
-router.post('/cancelApproveRequest/:orderId/:itemId',adminAuth,orderController.approveCancelRequest)
+router.post(
+  "/cancelApproveRequest/:orderId/:itemId",
+  adminAuth,
+  orderController.approveCancelRequest
+);
 
-//coupon management 
-router.get('/coupon',adminAuth, couponController.getCouponPage)
-router.post('/coupon',adminAuth, couponController.postCoupon)
-router.delete('/deleteCoupon/:code',adminAuth , couponController.deleteCoupon)
+//coupon management
+router.get("/coupon", adminAuth, couponController.getCouponPage);
+router.post("/coupon", adminAuth, couponController.postCoupon);
+router.delete("/deleteCoupon/:code", adminAuth, couponController.deleteCoupon);
+
+// salesReport
+router.get("/salesReport", adminAuth, salesController.getsalesReport);
+router.get("/sales-Report", adminAuth, salesController.filterSales);
+
 // router.get('/users',customerController.loadcustomerInfo)
 // router.get('/dashboard',adminController.loaddashboard)
 // router.use('/admin/*',(req,res,next)=>{

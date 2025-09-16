@@ -190,7 +190,7 @@ const getCheckOut = async (req,res) =>{
         // console.log("User:", user);
         
         const cart = await Cart.findOne({userId}).populate('items.productId');
-        if(!cart || !cart.items ||  cart.items.length === 0){
+        if(!cart || !cart.items ||  cart.items.length === 0 || cart.items.quantity < 0) {
             // console.log("eroor in !user if case")
             res.redirect('/cart')
         }
