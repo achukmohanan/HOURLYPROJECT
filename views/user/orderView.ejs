@@ -62,7 +62,10 @@
                                 <p style="color: rgb(235, 47, 2);"><strong class="text-dark">Order Status : </strong> <%= order.status %></p>
                                 <p><strong>Payment Method : </strong> <%= order.paymentMethod %></p>
                                 <p><strong>payment status : </strong> <%= order.paymentStatus %></p>
-                                <p><strong>Order Placed On : </strong><%= order.createdOn.toLocaleDateString('en-IN') %></p>
+                                <p><strong>Order Placed On : </strong><%= order.createdOn.toLocaleString('en-IN') %></p>
+                                <% if(order.deliveredAt){%>
+                                    <p><strong>Order Delivered On : </strong><%= order.deliveredAt.toLocaleString('en-IN') %></p>
+                                 <% } %>
                             </div>
 
                             <!-- Price & Cancel Button -->

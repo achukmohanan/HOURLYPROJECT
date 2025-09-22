@@ -57,7 +57,7 @@ const forgotPassword = async (req, res) => {
 
 const getForgotEmailOtp = async (req,res) =>{
     try {
-        return res.render('user/forgotpassotp')
+        return res.render('user/forgotemailotp')
     } catch (error) {
         console.log('error happened in the forgot otp page',error);
         // res.redirect('/pagenotfound')
@@ -75,7 +75,7 @@ const forgotEmailOtp = async (req, res) => {
         }
         
         const findUser = await User.findOne({ email: email });
-        console.log('Email:', email);
+        console.log('Email:sshw', email);
         
         if (findUser) {
             const otp = generateOtp();
@@ -86,8 +86,8 @@ const forgotEmailOtp = async (req, res) => {
                 req.session.email = email;
                 
                 console.log("Forgot password OTP:", otp);
-                // Fix: Remove 'admin/' from the redirect path
-                return res.render('user/forgotpassotp');
+                
+                return res.render('user/forgotemailotp')
             } else {
                 res.json({ success: false, message: "Failed to send OTP. Please try again" });
             }
@@ -103,14 +103,44 @@ const forgotEmailOtp = async (req, res) => {
 }
 const verifyForgotPassOtp = async (req,res)=>{
     try {
-        const enteredOtp = req.body.otp;
+        console.log("testing file check 1 i guess its a dat",req.body);
+        const {otp1,otp2,otp3,otp4} = req.body;
+        const enteredOtp = otp1+otp2+otp3+otp4;
+
+       
+
         if(enteredOtp === req.session.userOtp){
-            res.json({success:true,redirectUrl:'/resetpassword' });
+            console.log("enteredOtp === req.session.userOtp in verifyForgotPassOtp");
+            
+           return res.json({success:true,message:'OTP Verified Successfully' });
         }else{
-            res.json({success:false,message:"OTP not Matching"});
+           return res.json({success:false,message:"OTP not Matching"});
         }
     } catch (error) {
-        res.status(500).json({success:false,message:"An error Occured. Please try again"});
+        console.log("errror in the verifyForgotPassOtp",error)
+        return res.status(500).json({success:false,message:"An error Occured. Please try again"});
+        
+    }
+}
+const resendForgotOtp = async (req,res) =>{
+    try {
+        console.log("resend otp function invoke");
+        const otp = generateOtp();
+        req.session.userOtp = otp;
+        console.log("type is in session",typeof otp)
+        const email = req.session.email
+        console.log("email is in the resend forgot otp is ",email)
+        const emailSent = await sendVerificationEmail(email,otp);
+        console.log("email is send ",emailSent)
+        if(emailSent){
+            console.log("Resend OTP For Forgot Password : ",otp)
+            return res.status(200).json({success:true,message:"OTP send Successfully"})
+        }else{
+            return res.status(500).json({success:false,message:"Failed to Send. Please Try Again!"})
+        }    
+    } catch (error) {
+        console.log("error in the resendForgotOtp otp is",error);
+        return res.status(500).json({success:false,message:'Internal Server Error'})
     }
 }
 
@@ -424,5 +454,6 @@ module.exports = {
     postEditAddress,
     deleteAddress,
     getEditProfile,
-    editProfile
+    editProfile,
+    resendForgotOtp
 }

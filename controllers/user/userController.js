@@ -187,7 +187,7 @@ const login = async (req,res) => {
             return res.render('user/login',{message:"User is blocked by Admin"})
         }
 
-        const passwordMatch = await bcrypt.compare(password,findUser.password)
+        const passwordMatch = await bcrypt.compare(password,findUser.password);
         if(!passwordMatch){
             return res.render("user/login",{message:"Incorrect Password"})
         }
@@ -258,7 +258,7 @@ const confirmwithotp = async (req, res) => {
             return res.status(200).json({
                 success: true,
                 message: "OTP verified successfully",
-                redirectUrl: "/login"
+               
             });
         } else {
             return res.status(400).json({
@@ -278,7 +278,7 @@ const confirmwithotp = async (req, res) => {
 
 const resendOtp = async (req,res)=>{
     try {
-        // console.log(req.session.userData)
+        console.log("req.session.userData",req.session.userData)    
         const {email} = req.session.userData;
         if(!email){
             return res.status(400).json({success:false,message:"Email not found in Session"})
@@ -301,6 +301,7 @@ const resendOtp = async (req,res)=>{
         
     }
 }
+
 
 const logout = async (req,res) => {
     try {

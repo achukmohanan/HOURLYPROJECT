@@ -89,6 +89,7 @@ const confirmRazorpay = async (req,res) =>{
                 paymentStatus:'Paid',
                 paymentId: razorpay_payment_id,
                 address: selectedAddress.address[0],
+                deliveredAt:null
             });
 
             await order.save();

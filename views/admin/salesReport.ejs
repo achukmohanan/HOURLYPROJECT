@@ -9,20 +9,26 @@
     <div class="page-header">
         <h1 class="page-title">Sales Report</h1>
         <nav class="breadcrumb-nav">
-            <a href="/admin/dashboard">Dashboard</a> / <span>Sales Report</span>
+            <span>Sales Report</span>
         </nav>
+    </div>
+    <div class="buttonclass mb-3">
+
+        <button class="btn btn-danger" id="downloadPDF">Download PDF</button>
+     <button class="btn btn-success" id="downloadExcel">Download Excel</button>
     </div>
 
     <!-- Table Controls -->
     <div class="table-controls">
+        
         <div class="controls-left">
             <div class="control-group">
                 <label>Sort</label>
                 <select class="form-select" id="sortBy">
+                    <option value="today">Today</option>
+                    <option value="week">Week</option>
+                    <option value="month">month</option>
                     <option value="name">Product Name</option>
-                    <option value="price">Price</option>
-                    <option value="buyer">Buyer</option>
-                    <option value="total">Total</option>
                 </select>
             </div>
             
@@ -37,8 +43,10 @@
             <div class="control-group">
                 <label>Filter</label>
                 <select class="form-select" id="filterCategory">
-                    <option value="">All Categories</option>
-                    <option value="watch">Watch</option>
+                    <option value="daily">Daily</option>
+                    <option value="weekly">Weekly</option>
+                    <option value="monthly">Monthly</option>
+                    <option value="yearly">Yearly</option>
                 </select>
             </div>
         </div>
@@ -51,6 +59,7 @@
   <input type="date" id="endDate">
 
   <button class="btn btn-primary" id="generateReport">Generate Report</button>
+ 
 </div>
 
     </div>
@@ -352,17 +361,35 @@
 </style>
 
 <script>
-document.getElementById('generateReport').addEventListener('click',async()=>{
-    const startDate = document.getElementById('startDate').value;
-    const endDate = document.getElementById('endDate').value;
+    document.getElementById('generateReport').addEventListener('click', async()=>{
+        const startDate = document.getElementById('startDate').value;
+        const endDate = document.getElementById('endDate').value;
+        const filterCategory = document.getElementById('filterCategory').value;
+        const res = await fetch(`/admin/sales-Report?startDate=${startDate}&endDate=${endDate}&filter=${filterCategory}`);
+            const data = await res.json();
 
-    const res = await fetch(`/admin/sales-Report?startDate=${startDate}&endDate=${endDate}`);
-        const data = await res.json();
+            document.getElementById("reportSummary").innerHTML = `
+                    <p><strong>Filter:</strong> ${filterCategory}</p>
+                    <p>Total Sales: ₹${data.totalSales}</p>
+                    <p>Total Orders: ${data.totalOrders}</p>
+                    <p>Total Quantity Sold: ${data.totalQuantity}</p>
+                `;
+    })
 
-        document.getElementById("reportSummary").innerHTML = `
-                <p>Total Sales: ₹${data.totalSales}</p>
-                <p>Total Orders: ${data.totalOrders}</p>
-                <p>Total Quantity Sold: ${data.totalQuantity}</p>
-            `;
-})
+
+    function downloadReport(type){
+        const startDate = document. getElementById('startDate').value;
+        const endDate = document.getElementById('endDate').value;
+        const filterCategory = document.getElementById('filterCategory').value;
+
+        window.location.href = `/admin/sales-Report?startDate=${startDate}&endDate=${endDate}&filter=${filterCategory}&type=${type}`;
+
+    }
+    document.getElementById('downloadPDF').addEventListener('click',()=> {
+        downloadReport('pdf')
+    })
+
+    document.getElementById('downloadExcel').addEventListener('click', ()=> {
+        downloadReport('excel');
+    })
 </script>

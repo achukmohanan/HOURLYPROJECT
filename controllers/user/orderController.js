@@ -55,7 +55,8 @@ const postOrder = async (req,res) =>{
             totalPrice,
             paymentMethod,
             status:'Pending',
-            paymentStatus:"Cash on Delivery"
+            paymentStatus:"Cash on Delivery",
+            deliveredAt:null
         })
         // console.log("order is ",order)
         await order.save();
@@ -110,7 +111,8 @@ const postOrder = async (req,res) =>{
             totalPrice,
             paymentMethod:'Wallet',
             status:'Pending',
-            paymentStatus:"Paid"
+            paymentStatus:"Paid",
+            deliveredAt:null
         });
         // console.log("order is ",order)
         await order.save();

@@ -47,10 +47,6 @@ const orderSchema = new Schema({
     type: Number,
     default: 0,
   },
-  finalAmount: {
-    type: Number,
-    required: false,
-  },
   address: singleAddress,
   invoiceDate: {
     type: Date,
@@ -98,10 +94,10 @@ const orderSchema = new Schema({
     type: String,
     default: null,
   },
-  paymentStatus:{
-        type:String,
-        enum:["Paid","Cash on Delivery"]
-      }
+  deliveredAt:{
+    type:Date,
+    default:null
+  }
 });
 
 const Order = mongoose.model("Order", orderSchema);

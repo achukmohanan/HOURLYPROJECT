@@ -122,6 +122,12 @@ const updateOrderStatus = async (req, res) =>{
         if(!order){
             return res.status(404).json({success:false,message:"Order is Not Found"})
         }
+        if(status === 'Delivered'){
+            order.deliveredAt = new Date();
+            order.save();
+            console.log("deleiverd status updated");
+            
+        }
         return res.json({success:true,message:`Order status updatd to ${status}`,order})
     } catch (error) {
         console.log("error in the backenndn===",error);

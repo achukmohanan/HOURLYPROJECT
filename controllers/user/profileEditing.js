@@ -40,14 +40,6 @@ const changePassword = async (req,res) =>{
     }
 }
 
-const  getEmailEditPage = async (req,res) =>{
-    try {
-        return res.render('user/edit-email')
-    } catch (error) {
-        
-    }
-}
-
 const getCurrentEmail = async (req,res) =>{
     try {
         return res.render('user/currentEmail')
@@ -131,7 +123,7 @@ const getEmailEditOtp = async (req,res) =>{
 
 const postEmailEditOtp = async (req,res) =>{
     try {
-         
+         console.log("profile side email editing controller postemailEditOtp in profileediting")
         const { otp1, otp2, otp3, otp4 } = req.body;
         const otp = otp1 + otp2 + otp3 + otp4;
 
@@ -176,8 +168,7 @@ const postUpdateEmail = async (req,res) =>{
 }
 
 module.exports = {
-    changePassword,
-    getEmailEditPage,   
+    changePassword,   
     postCurrentEmail,
     getCurrentEmail,
     getEmailEditOtp,

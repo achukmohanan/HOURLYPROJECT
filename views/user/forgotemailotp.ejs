@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Confirm with OTP</title>
+    <title>EMAIL -Confirm with OTP</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
@@ -158,7 +158,7 @@
     
     <div class="container">
         <div class="otp-section">
-            <h2>Confirm with OTP</h2>
+            <h2>Confirm with OTPqdqdqd</h2>
             <p>Please check your mail address for OTP</p>
             <form id="otpForm">
             <div class="otp-inputs" id="otp">
@@ -167,11 +167,11 @@
                 <input type="text" id="otp3" name="otp3" class="otp-input" maxlength="1">
                 <input type="text" id="otp4" name="otp4" class="otp-input" maxlength="1">
             </div>
-            <button class="confirm-btn">Confirm</button>
+            <button class="confirm-btn" type="submit">Confirm</button>
             </form>
            <div id="otpTimer" class="otp-timer">
             <button type="button"    style="color: rgb(42, 34, 34); border: none; cursor: pointer;" onclick="resendOTP()">Resend OTP</button>
-            <span id="timerValue" style="color: red;">30</span>
+            <span id="timerValue" style="color: red;">60</span>
            </div>
 
             <a href="/login" class="back-link">Go back to Login page</a>
@@ -183,7 +183,7 @@
     
     <script>
 
-        let timer = 60;
+        let timer = 30;
         let timerInterval;
 
         function startTimer(){
@@ -220,39 +220,40 @@ startTimer()
 
         async function validateOTPForm(e) {
             e.preventDefault();
-
+          
             const otp1 = document.getElementById("otp1").value.trim();
             const otp2 = document.getElementById("otp2").value.trim();
             const otp3 = document.getElementById("otp3").value.trim();
             const otp4 = document.getElementById("otp4").value.trim();
 
-            if (!otp1 || !otp2 || !otp3 || !otp4) {
+            if (!otp1 || !otp2 || !otp3 || !otp4) { 
                 Swal.fire("Please enter all 4 digits of the OTP");
                 return;
             }
 
             const data = { otp1, otp2, otp3, otp4 };
-
-            try {
-                const res = await fetch("/confirmwithotp", {
+            console.log("data otp is ",data)
+           
+            try {   
+                const res = await fetch("/verify-passForgot-otp", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json"
                     },
                     body: JSON.stringify(data)
                 });
-
+                
                 const response = await res.json();
-                console.log(response)
-
+                console.log(response.message)
+               
                 if (response.success) {
                     Swal.fire({
                         icon: "success",
-                        title: "OTP Verified Successfully",
+                        title: response.message,
                         showConfirmButton: false,
                         timer: 1500
                     }).then(()=>{
-                        window.location.href = "/login";
+                        window.location.href = '/resetpassword'
                     })
                 } else {
                     Swal.fire({
@@ -262,10 +263,11 @@ startTimer()
                     });
                 }
             } catch (error) {
+                console.log("ERROR IN EMAIL EDIT OTP PAGE",error);
                 Swal.fire({
                     icon: "error",
-                    title: "Invalid OTP",
-                    text: "Please try again"
+                    title: "OOPS" ,
+                    text: "Something Went Wrong,Please try again"
                 });
             }
 
@@ -275,13 +277,13 @@ startTimer()
         
         async function resendOTP() {
             clearInterval(timerInterval);
-            time = 60;
+            time = 30;
             document.getElementById('otp').disabled = false;
             document.getElementById('timerValue').classList.remove("Expired");
             startTimer();
 
             try {
-                const response = await fetch('/resend-otp', {
+                const response = await fetch('/resend-Forgot-passwordOtp', {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json"
@@ -292,16 +294,14 @@ startTimer()
 
                 if (response.ok) {
                     Swal.fire({
-                        icon: "success", // Fixed typo: "Sucess" -> "success"
-                        title: "OTP Sent Again",
+                        icon: "success", 
+                        title: "OTP Sent",
                         showConfirmButton: false,
                         timer: 1000
-                    }).then(()=>{
-                        window.location.reload();
                     })
                 } else {
                     Swal.fire({
-                        icon: "error", // Fixed typo: "Error" -> "error"
+                        icon: "error",
                         title: "Failed to Resend OTP",
                         text: data.message || "Please try again"
                     });
