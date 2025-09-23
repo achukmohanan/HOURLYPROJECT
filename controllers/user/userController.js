@@ -2,6 +2,7 @@ const User = require('../../models/userSchema');
 const Category = require('../../models/categorySchema');
 const Product = require('../../models/productSchema');
 const Brand = require('../../models/brandSchema')
+const Coupon = require('../../models/couponSchema')
 const nodemailer = require("nodemailer");
 const env = require('dotenv').config();
 const bcrypt = require('bcrypt');
@@ -119,7 +120,9 @@ async function sendVerificationEmail(email, otp) {
 const signup = async (req, res) => {
 
     try {
-        const { name ,phone ,email, password, cPassword } = req.body;
+        const { name ,phone ,email, password, cPassword,referalcode } = req.body;
+        console.log("referal code is ",referalcode)
+
         if (password !== cPassword) {
             return res.status(400).json({
                 success:false,
@@ -143,9 +146,9 @@ const signup = async (req, res) => {
            });
         } 
          req.session.userOtp = otp;
-        req.session.userData = {name,phone,email,password};
+        req.session.userData = {name,phone,email,password,referalcode};
 
-        console.log("Otp sent",otp);
+        console.log("Signu Otp sent",otp);
 
         return res.status(200).json({success : true, message : 'Otp send Successfully...!'});
     } catch (error) {
@@ -222,6 +225,12 @@ const securePassword = async (password)=>{
         
     }
 }
+function generateReferalCode(name){
+    return name.substring(0,4).toUpperCase() + Math.floor(1000 + Math.random()*9000)
+}
+function generateCouponCode(userId){
+    return 'REF-'+ userId.toString().slice(-6)+"-"+Math.floor(1000 + Math.random() * 9000)
+}
 
 const confirmwithotp = async (req, res) => {
     try {
@@ -233,27 +242,59 @@ const confirmwithotp = async (req, res) => {
 
         if (otp === req.session.userOtp) {
             console.log('OTP verified successfully');
+            console.log("req.session.userdata",req.session.userData)
 
             const user = req.session.userData;
-
+            console.log("testing user issss",user)
             if (!user) {
                 return res.status(400).json({ success: false, message: "User session expired. Please sign up again." });
             }
 
             const passwordHash = await securePassword(user.password);
+            //referal setup
+
+            const myReferalCode = generateReferalCode(user.name)
 
             const saveUserData = new User({
                 name: user.name,
                 email: user.email,
                 phone: user.phone,
                 password: passwordHash,
+                referralCode:myReferalCode,
+                referredBy:user.referalcode || null
             });
 
             await saveUserData.save();
+            //coupn for refered user
+            const findReferal = user.referalcode;
+            
+            if(user.referalcode){
+                const refer = await User.findOne({referralCode:findReferal})
+                console.log("refer in fetched in user.referal code",refer)
+                if(refer){
+                    const coupon = await Coupon.create({
+                        code:generateCouponCode(refer._id),
+                        couponType:'fixed',
+                        discountValue:500,
+                        maxDiscount:500,
+                        description:"Referral Reward",
+                        limit:1,
+                        expireOn:new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+                        minPurchase:500,
+                        isActive:true,
+                        userId:refer._id,
+
+                    });
+                    console.log("Coupon is created in refreal",coupon)
+                    coupon.save();
+                }
+            }
+
 
             req.session.user = saveUserData._id;
             delete req.session.userOtp;
             delete req.session.userData;
+
 
             return res.status(200).json({
                 success: true,
