@@ -242,7 +242,7 @@ const confirmwithotp = async (req, res) => {
 
         if (otp === req.session.userOtp) {
             console.log('OTP verified successfully');
-            console.log("req.session.userdata",req.session.userData)
+            // console.log("req.session.userdata",req.session.userData)
 
             const user = req.session.userData;
             console.log("testing user issss",user)
@@ -255,13 +255,18 @@ const confirmwithotp = async (req, res) => {
 
             const myReferalCode = generateReferalCode(user.name)
 
+            let referredByUser = null;
+            if(user.referalcode){
+                referredByUser = await User.findOne({referralCode:user.referalcode})
+            }
+            console.log("referd by user is ",referredByUser);
             const saveUserData = new User({
                 name: user.name,
                 email: user.email,
                 phone: user.phone,
                 password: passwordHash,
                 referralCode:myReferalCode,
-                referredBy:user.referalcode || null
+                referredBy:referredByUser ? referredByUser._id : null
             });
 
             await saveUserData.save();
@@ -274,7 +279,8 @@ const confirmwithotp = async (req, res) => {
                 if(refer){
                     const coupon = await Coupon.create({
                         code:generateCouponCode(refer._id),
-                        couponType:'fixed',
+                        purpose:'Referral',
+                        discountType:'fixed',
                         discountValue:500,
                         maxDiscount:500,
                         description:"Referral Reward",
@@ -282,7 +288,7 @@ const confirmwithotp = async (req, res) => {
                         expireOn:new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
                         minPurchase:500,
                         isActive:true,
-                        userId:refer._id,
+                        userId:[refer._id],
 
                     });
                     console.log("Coupon is created in refreal",coupon)

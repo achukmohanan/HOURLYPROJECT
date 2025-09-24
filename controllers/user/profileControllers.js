@@ -5,7 +5,10 @@ const nodemailer = require('nodemailer');
 const bcrypt = require('bcrypt')
 const env = require('dotenv').config();
 const session = require('express-session');
-const Transaction = require('../../models/transactionSchema')
+const Transaction = require('../../models/transactionSchema');
+const Coupon = require('../../models/couponSchema');
+
+
 
 function generateOtp(){
     const digits = '1234567890';
@@ -210,10 +213,23 @@ const userProfile = async (req,res) =>{
         // console.log(req.session.user);
         
         const userId =    req.session.user;  
-        const userData = await User.findById(userId);
+        const userData = await User.findById(userId)
         const addressData = await Address.findOne({userId:userId});
         const orders = await Order.find({userId:req.session.user }).populate('orderedItems.product').sort({createdOn:-1})
-        
+        const coupons = await Coupon.find({
+                                isActive:true,
+                                
+                                $or:[
+                                    {userId:{$in:[userId]}},
+                                    {userId:{$size:0}}
+                                ]
+                            })
+                            console.log("coupon is ",coupons)
+        let referredName = null;
+        if(userData.referredBy){
+        const refer = await User.findOne({referralCode:userData.referredBy}).select('name').lean();
+            referredName = refer ? refer.name : null;
+        }
         const page = parseInt(req.query.page) || 1;
         const limit = 3;
         const skip = (page -1) * limit;
@@ -232,7 +248,7 @@ const userProfile = async (req,res) =>{
             txn.orderDetails = order
         }
         // console.log("transactions in accout ",transaction)
-            //  console.log("user data is ",userData)
+            
             // console.log("orders are ",orders)
         res.render('user/account',{
             user:userData,
@@ -243,7 +259,9 @@ const userProfile = async (req,res) =>{
                 page,
                 totalPages:Math.ceil(totalTransaction/limit),
                 totalTransaction
-            }
+            },
+            referredName:referredName,
+            coupons:coupons
         });
     } catch (error) {
          console.log("error occured in account",error);

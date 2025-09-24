@@ -7,7 +7,12 @@ const couponSchema = new mongoose.Schema({
     required: true,
     unique: true,
   },
-  couponType: {
+  purpose:{
+    type:String,
+    enum:['Referral','General'],
+    required:true
+  },
+  discountType: {
     type: String,
     enum: ["percentage", "fixed"],
     required: true,

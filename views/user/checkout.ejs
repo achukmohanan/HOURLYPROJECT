@@ -375,7 +375,8 @@
     <div class="d-flex flex-wrap gap-3">
       <% coupons.forEach(coupon => { %>
         <div class="coupon-card">
-          <p class="coupon-code"><%= coupon.code %></p>
+          <p  class="coupon-code"><%= coupon.code %></p>
+          <button type="button" onClick="copyClip('<%= coupon.code %>')">📋</button>
           <small><%= coupon.description %></small><br>
           <small>Expires: <%= coupon.expireOn.toDateString() %></small>
         </div>
@@ -435,6 +436,7 @@
             </div>
              </form>
     </main>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
        
         const applyBtn = document.getElementById('applyCouponBtn');
@@ -527,6 +529,26 @@
                 this.style.backgroundColor = '#f9f9f9';
             });
         });
+        function copyClip(code){
+            
+
+            navigator.clipboard.writeText(code)
+            .then(()=>{
+                Swal.fire({
+                    icon:'success',
+                    title:'Copied !',
+                    text:`Successfully Copied ${code}`
+                })
+            })
+            .catch(err=>{
+                console.log("errror in the checkout copy clip",err)
+                Swal.fire({
+                    icon:'error',
+                    title:'Failed to Copy'
+                })
+            })
+
+        }
     </script>
 </body>
 </html>

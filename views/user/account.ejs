@@ -67,10 +67,16 @@
                                 </a>
                             </li>
                             <li>
-                                <!-- <a href="#" class="sidebar-link" data-tab="email">
+                                <a href="#" class="sidebar-link" data-tab="referral">
+                                    <span class="icon">👥</span>
+                                   Referral 
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#" class="sidebar-link" data-tab="coupon">
                                     <span class="icon">✉️</span>
-                                    Account Email
-                                </a> -->
+                                   Coupon 
+                                </a>
                             </li>
                             <li>
                                 <a href="#" class="sidebar-link" data-tab="wallet">
@@ -184,53 +190,53 @@
 
                         <!-- Orders Tab -->
                          
-                        <div class="tab-pane" id="orders">
+                    <div class="tab-pane" id="orders">
+                        <hr>
+                            <h2>Your Orders</h2>
                             <hr>
-  <h2>Your Orders</h2>
-  <hr>
-  <div class="row">
-    <% if(orders.length <= 0){ %>
-      <p>No Orders</p>
-    <% } else { %>
-       
-      <% orders.forEach(order => { %>
-        <div class="col-md-6 col-lg-4 mb-4">
-          <div class="card shadow border-0 rounded-3">
-            <div class="card-body">
-                 
-                <img class="img-fluid" src="<%= order.orderedItems[0].product.productImage[0] %>" alt="">
-              <!-- Order Id / Product -->
-              <h5 class="card-title">
-                <%= order.orderedItems[0].product.productName %>
-              </h5>
+                            <div class="row">
+                                <% if(orders.length <= 0){ %>
+                                <p>No Orders</p>
+                                <% } else { %>
+                                
+                                <% orders.forEach(order => { %>
+                                    <div class="col-md-6 col-lg-4 mb-4">
+                                    <div class="card shadow border-0 rounded-3">
+                                        <div class="card-body">
+                                            
+                                            <img class="img-fluid" src="<%= order.orderedItems[0].product.productImage[0] %>" alt="">
+                                        <!-- Order Id / Product -->
+                                        <h5 class="card-title">
+                                            <%= order.orderedItems[0].product.productName %>
+                                        </h5>
 
-              <!-- Date -->
-              <p class="card-text mb-1">
-                <strong>Date:</strong> <%= order.createdOn.toLocaleDateString() %>
-              </p>
+                                        <!-- Date -->
+                                        <p class="card-text mb-1">
+                                            <strong>Date:</strong> <%= order.createdOn.toLocaleDateString() %>
+                                        </p>
 
-              <!-- Status -->
-              <p class="card-text mb-1">
-                <strong>Status:</strong> 
-                <span class="badge bg-success"><%= order.status %></span>
-              </p>
+                                        <!-- Status -->
+                                        <p class="card-text mb-1">
+                                            <strong>Status:</strong> 
+                                            <span class="badge bg-success"><%= order.status %></span>
+                                        </p>
 
-              <!-- Total -->
-              <p class="card-text mb-3">
-                <strong>Total:</strong> 
-                <%= order.totalPrice.toLocaleString('en-IN', { style: 'currency', currency: 'INR' }) %>
-              </p>
+                                        <!-- Total -->
+                                        <p class="card-text mb-3">
+                                            <strong>Total:</strong> 
+                                            <%= order.totalPrice.toLocaleString('en-IN', { style: 'currency', currency: 'INR' }) %>
+                                        </p>
 
-              <!-- Actions -->
-              <a href="/viewOrderDetails/<%=order.orderId%>" class="btn btn-sm btn-primary me-2">View</a>
-              <!-- <a href="#" class="btn btn-sm btn-outline-secondary">Track</a> -->
-            </div>
-          </div>
-        </div>
-      <% }) %>
-    <% } %>
-  </div>
-</div>
+                                        <!-- Actions -->
+                                        <a href="/viewOrderDetails/<%=order.orderId%>" class="btn btn-sm btn-primary me-2">View</a>
+                                        <!-- <a href="#" class="btn btn-sm btn-outline-secondary">Track</a> -->
+                                        </div>
+                                    </div>
+                                    </div>
+                                <% }) %>
+                                <% } %>
+                            </div>
+                            </div>
 
 
                         <!-- Password Tab -->
@@ -253,19 +259,70 @@
                              </form>
                         </div>
 
-                        <!-- Email Tab -->
-                        <!-- <div class="tab-pane" id="email">
-                            <h2>Account Email</h2>
-                            <div class="form-group">
-                                <label for="currentEmail">Current Email</label>
-                                <input type="email" id="currentEmail" name="currentEmail" placeholder="current@email.com" readonly>
+                        <!-- Referal Tab -->
+                        <div class="tab-pane" id="referral">
+                            <div class="Referal">
+                            <h2 >REFERRAL CODE</h2>
+                              <div class="innerReferal">
+                                <h5 >Your Referral Code is : <span id="clipboardCopy" class="border mx-3" ><%= user.referralCode %></span>
+                                     <button onClick="copyToClipboard()">📋</button></h5>
+                              </div>
                             </div>
-                            <div class="form-group">
-                                <label for="newEmail">New Email</label>
-                                <input type="email" id="newEmail" name="newEmail" placeholder="Enter new email">
+                            <div class="border mt-5 ">
+                                <h6 class="p-3">Referral History</h6>
+                                <%if(user.referredBy){%>
+                                    <p class="p-3">Your are Referred By :  <%=referredName %></p>
+                                <% }else{%>
+                                    <p></p>
+                                <% } %>
                             </div>
-                            <button class="save-btn">Update Email</button>
-                        </div> -->
+                           
+                        </div>
+                        <div id="toast">Copy to Clipboard</div>
+                      
+                        <!-- //coupon -->
+
+                          <div class="tab-pane" id="coupon">
+                            <div class="Referal">
+                            <h2 > coupon</h2>
+                              <div class="innerReferal">
+                              
+                                  
+                                  <% if(coupons){ %>
+                                    <div class="d-flex flex-wrap gap-3">
+                                        <% coupons.forEach(item => { %>
+                                            <div class="coupon-card">
+                                    <p class="coupon-code"></p>
+                                    <span id="copyCoupon"><strong><%= item.code %></strong></span>
+                                    <button onClick="copyToCoupon()"> 📋 </button></h5><br>
+                                    <small class="text-muted"><%= item.description%></small><br>
+                                    <small class="text-muted"><%= item.expireOn.toLocaleString('en-IN') %></small><br>
+                                    <small class="text-muted"><%= item.couponType %></small><br>
+                                    <small class="text-muted">MIN Purchase : <%= item.minPurchase.toLocaleString('en-IN',{style:'currency',currency:"INR"}) %></small><br>
+                                    <small class=" text-success">Active : <%= item.isActive %></small><br>
+                                    <!-- <small class="text-muted"><%= item.maxDiscount %></small><br> -->
+                                    </div>
+                                <% }) %>
+                                </div>
+                            <% }else{ %>
+                                <p>No coupons available right now.</p>
+                            <% } %>
+                               
+                                
+                                <!-- <div class="d-flex flex-wrap gap-3">
+                                <p>referral coupon reward</p>
+                                    <div class="coupon-card">
+                                    <p class="coupon-code"></p>
+                                    <small></small><br>
+                                    <small></small>
+                                    </div>
+                                
+                                </div> -->
+                              </div>
+                            </div>
+                        </div>
+                        
+
 
                         <!-- Wallet Tab -->
                         <div class="tab-pane" id="wallet">
@@ -672,7 +729,52 @@
         }
         
     });  
+    function copyToClipboard(){
+        const referralCode = document.getElementById('clipboardCopy').innerText;
 
+        navigator.clipboard.writeText(referralCode)
+        .then(()=>{
+           showToast('Referral Code Copied'+referralCode)
+        })
+        .catch(err=>{
+            console.log("Failed to copy in copyclipboard",err)
+            Swal.fire({
+                icon:'error',
+                title:'Failed to Copy'
+            })
+        })
+    }
+    function showToast(message){
+        const toast = document.getElementById('toast')
+        toast.innerText = message;
+        toast.className = 'show';
+
+        setTimeout(()=>{
+            toast.className = toast.className.replace('show','')
+        },3000)
+    }
+
+    function copyToCoupon(){
+        const copy = document.getElementById('copyCoupon').innerText;
+
+        navigator.clipboard.writeText(copy)
+        .then(()=>{
+            Swal.fire({
+                icon:'success',
+                title:'Success',
+                text:`Succeesfully copied ${copy}`,
+
+            })
+        })
+        .catch(err=>{
+            console.log("error in copy ",err)
+            Swal.fire({
+                icon:'error',
+                title:'Failed to copy'
+            })
+
+        })
+    }
     </script>
    
 </body>

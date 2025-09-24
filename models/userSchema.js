@@ -1,4 +1,5 @@
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
+const { ref } = require('pdfkit');
 const {Schema} = mongoose;
 
 
@@ -62,7 +63,8 @@ const userSchema = new Schema({
         unique:true
        },
        referredBy:{
-        type:String,
+        type:Schema.Types.ObjectId,
+        ref:'User',
         default:null
        },
       redeemed:{

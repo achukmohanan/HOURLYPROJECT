@@ -202,7 +202,13 @@ const getCheckOut = async (req,res) =>{
         const addressList = await Address.find({userId:userId});
             // console.log("address",addressList)
 
-        const coupons = await Coupon.find({})
+        const coupons = await Coupon.find({
+            isActive:true,
+            $or:[
+                {userId:{$in:[userId]}},
+                {userId:{$size:0}}
+            ]
+        })
 
         return res.render('user/checkout',{
             coupons,
