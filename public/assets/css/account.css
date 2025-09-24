@@ -512,3 +512,22 @@ nav1 ul li strong {
     opacity: 1;
     top: 50px;
   }
+
+  /* //payment :disabled */
+  .disabled-option {
+    opacity: 0.6;
+    background: #f8f8f8;
+    border-color: #ccc;
+    cursor: not-allowed;
+}
+
+.disabled-option:hover {
+    border-color: #ccc;
+    background: #f8f8f8;
+}
+
+.not-available {
+    color: red;
+    font-weight: bold;
+    margin-left: 8px;
+}

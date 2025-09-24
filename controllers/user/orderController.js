@@ -44,6 +44,7 @@ const postOrder = async (req,res) =>{
         
        
         if(paymentMethod === 'COD'){
+            if(totalPrice <=1000){
         const order = new Order({
             userId,
             address:findAddress.address[0],
@@ -71,6 +72,9 @@ const postOrder = async (req,res) =>{
         await  Cart.deleteOne({userId});
 
        return res.json({success:true,orderId:order._id,payment:'COD'});
+    }else{
+        return res.json({success:false,message:"Order Price not above 1000"})
+    }
     }
     if(paymentMethod === 'razorpay'){
          
@@ -95,6 +99,7 @@ const postOrder = async (req,res) =>{
     }
     if(paymentMethod === 'wallet'){
         const user = await User.findById(userId)
+    
         if(user.wallet < totalPrice ){
             return res.status(404).json({message:"Insufficent Balance in Wallet"})
         }

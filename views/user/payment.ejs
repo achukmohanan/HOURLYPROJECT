@@ -254,14 +254,23 @@
                 <div class="payment-options">
                     
                   <!-- Cash on Delivery -->
-                        <div class="payment-option " >
+                   <%if(orderData.totalPrice <= 1000){%>
+                        <div class="payment-option" >
                             <input type="radio" name="payment" value="COD">
                             <div class="payment-info">
                                 <div class="payment-title">💰 Cash on Delivery</div>
                                 <div class="payment-desc">Pay when your order is delivered to your doorstep</div>
                             </div>
                         </div>
-
+                    <% }else{%>
+                        <div class="payment-option disabled-option" >
+                            <input type="radio" name="payment" value="COD" disabled>
+                            <div class="payment-info">
+                                <div class="payment-title">💰 Cash on Delivery <span class="not-available">(Not Available)</span></div>
+                                <div class="payment-desc">COD is only available for orders up to ₹1000</div>
+                            </div>
+                        </div>
+                   <% } %>
                         <!-- Razorpay  -->
                         <div class="payment-option ">
                             <input type="radio" name="payment" value="razorpay" >

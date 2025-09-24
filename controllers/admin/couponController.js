@@ -3,7 +3,7 @@ const Coupon = require('../../models/couponSchema')
 
 const getCouponPage = async(req,res) =>{
     try {
-        const coupon = await Coupon.find({})
+        const coupon = await Coupon.find({}).sort({createdOn:-1})
         return res.render('admin/coupon',{coupon})
     } catch (error) {
         console.log("error in the getCouponPage",error);
@@ -14,9 +14,9 @@ const getCouponPage = async(req,res) =>{
 const postCoupon = async (req,res) =>{
     try {
         console.log("data is received ",req.body)
-        const {code,couponType,discountValue,maxDiscount,description,limit,expiryDate,minPurchase,} = req.body
+        const {code,discountType,discountValue,maxDiscount,description,limit,expiryDate,minPurchase,} = req.body
 
-        if(!code || !couponType || !expiryDate){
+        if(!code || !discountType || !expiryDate){
             return res.status(400).json({success:false,message:"Required fields are missing"})
         }
 
@@ -30,7 +30,8 @@ const postCoupon = async (req,res) =>{
 
         const coupon = new Coupon({
             code,
-            couponType,
+            purpose:'General',
+            discountType,
             discountValue,
             maxDiscount,
             description,

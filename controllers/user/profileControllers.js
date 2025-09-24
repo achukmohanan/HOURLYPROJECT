@@ -218,16 +218,16 @@ const userProfile = async (req,res) =>{
         const orders = await Order.find({userId:req.session.user }).populate('orderedItems.product').sort({createdOn:-1})
         const coupons = await Coupon.find({
                                 isActive:true,
-                                
                                 $or:[
                                     {userId:{$in:[userId]}},
                                     {userId:{$size:0}}
                                 ]
                             })
-                            console.log("coupon is ",coupons)
+                        
         let referredName = null;
+      
         if(userData.referredBy){
-        const refer = await User.findOne({referralCode:userData.referredBy}).select('name').lean();
+        const refer = await User.findOne({_id:userData.referredBy})
             referredName = refer ? refer.name : null;
         }
         const page = parseInt(req.query.page) || 1;
@@ -247,9 +247,7 @@ const userProfile = async (req,res) =>{
 
             txn.orderDetails = order
         }
-        // console.log("transactions in accout ",transaction)
-            
-            // console.log("orders are ",orders)
+     
         res.render('user/account',{
             user:userData,
             userAddress:addressData,
