@@ -1,5 +1,5 @@
 <%- include("../../views/partials/admin/sidebar") %>
-
+ <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
     :root {
     --dashboard-primary-color: #3b82f6;
@@ -304,28 +304,19 @@
             <div class="col-12 col-md-4">
                 <div class="card dashboard-card">
                     <div class="metric-card">
+                    <h5>Top 10 Products</h5>
+                    <ul class="list-group">
+                        <% topProducts.forEach((item,index)=>{ %>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <%= index+1  %>. <%= item.productDetails.productName %>
+                                <span class="badge bg-primary rounded-pill">
+                                    Sold:<%= item.totalQuantity %>
+                                </span>
+                            </li>
+                       <% }) %>
+                    </ul>
                        
-                        <div class="metric-value">₹51,00,199</div>
-                        <div class="metric-label">Total Sales<br><small>THIS MONTH</small></div>
-                        <div class="chart-container">
-                            <div class="bar-chart">
-                                <div class="bar" style="height: 30%; width: 8px;"></div>
-                                <div class="bar" style="height: 60%; width: 8px;"></div>
-                                <div class="bar" style="height: 40%; width: 8px;"></div>
-                                <div class="bar" style="height: 80%; width: 8px;"></div>
-                                <div class="bar" style="height: 20%; width: 8px;"></div>
-                                <div class="bar" style="height: 70%; width: 8px;"></div>
-                                <div class="bar" style="height: 45%; width: 8px;"></div>
-                                <div class="bar" style="height: 90%; width: 8px;"></div>
-                                <div class="bar" style="height: 35%; width: 8px;"></div>
-                                <div class="bar" style="height: 55%; width: 8px;"></div>
-                                <div class="bar" style="height: 25%; width: 8px;"></div>
-                                <div class="bar" style="height: 75%; width: 8px;"></div>
-                                <div class="bar" style="height: 50%; width: 8px;"></div>
-                                <div class="bar" style="height: 85%; width: 8px;"></div>
-                                <div class="bar" style="height: 15%; width: 8px;"></div>
-                            </div>
-                        </div>
+                     
                     </div>
                 </div>
             </div>
@@ -375,50 +366,13 @@
                             <a href="#" class="view-all-btn">View All</a>
                         </div>
                         
-                        <div class="table-responsive">
-                            <table class="table orders-table">
-                                <thead>
-                                    <tr>
-                                        <th>Item</th>
-                                        <th>Date</th>
-                                        <th>Total</th>
-                                        <th>Status</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>Laureato</td>
-                                        <td>20 Mar, 2023</td>
-                                        <td>₹15,60,000.00</td>
-                                        <td><span class="status-badge status-processing">Processing</span></td>
-                                    </tr>
-                                    <tr>
-                                        <td>Ulysse nardin</td>
-                                        <td>19 Mar, 2023</td>
-                                        <td>₹4,67,700.00</td>
-                                        <td><span class="status-badge status-processing">Processing</span></td>
-                                    </tr>
-                                    <tr>
-                                        <td>Hublot</td>
-                                        <td>7 Feb, 2023</td>
-                                        <td>₹5,88,600.00</td>
-                                        <td><span class="status-badge status-completed">Completed</span></td>
-                                    </tr>
-                                    <tr>
-                                        <td>Bremont</td>
-                                        <td>29 Jan, 2023</td>
-                                        <td>₹4,20,999.00</td>
-                                        <td><span class="status-badge status-completed">Completed</span></td>
-                                    </tr>
-                                    <tr>
-                                        <td>Titan</td>
-                                        <td>27 Jan, 2023</td>
-                                        <td>₹27,2000.00</td>
-                                        <td><span class="status-badge status-completed">Completed</span></td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
+                         <select name="" id="chartFilter">
+                        <option value="daily">Daily</option>
+                        <option value="weekly">Weekly</option>
+                        <option value="monthly" selected>Monthly</option>
+                        <option value="yearly">Yearly</option>
+                     </select> 
+                        <canvas id="salesChart" width="400" height="400"></canvas>
                     </div>
                 </div>
             </div>
@@ -485,4 +439,60 @@
             </div>
         </div>
     </div>
+
+
 </main> 
+<script>
+
+    const ctx = document.getElementById('salesChart').getContext('2d');
+    let chart;
+
+    async function loadChart(filter = 'monthly'){
+        const res = await fetch(`/admin/load-chart?filter=${filter}`);
+
+        const data = await res.json();
+
+        console.log("chart data from backend:", data);
+
+        const labels = data.map(item =>{
+            if(filter === 'daily' || filter === 'weekly'){
+                return `${item._id.day}/${item._id.month}`;
+            }
+            if(filter === 'monthly'){
+                return `Month ${item._id.month}`;
+            }
+            if(filter === 'yearly'){
+                return `Year ${item._id.year}`;
+            }
+        });
+
+        const values = data.map(item => item.totalSales);
+
+        if(chart) chart.destroy();
+
+        chart = new Chart(ctx,{
+            type:'bar',
+            data:{
+                labels,
+                datasets : [{
+                  label:'Total Sales',
+                  data:values,
+                  backgroundColor: "rgba(54, 162, 235, 0.6)",
+                  borderColor: "rgba(54, 162, 235, 1)",
+                  borderWidth:1 
+                }]
+            },
+            options:{
+                responsive:true,
+                plugins:{legend:{display:false}}
+            }
+        })
+    }
+
+document.getElementById('chartFilter').addEventListener('change',(e) =>{
+    loadChart(e.target.value);
+})
+
+loadChart('monthly')
+
+</script>
