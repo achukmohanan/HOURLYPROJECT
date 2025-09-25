@@ -7,19 +7,17 @@ const Order = require("../../models/orderSchema");
 // const { router } = require("../../app");
 
 const loadLogin = (req,res) =>{
-    if(req.session.admin){
-      
-        
-        return res.redirect('/admin/seconddash')
+    if(req.session.admin){ 
+        return res.redirect('/admin/dashboard')
     }
     res.render('admin/adminlogin',{message:null})
 }
 
-const loaddashboard = async (req,res) =>{
-
+const loaddashboard = async (req,res) => {
     try {
         if(req.session.admin){
           
+            //products
             const topProducts = await Order.aggregate([
                 {$match:{status:'Delivered'}},
                 {$unwind:'$orderedItems'},
@@ -42,13 +40,79 @@ const loaddashboard = async (req,res) =>{
                 {$sort:{totalQuantity:-1}},
                 {$limit:10}
             ]);
-            
-          return  res.render('admin/dashboard',{topProducts});
+
+            //category
+            const getCategories = await Order.aggregate([
+                {$match:{status:'Delivered'}},
+                {$unwind:'$orderedItems'},
+
+                //product
+                {
+                    $lookup:{
+                        from:'products',
+                        localField:'orderedItems.product',
+                        foreignField:'_id',
+                        as:'productDetails'
+                    },
+                },
+                {$unwind:'$productDetails'},
+                //category
+                {
+                    $lookup:{
+                        from:'categories',
+                        localField:'productDetails.category',
+                        foreignField:'_id',
+                        as:'categoryDetails'
+                    },
+                },
+                {$unwind:'$categoryDetails'},
+
+                {
+                    $group:{
+                        _id:'$categoryDetails._id',
+                        categoryName:{$first:'$categoryDetails.name'},
+                        totalSold:{$sum:'$orderedItems.quantity'}
+                    }
+                },
+
+                {$sort:{totalSold:-1}},
+                {$limit:3}
+            ]);
+           //brand
+
+           const getBrands = await Order.aggregate([
+                {$match:{status:'Delivered'}},
+                {$unwind:'$orderedItems'},
+
+                {
+                    $lookup:{
+                        from:'products',
+                        localField:'orderedItems.product',
+                        foreignField:'_id',
+                        as:'productDetails'
+                    },
+                },
+                {$unwind:'$productDetails'},
+                {
+                    $group:{
+                        _id:'$productDetails.brand',
+                        totalSold:{$sum:'$orderedItems.quantity'},
+                    },
+                },
+                {$sort:{totalSold:-1}},
+                {$limit:8},
+           ])
+          
+          return  res.render('admin/dashboard',{
+            topProducts,
+            getCategories,
+            getBrands
+        });
         }else{
-            res.redirect('/admin/adminlogin')
+            return res.redirect('/admin/adminlogin')
         }
     } catch (error) {
-        res.render('admin/adminpagenotfound')
+        // res.render('admin/adminpagenotfound')
         console.log("error happend in loaddashboard",error);
         
     }
@@ -110,7 +174,7 @@ const logout = async (req,res)=>{
 
 const salesChart = async (req,res) =>{
     try {
-        console.log("data  is ",req.query);
+       
         const {filter} = req.query;
         const matchFilter = {'orderedItems.status':'Delivered'};
 
@@ -160,7 +224,7 @@ const salesChart = async (req,res) =>{
             {$group:groupStage},
             {$sort:{'_id.year':1,'_id.month':1,'_id.year':1}}
         ]);
-        console.log("chart data is ",chatData)
+        
         res.json(chatData);
 
     } catch (error) {
