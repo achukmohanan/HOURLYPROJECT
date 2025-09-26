@@ -12,7 +12,7 @@ const paymentController = require("../controllers/user/paymentController");
 const orderController = require("../controllers/user/orderController");
 const invoiceController = require("../controllers/user/invoiceController");
 const walletController = require("../controllers/user/walletController");
-const contactController = require('../controllers/user/contactController')
+const contactController = require("../controllers/user/contactController");
 //error management
 router.get("/pagenotfound", userController.pageNotFound);
 
@@ -146,7 +146,7 @@ router.post(
 router.post("/apply-coupon", userAuth, cartController.applyCoupon);
 
 //contact
-router.get('/contact',userAuth,contactController.getContactPage)
+router.get("/contact", userAuth, contactController.getContactPage);
 
 router.get("/testing", cartController.gettest);
 module.exports = router;

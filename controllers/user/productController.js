@@ -19,6 +19,10 @@ const productDetails = async (req,res) =>{
         const productOffer = product.productOffer || 0;
         // const totalOffer = categoryOffer + productOffer;
       
+        if(!product){
+            return res.status(404).json({success:false,message:"Product Not Found"})
+        }
+
         let productOffers = null
         let categoryOffers = null
         if(categoryOffer > productOffer){

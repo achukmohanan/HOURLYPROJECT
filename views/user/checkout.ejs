@@ -351,16 +351,18 @@
                  
                 <div >
                     <form id="checkoutform" action="/payment" method="post">
-                    <select name="addressId" id="">
+                    <select name="addressId" id="addressSelect">
                         <% if(addressList.length > 0){ %>
                         <% addressList[0].address.forEach((addr,index)=> {%>
-                            <option value="<%=index %>"><%=addr.addressType %> -<%= addr.city %> - <%= addr.pincode %> </option>
+                            <option value="<%=index %>">
+                            <%=addr.addressType %> -<%= addr.city %> - <%= addr.pincode %> 
+                            </option>
                             <%}) %>
                             <%}else{%>
-                                <p>No Address Found</p>
+                                <option value="">No Address Found</option>
                                 <%}%>
                     </select>
-                   
+                    <div id="addressmessage" style="color:red; margin-top: 5px; " ></div>
                 </div>
 
                
@@ -438,7 +440,20 @@
     </main>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-       
+         document.getElementById('checkoutform').addEventListener('submit',function(e){
+            
+            const addressSelect = document.getElementById('addressSelect');
+            const errorAddress = document.getElementById('addressmessage')
+            
+            if(!addressSelect.value){
+                e.preventDefault()
+                errorAddress.textContent = "⚠️ Please select an address before proceeding.";
+            }
+        })
+
+
+
+
         const applyBtn = document.getElementById('applyCouponBtn');
         const couponMsg = document.getElementById('couponMessage');
         let appliedDiscount = 0;
@@ -549,6 +564,7 @@
             })
 
         }
+      
     </script>
 </body>
 </html>

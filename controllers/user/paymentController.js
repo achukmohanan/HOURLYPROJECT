@@ -9,6 +9,7 @@ const Transaction = require('../../models/transactionSchema')
 
 const postPayment = async (req,res) =>{
     try {
+        console.log("hekkoweinowb")
         const userId = req.session.user;
         const selectedIndex = req.body.addressId;
         const discount = req.body.discount

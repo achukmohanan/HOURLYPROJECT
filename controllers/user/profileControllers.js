@@ -66,7 +66,7 @@ const getForgotEmailOtp = async (req,res) =>{
         // res.redirect('/pagenotfound')
     }
 }
-
+//sset the timer 
 const forgotEmailOtp = async (req, res) => {
     console.log('Request body:', req.body); // Debug log
     

@@ -56,7 +56,9 @@ const loadHomepage = async (req, res) => {
         });
         productData.sort((a,b)=>new Date(b.createdOn)-new Date(a.createdOn));
         productData = productData.slice(0,4);
-        const brand = await Brand.find({})
+        const brand = await Brand.find({
+            isBlocked:false
+        })
 
         if(userId){
             const userData = await User.findById(userId);

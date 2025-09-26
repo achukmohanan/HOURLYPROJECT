@@ -207,7 +207,10 @@
                                             <img class="img-fluid" src="<%= order.orderedItems[0].product.productImage[0] %>" alt="">
                                         <!-- Order Id / Product -->
                                         <h5 class="card-title">
-                                            <%= order.orderedItems[0].product.productName %>
+                                            <%= order.orderedItems[0].product.productName %> 
+                                            <% if(order.orderedItems.length  > 1){ %>
+                                                   <span class="badge " style="color: rgb(63, 185, 47);">+ more  </span> 
+                                           <% } %>
                                         </h5>
 
                                         <!-- Date -->
