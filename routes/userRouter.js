@@ -147,6 +147,6 @@ router.post("/apply-coupon", userAuth, cartController.applyCoupon);
 
 //contact
 router.get("/contact", userAuth, contactController.getContactPage);
-
+router.post('/contact',userAuth , contactController.postContact)
 router.get("/testing", cartController.gettest);
 module.exports = router;

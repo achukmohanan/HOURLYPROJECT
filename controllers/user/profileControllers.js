@@ -78,7 +78,7 @@ const forgotEmailOtp = async (req, res) => {
         }
         
         const findUser = await User.findOne({ email: email });
-        console.log('Email:sshw', email);
+        console.log('Email:', email);
         
         if (findUser) {
             const otp = generateOtp();

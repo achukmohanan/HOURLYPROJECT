@@ -277,9 +277,10 @@ startTimer()
         
         async function resendOTP() {
             clearInterval(timerInterval);
-            time = 30;
+            timer = 30;
             document.getElementById('otp').disabled = false;
-            document.getElementById('timerValue').classList.remove("Expired");
+            document.getElementById('timerValue').classList.remove("expired");
+            document.getElementById('timerValue').textContent = timer;
             startTimer();
 
             try {

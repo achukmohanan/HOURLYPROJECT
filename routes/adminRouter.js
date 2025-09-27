@@ -8,10 +8,12 @@ const productController = require("../controllers/admin/productController");
 const orderController = require("../controllers/admin/orderController");
 const couponController = require("../controllers/admin/couponController");
 const salesController = require("../controllers/admin/salesController");
+const concernController = require('../controllers/admin/concernController')
 const { adminAuth, adminchecksession } = require("../middlewares/adminAuth");
 const multer = require("multer");
 const storage = require("../helpers/multer");
 const { checksession } = require("../middlewares/userAuth");
+const Concern = require("../models/concernSchema");
 const uploads = multer({ storage: storage });
 
 router.get("/adminlogin", checksession, adminController.loadLogin);
@@ -120,6 +122,11 @@ router.delete("/deleteCoupon/:code", adminAuth, couponController.deleteCoupon);
 // salesReport
 router.get("/salesReport", adminAuth, salesController.getsalesReport);
 router.get("/sales-Report", adminAuth, salesController.filterSales);
+
+//concern 
+router.get('/concerns',adminAuth ,concernController.getConcernPage )
+router.get('/viewConcern/:id',adminAuth ,concernController.viewConcernpage)
+
 
 // router.get('/users',customerController.loadcustomerInfo)
 // router.get('/dashboard',adminController.loaddashboard)
