@@ -6,7 +6,7 @@ const Concern = require('../../models/concernSchema');
 const getContactPage = async (req,res) =>{
     try {
         const userId = req.session.user
-        const concern = await Concern.findOne({userId})
+        const concern = await Concern.find({userId})
         console.log("concern got is ",concern)
         const user = await User.findById(userId);
          
@@ -17,6 +17,7 @@ const getContactPage = async (req,res) =>{
 }
 const postContact = async (req,res) =>{
     try {
+        
         const userId = req.session.user
         console.log("req.body is ",req.body)
         const {name,email,issueType,message} = req.body;

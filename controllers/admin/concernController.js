@@ -42,7 +42,27 @@ const viewConcernpage = async(req,res) =>{
         
     }
 }
+
+const updateConcern = async (req,res) => {
+    try {
+        console.log("rew.body is ",req.body)
+        const userId = req.params.id;
+        const {message,action} = req.body
+        console.log("user id ",userId)
+        console.log("messa",message)
+        console.log("action", action)
+        await Concern.findByIdAndUpdate(userId,{
+            adminReply:message,
+            status:action
+        })
+        
+        return res.status(200).json({success:true,message:'Concern Updated'})
+    } catch (error) {
+        console.log("errror in the update concern ",error);  
+    }
+}
 module.exports = {
     getConcernPage,
-    viewConcernpage
+    viewConcernpage,
+    updateConcern
 }

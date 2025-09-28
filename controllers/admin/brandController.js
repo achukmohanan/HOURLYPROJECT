@@ -67,19 +67,6 @@ const   unBlockBrand = async (req,res) =>{
     }
 }
 
-const deleteBrand = async (req,res) =>{
-    try {
-        const {id} = req.query;
-        if(!id){
-            return res.status(400).json({success:false , message:"Brand Id is not Found"})
-        }
-        await Brand.deleteOne({_id:id});
-       return   res.json({ success: true, message: 'Brand deleted successfully' });
-    } catch (error) {
-        console.log("error deleting brand :",error);
-        res.status(500).redirect('/admin/pageerror')
-    }
-}
 
 
 
@@ -87,6 +74,6 @@ module.exports = {
     getBrandPage,
     addBrand,
     unBlockBrand,
-    deleteBrand,
+   
     blockBrand
 }   

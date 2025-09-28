@@ -256,6 +256,12 @@
 .in-progress {
     background-color: blue;
 }
+.status-pending { background:#fef3c7; color:#92400e; border:1px solid #fcd34d; }
+  .status-approved { background:#d1fae5; color:#065f46; border:1px solid #10b981; }
+  .status-rejected { background:#fee2e2; color:#991b1b; border:1px solid #f87171; }
+  .status-resolved { background:#e0f2fe; color:#1e3a8a; border:1px solid #3b82f6; }
+  .status-badge { padding:6px 12px; border-radius:20px; font-weight:600; font-size:14px; display:inline-block; }
+</style>
     </style>
 </head>
 <body>
@@ -296,6 +302,8 @@
                             <option value="Product Issue">Product Issue</option>
                             <option value="Delivery Issue">Delivery Issue</option>
                             <option value="Offer Issue">Offer Issue</option>
+                            <option value="Order Issue">Order Issue</option>
+                            <option value="Feedback">Feedback</option>
                             <option value="Other">Other</option>
 
                         </select>
@@ -333,6 +341,57 @@
             </div>
         </div>
     </div>
+
+    <!-- <div class="main-wrapper"> -->
+ <div class="contact-container" style="max-width: 700px; margin: 20px auto;">
+  <div class="form-column" style="background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+    <div class="formheader" style="text-align: center; margin-bottom: 20px;">
+      <h1 class="form-title" style="font-size: 22px; font-weight: bold; color: #333;">💬 Conversation</h1>
+    </div>
+
+    <% if(concern && concern.length > 0){ %>
+      <div class="messages-container" style="max-height: 400px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; padding-right: 5px;">
+        <% concern.forEach(con => { %>
+          <% 
+            let statusClass = "";
+            if(con.status === "Pending"){ statusClass = "status-pending"; }
+            if(con.status === "Approved"){ statusClass = "status-approved"; }
+            if(con.status === "Rejected"){ statusClass = "status-rejected"; }
+            if(con.status === "Resolved"){ statusClass = "status-resolved"; }
+          %>
+
+          <span class="status-badge <%= statusClass %>" style="display:block; text-align:center; margin-bottom:10px;">
+            <%= con.status %>
+          </span>
+
+          <!-- User Message -->
+          <div style="display: flex; justify-content: flex-start;">
+            <div style="background: #e6f0ff; padding: 12px 16px; border-radius: 16px; max-width: 70%; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+              <h5 style="margin: 0; font-size: 14px; color: #1d4ed8;">You</h5>
+              <p style="margin: 4px 0 0; font-size: 15px; color: #333;"><%= con.description %></p>
+            </div>
+          </div>
+
+          <!-- Admin Message -->
+          <div style="display: flex; justify-content: flex-end;">
+            <div style="background: #d1fae5; padding: 12px 16px; border-radius: 16px; max-width: 70%; box-shadow: 0 2px 4px rgba(0,0,0,0.1); text-align: right;">
+              <h5 style="margin: 0; font-size: 14px; color: #047857;">HOURLY WATCHES</h5>
+              <p style="margin: 4px 0 0; font-size: 15px; color: #333;"><%= con.adminReply %></p>
+            </div>
+          </div>
+
+        <% }) %>
+      </div>
+    <% } else { %>
+      <div style="text-align: center; color: #777; font-style: italic;">🚫 No Response Yet</div>
+    <% } %>
+  </div>
+</div>
+
+
+
+    <!-- </div> -->
+
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
        document.getElementById('concernForm').addEventListener('submit',async (e) => {

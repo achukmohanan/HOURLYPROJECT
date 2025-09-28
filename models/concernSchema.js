@@ -17,7 +17,9 @@ const concernSchema = new mongoose.Schema({
             "Coupon Issue",
             "Product Issue",
             "Delivery Issue",
-            "Offer Issue",
+            "Offer Issue",,
+            "Feedback",
+            "Order Issue",
             "Other"
         ],
         required:true,

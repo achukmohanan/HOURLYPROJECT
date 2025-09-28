@@ -173,6 +173,7 @@
         <!-- Status Badge -->
          <%if(concern){ %>
             <% concern.forEach(con =>{ %>
+
         <div class="d-flex justify-content-end mb-4">
             <span class="status-badge">
                 CONCERN STATUS : <%=con.issueType %>
@@ -219,10 +220,28 @@
             <strong>Wallet : </strong><%= user.wallet ?  user.wallet : 0 %><br>
             <strong>Since : </strong> <%= user.createdOn.toLocaleString() %><br>
             <hr>
-            <strong>Order</strong><br>
+            <strong>Order Details</strong><br><hr>
             <% orders.forEach(order=> { %>
-                <%=order.orderedItems %>
-            <!-- <strong>orders :</strong> <br> -->
+                <strong>orders :</strong> 
+                OrderId : <%= order.orderId %>
+                <%order.orderedItems.forEach(item => { %>
+                   <p>productname : <%= item.product.productName %> <br>
+                     product Id : <%= item.product._id%> <br>
+                      description : <%= item.product.description%> <br>
+                      brand : <%= item.product.brand %> <br>
+                      category : <%= item.product.category %> <br>
+                      regularPrice : <%= item.product.regularPrice %> <br>
+                      Price : <%= item.price%> <br>
+                      quantity : <%= item.quantity%> <br>
+                      Status : <%= item.status %> <br>
+                      <% }) %> 
+                        Coupon applied : <%= order.couponApplied %> <br>
+                        Address : <%= order.address %> <br>
+                        Discount : <%= order.discount %> <br>
+                        paymentMethod : <%= order.paymentMethod %> <br>
+                      Order Created At: <%= order.createdOn.toLocaleString() %> <br>
+                      Order Updated At : <%= order.deliveredAt ? order.deliveredAt.toLocaleString() : 'Not Updated' %> <br>
+                    </p> 
              <% }) %> 
             </div>
         </div>
@@ -231,18 +250,16 @@
         <form  id="concernForm">
             <div class="draft-section">
                 <h3 class="draft-title">DRAFT MESSAGE TO CUSTOMER</h3>
-                <textarea name="message" class="draft-textarea" placeholder="enter message..." required></textarea>
+                <textarea name="message" id="message-<%=con._id %>" class="draft-textarea" placeholder="enter message..." ></textarea>
             </div>
 
             <!-- Action Buttons -->
             <div class="action-buttons">
-                <button type="button" class="btn-approve" onclick="submitAction('approve')">Approve</button>
-                <button type="button" class="btn-reject" onclick="submitAction('reject')">Reject</button>
-                <button type="button" class="btn-resolved" onclick="submitAction('resolved')">Resolved</button>
+                <button type="button" class="btn-approve" onclick="submitAction('<%= con._id %>','Approved')">Approve</button>
+                <button type="button" class="btn-reject" onclick="submitAction('<%= con._id %>','Rejected')">Reject</button>
+                <button type="button" class="btn-resolved" onclick="submitAction('<%= con._id %>','Resolved')">Resolved</button>
             </div>
 
-            <!-- Hidden input for action -->
-            <input type="hidden" name="action" id="actionInput" value="">
         </form>
         <hr>
    <% }) %>
@@ -251,8 +268,52 @@
    <% } %>
     </div>
 </main>
-
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
-  
+
+        async function submitAction(concerId,action){
+        const messagev = document.getElementById(`message-${concerId}`)
+        const message = messagev.value.trim()
+        console.log("meaasge is ",message)
+         if (!message) {
+        Swal.fire({
+            icon: 'warning',
+            title: 'Message Required',
+            text: 'Please enter a message before submitting.'
+        });
+        return;
+    }
+        try {
+            await fetch(`/admin/updateConcern/${concerId}`,{
+                method:'POST',
+                headers:{
+                    'Content-Type':'application/json'
+                },
+                body:JSON.stringify({message:message,action:action})
+                
+            })
+            .then(res => res.json())
+            .then((data)=>{
+                if(data.success){
+                    Swal.fire({
+                        icon:'success',
+                        title:'Success',
+                        text:data.message
+                    }).then(()=>{
+                        window.location.reload()
+                    })
+                }else{
+                    Swal.fire({
+                        icon:'error',
+                        title:'Failed to Sumbit',
+                        text:'Something Went Wrong',
+                        showConfirmButton:true
+                    })
+                }
+            })
+        } catch (error) {
+            console.log("error in the fetch of submit action",error)
+        }
+        }
 
 </script>

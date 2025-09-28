@@ -92,7 +92,7 @@
                                             <th>Brand</th>
                                             <th>Logo</th>
                                             <th>Status</th>
-                                            <th>Block/Unblock/Delete</th>
+                                            <th>Block/Unblock</th>
                                         </tr>
                                     </thead>
                                    
@@ -127,18 +127,14 @@
                                             </td>
                                             <td class="text-start">
                                               <%if(brand.isBlocked === false){%>
-                                                <button class="btn btn-danger" style="width: 90px">
-                                                    <a href="/admin/blockBrand?id=<%=brand._id%>" class="text-white no-underline">Block</a>
-                                                </button>
+                                                <!-- <button class="btn btn-danger" style="width: 90px"> -->
+                                                    <a href="/admin/blockBrand?id=<%=brand._id%>" class=" btn btn-danger text-white no-underline"> Block </a>
+                                                <!-- </button> -->
                                                 <%}else{%>
-                                                <button class="btn btn-success" style="width: 90px">
-                                                    <a href="/admin/unBlockBrand?id=<%=brand._id%>" class="text-white no-underline">Unblock</a>
-                                                </button>
-                                                <%}%>
-                                                <button class="btn btn-danger" style="width: 90px"onclick="return confirmDelete('<%=brand._id %>')">
-                                                    Delete
-                                                </button>
-                                                    <!-- <a href="/admin/deleteBrand?id=<%=brand._id%>" class="text-white no-underline"></a> -->
+                                                <!-- <button class="btn btn-success" style="width: 90px"> -->
+                                                    <a href="/admin/unBlockBrand?id=<%=brand._id%>" class="btn btn-success text-white ">Unblock</a>
+                                                <!-- </button> -->
+                                                <%}%>  
                                             </td>
                                         </tr>
                                         <%})%>
@@ -177,51 +173,7 @@
 
 <script>
     
-  function confirmDelete(brandId){
-        Swal.fire({
-            icon:'waring',
-            title:"Are you Sure ?",
-            text:"You want to delete this brand ?",
-            confirmButtonColor:"#3085d6",
-            showCancelButton:true,
-            cancelButtonColor:"#d33",
-            confirmButtonText:"Yes,delete it!"
-        }).then( async (res)=>{
-            if(res.isConfirmed){
-               try {
-                const response = await fetch(`/admin/deleteBrand?id=${brandId}`,{
-                    method:'DELETE'
-                });
-                    const result = await response.json()
-                    
-                    if(result.success){
-                         Swal.fire({
-                            icon:"success",
-                            text:"Brand Deleted Successfully",
-                            title:'Deleted',
-                            timer:2000,
-                            showConfirmButton:false
-                             }).then(()=>{
-                                window.location.reload()
-                             })
-                    }else{
-                         Swal.fire({
-                        icon:"error",
-                        text:result.message || "Something Went Wrong",
-                        title:'Success'
-                    });
-                    }
-
-               } catch (error) {
-                 Swal.fire({
-                    icon:"error",
-                    text:"Internal error happened",
-                    title:'Oops'
-                });
-               }
-            } 
-        });
-  }
+ 
 
   document.getElementById('brandform').addEventListener('submit', async function(event) {
     event.preventDefault();

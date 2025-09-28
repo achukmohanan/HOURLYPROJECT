@@ -58,7 +58,7 @@ router.post(
 );
 router.get("/blockBrand", adminAuth, brandController.blockBrand);
 router.get("/unBlockBrand", adminAuth, brandController.unBlockBrand);
-router.delete("/deleteBrand", adminAuth, brandController.deleteBrand);
+
 
 //product management
 router.get("/addProducts", adminAuth, productController.getProductAddPage);
@@ -127,6 +127,7 @@ router.get("/sales-Report", adminAuth, salesController.filterSales);
 router.get('/concerns',adminAuth ,concernController.getConcernPage )
 router.get('/viewConcern/:id',adminAuth ,concernController.viewConcernpage)
 
+router.post('/updateConcern/:id',adminAuth, concernController.updateConcern)
 
 // router.get('/users',customerController.loadcustomerInfo)
 // router.get('/dashboard',adminController.loaddashboard)
