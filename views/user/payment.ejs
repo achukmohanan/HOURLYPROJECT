@@ -238,9 +238,13 @@
                         <span class="product-qty" ><%= item.quantity%></span>
                        <span class="product-amount" >₹<%= item.productId.salePrice * item.quantity %></span>
                     </div>  
-                 
-                   <% }) %>
                     
+                   <% }) %>
+                   <div class="order-item">
+
+                       <span class="product-name" > Coupon Discount </span> 
+                       <span class="product-amount">- <%= orderData.discount %></span>
+                   </div>
                     <div class="order-item1">
                         <span>Total Amount</span>
                         <span>₹ <%= orderData.totalPrice %></span>
@@ -318,6 +322,7 @@
                 })
                 return;  
             }
+            const discount = '<%= orderData.discount %>'
             const totalAmount = '<%= orderData.totalPrice %>';
             const result = fetch('/place-order',{
                 method:'POST',
@@ -327,7 +332,8 @@
                 body:JSON.stringify({
                     address:"<%=orderData.address._id %>",
                     paymentMethod:selectedPayment,
-                    totalAmount:totalAmount
+                    totalAmount:totalAmount,
+                    discount:discount
                 })
             })
             .then(res => res.json())
@@ -354,6 +360,7 @@
                                         orderId: data.orderId,
                                         address:"<%=orderData.address._id %>",
                                         amount:data.order.amount,
+                                        discount:"<%=orderData.discount%>"
 
                                     })  
                                 })

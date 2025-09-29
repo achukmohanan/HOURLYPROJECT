@@ -3,8 +3,24 @@ const Coupon = require('../../models/couponSchema')
 
 const getCouponPage = async(req,res) =>{
     try {
-        const coupon = await Coupon.find({}).sort({createdOn:-1})
-        return res.render('admin/coupon',{coupon})
+        let page = parseInt(req.query.page) || 1;
+        let limit = 5;
+        let skip = (page -1)*limit
+
+        let totalCoupons = await Coupon.countDocuments();
+
+        const coupon = await Coupon.find({})
+                        .sort({createdOn:-1})
+                        .skip(skip)
+                        .limit(limit);
+
+
+        return res.render('admin/coupon',{
+            coupon,
+            totalCoupons,
+            currentPage:page,
+            totalPages:Math.ceil(totalCoupons/limit)
+        })
     } catch (error) {
         console.log("error in the getCouponPage",error);
         

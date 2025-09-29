@@ -7,6 +7,8 @@ const Transaction = require('../../models/transactionSchema')
 
 const getConcernPage = async(req,res) =>{
     try {
+
+        
         const concerns = await Concern.find({});
       
         return res.render('admin/concern',{concerns})

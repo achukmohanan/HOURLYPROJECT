@@ -40,7 +40,8 @@ const postPayment = async (req,res) =>{
             userId,
             address:selectedAddress,
             items:cart.items,
-            totalPrice:total
+            totalPrice:total,
+            discount
         }
         
         res.render('user/payment',{orderData});
@@ -52,8 +53,8 @@ const postPayment = async (req,res) =>{
 const confirmRazorpay = async (req,res) =>{
     try {
         const userId = req.session.user; 
-        const {razorpay_order_id,razorpay_payment_id,razorpay_signature,address,amount}  = req.body;
-        console.log("amount in the confirm ",amount);
+        const {razorpay_order_id,razorpay_payment_id,razorpay_signature,address,amount,discount}  = req.body;
+        console.log("discount  in the confirm ",discount);
         
         const body = razorpay_order_id + "|" + razorpay_payment_id;
         // console.log("address is ",address)
@@ -88,9 +89,11 @@ const confirmRazorpay = async (req,res) =>{
                 paymentMethod:'Razorpay',
                 status:'Pending',
                 paymentStatus:'Paid',
+                discount:discount,
                 paymentId: razorpay_payment_id,
                 address: selectedAddress.address[0],
-                deliveredAt:null
+                deliveredAt:null,
+                couponApplied:discount>0 ? true : false
             });
 
             await order.save();

@@ -67,8 +67,8 @@
                     <div class="d-flex align-items-center">
                         <label class="me-2 fw-bold">Sort</label>
                         <select class="form-select form-select-sm">
-                            <option>Coupon Amt</option>
-                            <option>Code</option>
+                            <!-- <option>Coupon Amt</option> -->
+                            <!-- <option>Code</option> -->
                             <option>Expiry Date</option>
                         </select>
                     </div>
@@ -134,6 +134,31 @@
                         <% } %>
                     </tbody>
                 </table>
+            </div>
+
+            <!-- <-----------pagination---------------> 
+
+            <div class="d-flex justify-content-center mt-3" >
+                <ul class="pagination" >
+                    <% if(currentPage > 1){ %>
+                        <li class="page-item">
+                            <a class="page-link" href="?page=<%= currentPage -1 %>">Previous</a>
+                        </li>
+                   <% } %>
+                
+                 
+                <% for(let i=1; i<=totalPages; i++){ %>
+                    <li class="page-item <%= i=== currentPage ? 'active' : '' %>">
+                        <a class="page-link" href="?page=<%= i%>"><%= i%></a>
+                    </li>
+                <% } %>
+
+                <% if(currentPage < totalPages){ %>
+                    <li class="page-item">
+                        <a class="page-link" href="?page=<%= currentPage + 1%>">Next</a>
+                    </li>
+                <% } %>
+                </ul>
             </div>
         </div>
 

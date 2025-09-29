@@ -15,11 +15,13 @@ const Transaction = require('../../models/transactionSchema');
 const postOrder = async (req,res) =>{
     try {
         const  userId = req.session.user;
-        const {address,paymentMethod,totalAmount} = req.body;
+        const {address,paymentMethod,totalAmount,discount} = req.body;
         
         console.log("payment method",paymentMethod);
         console.log("total amount",totalAmount);
+        console.log("discount  amount is",discount);
         
+        // console.log("address is in discount order is", address)
         // console.log("address is in post order", address)
         //eni ee id vech address fetch2. save cheyanam
         const findAddress = await Address.findOne({"address._id":address},{"address.$":1})
@@ -54,10 +56,12 @@ const postOrder = async (req,res) =>{
             price:item.productId.salePrice
             })),
             totalPrice,
+            discount:discount,
             paymentMethod,
             status:'Pending',
             paymentStatus:"Cash on Delivery",
-            deliveredAt:null
+            deliveredAt:null,
+            couponApplied:discount>0 ? true : false
         })
         // console.log("order is ",order)
         await order.save();
@@ -90,10 +94,12 @@ const postOrder = async (req,res) =>{
                 order:{
                     id:razorpayOrder.id,
                     amount:totalPrice * 100,
-                    currency:'INR'
+                    currency:'INR',
+                     
                 },
                 key:process.env.RAZORPAY_KEY_ID,            
-                orderId: razorpayOrder.id
+                orderId: razorpayOrder.id,
+               
             });
             
     }
@@ -114,10 +120,12 @@ const postOrder = async (req,res) =>{
             price:item.productId.salePrice
             })),
             totalPrice,
+            discount:discount,
             paymentMethod:'Wallet',
             status:'Pending',
             paymentStatus:"Paid",
-            deliveredAt:null
+            deliveredAt:null,
+            couponApplied:discount>0 ? true : false
         });
         // console.log("order is ",order)
         await order.save();
@@ -162,7 +170,8 @@ const orderSuccess = async(req,res) =>{
 const cancelOrder = async (req,res) =>{
     try {
         const { orderId,itemId } = req.params;
-        const {action,reason} = req.body;
+        console.log("req.body is testing ",req.body)
+        const {action,reason,discount} = req.body;
         
         const userId = req.session.user;
         // console.log("item Id is",itemId)

@@ -61,8 +61,10 @@
                                 <p style="color: rgb(223, 47, 2);" > <strong class="text-dark">Item Status :</strong> <%= item.status %></p>
                                 <p style="color: rgb(235, 47, 2);"><strong class="text-dark">Order Status : </strong> <%= order.status %></p>
                                 <p><strong>Payment Method : </strong> <%= order.paymentMethod %></p>
-                                <p><strong>payment status : </strong> <%= order.paymentStatus %></p>
+                                <!-- <p><strong>payment status : </strong> <%= order.paymentStatus %></p> -->
                                 <p><strong>Order Placed On : </strong><%= order.createdOn.toLocaleString('en-IN') %></p>
+                                
+                                
                                 <% if(order.deliveredAt){%>
                                     <p><strong>Order Delivered On : </strong><%= order.deliveredAt.toLocaleString('en-IN') %></p>
                                  <% } %>
@@ -71,14 +73,17 @@
                             <!-- Price & Cancel Button -->
                             <div class="col-4 text-end">
                                     <h6>
-                                     <b>Price : </b>   <%= item.price.toLocaleString('en-IN',{style:'currency',currency:'INR'})  %>
+                                    <b>Item Price : </b>
+                                    <span data-bs-toggle="tooltip" title="Order Price: <%= orders[0].totalPrice.toLocaleString('en-IN',{style:'currency',currency:'INR'}) %>">
+                                        <%= item.price.toLocaleString('en-IN', { style: 'currency', currency: 'INR' }) %>
+                                    </span>
                                     </h6>
                                     
                                <% if(!(item.status === 'Cancelled' ||order.status === 'Delivered' || item.status === "Returned" ||item.status ==='Return Approved'||item.status ==='Return Requested' || item.status === 'Cancellation Requested' )){ %>
                                  <button type="button" 
                                         class="btn btn-danger mt-2" 
                                         
-                                        onclick="setCancelOrderId('<%= order.orderId %>','<%= item._id %>')" >
+                                        onclick="setCancelOrderId('<%= order.orderId %>','<%= item._id %>','<%= orders[0].discount %>')" >
                                     Cancel Item
                                 </button>
                             <% } %>  
@@ -134,9 +139,9 @@
 <!-- --------------------order total---------------------- -->
  <div class="card mt-2">
             <div class="card-body cancel-section">
-                
-                    <h5 class="text-danger mb-3"> Order Total</h5>
-             
+                <h5 class="text-danger mb-3"> Order Total</h5>
+                <p><strong>Coupon Applied : </strong><%= orders[0].couponApplied ? 'YES' : 'NO' %></p>
+             <p><strong>Discount  : </strong><%= orders[0].discount ?  orders[0].discount.toLocaleString('en-IN',{style:'currency',currency:'INR'}) : 0 %></p>
                 <!-- <p class="mb-3">You can cancel this order if it hasn't been shipped yet. Once cancelled, you'll receive a full refund within 3-5 business days.</p> -->
                 <p><strong>Order Total</strong> : <%=  orders[0].totalPrice.toLocaleString('en-IN',{style:'currency',currency:'INR'}) %></p>
                 <!-- Cancel Button with Confirmation -->
@@ -242,7 +247,7 @@
 
 
 
-    function setCancelOrderId(orderId,itemId){
+    function setCancelOrderId(orderId,itemId,discount){
         Swal.fire({
             title:"Are you Sure?",
             text:'Do you really want to cancel this order?',
@@ -284,24 +289,24 @@
                                 confirmButtonText: 'Submit'
                             }).then((feedResult)=>{
                                 if(feedResult.isConfirmed){
-                                    cancelOrder(orderId,itemId,feedResult.value);
+                                    cancelOrder(orderId,itemId,feedResult.value,discount);
                                 }
                             });
                         }else{
-                            cancelOrder(orderId, itemId, result.value);
+                            cancelOrder(orderId, itemId, result.value,discount);
                         }
                     }
                 });
             }
         })
     } 
-              function cancelOrder (orderId,itemId,reason) {
+              function cancelOrder (orderId,itemId,reason,discount) {
                 fetch(`/cancelOrder/${orderId}/${itemId}`,{
                 method:'POST',
                 headers:{
                     'Content-Type':'application/json'
                 },
-                body:JSON.stringify({action:'request', reason})
+                body:JSON.stringify({action:'request', reason,discount})
             })
             .then(res=>res.json())
             .then(data=>{
@@ -375,5 +380,9 @@
             
         }
        
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+  var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+    return new bootstrap.Tooltip(tooltipTriggerEl)
+  })
     </script>
 </body>

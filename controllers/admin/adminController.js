@@ -16,7 +16,33 @@ const loadLogin = (req,res) =>{
 const loaddashboard = async (req,res) => {
     try {
         if(req.session.admin){
+          const result = await Order.aggregate([
+            {
+                $match:{
+                    status:{$in:["Delivered"]}
+                }
+            },
+            {
+                $group:{
+                    _id:null,
+                    toprevenue:{$sum:'$totalPrice'}
+                }
+            }
+          ])
+//total orders
+
+            const totalOrders = await Order.aggregate([
+                {$match:{
+                    status:{$in:['Delivered']}
+                }},
+                
+                {$group:{
+                    _id:null,
+                    totalorders:{$sum:1}
+                }}
+            ])
           
+
             //products
             const topProducts = await Order.aggregate([
                 {$match:{status:'Delivered'}},
@@ -102,11 +128,26 @@ const loaddashboard = async (req,res) => {
                 {$sort:{totalSold:-1}},
                 {$limit:8},
            ])
+           //customers
+           const userResult = await User.aggregate([
+            {$match:{isBlocked:false,isAdmin:false}},
+            
+            {
+                $group:{
+                    _id:null,
+                    totalUsers:{$sum:1}
+                }
+            }
+           ])
+  
           
           return  res.render('admin/dashboard',{
+            result,
             topProducts,
             getCategories,
-            getBrands
+            getBrands,
+            totalOrders,
+            userResult
         });
         }else{
             return res.redirect('/admin/adminlogin')

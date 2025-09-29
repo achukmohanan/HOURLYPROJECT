@@ -50,6 +50,10 @@
         border: none;
         transition: transform 0.2s ease;
         overflow: hidden;
+          display: flex;
+    flex-direction: column;
+    height: 100%;
+
     }
     
     .dashboard-card:hover {
@@ -62,9 +66,19 @@
         text-align: center;
          background: white;
     border-left: 4px solid var(--dashboard-primary-color);
+      flex: 1;
+    display: flex;
+    flex-direction: column;
 
     }
     
+    .scrollable-list {
+    max-height: 250px; /* adjust this value as needed */
+    overflow-y: auto;
+    text-align: left;  /* keep list aligned properly */
+    margin: 0;
+    padding: 0;
+}
     .metric-value {
         font-size: 2rem;
         font-weight: 700;
@@ -258,73 +272,41 @@
 <!-- Main Content -->
 <main class="main-content" id="mainContent">
     <div class="container-fluid">
+
+
+<h1> Welcome to Dashboard</h1> 
+
         <!-- Top Metrics Row -->
         <div class="row g-4 mb-4">
-            <!-- Total Sales -->
-             <h1> Welcome to Dashboard</h1>
-            <div class="col-12 col-md-4">
-                <div class="card dashboard-card">
+<!-- -----------------total revenue----------------- -->
+
+            <div class="row mt-5">
+                <div class="col-12 col-md-4">
                     <div class="metric-card">
-                    <h5>Top 10 Products</h5>
-                    <ul class="list-group">
-                        <% topProducts.forEach((item,index)=>{ %>
-                            <li class="list-group-item d-flex justify-content-between align-items-center">
-                                <%= index+1  %>. <%= item.productDetails.productName %>
-                                <span class="badge bg-primary rounded-pill">
-                                    Sold:<%= item.totalQuantity %>
-                                </span>
-                            </li>
-                       <% }) %>
-                    </ul>
-                       
-                     
+                            <h5>Total Revenue</h5>
+                            
+                            <p><%= result[0].toprevenue.toLocaleString('en-IN',{style:'currency',currency:'INR'}) %></p>
                     </div>
                 </div>
-            </div>
             
-            <!-- Customers -->
-            <div class="col-12 col-md-4">
-                <div class="card dashboard-card">
+              
+                <div class="col-12 col-md-4">
                     <div class="metric-card">
-                        <h5>Top Selling Categories</h5>
-                        <ul class="list-group">
-                             <% getCategories.forEach((item,index) => { %>
-                                 <li class="list-group-item d-flex justify-content-between align-items-center">
-                                    <%= index + 1%> .<%= item.categoryName %>
-                                    <span class="badge bg-primary rounded-pill" >
-                                        <%= item.totalSold %>
-                                    </span>
-                                </li>
-                            <% }) %>
-                                
-                         
-                        </ul>
+                        <h5>Total Orders</h5> 
+                        <p><%= totalOrders[0].totalorders %></p>
+
+                </div>
+            </div>
+             
+                <div class="col-12 col-md-4">
+                    <div class="metric-card">
+                            <h5> Active Customers</h5>
+                            <p><%= userResult[0].totalUsers%></p>
                     </div>
                 </div>
             </div>
-            
-            <!-- brand -->
-            <div class="col-12 col-md-4">
-                <div class="card dashboard-card">
-                    <div class="metric-card">
-                        <h5>Top Selling Brands</h5>
-                        <ul class="list-group">
-                            <% getBrands.forEach(item =>{%>
-                                <li class="list-group-item d-flex justify-content-between align-items-center">
-                                    <%= item._id %>
-                                    <span class="badge bg-primary rounded-pill">
-                                        <%= item.totalSold %>
-                                    </span>
-                                </li>
-                           <% }) %>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Bottom Row -->
-        <div class="row g-4">
+</div>
+ <div class="row g-4">
             <!-- Recent Orders -->
             <div class="col-12 col-lg-8">
                 <div class="card dashboard-card">
@@ -350,6 +332,71 @@
             <!-- Best Selling -->
             <!-- < -->
         </div>
+
+
+
+
+             
+             
+            <div class="row mt-5">
+                <div class="col-12 col-md-4">
+                    <div class="card dashboard-card h-100">
+                    <div class="metric-card">
+                        <h5>Top 10 Products</h5>
+                        <ul class="list-group scrollable-list">
+                        <% topProducts.forEach((item,index)=>{ %>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <%= index+1  %>. <%= item.productDetails.productName %>
+                            <span class="badge bg-primary rounded-pill">
+                                Sold:<%= item.totalQuantity %>
+                            </span>
+                            </li>
+                        <% }) %>
+                        </ul>
+                    </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-md-4">
+                    <div class="card dashboard-card h-100">
+                    <div class="metric-card">
+                        <h5>Top Selling Categories</h5>
+                        <ul class="list-group scrollable-list">
+                        <% getCategories.forEach((item,index) => { %>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <%= index + 1%> .<%= item.categoryName %>
+                            <span class="badge bg-primary rounded-pill" >
+                                <%= item.totalSold %>
+                            </span>
+                            </li>
+                        <% }) %>
+                        </ul>
+                    </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-md-4">
+                    <div class="card dashboard-card h-100">
+                    <div class="metric-card">
+                        <h5>Top Selling Brands</h5>
+                        <ul class="list-group scrollable-list">
+                        <% getBrands.forEach(item =>{%>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <%= item._id %>
+                            <span class="badge bg-primary rounded-pill">
+                                <%= item.totalSold %>
+                            </span>
+                            </li>
+                        <% }) %>
+                        </ul>
+                    </div>
+                    </div>
+                </div>
+                </div>
+        </div>
+        
+        
+       
     </div>
 
 
