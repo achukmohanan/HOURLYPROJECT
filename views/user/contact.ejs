@@ -1,0 +1,441 @@
+ <%- include("../../views/partials/user/supportheader") %>
+    <title>Contact</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f8f8f8;
+          
+        }
+        
+        .breadcrumb-bar {
+            background-color: #e6e6e6;
+            padding: 20px 20px;
+            font-size: 13px;
+            color: #666;
+          
+        }
+        
+        .breadcrumb-bar a {
+            color: #666;
+            text-decoration: none;
+            margin-left: 5%;
+        }
+        
+        .main-wrapper {
+            background-color: #f8f8f8;
+            min-height: calc(100vh - 45px);
+            padding: 0;
+        }
+        
+        .contact-container {
+            background-color: white;
+            margin: 30px 80px;
+            display: flex;
+            min-height: 500px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        .form-column {
+            width: 60%;
+            padding: 40px 50px;
+            background-color: white;
+        }
+        
+        .info-column {
+            width: 40%;
+            background-color: #d8d8d8;
+            padding: 40px 35px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .form-title {
+            font-size: 20px;
+            color: #333;
+            margin-bottom: 30px;
+            font-weight: normal;
+        }
+        
+        .form-row {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .form-field {
+            flex: 1;
+        }
+        
+        .form-field.full {
+            width: 100%;
+            margin-bottom: 20px;
+        }
+        
+        .form-field label {
+            display: block;
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 5px;
+            font-weight: normal;
+        }
+        
+        .form-field input,
+        .form-field textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #ccc;
+            border-radius: 0;
+            font-size: 13px;
+            font-family: Arial, sans-serif;
+            box-sizing: border-box;
+        }
+        
+        .form-field input:focus,
+        .form-field textarea:focus {
+            outline: none;
+            border-color: #999;
+        }
+        
+        .form-field textarea {
+            height: 100px;
+            resize: vertical;
+        }
+        
+        .send-btn {
+            background-color: #333;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 11px;
+            font-weight: bold;
+            letter-spacing: 1px;
+            cursor: pointer;
+            margin-top: 15px;
+        }
+        
+        .send-btn:hover {
+            background-color: #555;
+        }
+        
+        .contact-info {
+            width: 100%;
+        }
+        
+        .contact-info h2 {
+            font-size: 14px;
+            font-weight: bold;
+            color: #666;
+            margin-bottom: 25px;
+            letter-spacing: 0.5px;
+        }
+        
+        .info-item {
+            margin-bottom: 25px;
+        }
+        
+        .info-item h3 {
+            font-size: 13px;
+            font-weight: bold;
+            color: #666;
+            margin-bottom: 5px;
+            letter-spacing: 0.5px;
+        }
+        
+        .info-item p {
+            font-size: 12px;
+            color: #666;
+            margin: 0;
+            line-height: 1.3;
+        }
+        
+        @media (max-width: 768px) {
+            .contact-container {
+                flex-direction: column;
+                margin: 15px;
+            }
+            
+            .form-column {
+                width: 100%;
+            }
+            
+            .info-column {
+                width: 100%;
+            }
+            
+            .form-column {
+                padding: 30px 25px;
+            }
+            
+            .info-column {
+                padding: 30px 25px;
+            }
+            
+            .form-row {
+                flex-direction: column;
+                gap: 0;
+            }
+            
+            .form-field input,
+            .form-field textarea {
+                width: 100%;
+            }
+        }
+        /* Modern attractive select */
+.custom-select {
+    width: 100%;
+    padding: 10px 15px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    background-color: #fff;
+    appearance: none; /* removes default arrow */
+    font-size: 16px;
+    color: #333;
+    cursor: pointer;
+    transition: 0.3s all;
+    position: relative;
+}
+
+/* Hover & focus effect */
+.custom-select:hover,
+.custom-select:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+    outline: none;
+}
+
+/* Add custom arrow using a pseudo-element */
+.custom-select-wrapper {
+    position: relative;
+}
+
+.custom-select-wrapper::after {
+    content: "▼";
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    color: #555;
+    font-size: 12px;
+}
+.formheader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+.conceernstatus {
+    font-weight: bold;
+    color: green; /* or whatever color you want */
+}
+.conceernstatus {
+    display: inline-block;
+    padding: 5px 15px;
+    border-radius: 20px;  /* pill shape */
+    font-weight: bold;
+    color: white;
+    font-size: 14px;
+}
+
+/* Status-specific colors */
+.pending {
+    background-color: orange;
+}
+
+.resolved {
+    background-color: green;
+}
+
+.rejected {
+    background-color: red;
+}
+
+.in-progress {
+    background-color: blue;
+}
+.status-pending { background:#fef3c7; color:#92400e; border:1px solid #fcd34d; }
+  .status-approved { background:#d1fae5; color:#065f46; border:1px solid #10b981; }
+  .status-rejected { background:#fee2e2; color:#991b1b; border:1px solid #f87171; }
+  .status-resolved { background:#e0f2fe; color:#1e3a8a; border:1px solid #3b82f6; }
+  .status-badge { padding:6px 12px; border-radius:20px; font-weight:600; font-size:14px; display:inline-block; }
+</style>
+    </style>
+</head>
+<body>
+    <!-- Breadcrumb -->
+    <div class="breadcrumb-bar">
+        <a href="#">Hourly</a> &gt; <strong>Contact</strong>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-wrapper">
+        <div class="contact-container">
+            <!-- Form Section -->
+            <div class="form-column">
+                <div class="formheader">
+                <h1 class="form-title">"Tell Us What's on Your Mind!"</h1>  
+             
+                </div>
+                <form id="concernForm">
+                    <div class="form-row">
+                        <div class="form-field">
+                            <label for="name">your name</label>
+                            <input type="text" id="name" name="name" class="text-muted" value="<%= user.name%>" readonly>
+                        </div>
+                        <div class="form-field">
+                            <label for="email">your email</label>
+                            <input type="email" id="email" value="<%= user.email %>" name="email" class="text-muted" readonly>
+                        </div>
+                    </div>
+                    
+                    <div class="form-field full">
+                        <select name="issueType" id="issueType" required class="custom-select">
+                            <option value="">---Select Options---</option>
+                            <option value="Cancel Issue">Cancel Issue</option>
+                            <option value="Return Issue">Return Issue</option>
+                            <option value="Refund Issue">Refund Issue</option>
+                            <option value="Referral Issue">Referral Issue</option>
+                            <option value="Coupon Issue">Coupon Issue</option>
+                            <option value="Product Issue">Product Issue</option>
+                            <option value="Delivery Issue">Delivery Issue</option>
+                            <option value="Offer Issue">Offer Issue</option>
+                            <option value="Order Issue">Order Issue</option>
+                            <option value="Feedback">Feedback</option>
+                            <option value="Other">Other</option>
+
+                        </select>
+                    </div>
+                    
+                    <div class="form-field full">
+                        <label for="message">Your Message</label>
+                        <textarea id="message"  name="message" required></textarea>
+                    </div>
+                    
+                    <button type="submit" class="send-btn">SEND</button>
+                </form>
+            </div>
+
+            <!-- Contact Information -->
+            <div class="info-column">
+                <div class="contact-info">
+                    <h2>CONTACT US</h2>
+                    
+                    <div class="info-item">
+                        <h3>ADDRESS</h3>
+                        <p>Hourly Groups</p>
+                    </div>
+
+                    <div class="info-item">
+                        <h3>PHONE</h3>
+                        <p>888 555 3232</p>
+                    </div>
+
+                    <div class="info-item">
+                        <h3>EMAIL</h3>
+                        <p>hourlygroups@gmail.com</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- <div class="main-wrapper"> -->
+ <div class="contact-container" style="max-width: 700px; margin: 20px auto;">
+  <div class="form-column" style="background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+    <div class="formheader" style="text-align: center; margin-bottom: 20px;">
+      <h1 class="form-title" style="font-size: 22px; font-weight: bold; color: #333;">💬 Conversation</h1>
+    </div>
+
+    <% if(concern && concern.length > 0){ %>
+      <div class="messages-container" style="max-height: 400px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; padding-right: 5px;">
+        <% concern.forEach(con => { %>
+          <% 
+            let statusClass = "";
+            if(con.status === "Pending"){ statusClass = "status-pending"; }
+            if(con.status === "Approved"){ statusClass = "status-approved"; }
+            if(con.status === "Rejected"){ statusClass = "status-rejected"; }
+            if(con.status === "Resolved"){ statusClass = "status-resolved"; }
+          %>
+
+          <span class="status-badge <%= statusClass %>" style="display:block; text-align:center; margin-bottom:10px;">
+            <%= con.status %>
+          </span>
+
+          <!-- User Message -->
+          <div style="display: flex; justify-content: flex-start;">
+            <div style="background: #e6f0ff; padding: 12px 16px; border-radius: 16px; max-width: 70%; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+              <h5 style="margin: 0; font-size: 14px; color: #1d4ed8;">You</h5>
+              <p style="margin: 4px 0 0; font-size: 15px; color: #333;"><%= con.description %></p>
+            </div>
+          </div>
+
+          <!-- Admin Message -->
+          <div style="display: flex; justify-content: flex-end;">
+            <div style="background: #d1fae5; padding: 12px 16px; border-radius: 16px; max-width: 70%; box-shadow: 0 2px 4px rgba(0,0,0,0.1); text-align: right;">
+              <h5 style="margin: 0; font-size: 14px; color: #047857;">HOURLY WATCHES</h5>
+              <p style="margin: 4px 0 0; font-size: 15px; color: #333;"><%= con.adminReply %></p>
+            </div>
+          </div>
+
+        <% }) %>
+      </div>
+    <% } else { %>
+      <div style="text-align: center; color: #777; font-style: italic;">🚫 No Response Yet</div>
+    <% } %>
+  </div>
+</div>
+
+
+
+    <!-- </div> -->
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+       document.getElementById('concernForm').addEventListener('submit',async (e) => {
+        e.preventDefault();
+        const form = e.target;
+        const formData = new FormData(form);
+
+        const data = Object.fromEntries(formData.entries());
+         try {
+             const response  = await fetch('/contact',{
+            method:'POST',
+            headers:{
+                'Content-Type' : 'application/json'
+            },
+            body:JSON.stringify(data)
+          })
+          const result = await response.json()
+
+          if(result.success){
+            Swal.fire({
+                icon:'success',
+                title:'Submitted',
+                text:result.message
+            }).then(()=>{
+                window.location.reload()
+            })
+          }else{
+            Swal.fire({
+                icon:'error',
+                title:'Failed to Submit',
+                text:'Failed to submit! Please Try again'
+                ,showConfirmButton:true
+            })
+          }
+         } catch (error) {
+            console.log("error in the fetch concern ",error)
+            Swal.fire({
+                icon:'error',
+                title:'OOPS',
+                text:'Something Went Wrong! Please try again',
+                showConfirmButton:true
+            })
+         }
+       })
+    </script>
+</body>
+</html>

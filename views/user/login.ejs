@@ -4,8 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>HOURLY | LOGIN</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-SgOJa3DmI69IUzQ2PVdRZhwQ+dy64/BUtbMJw1MZ8t5HZApcHrRKUc4W0kG879m7" crossorigin="anonymous">
-  
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet">
+
   <style>
     * {
       box-sizing: border-box;
@@ -15,12 +15,12 @@
     }
 
     body {
-      background: linear-gradient(to right, #c0f0e5, #d0f3f9);
+      background: linear-gradient(to right, #c0f0e5, #e1f4f7);
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 100vh;
-      padding: 20px;
+      min-height: 100vh;
+      padding: 15px;
     }
 
     .login-container {
@@ -28,18 +28,15 @@
       border-radius: 12px;
       box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
       display: flex;
-      /* flex-wrap: wrap; */
-      /* max-width: 2500px; */
-      width: 130%;
+      flex-direction: row;  /* always side by side by default */
+      width: 100%;
+      max-width: 900px;
       overflow: hidden;
     }
 
-    .left-section, .right-section {
-      flex: 1 1 300px;
-      padding: 30px;
-    }
-
     .left-section {
+      flex: 1;
+      padding: 30px;
       display: flex;
       flex-direction: column;
       gap: 15px;
@@ -48,18 +45,19 @@
     .left-section h2 {
       font-size: 28px;
       font-weight: bold;
+      text-align: center;
     }
 
     .google-login {
       padding: 10px;
-      background: white;
+      background: rgb(239, 236, 236);
       border: 1px solid #ccc;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 10px;
-      border-radius: 4%;
+      border-radius: 6px;
     }
 
     .divider {
@@ -99,6 +97,11 @@
       border: none;
       border-radius: 6px;
       cursor: pointer;
+      font-size: 16px;
+    }
+
+    .login-btn:hover {
+      background: #3737d6;
     }
 
     a {
@@ -107,95 +110,95 @@
       color: #4b4ded;
     }
 
+    .forgotpass:hover {
+      color: rgb(53, 47, 226);
+      text-decoration: underline;
+    }
+
     .right-section {
+      flex: 1;
+      padding: 30px;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       text-align: center;
+      background: #ffffff;
     }
 
-    .watch {
-      width: 20%;
-      height: 20%;
-      background: #000;
-      color: white;
-      padding: 20px;
-      border-radius: 10px;
-      font-size: 40px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-bottom: 20px;
+    .watch img {
+      max-width: 220px;
+      width: 100%;
+      height: auto;
     }
 
-    .hourly-label {
-      background: #888;
-      padding: 10px 20px;
-      border-radius: 6px;
-      color: white;
-      font-weight: bold;
-    }
-
+    /* Responsive tweaks */
     @media (max-width: 768px) {
       .login-container {
-        flex-direction: column;
-        align-items: center;
+        flex-direction: column; /* stack vertically */
+        text-align: center;
       }
 
       .left-section, .right-section {
         padding: 20px;
       }
-    }
-    .forgotpass:hover{
-      color: rgb(53, 47, 226);
-      text-decoration: underline;
+
+      .left-section h2 {
+        font-size: 24px;
+      }
+
+      .google-login {
+        font-size: 14px;
+      }
     }
   </style>
 </head>
 <body>
   <form method="post" action="/login">
-  <div class="login-container">
-    <div class="left-section">
-   <span class="text-center" ><h2>Welcome !</h2></span> 
-      <a class="google-login" href="/auth/google" style="text-decoration: none;">
-        <img src="assets/img/gallery/google.png" width="20" />
-        Login with Google
-      </a>
-      <div class="divider"><span>or</span></div>
-     <input type="email" name="email" placeholder="Email" required />
-      <input type="password" name="password" placeholder="Password" required />
-     <% if (locals.message && locals.message.length > 0) { %>
-  <div class="alert alert-danger text-center">
-    <%= locals.message %>
-  </div>
-<% } %>
+    <div class="login-container">
+      <!-- Left: Login Form -->
+      <div class="left-section">
+        <h2>Welcome!</h2> 
+        <a class="google-login" href="/auth/google">
+          <img src="assets/img/gallery/google.png" width="20" alt="Google Logo"/>
+          Login with Google
+        </a>
+        <div class="divider"><span>or</span></div>
+        <input type="email" name="email" placeholder="Email" required />
+        <input type="password" name="password" placeholder="Password" required />
 
-      <a href="/forgotpassword" class="forgotpass" >Forgot password?</a>  
-      <button class="login-btn">Login</button>
-      <p>New User? <a href="/signup">Sign up now..!</a></p>
+        <% if (locals.message && locals.message.length > 0) { %>
+          <div class="alert alert-danger text-center">
+            <%= locals.message %>
+          </div>
+        <% } %>
+
+        <a href="/forgotpassword" class="forgotpass">Forgot password?</a>  
+        <button class="login-btn">Login</button>
+        <p>New User? <a href="/signup">Sign up now..!</a></p>
+      </div>
+
+      <!-- Right: Logo/Icon -->
+      <div class="right-section">
+        <div class="watch">
+          <img src="assets/img/gallery/HourlyYours.png" alt="HOURLY Logo" class="rounded-4">
+        </div>
+      </div>
     </div>
-    <div class="right-section">
-      <div class="watch"><img src="assets/img/gallery/HourlyYours.png" style="max-width: 150px;" alt="img"></div>
-      <!-- <div class="hourly-label">HOURLY</div> -->
-    </div>
-  </div>
-</form>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js" integrity="sha384-k6d4wzSIapyDyv1kpU366/PK5hCdSbCRGRCMv+eplOQJWyd1fbcAu9OCUj5zNLiq" crossorigin="anonymous"></script>
-<script>
-const params = new URLSearchParams(window.location.search);
-if(params.get('blocked')==="true"){
-  Swal.fire({
-    icon:"error",
-    title:"Blocked",
-    text:"You were blocked by Admin",
-    confirmButtonText:"OK"
-  })
-}
+  </form>
 
-
-</script>
-
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    if(params.get('blocked')==="true"){
+      Swal.fire({
+        icon:"error",
+        title:"Blocked",
+        text:"You were blocked by Admin",
+        confirmButtonText:"OK"
+      })
+    }
+  </script>
 </body>
 </html>

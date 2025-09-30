@@ -5,6 +5,10 @@ const nodemailer = require('nodemailer');
 const bcrypt = require('bcrypt')
 const env = require('dotenv').config();
 const session = require('express-session');
+const Transaction = require('../../models/transactionSchema');
+const Coupon = require('../../models/couponSchema');
+
+
 
 function generateOtp(){
     const digits = '1234567890';
@@ -56,13 +60,13 @@ const forgotPassword = async (req, res) => {
 
 const getForgotEmailOtp = async (req,res) =>{
     try {
-        return res.render('user/forgotpassotp')
+        return res.render('user/forgotemailotp')
     } catch (error) {
         console.log('error happened in the forgot otp page',error);
         // res.redirect('/pagenotfound')
     }
 }
-
+//sset the timer 
 const forgotEmailOtp = async (req, res) => {
     console.log('Request body:', req.body); // Debug log
     
@@ -85,8 +89,8 @@ const forgotEmailOtp = async (req, res) => {
                 req.session.email = email;
                 
                 console.log("Forgot password OTP:", otp);
-                // Fix: Remove 'admin/' from the redirect path
-                return res.render('user/forgotpassotp');
+                
+                return res.render('user/forgotemailotp')
             } else {
                 res.json({ success: false, message: "Failed to send OTP. Please try again" });
             }
@@ -102,14 +106,44 @@ const forgotEmailOtp = async (req, res) => {
 }
 const verifyForgotPassOtp = async (req,res)=>{
     try {
-        const enteredOtp = req.body.otp;
+        console.log("testing file check 1 i guess its a dat",req.body);
+        const {otp1,otp2,otp3,otp4} = req.body;
+        const enteredOtp = otp1+otp2+otp3+otp4;
+
+       
+
         if(enteredOtp === req.session.userOtp){
-            res.json({success:true,redirectUrl:'/resetpassword' });
+            console.log("enteredOtp === req.session.userOtp in verifyForgotPassOtp");
+            
+           return res.json({success:true,message:'OTP Verified Successfully' });
         }else{
-            res.json({success:false,message:"OTP not Matching"});
+           return res.json({success:false,message:"OTP not Matching"});
         }
     } catch (error) {
-        res.status(500).json({success:false,message:"An error Occured. Please try again"});
+        console.log("errror in the verifyForgotPassOtp",error)
+        return res.status(500).json({success:false,message:"An error Occured. Please try again"});
+        
+    }
+}
+const resendForgotOtp = async (req,res) =>{
+    try {
+        console.log("resend otp function invoke");
+        const otp = generateOtp();
+        req.session.userOtp = otp;
+        console.log("type is in session",typeof otp)
+        const email = req.session.email
+        console.log("email is in the resend forgot otp is ",email)
+        const emailSent = await sendVerificationEmail(email,otp);
+        console.log("email is send ",emailSent)
+        if(emailSent){
+            console.log("Resend OTP For Forgot Password : ",otp)
+            return res.status(200).json({success:true,message:"OTP send Successfully"})
+        }else{
+            return res.status(500).json({success:false,message:"Failed to Send. Please Try Again!"})
+        }    
+    } catch (error) {
+        console.log("error in the resendForgotOtp otp is",error);
+        return res.status(500).json({success:false,message:'Internal Server Error'})
     }
 }
 
@@ -179,18 +213,57 @@ const userProfile = async (req,res) =>{
         // console.log(req.session.user);
         
         const userId =    req.session.user;  
-        const userData = await User.findById(userId);
+        const userData = await User.findById(userId)
         const addressData = await Address.findOne({userId:userId});
         const orders = await Order.find({userId:req.session.user }).populate('orderedItems.product').sort({createdOn:-1})
-            //  console.log("user data is ",userData)
+        const coupons = await Coupon.find({
+                                isActive:true,
+                                $or:[
+                                    {userId:{$in:[userId]}},
+                                    {userId:{$size:0}}
+                                ]
+                            }).sort({createdOn:-1})
+                        
+        let referredName = null;
+      
+        if(userData.referredBy){
+        const refer = await User.findOne({_id:userData.referredBy})
+            referredName = refer ? refer.name : null;
+        }
+        const page = parseInt(req.query.page) || 1;
+        const limit = 3;
+        const skip = (page -1) * limit;
+        
+        const totalTransaction = await Transaction.countDocuments({userId})
+        let  transaction = await Transaction.find({userId:userId})
+        .sort({date:-1})
+        .skip(skip)
+        .limit(limit)
+        .lean()
+
+
+        for(let txn of transaction){
+            const order = await Order.findOne({orderId:txn.orderId}).populate('orderedItems.product','productName productImage').lean()
+
+            txn.orderDetails = order
+        }
+     
         res.render('user/account',{
             user:userData,
             userAddress:addressData,
-            orders:orders
+            orders:orders,
+            transaction:transaction,
+            pagination:{
+                page,
+                totalPages:Math.ceil(totalTransaction/limit),
+                totalTransaction
+            },
+            referredName:referredName,
+            coupons:coupons
         });
     } catch (error) {
          console.log("error occured in account",error);
-        res.status(500).send("server error")
+        res.status(500).json("server error")
        
         
     }
@@ -397,5 +470,6 @@ module.exports = {
     postEditAddress,
     deleteAddress,
     getEditProfile,
-    editProfile
+    editProfile,
+    resendForgotOtp
 }

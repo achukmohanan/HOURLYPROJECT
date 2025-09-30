@@ -1,0 +1,191 @@
+ <%- include("../../views/partials/user/supportheader") %>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+        
+        .success-header {
+            background-color: #e38a8a70;
+            color:  #ff0000;
+            padding: 15px 0;
+            border-bottom: 1px solid #c3e6cb;
+        }
+        
+        .success-icon {
+            width: 80px;
+            height: 80px;
+            background-color: #ff0000;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 30px;
+            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+        }
+        
+        .success-icon i {
+            font-size: 40px;
+            color: white;
+        }
+        
+        .success-content {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 50px 40px;
+            margin-top: 30px;
+        }
+        
+        .success-title {
+            font-size: 28px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 15px;
+        }
+        
+        .success-message {
+            color: #666;
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 40px;
+        }
+        
+        .btn-custom-primary {
+            background-color: #333;
+            border-color: #333;
+            padding: 12px 30px;
+            font-weight: 500;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-custom-primary:hover {
+            background-color: #555;
+            border-color: #555;
+            transform: translateY(-1px);
+        }
+        
+        .btn-custom-secondary {
+            background-color: #6c757d;
+            border-color: #6c757d;
+            padding: 12px 30px;
+            font-weight: 500;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-custom-secondary:hover {
+            background-color: #5a6268;
+            border-color: #5a6268;
+            transform: translateY(-1px);
+        }
+        
+        @media (max-width: 768px) {
+            .success-content {
+                padding: 30px 20px;
+                margin-top: 20px;
+            }
+            
+            .success-title {
+                font-size: 24px;
+            }
+            
+            .btn-custom-primary,
+            .btn-custom-secondary {
+                width: 100%;
+                margin-bottom: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="success-header">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <h6 class="mb-0">
+                        <i class="bi bi-ban"></i>
+                        Payment Failed
+                    </h6>
+                   
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-6 col-md-8 col-sm-10">
+                <div class="success-content text-center">
+                    <!-- Success Icon -->
+                    <div class="success-icon">
+                        <i class="bi bi-x-circle"></i>
+                    </div>
+                    
+                    <!-- Success Message -->
+                    <h1 class="success-title">Oops! Something went wrong</h1>
+                    <p class="success-message">
+                       We apologize for the inconvenience. Please try again or choose a different payment method.
+                    </p>
+                    
+                    <!-- Action Buttons -->
+                    <div class="d-flex flex-column flex-md-row gap-3 justify-content-center">
+                      
+                        
+                   <a id="btnViewOrders" class="btn btn-custom-primary text-white"><i class="bi bi-arrow-clockwise"></i> Retry Payment</a>
+                    <a id="btnContinueShopping" class="btn btn-custom-primary text-white"><i class="bi bi-bag"></i> Continue Shopping</a>
+
+                    </div>
+                </div>
+            </div>  
+        </div>
+    </div>
+
+
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+       document.addEventListener('DOMContentLoaded', function() {
+    // Animate success icon
+    const successIcon = document.querySelector('.success-icon');
+    if(successIcon){
+        successIcon.style.transform = 'scale(0)';
+        setTimeout(() => {
+            successIcon.style.transition = 'transform 0.5s ease-in-out';
+            successIcon.style.transform = 'scale(1)';
+        }, 300);
+    }
+
+    // Continue Shopping button
+    document.querySelector('#btnContinueShopping').addEventListener('click', async function() {
+        await Swal.fire({
+            title: 'Redirecting...',
+            text: 'Redirecting to shopping page...',
+            icon: 'info',
+            timer: 3000,
+            showConfirmButton: false
+        });
+        window.location.href = '/shop';
+    });
+
+    // View Orders button
+    document.querySelector('#btnViewOrders').addEventListener('click', async function() {
+        await Swal.fire({
+            title: 'Redirecting...',
+            text: 'Redirecting to checkout page...',
+            icon: 'info',
+            timer: 3000,
+            showConfirmButton: false
+        });
+        window.location.href = '/checkout';
+    });
+});
+
+    </script>

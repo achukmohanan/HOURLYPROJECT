@@ -341,7 +341,7 @@
             <h1>Checkout</h1>
             <div class="breadcrumb">
                 <span class="breadcrumb-item ">Cart</span>
-                <span class="breadcrumb-item active" >Shipping</span>
+                <span class="breadcrumb-item active" >Checkout</span>
                 <span class="breadcrumb-item">Payment</span>
             </div>
 
@@ -351,28 +351,51 @@
                  
                 <div >
                     <form id="checkoutform" action="/payment" method="post">
-                    <select name="addressId" id="">
+                    <select name="addressId" id="addressSelect">
                         <% if(addressList.length > 0){ %>
                         <% addressList[0].address.forEach((addr,index)=> {%>
-                            <option value="<%=index %>"><%=addr.addressType %> -<%= addr.city %> - <%= addr.pincode %> </option>
+                            <option value="<%=index %>">
+                            <%=addr.addressType %> -<%= addr.city %> - <%= addr.pincode %> 
+                            </option>
                             <%}) %>
                             <%}else{%>
-                                <p>No Address Found</p>
+                                <option value="">No Address Found</option>
                                 <%}%>
                     </select>
-                   
+                    <div id="addressmessage" style="color:red; margin-top: 5px; " ></div>
                 </div>
 
                
                <a href="/addAddress-checkout" class="btn btn-primary m-4" type="button">Add New Address</a>
             </div>
-             
+
+               <div class="form-section mt-5">
+                    
+                     <h5>Available Coupons</h5>
+
+  <% if (coupons.length > 0) { %>
+    <div class="d-flex flex-wrap gap-3">
+      <% coupons.forEach(coupon => { %>
+        <div class="coupon-card">
+          <p  class="coupon-code"><%= coupon.code %></p>
+          <button type="button" onClick="copyClip('<%= coupon.code %>')">📋</button>
+          <small><%= coupon.description %></small><br>
+          <small>Expires: <%= coupon.expireOn.toDateString() %></small>
+        </div>
+      <% }) %>
+    </div>
+  <% } else { %>
+    <p>No coupons available right now.</p>
+  <% } %>
+               </div>
+    
         </div>
         <div class="summary-section  ">
                 <h3 class="text-dark fw-bold" >Order Summary</h3>
                  <% cart.items.forEach(item=>{%>
                 <div class="summary-line">
                     <span>Product :<%= item.productId.productName %></span>
+
                     <span id="price-<%= item.productId._id %>"> ₹ <%= item.productId.salePrice * item.quantity  %></span>
                 </div>
                 <%})%>
@@ -380,14 +403,31 @@
                     <span>Shipping</span>
                     <span style="color: #0bdb15;">Free</span>
                 </div>
+                
+            <h5>Apply Coupon</h5>
+                
+                    <input 
+                        type="text" 
+                        class="form-control me-2 mb-2" 
+                        name="couponCode"
+                        id="couponCode"
+                        placeholder="Enter coupon code"
+                    >   
+                    <input type="hidden" name="discount" id="discountInput" value="0">
+
+                    <button type="button" class="btn btn-primary" id="applyCouponBtn">Apply</button>
+                    <div id="couponMessage"></div>
+                
+
+            
                 <!-- <div class="summary-line">
-                    <span>Tax</span>
+                    <span> Coupon Discont </span>
                     <span id="tax">Rs. 50,000</span>
                 </div> -->
                 <hr>
                 <div class="summary-line ">
                     <span class="fw-bold">Total</span>
-                    <span  id="total"> ₹ <%= totalPrice.toLocaleString('en-IN') %></span>
+                    <span  id="total" data-original-total="<%=totalPrice %>"> ₹ <%= totalPrice.toLocaleString('en-IN') %></span>
                 </div>
                 
                 <button type="submit" class="btn checkout-btn">Proceed to Pay </button>
@@ -398,8 +438,75 @@
             </div>
              </form>
     </main>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-       
+         document.getElementById('checkoutform').addEventListener('submit',function(e){
+            
+            const addressSelect = document.getElementById('addressSelect');
+            const errorAddress = document.getElementById('addressmessage')
+            
+            if(!addressSelect.value){
+                e.preventDefault()
+                errorAddress.textContent = "⚠️ Please select an address before proceeding.";
+            }
+        })
+
+
+
+
+        const applyBtn = document.getElementById('applyCouponBtn');
+        const couponMsg = document.getElementById('couponMessage');
+        let appliedDiscount = 0;
+
+        applyBtn.addEventListener('click',async ()=>{
+            const code = document.getElementById('couponCode').value.trim();
+            if(!code){
+                couponMessage.style.color = 'grey';
+                couponMsg.innerText = 'No Coupon Applied'
+                appliedDiscount = 0;  
+                        // Reset total
+                const totalEl = document.getElementById('total');
+                let originalTotal = parseFloat(totalEl.dataset.originalTotal);
+                totalEl.innerText = `₹ ${originalTotal.toLocaleString('en-IN')}`;
+                return;
+            }
+            try {
+                const response = await fetch('/apply-coupon', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ code })
+                });
+
+                const data = await response.json();
+
+                const discountInput = document.getElementById('discountInput');
+
+                if(data.success){
+                    appliedDiscount = data.discount;
+                    couponMessage.style.color = 'green';
+                    couponMessage.innerText = `Coupon applied! Discount: ₹${appliedDiscount}`;
+                    
+                    const totalEl = document.getElementById('total');
+                    let originalTotal =  parseFloat(totalEl.dataset.originalTotal);
+                    let newTotal = originalTotal - appliedDiscount;
+                    if(newTotal < 0) newTotal = 0;
+                    totalEl.innerText = `₹ ${newTotal.toLocaleString('en-IN')}`;
+
+                    discountInput.value = appliedDiscount
+                }else{
+                    couponMessage.style.color='red',
+                    couponMsg.innerText = data.message
+                    appliedDiscount = 0;
+                    discountInput.value = 0;
+                }
+            } catch (error) {
+                console.log("errror in the apply coupon",error);
+                 couponMsg.style.color = 'red';
+                couponMsg.innerText = 'Something went wrong!';
+                appliedDiscount = 0;
+            }
+        })
+
 
         // Handle shipping option selection
         document.querySelectorAll('.shipping-option').forEach(option => {
@@ -437,6 +544,27 @@
                 this.style.backgroundColor = '#f9f9f9';
             });
         });
+        function copyClip(code){
+            
+
+            navigator.clipboard.writeText(code)
+            .then(()=>{
+                Swal.fire({
+                    icon:'success',
+                    title:'Copied !',
+                    text:`Successfully Copied ${code}`
+                })
+            })
+            .catch(err=>{
+                console.log("errror in the checkout copy clip",err)
+                Swal.fire({
+                    icon:'error',
+                    title:'Failed to Copy'
+                })
+            })
+
+        }
+      
     </script>
 </body>
 </html>

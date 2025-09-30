@@ -372,6 +372,7 @@
                     <tr>
                         <th scope="col"><b>Name</b></th>
                         <th scope="col"><b>Email</b></th>
+                        <th scope="col"><b>Joined</b></th>
                         <th scope="col"><b>Phone No</b></th>
                         <th scope="col"><b>Action</b></th>
                     </tr>
@@ -384,6 +385,7 @@
 
                                 <td><%= data[i].name %></td>
                                 <td><%= data[i].email %></td>
+                                <td><%= data[i].createdOn.toLocaleString()%></td>
                                 <td><%= data[i].phone %></td>
                                 <td>
                                     <% if (data[i].isBlocked === false) { %>

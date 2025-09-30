@@ -1,4 +1,5 @@
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
+const { ref } = require('pdfkit');
 const {Schema} = mongoose;
 
 
@@ -45,10 +46,10 @@ const userSchema = new Schema({
         type:Schema.Types.ObjectId,
         ref:"Cart",
        }],
-       wallet:[{
-        type:Schema.Types.ObjectId,
-        ref:'Wishlist'
-       }],
+       wallet:{
+        type:Number,
+        default:0
+       },
        orderHistory:[{
         type:Schema.Types.ObjectId,
         ref:"Order"
@@ -57,8 +58,14 @@ const userSchema = new Schema({
         type:Date,
         default:Date.now
        },
-       referalCode:{
-        type:String
+       referralCode:{
+        type:String,
+        unique:true
+       },
+       referredBy:{
+        type:Schema.Types.ObjectId,
+        ref:'User',
+        default:null
        },
       redeemed:{
         type:Boolean

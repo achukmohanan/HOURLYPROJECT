@@ -237,12 +237,13 @@
    
 
     <!-- Main Content -->
+    
     <main class="main-content">
         <h3 class="text-muted" >Hi <%=user.name %></h3>
         <h1 class="page-title">Your Shopping Cart</h1>
         <div class="breadcrumb">
             <span class="breadcrumb-item active">Cart</span> 
-            <span class="breadcrumb-item">Shipping </span> 
+            <span class="breadcrumb-item">checkout </span> 
             <span class="breadcrumb-item">Payment</span>
         </div>
 
@@ -301,9 +302,8 @@
                     <span id="price-<%= item.productId._id %>"> ₹ <%= item.productId.salePrice * item.quantity  %></span>
                 </div>
                 <% }) %>
-                <% } else { %>
-                    No Products Selected
-                <% } %>
+              
+               <p class="text-muted " style="font-size: 10px;">*including all taxes and offer </p> 
                 <div class="summary-line">
                     <span>Shipping</span>
                     <span style="color: #0bdb15;">Free</span>
@@ -314,9 +314,13 @@
                 </div> -->
                 <hr>
                 <div class="summary-line ">
-                    <span class="fw-bold">Total</span>
+                    <span class="fw-bold">Offer Price</span>
                     <span  id="total"> ₹ <%= totalPrice.toLocaleString('en-IN') %></span>
                 </div>
+                  <% } else { %>
+                    No Products Selected
+                <% } %>
+
                 <% let iscartEmpty = !cart || !cart.items || cart.items.length === 0 %>
                 <% if(iscartEmpty){ %>
                      <a class="btn  checkout-btn disabled" href="javascript:void(0)" style="pointer-events:none; opacity:0.5;">
@@ -332,7 +336,7 @@
             </div>
         </div>
     </main>
-
+  
     
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>

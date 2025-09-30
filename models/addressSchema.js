@@ -1,13 +1,7 @@
 const mongoose = require('mongoose')
 const {Schema} = mongoose;
 
-const addressSchema = new Schema({
-    userId:{
-        type : Schema.Types.ObjectId,
-        ref:'User',
-        required: true
-    },
-    address:[{
+const singleAddress = new Schema({
         addressType:{
             type:String,
             required:true
@@ -40,7 +34,15 @@ const addressSchema = new Schema({
             type:String,
             required:true
         }
-    }]
+    })
+
+const addressSchema = new Schema({
+    userId:{
+        type : Schema.Types.ObjectId,
+        ref:'User',
+        required: true
+    },
+    address:[singleAddress]
 })
 
 // <--creating the model---->
@@ -48,3 +50,4 @@ const addressSchema = new Schema({
 const Address = mongoose.model("Address",addressSchema)
 
 module.exports = Address;
+module.exports.singleAddress = singleAddress

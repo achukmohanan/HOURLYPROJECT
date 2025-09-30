@@ -183,36 +183,41 @@ const addProductOffer = async (req,res) =>{
         const findProduct = await Product.findOne({_id:productId});
         const findCategory = await Category.findOne({_id:findProduct.category})
 
-        if(findCategory.categoryOffer>percentage){
-            return res.json({status:false,message:"This products category already haas a category offer"});
-
-        }
-
-        findProduct.salePrice = findProduct.salePrice-Math.floor(findProduct.regularPrice*(percentage/100));
+        findProduct.salePrice = findProduct.regularPrice - Math.floor(findProduct.regularPrice*(percentage/100));
+        
         findProduct.productOffer = parseInt(percentage);
+    
         await findProduct.save();
-        findCategory.categoryOffer = 0;
-        await findCategory.save();
-        res.json({status:true});
+
+        return res.json({status:true});
 
     } catch (error) {
-        res.redirect('/pageerror');
-        res.status(500).json({status:false,message:"Internal Server error"});
-
+       console.log("error in the backend of addProductOffer",error)
+       return res.status(500).json({status:false,message:"Internal Server error"})
     }
 }
 
 const removeProductOffer = async (req,res) =>{
     try {
         const {productId} = req.body;
-        const findProduct = await Product.findOne({_id:productId});
-        const percentage = findProduct.productOffer;
-        findProduct.salePrice = findProduct.salePrice + Math.floor(findProduct.regularPrice*(percentage/100))
+        const findProduct = await Product.findById(productId).populate('category');
+            
+         if (!findProduct) {
+            return res.status(404).json({ status: false, message: "Product not found" });
+        }
+        const category = findProduct.category
         findProduct.productOffer = 0;
+        // console.log("category is found in removeoffer",category)
+        if(category && category.categoryOffer > 0){
+            findProduct.salePrice = Math.floor(findProduct.regularPrice - (findProduct.regularPrice *(category.categoryOffer/100)))
+        }else{
+            findProduct.salePrice = findProduct.regularPrice;
+        }
         await findProduct.save();
-        res.json({status:true});
+        res.json({status:true,message:"Product removed Successfully"});
     } catch (error) {
-        res.redirect('/pageerror')
+        console.log("error in the remove product offer ",error);
+        return res.status(500).json({success:false,message:"Internal Server error"})
     }
 }
 

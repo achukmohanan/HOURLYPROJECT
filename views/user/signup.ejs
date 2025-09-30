@@ -173,6 +173,10 @@
           <input type="tel" id="phone" name="phone" placeholder="Enter Mobile Number"    />
           <div id="error3" class="error-message"></div>
         </div>
+        <div class="form-group">
+          <input type="tel" id="referalcode" name="referalcode" placeholder="Referal Code"    />
+          <div id="error6" class="error-message"></div>
+        </div>
 
         <div class="form-group">
           <input type="password" id="password" name="password" placeholder="Enter Password"   />
@@ -204,6 +208,7 @@
     const phoneid = document.getElementById('phone');
     const passwordid = document.getElementById('password');
     const cPasswordid = document.getElementById('cPassword')
+    const referalcodeid = document.getElementById('referalcode')
 
     const error1 = document.getElementById('error1')
     const error2 = document.getElementById('error2')
@@ -238,19 +243,27 @@
 
 
     function emailValidateChecking(e){
-        const emailval = emailid.value;
-        emailpattern =  /^([a-zA-Z0-9._-]+)@([a-zA-Z0-9.-]+)\.([a-zA-Z]{2,4})$/;
+        const emailval = emailid.value.trim();
+       const  emailpattern =  /^([a-zA-Z0-9._-]+)@([a-zA-Z0-9.-]+)\.([a-zA-Z]{2,4})$/;
+
+       const allowedDomains  = ['gmail.com','yahoo.com','Outlook.com',]
 
       if(!emailpattern.test(emailval)){
         error2.style.display = 'block';
-        error2.innerHTML = 'Invalid Format'
+        error2.innerHTML = 'Invalid Email Format'
         return false;
-      }else{
-        error2.style.display = "none";
-        error2.innerHTML = "";
-        return true;
       }
+      const domain = emailval.split('@')[1]
 
+      if(!allowedDomains.includes(domain)){
+        error2.style.display = "block";
+        error2.innerHTML = `Only ${allowedDomains.join(',')} emails are allowed`;
+        return false;
+      }
+      // if valid
+      error2.style.display = "none";
+      error2.innerHTML = "";
+      return true;
     }
 
     function phoneValidateChecking(e){
@@ -343,7 +356,8 @@
           email:emailid.value,
           phone: phoneid.value,
           password: passwordid.value,
-          cPassword: cPasswordid.value
+          cPassword: cPasswordid.value,
+          referalcode:referalcode.value
         };
         
       console.log("Form data ready to submit", formData);

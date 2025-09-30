@@ -144,10 +144,13 @@
                             <i class="fas fa-shopping-bag me-2"></i>
                             Continue Shopping
                         </button> -->
-                    <a class="btn btn-custom-primary text-white" > Continue Shopping</a>
+                        
+                   <a id="btnViewOrders" class="btn btn-custom-primary text-white">View Orders</a>
+                    <a id="btnContinueShopping" class="btn btn-custom-primary text-white">Continue Shopping</a>
+
                     </div>
                 </div>
-            </div>
+            </div>  
         </div>
     </div>
 
@@ -157,30 +160,40 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-        // Add some interactivity
-        document.addEventListener('DOMContentLoaded', function() {
-            // Animate the success icon on load
-            const successIcon = document.querySelector('.success-icon');
-            successIcon.style.transform = 'scale(0)';
-            setTimeout(() => {
-                successIcon.style.transition = 'transform 0.5s ease-in-out';
-                successIcon.style.transform = 'scale(1)';
-            }, 300);
-            
-            // Button click handlers
-            document.querySelector('.btn-custom-primary').addEventListener('click', function() {
-                Swal.fire({
-                    title: 'Redirecting...',
-                    text: 'Redirecting to order shopping page...',
-                    icon: 'info',
-                    timer: 3000,
-                    timeProgressBar:true,
-                    showConfirmButton: false
-                }).then(() => {
-                    // Redirect after alert closes
-                    window.location.href = '/shop';
-                });
-            });
-            
+       document.addEventListener('DOMContentLoaded', function() {
+    // Animate success icon
+    const successIcon = document.querySelector('.success-icon');
+    if(successIcon){
+        successIcon.style.transform = 'scale(0)';
+        setTimeout(() => {
+            successIcon.style.transition = 'transform 0.5s ease-in-out';
+            successIcon.style.transform = 'scale(1)';
+        }, 300);
+    }
+
+    // Continue Shopping button
+    document.querySelector('#btnContinueShopping').addEventListener('click', async function() {
+        await Swal.fire({
+            title: 'Redirecting...',
+            text: 'Redirecting to shopping page...',
+            icon: 'info',
+            timer: 3000,
+            showConfirmButton: false
         });
+        window.location.href = '/shop';
+    });
+
+    // View Orders button
+    document.querySelector('#btnViewOrders').addEventListener('click', async function() {
+        await Swal.fire({
+            title: 'Redirecting...',
+            text: 'Redirecting to order page...',
+            icon: 'info',
+            timer: 3000,
+            showConfirmButton: false
+        });
+        window.location.href = '/account?tab=orders';
+    });
+});
+
     </script>

@@ -1,0 +1,319 @@
+<%- include('../../views/partials/admin/sidebar') %>
+
+<!-- Add custom styles for the concern page -->
+<style>
+    .status-badge {
+        background-color: #8b1538;
+        color: white;
+        padding: 8px 16px;
+        border-radius: 4px;
+        font-weight: 500;
+        font-size: 14px;
+        display: inline-block;
+    }
+
+    .concern-type {
+        color: var(--primary-color);
+        font-size: 18px;
+        font-weight: 600;
+        margin-bottom: 15px;
+    }
+
+    .concern-type .arrow {
+        margin-right: 8px;
+    }
+
+    .description-section {
+        margin-bottom: 30px;
+    }
+
+    .description-title {
+        color: var(--primary-color);
+        font-size: 18px;
+        font-weight: 600;
+        margin-bottom: 15px;
+    }
+
+    .description-box {
+        background-color: #f8f9fa;
+        border: 1px solid #e9ecef;
+        border-radius: 6px;
+        min-height: 100px;
+        padding: 15px;
+        color: #6c757d;
+    }
+
+    .draft-section {
+        margin-bottom: 30px;
+    }
+
+    .draft-title {
+        color: var(--primary-color);
+        font-size: 18px;
+        font-weight: 600;
+        margin-bottom: 15px;
+    }
+
+    .draft-textarea {
+        width: 100%;
+        min-height: 120px;
+        border: 1px solid #e9ecef;
+        border-radius: 6px;
+        padding: 15px;
+        font-size: 14px;
+        resize: vertical;
+        background-color: #f8f9fa;
+        color: #6c757d;
+    }
+
+    .draft-textarea:focus {
+        outline: none;
+        border-color: var(--accent-color);
+        box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 15px;
+    }
+
+    .btn-approve {
+        background-color: #28a745;
+        border: none;
+        color: white;
+        padding: 12px 30px;
+        border-radius: 6px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    .btn-approve:hover {
+        background-color: #218838;
+    }
+
+    .btn-reject {
+        background-color: #dc3545;
+        border: none;
+        color: white;
+        padding: 12px 30px;
+        border-radius: 6px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    .btn-reject:hover {
+        background-color: #c82333;
+    }
+
+    .btn-resolved {
+        background-color: #6c757d;
+        border: none;
+        color: white;
+        padding: 12px 30px;
+        border-radius: 6px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    .btn-resolved:hover {
+        background-color: #5a6268;
+    }
+
+    /* Mobile Responsive */
+    @media (max-width: 768px) {
+        .action-buttons {
+            flex-direction: column;
+        }
+
+        .action-buttons button {
+            width: 100%;
+        }
+    }
+    .status-badge {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: bold;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    }
+
+    .status-badge.pending {
+        background-color: #fff3cd;
+        color: #856404;
+        border: 1px solid #ffeeba;
+    }
+
+    .status-badge.approved {
+        background-color: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+    }
+
+    .status-badge.rejected {
+        background-color: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+    }
+
+    .status-badge.resolved {
+        background-color: #cce5ff;
+        color: #004085;
+        border: 1px solid #b8daff;
+    }
+</style>
+
+<!-- Main Content -->
+<main class="main-content" id="mainContent">
+    <div class="content-card">
+        <!-- Status Badge -->
+         <%if(concern){ %>
+            <% concern.forEach(con =>{ %>
+
+        <div class="d-flex justify-content-end mb-4">
+            <span class="status-badge">
+                CONCERN STATUS : <%=con.issueType %>
+              
+            </span>
+        </div>
+
+        <!-- Concern Type Section -->
+        <div class="concern-type">
+            <% if(con.status === 'Pending'){ %>
+                <span class="status-badge pending">
+                    ⏳ <%= con.status %>
+                </span>
+            <% } else if(con.status === 'Approved'){ %>
+                <span class="status-badge approved">
+                    ✅ <%= con.status %>
+                </span>
+            <% } else if(con.status === 'Rejected'){ %>
+                <span class="status-badge rejected">
+                    ❌ <%= con.status %>
+                </span>
+            <% } else if(con.status === 'Resolved'){ %>
+                <span class="status-badge resolved">
+                    🎉 <%= con.status %>
+                </span>
+            <% } %>
+        </div>
+
+        <!-- Description Section -->
+        <div class="description-section">
+            <h3 class="description-title">DESCRIPTION</h3>
+            <div class="description-box">
+          <%= con.description%>
+            </div>
+        </div>
+        <!-- user details  Section -->
+        <div class="description-section">
+            <h3 class="description-title">USER DETAILS</h3>
+            <div class="description-box">
+            <strong>Name : </strong><%= user.name %> <br>
+            <strong>Email : </strong><%= user.email  %> <br>
+            <strong>Phone : </strong> <%= user.phone ?  user.phone : "none" %> <br>
+            <strong>Gender : </strong> <%= user.gender ?  user.gender : "none" %><br>
+            <strong>Wallet : </strong><%= user.wallet ?  user.wallet : 0 %><br>
+            <strong>Since : </strong> <%= user.createdOn.toLocaleString() %><br>
+            <hr>
+            <strong>Order Details</strong><br><hr>
+            <% orders.forEach(order=> { %>
+                <strong>orders :</strong> 
+                OrderId : <%= order.orderId %>
+                <%order.orderedItems.forEach(item => { %>
+                   <p>productname : <%= item.product.productName %> <br>
+                     product Id : <%= item.product._id%> <br>
+                      description : <%= item.product.description%> <br>
+                      brand : <%= item.product.brand %> <br>
+                      category : <%= item.product.category %> <br>
+                      regularPrice : <%= item.product.regularPrice %> <br>
+                      Price : <%= item.price%> <br>
+                      quantity : <%= item.quantity%> <br>
+                      Status : <%= item.status %> <br>
+                      <% }) %> 
+                        Coupon applied : <%= order.couponApplied %> <br>
+                        Address : <%= order.address %> <br>
+                        Discount : <%= order.discount %> <br>
+                        paymentMethod : <%= order.paymentMethod %> <br>
+                      Order Created At: <%= order.createdOn.toLocaleString() %> <br>
+                      Order Updated At : <%= order.deliveredAt ? order.deliveredAt.toLocaleString() : 'Not Updated' %> <br>
+                    </p> 
+             <% }) %> 
+            </div>
+        </div>
+
+        <!-- Draft Message Section -->
+        <form  id="concernForm">
+            <div class="draft-section">
+                <h3 class="draft-title">DRAFT MESSAGE TO CUSTOMER</h3>
+                <textarea name="message" id="message-<%=con._id %>" class="draft-textarea" placeholder="enter message..." ></textarea>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="action-buttons">
+                <button type="button" class="btn-approve" onclick="submitAction('<%= con._id %>','Approved')">Approve</button>
+                <button type="button" class="btn-reject" onclick="submitAction('<%= con._id %>','Rejected')">Reject</button>
+                <button type="button" class="btn-resolved" onclick="submitAction('<%= con._id %>','Resolved')">Resolved</button>
+            </div>
+
+        </form>
+        <hr>
+   <% }) %>
+    <% }else{ %>
+    No concerns Found
+   <% } %>
+    </div>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+
+        async function submitAction(concerId,action){
+        const messagev = document.getElementById(`message-${concerId}`)
+        const message = messagev.value.trim()
+        console.log("meaasge is ",message)
+         if (!message) {
+        Swal.fire({
+            icon: 'warning',
+            title: 'Message Required',
+            text: 'Please enter a message before submitting.'
+        });
+        return;
+    }
+        try {
+            await fetch(`/admin/updateConcern/${concerId}`,{
+                method:'POST',
+                headers:{
+                    'Content-Type':'application/json'
+                },
+                body:JSON.stringify({message:message,action:action})
+                
+            })
+            .then(res => res.json())
+            .then((data)=>{
+                if(data.success){
+                    Swal.fire({
+                        icon:'success',
+                        title:'Success',
+                        text:data.message
+                    }).then(()=>{
+                        window.location.reload()
+                    })
+                }else{
+                    Swal.fire({
+                        icon:'error',
+                        title:'Failed to Sumbit',
+                        text:'Something Went Wrong',
+                        showConfirmButton:true
+                    })
+                }
+            })
+        } catch (error) {
+            console.log("error in the fetch of submit action",error)
+        }
+        }
+
+</script>

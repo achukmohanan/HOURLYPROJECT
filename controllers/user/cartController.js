@@ -2,11 +2,14 @@ const User = require('../../models/userSchema')
 const Cart = require('../../models/cartSchema');
 const Product = require('../../models/productSchema');
 const Address = require('../../models/addressSchema')
+const Coupon = require('../../models/couponSchema');
 
-const getCart = async (req,res) =>{
+const  getCart = async (req,res) =>{
     try {
         const userId = req.session.user
         const findUser = await User.findById(userId)
+
+        if(!userId) return res.redirect('/login');
 
         let cart = await Cart.findOne({userId}).populate('items.productId');
        
@@ -18,7 +21,7 @@ const getCart = async (req,res) =>{
             })
         }else{
             cart = {items:[]}
-        }
+        } 
        return res.render('user/cart',{
            user:findUser,
            cart,
@@ -29,7 +32,7 @@ const getCart = async (req,res) =>{
        console.log("error in get cart",error);
         
     }
-}
+} 
 const addToCart = async (req,res) =>{
     try {
 
@@ -61,9 +64,12 @@ const addToCart = async (req,res) =>{
         
 
         if(existingItem){
+            if(existingItem.quantity >= product.quantity){
+                return res.status(400).json({success:false,message:"Stock limit Reached"})
+            }
             existingItem.quantity += 1;
         }else{
-            if(cart.items.length >= 6){
+            if(cart.items.length >= 5){
             return res.status(400).json({success:false,message:"Cart Limit Reached!"})
         }
          cart.items.push({
@@ -173,6 +179,7 @@ const addAddressInCheckout = async (req,res) =>{
             name:user
         })
     } catch (error) {
+        console.log("error in add address in checkout controller ",error);
         
     }
 }
@@ -183,7 +190,7 @@ const getCheckOut = async (req,res) =>{
         // console.log("User:", user);
         
         const cart = await Cart.findOne({userId}).populate('items.productId');
-        if(!cart || !cart.items ||  cart.items.length === 0){
+        if(!cart || !cart.items ||  cart.items.length === 0 || cart.items.quantity < 0) {
             // console.log("eroor in !user if case")
             res.redirect('/cart')
         }
@@ -195,7 +202,16 @@ const getCheckOut = async (req,res) =>{
         const addressList = await Address.find({userId:userId});
             // console.log("address",addressList)
 
+        const coupons = await Coupon.find({
+            isActive:true,
+            $or:[
+                {userId:{$in:[userId]}},
+                {userId:{$size:0}}
+            ]
+        })
+
         return res.render('user/checkout',{
+            coupons,
             user:user,
             cart,
             totalPrice:total,
@@ -206,6 +222,32 @@ const getCheckOut = async (req,res) =>{
         
     }
 }
+const applyCoupon = async(req,res)=>{
+    try {
+        const {code} = req.body;
+
+        const coupon = await Coupon.findOne({code});
+        
+        if(!coupon){    
+            return res.json({ success: false, message: 'Invalid coupon code' });
+        }
+        if(!coupon.isActive){
+             return res.json({ success: false, message: 'Coupon is not active' });
+        }
+        if(new Date() > coupon.expireOn){
+            return res.json({ success: false, message: 'Coupon has expired' });
+        }
+        console.log("whebflwejq",coupon.discountValue)
+
+        res.json({ success: true, discount: coupon.discountValue });
+
+    } catch (error) {
+        
+    }
+}
+
+
+
 const gettest = async(req,res)=>{
     try {
         return res.render('user/testing')
@@ -221,5 +263,6 @@ module.exports = {
     updateCartQuantity,
     addAddressInCheckout,
     getCheckOut,
-    gettest
+    gettest,
+    applyCoupon
 }

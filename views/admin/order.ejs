@@ -37,6 +37,28 @@
             color: #2d3436;
             font-weight: 700;
         }
+        .pagination{
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        .pagination a{
+            padding: 8px 12px;
+            border: 1px solid #ccc;
+            text-decoration: none;
+            color: black;
+            border-radius: 5px;
+        }
+        .pagination a.active{
+            background-color: #007bff;
+            color: white;
+            font-weight: bold;
+        }
+        .pagination a:hover{
+            background-color: #ddd;
+        }
     </style>
 </head>
 <body>
@@ -52,7 +74,7 @@
             </div>
 
             <!-- Stats Cards -->
-            <div class="row mb-4">
+            <!-- <div class="row mb-4">
                 <div class="col-xl-3 col-md-6 mb-3">
                     <div class="stats-card p-4 text-center">
                         <div class="text-warning mb-2">
@@ -89,22 +111,22 @@
                         <p class="text-muted mb-0">Delivered</p>
                     </div>
                 </div>
-            </div>
+            </div> -->
 
             <!-- Filters -->
             <div class="filter-section p-4 mb-4">
                 <div class="row align-items-center">
-                    <div class="col-md-3">
-                        <label class="form-label fw-bold">Status Filter</label>
-                        <select class="form-select" id="statusFilter">
-                            <option value="">All Status</option>
-                            <option value="pending">Pending</option>
-                            <option value="processing">Processing</option>
-                            <option value="shipped">Shipped</option>
-                            <option value="delivered">Delivered</option>
-                            <option value="cancelled">Cancelled</option>
-                        </select>
-                    </div>
+                        <div class="col-md-3">
+                            <label class="form-label fw-bold">Status Filter</label>
+                            <select class="form-select" id="statusFilter">
+                                <option value="">All Status</option>
+                                <option value="Pending">Pending</option>
+                                <option value="Processing">Processing</option>
+                                <option value="Shipped">Shipped</option>
+                                <option value="Delivered">Delivered</option>
+                                <option value="Cancelled">Cancelled</option>
+                            </select>
+                        </div>
                     <div class="col-md-3">
                         <label class="form-label fw-bold">Date Range</label>
                         <select class="form-select" id="dateFilter">
@@ -122,7 +144,7 @@
                             <button class="btn btn-primary" type="button"><i class="fas fa-search"></i></button>
                         </div>
                     </div>
-                    <div class="col-md-2">
+                     <div class="col-md-2">
                         <label class="form-label fw-bold">&nbsp;</label>
                         <div class="d-grid">
                             <button class="btn btn-success" onclick="refreshOrders()">
@@ -142,29 +164,58 @@
                                 <th class="px-4 py-3">Order ID</th>
                                 <th class="py-3">Customer</th>
                                 <th class="py-3">Date</th>
-                                <th class="py-3">Items</th>
+                                <th class="py-3">Items QTY</th>
                                 <th class="py-3">Amount</th>
                                 <th class="py-3">Status</th>
                                 <th class="py-3">Actions</th>
                             </tr>
                         </thead>
                         <tbody id="ordersTableBody">
+                            <%orders.forEach(order => { %> 
                            <tr>
-                            <td>#ORD12345</td>
-                            <td>John Doe</td>
-                            <td>2025-08-13</td>
-                            <td>2 × iPhone 15, 1 × AirPods Pro</td>
-                            <td>₹1,25,000</td>
-                            <td><span class="badge bg-success">Delivered</span></td>
+                            <td><%=order.orderId %></td>
+                            <td><%= order.userId ? order.userId.name : 'Guest User' %></td>
+                            <td><%= order.createdOn.toLocaleDateString('en-IN') %></td>
                             <td>
-                                <button class="btn btn-sm btn-primary">View</button>
+                                <% order.orderedItems.forEach(item => { %>
+                                    <%= item.quantity %>  
+                                    <%= item.product.productName ? item.product.productName : '' %> <br>
+                                    <% }) %>
+                            </td>
+                            <td>₹<%= order.totalPrice%></td>
+                            <td><span class="badge bg-<%= order.status === 'Delivered' ? 'success' : 'warning' %>"></span>
+                            <%= order.status %>
+                            </td>
+                            <td>
+                                <a href="/admin/viewOrderDetails/<%= order.orderId %>" class="btn btn-sm btn-primary">View</a>
                             </td>
                            </tr>
+                        <% }) %>
+                       
                         </tbody>
                     </table>
                 </div>
+            
             </div>
-        </div>
+
+            <div class="pagination">
+                <% if(currentPage > 1){ %>
+                    <a href="?page=<%= currentPage - 1 %>">&laquo; Prev</a>
+                    <% } %>
+
+                    <% for(let i=1; i<=totalPages; i++){ %>
+                        <a href="?page=<%= i %>"
+                            class="<%= currentPage === i ? 'active' : '' %>">
+                            <%= i%>
+                        </a>
+                    <% } %>
+
+                    <% if(currentPage < totalPages){%>
+                        <a href="?page=<%=currentPage + 1%>">Next &raquo;</a>
+                    <% } %>
+            </div>
+
+        </div>                
     </main>
 
     <!-- Order Detail Modal -->
@@ -185,35 +236,98 @@
             </div>
         </div>
     </div>
-
+     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
     <script>
-        function filterOrders() {
-            const statusFilter = document.getElementById('statusFilter').value;
-            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-            
-            currentOrders = sampleOrders.filter(order => {
-                const matchesStatus = !statusFilter || order.status === statusFilter;
-                const matchesSearch = !searchTerm || 
-                    order.id.toLowerCase().includes(searchTerm) ||
-                    order.customer.toLowerCase().includes(searchTerm) ||
-                    order.email.toLowerCase().includes(searchTerm);
-                
-                return matchesStatus && matchesSearch;
-            });
 
-            currentPage = 1;
-            loadOrders();
+        document.addEventListener('DOMContentLoaded',()=>{
+
+    const statusFilter = document.getElementById('statusFilter')
+    const dateFilter = document.getElementById('dateFilter')
+    const tableBody = document.getElementById('ordersTableBody')
+    const searchInput = document.getElementById('searchInput')
+
+                statusFilter.addEventListener('change',applyFilters);
+                dateFilter.addEventListener('change',applyFilters);
+                searchInput.addEventListener('input',applyFilters)
+
+        async function applyFilters(){
+                const status = statusFilter.value;
+                const date = dateFilter.value;
+                const search = searchInput.value;
+
+                const url = `/admin/order?status=${status}&date=${date}&search=${search}`;
+                try {
+                    const res = await fetch(url,{
+                        headers:{
+                            'Accept':'application/json'
+                        }
+                    });
+                    const data = await res.json();
+                    renderTable(data.orders)
+                } catch (error) {
+                    Swal("error in frontend order ejs ")
+                    console.log("error in order ejs ",error)
+                }
         }
+
+        function renderTable(orders){
+            tableBody.innerHTML = "";
+            if(orders.length ===0){
+                tableBody.innerHTML = `<tr><td colspan="7"class="text-center">No Orders Found </td></tr>`;
+                return;
+            }
+            orders.forEach(order=>{
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                <td>${order.orderId}</td>
+                <td> ${order.userId ? order.userId.name : 'Guest User'}</td>
+                <td>${new Date(order.createdOn).toLocaleDateString('en-IN')}</td>
+                <td>
+                    ${(order.orderedItems || []).map(item=>
+                    `${item.quantity} * ${item.product ? item.price :'Unkown Product'}`
+                    ).join("<br>")}    
+                </td> 
+                <td>₹${order.totalPrice}</td>  
+                <td>
+                    <span class="badge bg-${order.status === "Delivered" ? "success" : "warning"}" >
+                    ${order.status}
+                    </span>
+                </td>  
+                <td>
+                <a href="/admin/viewOrderDetails/${order.orderId}" class="btn btn-sm btn-primary">View</a>    
+                </td>  
+               ` ;
+               tableBody.appendChild(row);
+            });
+        }
+})
+        // function filterOrders() {
+        //     const statusFilter = document.getElementById('statusFilter').value;
+        //     const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            
+        //     currentOrders = sampleOrders.filter(order => {
+        //         const matchesStatus = !statusFilter || order.status === statusFilter;
+        //         const matchesSearch = !searchTerm || 
+        //             order.id.toLowerCase().includes(searchTerm) ||
+        //             order.customer.toLowerCase().includes(searchTerm) ||
+        //             order.email.toLowerCase().includes(searchTerm);
+                
+        //         return matchesStatus && matchesSearch;
+        //     });
+
+        //     currentPage = 1;
+        //     loadOrders();
+        // }
 
         
        
      function refreshOrders() {
-            alert('Orders refreshed successfully!', 'success');
-            loadOrders();
+           window.location.reload()
         }
 
      
     </script>
+   
 </body>
 </html>
