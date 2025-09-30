@@ -69,7 +69,7 @@ const addToCart = async (req,res) =>{
             }
             existingItem.quantity += 1;
         }else{
-            if(cart.items.length >= 6){
+            if(cart.items.length >= 5){
             return res.status(400).json({success:false,message:"Cart Limit Reached!"})
         }
          cart.items.push({

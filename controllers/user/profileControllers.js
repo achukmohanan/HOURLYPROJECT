@@ -222,7 +222,7 @@ const userProfile = async (req,res) =>{
                                     {userId:{$in:[userId]}},
                                     {userId:{$size:0}}
                                 ]
-                            })
+                            }).sort({createdOn:-1})
                         
         let referredName = null;
       

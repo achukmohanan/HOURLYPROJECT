@@ -197,7 +197,7 @@ const approveCancelRequest = async(req,res) =>{
         if(!order){
             return res.status(404).json({success:false,message:"Order not found"})
         }
-      
+        
         
         const item = order.orderedItems.id(itemId);
         if(!item){
@@ -222,8 +222,10 @@ const approveCancelRequest = async(req,res) =>{
                     order.status = 'Pending'
                 }
        
-             if(order.paymentMethod === 'Razorpay'){
-                const refundAmount = item.quantity * item.price;
+            const refundAmount = item.quantity * item.price;
+
+            if(order.paymentMethod === 'Razorpay' ){
+                
                   order.userId.wallet = (order.userId.wallet || 0) + refundAmount
                   await order.userId.save()
                   await Transaction.create({

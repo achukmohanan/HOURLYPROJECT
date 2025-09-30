@@ -17,14 +17,14 @@ const contactController = require("../controllers/user/contactController");
 router.get("/pagenotfound", userController.pageNotFound);
 
 //signup management
-router.get("/signup", userController.loadSignup);
+router.get("/signup",checksession, userController.loadSignup);
 router.post("/signup", userController.signup);
 //resend otp in signup
 router.post("/resend-otp", userController.resendOtp);
 router.post("/resend-Forgot-passwordOtp", profileController.resendForgotOtp);
 
-router.get("/confirmwithotp", userController.confirmWithOtp);
-router.post("/confirmwithotp", userController.confirmwithotp);
+router.get("/confirmwithotp", checksession, userController.confirmWithOtp);
+router.post("/confirmwithotp",checksession, userController.confirmwithotp);
 //google login
 router.get(
   "/google",
