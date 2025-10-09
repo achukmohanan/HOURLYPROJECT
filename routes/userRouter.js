@@ -90,7 +90,7 @@ router.post("/updateEmail", userAuth, profileEditing.postUpdateEmail);
 
 //product management
 router.get("/productDetails", productController.productDetails);
-router.get("/shop", productController.loadShoppingpage);
+router.get("/shop",productController.loadShoppingpage);
 router.get("/filter", productController.filterProduct);
 router.get("/filterPrice", productController.filterByPrice);
 router.get("/search", productController.searchProducts);
@@ -148,5 +148,11 @@ router.post("/apply-coupon", userAuth, cartController.applyCoupon);
 //contact
 router.get("/contact", userAuth, contactController.getContactPage);
 router.post('/contact',userAuth , contactController.postContact)
+
+
+
+
 router.get("/testing", cartController.gettest);
+
+
 module.exports = router;

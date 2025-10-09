@@ -7,7 +7,7 @@ const Cart = require('../../models/cartSchema');
 const Address = require('../../models/addressSchema');
 const Order = require('../../models/orderSchema');
 const Product = require('../../models/productSchema');
-
+const {STATUS_CODE} = require('../../utils/statusCode')
 
 
 
@@ -20,7 +20,7 @@ const invoice = async(req,res) =>{
             .populate('userId');
             
             if(!order){
-                return res.status(400).json({success:false,message:"Order is not Found"})
+                return res.status(STATUS_CODE.NOT_FOUND).json({success:false,message:"Order is not Found"})
             }
             if(order.status === 'Delivered'){
           const doc = new PDFDocument({ 

@@ -1,8 +1,5 @@
 const User = require('../models/userSchema')
 
-
-
-
 const adminAuth = (req,res,next)=>{
      if(!req.session.admin){
         return res.redirect('/admin/adminlogin')

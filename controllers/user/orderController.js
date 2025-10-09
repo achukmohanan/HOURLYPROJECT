@@ -11,6 +11,7 @@ const razorpayInstance = require('./razorpay');
 const crypto = require("crypto");
 const { model } = require('mongoose');
 const Transaction = require('../../models/transactionSchema');
+const { STATUS_CODE } = require('../../utils/statusCode');
 
 const postOrder = async (req,res) =>{
     try {
@@ -28,16 +29,16 @@ const postOrder = async (req,res) =>{
         // console.log("findAddress is ",findAddress)
 
         if(!findAddress || findAddress.address.length !== 1){
-            return res.status(400).json({success:false,message:"Address not found"})
+            return res.status(STATUS_CODE.BAD_REQUEST).json({success:false,message:"Address not found"})
         }
         const cart = await Cart.findOne({userId}).populate('items.productId');
         if(!cart || cart.items.length === 0){
-            return res.status(400).json({success:false,message:"Cart is Empty"})
+            return res.status(STATUS_CODE.BAD_REQUEST).json({success:false,message:"Cart is Empty"})
         }
 
         for(let item of cart.items){
             if(item.productId.quantity < item.quantity){
-                return res.status(400).json({success:false,message:`${item.productId.productName} is Out Of Stock!`})
+                return res.status(STATUS_CODE.BAD_REQUEST).json({success:false,message:`${item.productId.productName} is Out Of Stock!`})
             }
         }
 
@@ -107,7 +108,7 @@ const postOrder = async (req,res) =>{
         const user = await User.findById(userId)
     
         if(user.wallet < totalPrice ){
-            return res.status(404).json({message:"Insufficent Balance in Wallet"})
+            return res.status(STATUS_CODE.NOT_FOUND).json({message:"Insufficent Balance in Wallet"})
         }
         user.wallet -= totalPrice;
         await user.save();
@@ -155,7 +156,7 @@ const postOrder = async (req,res) =>{
     }
     } catch (error) {
         console.log("error in the postorder",error)
-        res.status(500).json({status:false,message:"Internal Server Error"});
+        res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({status:false,message:"Internal Server Error"});
     }
 }
 
@@ -178,27 +179,28 @@ const cancelOrder = async (req,res) =>{
         const order = await Order.findOne({orderId,userId }).populate('orderedItems.product');
 
         if(!order){
-            return res.status(404).json({success:false,message:"Order Not Found"})
+            return res.status(STATUS_CODE.NOT_FOUND).json({success:false,message:"Order Not Found"})
         }
+       
         const item = order.orderedItems.id(itemId);
         // console.log("item is ",item)
         if(!item){
-            return res.status(404).json({success:false,message:"Item not found in this order"})
+            return res.status(STATUS_CODE.NOT_FOUND).json({success:false,message:"Item not found in this order"})
         }
 
         if(action === 'request'){
         if(order.status === "Delivered"){
-            return res.status(400).json({success:false,message:"Delivered Orders Can't Cancel"})
+            return res.status(STATUS_CODE.BAD_REQUEST).json({success:false,message:"Delivered Orders Can't Cancel"})
         }
         if(item.status === "Cancelled"){
-            return res.status(400).json({success:false,message:'This Item is  Already Cancelled'})
+            return res.status(STATUS_CODE.BAD_REQUEST).json({success:false,message:'This Item is  Already Cancelled'})
         }
           
         item.cancelRequest = {requested:true ,reason}
         item.status = "Cancellation Requested";
     }else if(action === 'withdraw'){
         if(item.status !== 'Cancellation Requested'){
-            return res.status(404).json({success:false,message:"No Withdrawn Requested"})
+            return res.status(STATUS_CODE.NOT_FOUND).json({success:false,message:"No Withdrawn Requested"})
         }
         order.status = 'Pending';
         item.cancelRequest = null;
@@ -206,11 +208,11 @@ const cancelOrder = async (req,res) =>{
     }   
         await order.save();
         // console.log("order cancelled requested",order);
-        return res.status(200).json({success:true,message:`Cancel ${action} Processed Successfully`})
+        return res.status(STATUS_CODE.SUCCESS).json({success:true,message:`Cancel ${action} Processed Successfully`})
 
     } catch (error) {
         console.log("error in the cancel order ",error);
-        return res.status(500).json({success:false,message:"Internal Server Error"})
+        return res.status(STATUS_CODE.SUCCESS).json({success:false,message:"Internal Server Error"})
     }
 }
 const returnOrder = async(req,res) =>{
@@ -220,7 +222,7 @@ const returnOrder = async(req,res) =>{
         
         let   order = await Order.findOne({orderId:id}).populate('userId');
         if(!order){
-            return res.status(404).json({success:false,message:"Order is not Found"})
+            return res.status(STATUS_CODE.NOT_FOUND).json({success:false,message:"Order is not Found"})
         }
         order.returnRequest={
             requested:true,

@@ -1,6 +1,6 @@
 const Brand = require('../../models/brandSchema');
 const Product = require('../../models/productSchema');
-
+const {STATUS_CODE} = require('../../utils/statusCode')
 
 const getBrandPage = async (req,res) =>{
     try {
@@ -39,10 +39,10 @@ const addBrand = async (req,res) =>{
             await newBrand.save();
             // console.log(newBrand);
             
-             res.status(200).json({success:true , message:"Brand Uploaded successfully"})
+             res.status(STATUS_CODE.SUCCESS).json({success:true , message:"Brand Uploaded successfully"})
         }
      } catch (error) {
-        res.status(500).json({success:false,message:"Internal Server Error"}); 
+        res.status(STATUS_CODE.INTERNAL_SERVER_ERROR    ).json({success:false,message:"Internal Server Error"}); 
     }
 }
 const blockBrand = async (req,res) =>{
@@ -56,7 +56,7 @@ const blockBrand = async (req,res) =>{
 }
 
 
-const   unBlockBrand = async (req,res) =>{
+const  unBlockBrand = async (req,res) =>{
     try {
         const id = req.query.id;
         await Brand.updateOne({_id:id},{$set:{isBlocked:false}});

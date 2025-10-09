@@ -14,7 +14,7 @@ const session = require('express-session')
 const userRouter = require('./routes/userRouter');
 const adminRouter = require('./routes/adminRouter');
 const nocache = require('nocache');
-
+const {STATUS_CODE} = require('./utils/statusCode')
 
 db()
 app.use(express.json())
@@ -65,7 +65,7 @@ app.use('/admin',adminRouter);
 
 
 app.use((req, res, next) => {
-    res.status(404).render('user/error404'); 
+    res.status(STATUS_CODE.NOT_FOUND).render('user/error404'); 
 });
 
 

@@ -1,6 +1,7 @@
 const Wishlist = require('../../models/wishlistSchema');
 const User = require('../../models/userSchema')
 const Cart = require('../../models/cartSchema')
+const {STATUS_CODE} = require('../../utils/statusCode')
 
 const getWishList = async(req,res)=>{
     try {
@@ -12,11 +13,8 @@ const getWishList = async(req,res)=>{
             user:findUser,
             wishlist
         })
-
-
     } catch (error) {
-        console.log("error in get wishlist",error);
-        
+        console.log("error in get wishlist",error); 
     }
 }
 
@@ -27,7 +25,7 @@ const postWishList = async (req,res) =>{
         console.log("productId is ",productId);
         
         if(!productId){
-            return res.status(400).json({success:false,message:"Product is Not Found "});
+            return res.status(STATUS_CODE.BAD_REQUEST).json({success:false,message:"Product is Not Found "});
         }
         let wishlist = await Wishlist.findOne({userId});
 
@@ -35,23 +33,23 @@ const postWishList = async (req,res) =>{
             const alreadyExist = wishlist.products.some(item=>item.productId.toString()=== productId)
 
             if(alreadyExist){
-                return res.status(200).json({success:true,message:"Product is already Exists"})
+                return res.status(STATUS_CODE.SUCCESS).json({success:true,message:"Product is already Exists"})
             }
             wishlist.products.push({productId});
             await wishlist.save()
-            return res.status(200).json({success:true,message:"Product Added to Wishlist"})
+            return res.status(STATUS_CODE.SUCCESS).json({success:true,message:"Product Added to Wishlist"})
         }else{
             const newWishlist = new Wishlist({
                 userId,
                 products:[{productId}]
             })
             await newWishlist.save();
-            return res.status(200).json({success:true,message:"Wishlist Created and Product Added"})
+            return res.status(STATUS_CODE.SUCCESS).json({success:true,message:"Wishlist Created and Product Added"})
         }
 
     } catch (error) {
         console.log("error in postwishlist",error)
-        return res.status(500).json({success:false,message:"Internal Server Error"})
+        return res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({success:false,message:"Internal Server Error"})
     }
 }
 
@@ -63,16 +61,16 @@ const deleteWishlistItem = async(req,res) =>{
         // console.log("productId is",productId, typeof productId);
         const wishlist = await Wishlist.findOne({userId});
         if(!wishlist){
-            return res.status(404).json({status:false, message:" Wishlist not Found"});
+            return res.status(STATUS_CODE.NOT_FOUND).json({status:false, message:" Wishlist not Found"});
         }
 
         wishlist.products = wishlist.products.filter(item=> item.productId.toString() !== productId)
         console.log("wishlist products ", wishlist.products)
         await wishlist.save();
-        return res.status(200).json({success:true,message:"Item Removed from the cart"})
+        return res.status(STATUS_CODE.SUCCESS).json({success:true,message:"Item Removed from the cart"})
     } catch (error) {
         console.log("error in delete wishlist item",error);
-        res.status(500).json({success:false,message:"Internal Server error"})
+        res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({success:false,message:"Internal Server error"})
         
     }
 }
@@ -83,14 +81,14 @@ const addToCartFromWishlist = async (req,res) =>{
         const {productId} = req.body;
        
         if(!userId || !productId){
-            return res.status(400).json({success:false,message:"Missing Data"})
+            return res.status(STATUS_CODE.BAD_REQUEST).json({success:false,message:"Missing Data"})
         }
         const existingCart = await Cart.findOne({userId})
        
         if(existingCart){
             const itemInCart = existingCart.items.some(item=>item.productId.toString() === productId)
             if(itemInCart){
-                return res.status(400).json({success:false,message:"Item is already in the Cart"})
+                return res.status(STATUS_CODE.BAD_REQUEST).json({success:false,message:"Item is already in the Cart"})
             }else{
                 existingCart.items.push({productId,quantity:1});
                 await existingCart.save();
@@ -105,10 +103,10 @@ const addToCartFromWishlist = async (req,res) =>{
             {userId},
             {$pull:{products:{productId}}}
         )
-        return res.status(200).json({success:true,message:"product Moved to Cart and removed from wishlist"})
+        return res.status(STATUS_CODE.SUCCESS).json({success:true,message:"product Moved to Cart and removed from wishlist"})
     } catch (error) {
         console.log("error in the addToCartFromWishlist ",error);
-        return res.status(500).json({success:false,message:"Internal Server Error"})
+        return res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({success:false,message:"Internal Server Error"})
     }
 }
 

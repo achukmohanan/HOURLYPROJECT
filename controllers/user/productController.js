@@ -2,9 +2,8 @@ const Product = require('../../models/productSchema');
 const Category = require('../../models/categorySchema');
 const User = require('../../models/userSchema');
 const Brand = require('../../models/brandSchema');
+const {STATUS_CODE} = require('../../utils/statusCode')
 
-const { render } = require('ejs');
-const { search } = require('../../routes/userRouter');
 
 const productDetails = async (req,res) =>{
     try {
@@ -20,7 +19,7 @@ const productDetails = async (req,res) =>{
         // const totalOffer = categoryOffer + productOffer;
       
         if(!product){
-            return res.status(404).json({success:false,message:"Product Not Found"})
+            return res.status(STATUS_CODE.NOT_FOUND).json({success:false,message:"Product Not Found"})
         }
 
         let productOffers = null
@@ -245,26 +244,25 @@ const searchProducts = async (req,res) => {
         const user = req.session.user;
         const userData = await User.findOne({_id:user})
 
+        console.log("Search query is ",req.query.query)
+
         let search = req.query.query || "";
         
         const brands = await Brand.find({}).lean();
         const categories = await Category.find({isListed:true}).lean()
-        const categoryIds = categories.map(category=>category._id.toString());
-        let searchResult = [];
-        if(req.session.filteredProducts && req.session.filteredProducts.length > 0){
-            searchResult = req.session.filteredProducts.filter(product => 
-                product.productName.toLowerCase().includes(search.toLowerCase())
-            )
-        }else{
-            searchResult = await Product.find({
-                productName:{$regex:'.*'+search+'.*',$options:"i"},
-                isBlocked:false,
-                quantity:{$gt:0},
-                category:{$in:categoryIds}
-            }).sort({productName:-1})
-        }
+        const categoryIds = categories.map(category=>category._id);
 
-        // searchResult.sort((a,b)=> new Date(b.createdOn)- new Date(a.createdOn));
+      
+       
+         const  searchResult = await Product.find({
+                productName:{$regex: search,$options:'i'},
+                isBlocked:false,
+                quantity:{$gte:0},
+                category:{$in:categoryIds}
+            })
+            .sort({productName:-1})
+            .lean()
+    
         
         let itemsPerPage = 6;
         let currentPage = parseInt(req.query.page) || 1;
@@ -303,28 +301,7 @@ const searchProducts = async (req,res) => {
     }
 }
  
-// const sortProducts = async(req,res) =>{
-//     try {
-//         const sortOption = req.query.sort || "newest";
 
-//         let sortQuery = {};
-        
-//         if(sortOption === "price-low"){
-//             sortQuery = {salePrice:1}
-//         }else if(sortOption === "price-high"){
-//             sortQuery = {salePrice:-1}
-//         }else if(sortOption === "name"){
-//             sortQuery = {productName:1}
-//         }
-
-//         const products = await Product.find().sort(sortQuery)
-//         res.json({products});
-//     } catch (error) {
-//         console.log("errror in sortProducts",error);
-//         res.status(500).json({ message: "Error sorting products" });
-//     }  
-
-// }
 
 module.exports = {
     productDetails,

@@ -2,7 +2,7 @@ const Order = require('../../models/orderSchema')
 const User = require('../../models/userSchema')
 const Product = require('../../models/productSchema')
 const Transaction = require('../../models/transactionSchema');
-
+const {STATUS_CODE} = require('../../utils/statusCode')
 const getOrderPage = async (req,res) =>{
     try {
         // console.log(req.query)
@@ -93,13 +93,13 @@ const viewOrderDetails = async (req,res) =>{
         .populate('address')
         
         if(!order){
-            return res.status(404).json({success:false,message:" order is not found"});
+            return res.status(STATUS_CODE.NOT_FOUND).json({success:false,message:" order is not found"});
         }
         // console.log("orders in view order",order)
       return res.render('admin/vieworder',{order}) 
     } catch (error) {
         console.log("error in view get order details ",error)
-         return res.status(500).json({success:false,message:"Server Error"});
+         return res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({success:false,message:"Server Error"});
     }
 }
 const updateOrderStatus = async (req, res) =>{
@@ -120,7 +120,7 @@ const updateOrderStatus = async (req, res) =>{
         );
         
         if(!order){
-            return res.status(404).json({success:false,message:"Order is Not Found"})
+            return res.status(STATUS_CODE.NOT_FOUND).json({success:false,message:"Order is Not Found"})
         }
         if(status === 'Delivered'){
             order.deliveredAt = new Date();
@@ -131,7 +131,7 @@ const updateOrderStatus = async (req, res) =>{
         return res.json({success:true,message:`Order status updatd to ${status}`,order})
     } catch (error) {
         console.log("error in the backenndn===",error);
-        return res.status(500).json({ success: false, message: "Internal server error" });
+        return res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ success: false, message: "Internal server error" });
     }
 }
 
@@ -143,10 +143,10 @@ const   approveReturnRequest =async (req,res)=> {
         const order = await Order.findOne({orderId:orderId});
 
         if(!order){
-            return res.status(400).json({success:false,message:"No order Found"});
+            return res.status(STATUS_CODE.BAD_REQUEST).json({success:false,message:"No order Found"});
         }
         if(!order.returnRequest.requested){
-            return res.status(400).json({suceess:false,message:"No Return Request Found"})
+            return res.status(STATUS_CODE.BAD_REQUEST).json({suceess:false,message:"No Return Request Found"})
         }
         if(approve){
             order.returnRequest.verified = true;
@@ -180,7 +180,7 @@ const   approveReturnRequest =async (req,res)=> {
             await order.save()
         }
         
-        return res.status(200).json({success:true,message:"Approved Successfully"})
+        return res.status(STATUS_CODE.SUCCESS).json({success:true,message:"Approved Successfully"})
     } catch (error) {
         console.log("error in the approve requst",error);
 
@@ -195,16 +195,16 @@ const approveCancelRequest = async(req,res) =>{
         const order = await Order.findOne({orderId}).populate('userId');
         // console.log("ordered item testing is",order.userId._id)
         if(!order){
-            return res.status(404).json({success:false,message:"Order not found"})
+            return res.status(STATUS_CODE.NOT_FOUND).json({success:false,message:"Order not found"})
         }
         
         
         const item = order.orderedItems.id(itemId);
         if(!item){
-            return res.status(404).json({success:false,message:'Item is not found'})
+            return res.status(STATUS_CODE.NOT_FOUND).json({success:false,message:'Item is not found'})
         }
         if(item.status !== 'Cancellation Requested' ){
-            return res.status(404).json({success:false,message:'NO Cancelation Requested'})
+            return res.status(STATUS_CODE.NOT_FOUND).json({success:false,message:'NO Cancelation Requested'})
         }
         if( action === 'approve'){
         await Product.findByIdAndUpdate(item.product._id,{
@@ -239,13 +239,13 @@ const approveCancelRequest = async(req,res) =>{
                   })
                 }
                 await order.save()
-                return  res.status(200).json({success:true,message:"approved Successfully"})
+                return  res.status(STATUS_CODE.SUCCESS).json({success:true,message:"approved Successfully"})
             }
             if(action === 'reject'){
                 item.status = 'Cancellation Rejected'
                 
                 await order.save();
-                return res.status(200).json({ success: true, message: "Cancel request rejected successfully" });
+                return res.status(STATUS_CODE.SUCCESS).json({ success: true, message: "Cancel request rejected successfully" });
             }
        
     } catch (error) {

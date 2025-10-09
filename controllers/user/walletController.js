@@ -3,7 +3,7 @@ const razorpayInstance = require('./razorpay')
 const crypto = require('crypto') 
 const User = require('../../models/userSchema');
 const Transaction = require("../../models/transactionSchema");
-
+const {STATUS_CODE} = require('../../utils/statusCode');
 
 const walletTopUp = async (req,res) =>{
     try {
@@ -26,7 +26,7 @@ const walletTopUp = async (req,res) =>{
             });
     } catch (error) {
         console.log("error in the wallet top up ",error);
-        return res.status(500).json({success:false,message:"Razorpay payment creation failed"})
+        return res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({success:false,message:"Razorpay payment creation failed"})
     }
 }
 const verifyWalletTopup = async (req,res)=>{
@@ -41,12 +41,12 @@ const verifyWalletTopup = async (req,res)=>{
                 .digest('hex')
 
                 if(expectedSignature !== razorpay_signature){
-                    return res.status(400).json({success:false,message:"Invalid payment signature"})
+                    return res.status(STATUS_CODE.BAD_REQUEST).json({success:false,message:"Invalid payment signature"})
                 }
 
                 const user  = await User.findById(userId)
                 if(!user){
-                    return res.status(404).json({success:false,message:"User is not found"})
+                    return res.status(STATUS_CODE.BAD_REQUEST).json({success:false,message:"User is not found"})
                 }
                 user.wallet = (user.wallet || 0) + parseInt(amount)
                 await user.save()
@@ -60,10 +60,10 @@ const verifyWalletTopup = async (req,res)=>{
                     description:'Wallet Topup',
 
                 })
-                return res.status(200).json({success:true,message:"Wallet Top up successfully"})
+                return res.status(STATUS_CODE.SUCCESS).json({success:true,message:"Wallet Top up successfully"})
     } catch (error) {
         console.log("error in the verifyWalletTopup",error);
-        return res.status(500).json({success:false,message:"Internal Server Error"})
+        return res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({success:false,message:"Internal Server Error"})
     }
 }
 

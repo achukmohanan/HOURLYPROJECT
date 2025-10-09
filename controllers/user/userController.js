@@ -3,10 +3,12 @@ const Category = require('../../models/categorySchema');
 const Product = require('../../models/productSchema');
 const Brand = require('../../models/brandSchema')
 const Coupon = require('../../models/couponSchema')
+const Cart = require('../../models/cartSchema');
+const Wishlist = require('../../models/wishlistSchema');
 const nodemailer = require("nodemailer");
 const env = require('dotenv').config();
 const bcrypt = require('bcrypt');
- 
+const {STATUS_CODE} = require('../../utils/statusCode')
 const pageNotFound = async (req, res) => {
     try {
         return res.render("user/error404")
@@ -59,13 +61,30 @@ const loadHomepage = async (req, res) => {
         const brand = await Brand.find({
             isBlocked:false
         })
+        const cart = await Cart.findOne({userId});
+        const wishlist = await Wishlist.findOne({userId});
 
+        
+        let cartCount = cart ? cart.items.length : 0;
+        let wishlistCount = wishlist ? wishlist.products.length : 0;
+        
+        // console.log("cart Count",cartCount);
+        // console.log("wishlist Count",wishlistCount);
+
+        req.session.cartCount = cartCount;
+        req.session.wishlistCount = wishlistCount;
+
+        // console.log(" req.session.cartCount is ", req.session.cartCount)
+        // console.log(" req.session.wishlistCount is", req.session.wishlistCount)
+        
         if(userId){
             const userData = await User.findById(userId);
             res.render('user/home',{
                 user: userData,
                 products:productData,
-                brand:brand
+                brand:brand,
+                cartCount:cartCount,
+                wishlistCount:wishlistCount
             });
         }else{
             return res.render('user/home',{
@@ -76,7 +95,7 @@ const loadHomepage = async (req, res) => {
         console.log("Products sent to EJS:,its working ", productData.length);
     } catch (error) {
         console.log("Home page is not loading", error);
-       res.status(500).send("server error")
+       res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json("Internal Server Error")
     }
 };
 
@@ -85,7 +104,7 @@ const loadSignup = async (req, res) => {
         return res.render('user/signup')
     } catch (error) {
         console.log('Home page not loaded:', error);
-        res.status(500).send('Server Error')
+        res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).send('Server Error')
     }
 }
 
@@ -126,14 +145,14 @@ const signup = async (req, res) => {
         console.log("referal code is ",referalcode)
 
         if (password !== cPassword) {
-            return res.status(400).json({
+            return res.status(STATUS_CODE.BAD_REQUEST).json({
                 success:false,
                 message:"Password does not Match"
             });
         } 
         const findUser = await User.findOne({ email });
         if (findUser) {
-            return res.status(400).json({
+            return res.status(STATUS_CODE.BAD_REQUEST).json({
                 success:false,
                 message:"User with this Email already exists"
             });
@@ -142,7 +161,7 @@ const signup = async (req, res) => {
 
         const emailSent = await sendVerificationEmail(email,otp);
         if(!emailSent){
-           return res.status(500).json({
+           return res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({
             success:false,
             message:"Failed to send verification Email.Please try again"
            });
@@ -150,9 +169,9 @@ const signup = async (req, res) => {
          req.session.userOtp = otp;
         req.session.userData = {name,phone,email,password,referalcode};
 
-        console.log("Signu Otp sent",otp);
+        console.log("Signup Otp sent",otp);
 
-        return res.status(200).json({success : true, message : 'Otp send Successfully...!'});
+        return res.status(STATUS_CODE.SUCCESS).json({success : true, message : 'Otp send Successfully...!'});
     } catch (error) {
         console.log("signup error",error);
         res.redirect('/pagenotfound')
@@ -164,7 +183,7 @@ const signup = async (req, res) => {
                 message:"OTP sent to your Email"
             });
         }else{
-            return res.status(500).json({
+            return res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({
                 success:false,
                 message:"Failed to sent OTP,Please try again"
             });
@@ -215,7 +234,7 @@ const confirmWithOtp = async (req, res) => {
         return res.render('user/confirmwithotp')
     } catch (error) {
         console.log('error happened in confirm with ott ', error)
-        res.status(500).send('Server error')
+        res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).send('Server error')
     }
 }
 
@@ -238,7 +257,7 @@ const confirmwithotp = async (req, res) => {
     try {
         const { otp1, otp2, otp3, otp4 } = req.body;
         if (!otp1 || !otp2 || !otp3 || !otp4) {
-            return res.status(400).json({ success: false, message: "All 4 OTP digits are required" });
+            return res.status(STATUS_CODE.BAD_REQUEST).json({ success: false, message: "All 4 OTP digits are required" });
         }
         const otp = otp1 + otp2 + otp3 + otp4;
 
@@ -249,7 +268,7 @@ const confirmwithotp = async (req, res) => {
             const user = req.session.userData;
             console.log("testing user issss",user)
             if (!user) {
-                return res.status(400).json({ success: false, message: "User session expired. Please sign up again." });
+                return res.status(STATUS_CODE.BAD_REQUEST).json({ success: false, message: "User session expired. Please sign up again." });
             }
 
             const passwordHash = await securePassword(user.password);
@@ -304,20 +323,20 @@ const confirmwithotp = async (req, res) => {
             delete req.session.userData;
 
 
-            return res.status(200).json({
+            return res.status(STATUS_CODE.SUCCESS).json({
                 success: true,
                 message: "OTP verified successfully",
                
             });
         } else {
-            return res.status(400).json({
+            return res.status(STATUS_CODE.BAD_REQUEST).json({
                 success: false,
                 message: "Invalid OTP, please try again"
             });
         }
     } catch (error) {
         console.error("Error verifying OTP:", error);
-        return res.status(500).json({
+        return res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({
             success: false,
             message: "An internal server error occurred"
         });
@@ -330,7 +349,7 @@ const resendOtp = async (req,res)=>{
         console.log("req.session.userData",req.session.userData)    
         const {email} = req.session.userData;
         if(!email){
-            return res.status(400).json({success:false,message:"Email not found in Session"})
+            return res.status(STATUS_CODE.BAD_REQUEST).json({success:false,message:"Email not found in Session"})
         }
 
         const otp = generateOtp();
@@ -339,14 +358,14 @@ const resendOtp = async (req,res)=>{
         const emailSent =  await sendVerificationEmail(email,otp);
         if(emailSent){
             console.log("Resend OTP:",otp);
-            return res.status(200).json({success:true,message:"OTP Resend Succesfully"})
+            return res.status(STATUS_CODE.SUCCESS).json({success:true,message:"OTP Resend Succesfully"})
         }else{
-            return res.status(500).json({success:false,message:"Failed to Resend OTP. Please try again"});
+            return res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({success:false,message:"Failed to Resend OTP. Please try again"});
         }
 
     } catch (error) {
         console.log("error  resending otp",error);
-        res.status(500).json({success:false,message:"internal Server Error,Please try again"});
+        res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({success:false,message:"internal Server Error,Please try again"});
         
     }
 }
@@ -373,13 +392,10 @@ module.exports = {
     loadSignup,
     signup,
     loadLogin,
-  
     confirmWithOtp,
     landingPage,
     confirmwithotp,
     resendOtp,
     login,
-    
     logout,
-   
 }

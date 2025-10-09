@@ -3,7 +3,7 @@ const env = require('dotenv').config();
 const session = require('express-session');
 const bcrypt = require('bcrypt');
 const nodemailer = require('nodemailer');
-
+const {STATUS_CODE} = require('../../utils/statusCode')
 
 const changePassword = async (req,res) =>{
     try {
@@ -11,23 +11,19 @@ const changePassword = async (req,res) =>{
         //  console.log("userId from session",user)
         const userId = await User.findById(user);
         if(userId.password === undefined){
-            return res.status(400).json({success:false,message:"You are Login through Google, You Can't change Email and Password"})
+            return res.status(STATUS_CODE.BAD_REQUEST).json({success:false,message:"You are Login through Google, You Can't change Email and Password"})
         }
         const {currentPassword,newPassword,confirmPassword} = req.body;
         
         console.log("user from data base",userId)
         if(!userId){    
-           return res.status(400).json({success:false,message:"User is not found"})
+           return res.status(STATUS_CODE.BAD_REQUEST).json({success:false,message:"User is not found"})
         }
 
         const isMatch = await bcrypt.compare(currentPassword,userId.password);
         if(!isMatch){
-          return  res.status(400).json({success:false,message:"current Password is incorrect"});
+          return  res.status(STATUS_CODE.BAD_REQUEST).json({success:false,message:"current Password is incorrect"});
         }
-
-        // if(newPassword != confirmPassword){
-        //  return   res.status(400).json({success:false,message:"password do not Match"});
-        // }
 
         const hashPassword = await bcrypt.hash(newPassword,10);
         userId.password = hashPassword;
@@ -36,7 +32,7 @@ const changePassword = async (req,res) =>{
       
     } catch (error) {
         console.log("error in change password ",error);
-        res.status(500).json({success:false,message:"Internal Server Error"});   
+        res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({success:false,message:"Internal Server Error"});   
     }
 }
 
@@ -89,19 +85,19 @@ const postCurrentEmail = async (req,res) =>{
         const findEmail = await User.findOne({email:currentEmail})
         
         if(findEmail.password === undefined){
-           return res.status(400).json({success:false,message:"Google user cant change Email and Password"})
+           return res.status(STATUS_CODE.BAD_REQUEST).json({success:false,message:"Google user cant change Email and Password"})
 
         }
         const otp = generateOtp();
         if(!findEmail){
-        return res.status(404).json({success:false,message:"Email not Found"})
+        return res.status(STATUS_CODE.BAD_REQUEST).json({success:false,message:"Email not Found"})
         }
         const sent = await sendVerificationEmail(currentEmail,otp);
         if(sent){
             req.session.otp = otp;
-            res.status(200).json({success:true,message:"OTP Successfully Send to your Current Email"})
+            res.status(STATUS_CODE.SUCCESS).json({success:true,message:"OTP Successfully Send to your Current Email"})
         }else{
-             res.status(503).json({success:false,message:"Failed to send otp"})
+             res.status(STATUS_CODE.SERVICE_UNAVAILABLE).json({success:false,message:"Failed to send otp"})
         }
           
         // req.session.userData.email ={currentEmail} 
@@ -109,7 +105,7 @@ const postCurrentEmail = async (req,res) =>{
         // console.log("otp in session ",req.session.otp)
     } catch (error) {   
         console.log("error in post email edit", error);
-        res.status(500).json({success:false,message:"Internal Server error"})
+        res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({success:false,message:"Internal Server error"})
     }
 }
 
@@ -128,13 +124,13 @@ const postEmailEditOtp = async (req,res) =>{
         const otp = otp1 + otp2 + otp3 + otp4;
 
         if(otp !== req.session.otp){
-          return  res.status(404).json({success:false,message:"You Entered OTP is MissMatch"})
+          return  res.status(STATUS_CODE.NOT_FOUND).json({success:false,message:"You Entered OTP is MissMatch"})
         }   
-       return res.status(200).json({success:true,message:"OTP verified successfully"});
+       return res.status(STATUS_CODE.SUCCESS).json({success:true,message:"OTP verified successfully"});
  
     } catch (error) {
         console.log("error in post email edit otp",error);
-        res.status(500).json({success:false,message:"Internal server Error"})
+        res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({success:false,message:"Internal server Error"})
     }
 }
 
@@ -151,18 +147,18 @@ const postUpdateEmail = async (req,res) =>{
         const {newEmail} = req.body;
         const emailExisting = await User.findOne({email:newEmail})
         if(emailExisting){
-            return res.status(409).json({success:false,message:"This Email already in Use ,Try another Email"})
+            return res.status(STATUS_CODE.CONFLICT).json({success:false,message:"This Email already in Use ,Try another Email"})
         }
         const user = await User.findOne({_id:userId});
         
         if(!user){
-            return res.status(404).json({success:false,message:"User not found"})
+            return res.status(STATUS_CODE.NOT_FOUND).json({success:false,message:"User not found"})
         }
         user.email = newEmail;
         user.save();
-        res.status(200).json({success:true,message:"Email Updated Successfully"})
+        res.status(STATUS_CODE.SUCCESS).json({success:true,message:"Email Updated Successfully"})
     } catch (error) {
-        res.status(500).json({success:false,message:"Internal Server Error"})
+        res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({success:false,message:"Internal Server Error"})
         console.log("error in postUpdateEmail",error);
     }
 }

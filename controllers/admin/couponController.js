@@ -1,5 +1,5 @@
 const Coupon = require('../../models/couponSchema')
-
+const {STATUS_CODE} = require('../../utils/statusCode')
 
 const getCouponPage = async(req,res) =>{
     try {
@@ -13,8 +13,6 @@ const getCouponPage = async(req,res) =>{
                         .sort({createdOn:-1})
                         .skip(skip)
                         .limit(limit);
-
-
         return res.render('admin/coupon',{
             coupon,
             totalCoupons,
@@ -22,10 +20,8 @@ const getCouponPage = async(req,res) =>{
             totalPages:Math.ceil(totalCoupons/limit)
         })
     } catch (error) {
-        console.log("error in the getCouponPage",error);
-        
+        console.log("error in the getCouponPage",error);   
     }
-
 }
 const postCoupon = async (req,res) =>{
     try {
@@ -33,15 +29,15 @@ const postCoupon = async (req,res) =>{
         const {code,discountType,discountValue,maxDiscount,description,limit,expiryDate,minPurchase,} = req.body
 
         if(!code || !discountType || !expiryDate){
-            return res.status(400).json({success:false,message:"Required fields are missing"})
+            return res.status(STATUS_CODE.BAD_REQUEST).json({success:false,message:"Required fields are missing"})
         }
 
         if(new Date(expiryDate) <= new Date()){
-            return res.status(400).json({success:false,message:"Expiry date must be future"})
+            return res.status(STATUS_CODE.BAD_REQUEST).json({success:false,message:"Expiry date must be future"})
         }
         const existing = await Coupon.findOne({code})
         if(existing){
-            return res.status(400).json({success:false,message:"Coupon code already exists"})
+            return res.status(STATUS_CODE.BAD_REQUEST).json({success:false,message:"Coupon code already exists"})
         }
 
         const coupon = new Coupon({
@@ -56,7 +52,7 @@ const postCoupon = async (req,res) =>{
             minPurchase
         })
         await coupon.save()
-        return res.status(200).json({success:true,message:"Coupon Created Successfully"})
+        return res.status(STATUS_CODE.SUCCESS).json({success:true,message:"Coupon Created Successfully"})
     } catch (error) {
         console.log("error in the backend of post coupon",error);
         
@@ -68,10 +64,10 @@ const deleteCoupon = async (req,res) =>{
     const deleted = await Coupon.findOneAndDelete({code});
 
     if(!deleted){
-        return res.status(404).json({success:false,message:"Coupon is not Found"})
+        return res.status(STATUS_CODE.NOT_FOUND).json({success:false,message:"Coupon is not Found"})
     }
 
-    return res.status(200).json({success:true,message:'Deleted Successfully'})
+    return res.status(STATUS_CODE.SUCCESS).json({success:true,message:'Deleted Successfully'})
     
 }
 
