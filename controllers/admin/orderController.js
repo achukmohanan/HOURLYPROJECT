@@ -159,6 +159,7 @@ const   approveReturnRequest =async (req,res)=> {
             
             await order.save();
 
+            // let refundAmount = 
              if ((order.paymentMethod === "COD" || order.paymentMethod === 'Razorpay') &&
               (order.status === "Return Approved" || order.status === "Partially Returned")) {
             
@@ -198,7 +199,7 @@ const approveCancelRequest = async(req,res) =>{
             return res.status(STATUS_CODE.NOT_FOUND).json({success:false,message:"Order not found"})
         }
         
-        console.log("discount amount is ",order.discount)
+        // console.log("discount amount is ",order.discount)
         
         const item = order.orderedItems.id(itemId);
         if(!item){
@@ -234,11 +235,11 @@ const approveCancelRequest = async(req,res) =>{
                 const  itemDiscount = (refundAmount * discountPercentage) / 100;
                 refundAmount = refundAmount - itemDiscount;
 
-            console.log("itemDiscount",itemDiscount)
-            console.log("discountPercentage",discountPercentage)
+            // console.log("itemDiscount",itemDiscount)
+            // console.log("discountPercentage",discountPercentage)
 
             }
-            console.log("refundAmount is",refundAmount)
+            // console.log("refundAmount is",refundAmount)
 
             if(order.paymentMethod === 'Razorpay' ){
                 
