@@ -109,6 +109,7 @@ router.get(
   cartController.addAddressInCheckout
 );
 //payement and confirm order
+
 router.post("/payment", paymentController.postPayment);
 router.post("/verify-payment", userAuth, paymentController.confirmRazorpay);
 // order management

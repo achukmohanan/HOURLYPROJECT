@@ -239,8 +239,9 @@ const applyCoupon = async(req,res)=>{
         if(new Date() > coupon.expireOn){
             return res.json({ success: false, message: 'Coupon has expired' });
         }
-        console.log("whebflwejq",coupon.discountValue)
 
+        console.log("couupon discoubr value is",coupon.discountValue)
+        
         res.json({ success: true, discount: coupon.discountValue });
 
     } catch (error) {

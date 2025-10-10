@@ -118,7 +118,7 @@
                             <% coupon.forEach(c=>{  %>
                         <tr>
                             <td><strong><%= c.code %></strong></td>
-                            <td><%= c.couponType %></td>
+                            <td><%= c.discountType %></td>
                             <td><%= c.minPurchase %></td>
                             <td><%= c.maxDiscount %></td>
                             <td><%= c.limit%></td>
@@ -175,16 +175,16 @@
                         <label class="form-label">DiscountType Type</label>
                         <select name="discountType" class="form-select" required>
                         <option value="percentage">Percentage</option>
-                        <option value="fixed">Fixed Amount</option>
+                        
                         </select>
                     </div>
                     <div class="col-md-3 mb-3">
-                        <label class="form-label">Discount Value</label>
+                        <label class="form-label">Discount Percentage</label>
                         <input type="number" name="discountValue" class="form-control" placeholder="Enter discount value" required>
                     </div>
 
                     <div class="col-md-3 mb-3">
-                        <label class="form-label">Max Discount</label>
+                        <label class="form-label">Max Discount Value</label>
                         <input type="number" name="maxDiscount" class="form-control" placeholder="Enter max discount">
                     </div>
                     <div class="col-md-3 mb-3">

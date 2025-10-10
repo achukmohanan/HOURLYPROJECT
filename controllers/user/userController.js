@@ -301,13 +301,13 @@ const confirmwithotp = async (req, res) => {
                     const coupon = await Coupon.create({
                         code:generateCouponCode(refer._id),
                         purpose:'Referral',
-                        discountType:'fixed',
+                        discountType:'percentage',
                         discountValue:500,
                         maxDiscount:500,
                         description:"Referral Reward",
                         limit:1,
                         expireOn:new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
-                        minPurchase:500,
+                        minPurchase:1000,
                         isActive:true,
                         userId:[refer._id],
 

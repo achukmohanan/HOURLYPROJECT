@@ -1,10 +1,10 @@
 const express = require('express');
 const app = express();
 
-        app.use((req, res, next) => {
-          res.setHeader("Access-Control-Allow-Origin", "https://b293f2fd9eda.ngrok-free.app");
-          next();
-        });
+app.use((req, res, next) => {
+    res.setHeader("Access-Control-Allow-Origin", "https://b293f2fd9eda.ngrok-free.app");
+    next();
+});
     
 const passport = require('./config/passport')
 const env = require('dotenv').config();

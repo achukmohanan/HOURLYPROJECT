@@ -9,11 +9,12 @@ const Transaction = require('../../models/transactionSchema')
 
 const postPayment = async (req,res) =>{
     try {
-        console.log("hekkoweinowb")
+        console.log("paymet")
         const userId = req.session.user;
         const selectedIndex = req.body.addressId;
         const discount = req.body.discount
 
+        console.log("discount is discount",discount)
         const address = await Address.find({userId:userId});
         if(!address || !address.length){
             return res.redirect('/checkout')
@@ -34,14 +35,18 @@ const postPayment = async (req,res) =>{
            return sum + item.productId.salePrice * item.quantity
         },0)
 
-        total-=discount;
+        let disamount = (discount/100)*total;
+        console.log("discount is =",disamount)
+        total=total-(20/100) * total;
+
+        console.log("total is total",total)
         const orderData = {
             findUser,
             userId,
             address:selectedAddress,
             items:cart.items,
             totalPrice:total,
-            discount
+            discount:disamount
         }
         
         res.render('user/payment',{orderData});
@@ -50,6 +55,7 @@ const postPayment = async (req,res) =>{
         console.log("error in the post payment ",error)
     }
 }
+
 const confirmRazorpay = async (req,res) =>{
     try {
         const userId = req.session.user; 
@@ -129,4 +135,5 @@ const confirmRazorpay = async (req,res) =>{
 module.exports ={
     postPayment,
     confirmRazorpay  
+    
 }

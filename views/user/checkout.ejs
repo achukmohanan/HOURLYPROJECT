@@ -484,11 +484,11 @@
                 if(data.success){
                     appliedDiscount = data.discount;
                     couponMessage.style.color = 'green';
-                    couponMessage.innerText = `Coupon applied! Discount: ₹${appliedDiscount}`;
+                    couponMessage.innerText = `Coupon applied! Discount: ${appliedDiscount}%`;
                     
                     const totalEl = document.getElementById('total');
                     let originalTotal =  parseFloat(totalEl.dataset.originalTotal);
-                    let newTotal = originalTotal - appliedDiscount;
+                    let newTotal = originalTotal- (appliedDiscount/100)*originalTotal;
                     if(newTotal < 0) newTotal = 0;
                     totalEl.innerText = `₹ ${newTotal.toLocaleString('en-IN')}`;
 

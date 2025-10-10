@@ -198,6 +198,7 @@ const approveCancelRequest = async(req,res) =>{
             return res.status(STATUS_CODE.NOT_FOUND).json({success:false,message:"Order not found"})
         }
         
+        console.log("discount amount is ",order.discount)
         
         const item = order.orderedItems.id(itemId);
         if(!item){
@@ -222,7 +223,22 @@ const approveCancelRequest = async(req,res) =>{
                     order.status = 'Pending'
                 }
        
-            const refundAmount = item.quantity * item.price;
+            let refundAmount = item.quantity * item.price;    
+
+            //if coupon is applied
+
+            if(order.couponApplied && order.discount >0){
+                const totalBeforeDiscount = order.totalPrice + order.discount;
+                const discountPercentage = (order.discount / totalBeforeDiscount) * 100;
+
+                const  itemDiscount = (refundAmount * discountPercentage) / 100;
+                refundAmount = refundAmount - itemDiscount;
+
+            console.log("itemDiscount",itemDiscount)
+            console.log("discountPercentage",discountPercentage)
+
+            }
+            console.log("refundAmount is",refundAmount)
 
             if(order.paymentMethod === 'Razorpay' ){
                 
