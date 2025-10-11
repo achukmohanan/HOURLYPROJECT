@@ -107,7 +107,7 @@
                                 <button type="button" 
                                         class="btn btn-secondary mt-2" 
                                         
-                                        onclick="returnOrder('<%= order.orderId %>')" >
+                                        onclick="returnOrder('<%= order.orderId %>','<%= item._id%>')" >
                                     Return Order
                                 </button>
                            <% } %>
@@ -210,7 +210,7 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
     <script>
-        function returnOrder(orderId) {
+        function returnOrder(orderId,itemId) {
             Swal.fire({
             title: "Are you sure?",
             text: "Please provide a reason for returning this order:",
@@ -221,7 +221,7 @@
             cancelButtonText: "Cancel"
                  }).then((result) => {
                     if (result.isConfirmed && result.value.trim() !=="") {
-                        fetch(`/return-order/${orderId}`, {
+                        fetch(`/return-order/${orderId}/${itemId}`, {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
                         body:JSON.stringify({reason:result.value})

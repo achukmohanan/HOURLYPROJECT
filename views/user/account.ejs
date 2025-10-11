@@ -1,10 +1,759 @@
- <%- include("../../views/partials/user/supportheader") %>
+<%- include("../../views/partials/user/supportheader") %>
 <head>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <title>HOURLY WATCHES | CART</title>
+    
+    <style>
+        /* Base styles for better responsiveness */
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            overflow-x: hidden;
+        }
+
+        .main-content {
+            width: 100%;
+            padding: 0 15px;
+        }
+
+        .container {
+            max-width: 100%;
+            padding: 0 15px;
+        }
+
+        /* Account Section Base Styles */
+        .account-section {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        /* Profile Header */
+        .account-header {
+            padding: 20px;
+            text-align: center;
+        }
+
+        .img-div1, .class-img {
+            margin-bottom: 15px;
+        }
+
+        .img-div1 img, .class-img img {
+            border: 3px solid #ddd;
+            transition: transform 0.3s;
+        }
+
+        .img-div1 img:hover, .class-img img:hover {
+            transform: scale(1.05);
+        }
+
+        /* Account Content Layout */
+        .account-content {
+            display: flex;
+            min-height: 500px;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: 280px;
+            background: #f8f9fa;
+            padding: 20px 0;
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .sidebar-menu li {
+            margin-bottom: 5px;
+        }
+
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            color: #333;
+            text-decoration: none;
+            transition: all 0.3s;
+            border-left: 4px solid transparent;
+        }
+
+        .sidebar-link:hover {
+            background: #e9ecef;
+            color: #667eea;
+            border-left-color: #667eea;
+        }
+
+        .sidebar-link.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-left-color: #764ba2;
+        }
+
+        .sidebar-link .icon {
+            margin-right: 12px;
+            font-size: 18px;
+        }
+
+        /* Mobile Sidebar Toggle */
+        .mobile-sidebar-toggle {
+            display: none;
+            background: #f8f9fa;
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin: 15px;
+            cursor: pointer;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .hambugar-menu {
+            width: 30px;
+            height: 24px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .hambugar-menu span {
+            display: block;
+            height: 3px;
+            background: #333;
+            border-radius: 3px;
+            transition: 0.3s;
+        }
+
+        .hambugar-menu:hover {
+            transform: scale(1.1);
+        }
+
+        /* Tab Content */
+        .tab-content {
+            flex: 1;
+            padding: 30px;
+            overflow-y: auto;
+        }
+
+        .tab-pane {
+            display: none;
+        }
+
+        .tab-pane.show.active {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Form Groups */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        /* Address Card Improvements */
+        .address-card {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .address-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        .btn-small {
+            display: inline-block;
+            padding: 8px 16px;
+            margin-right: 10px;
+            margin-bottom: 5px;
+            background: #667eea;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: background 0.3s;
+            border: none;
+        }
+
+        .btn-small:hover {
+            background: #764ba2;
+            color: white;
+        }
+
+        .btn-small.delete-btn {
+            background: #dc3545;
+        }
+
+        .btn-small.delete-btn:hover {
+            background: #c82333;
+        }
+
+        /* Button Improvements */
+        .save-btn, .btn-primary {
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .save-btn:hover, .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        /* Table Improvements */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 20px;
+        }
+
+        table th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        table td {
+            padding: 12px;
+            border-bottom: 1px solid #e9ecef;
+            font-size: 14px;
+        }
+
+        table td img {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 6px;
+        }
+
+        /* Mobile Card Style for Transaction Table */
+        .transaction-card {
+            display: none;
+            background: white;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .transaction-card .transaction-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .transaction-card .transaction-header img {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-right: 12px;
+        }
+
+        .transaction-card .transaction-header .product-name {
+            flex: 1;
+            font-weight: 600;
+            font-size: 14px;
+            color: #333;
+        }
+
+        .transaction-card .transaction-detail {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            font-size: 13px;
+        }
+
+        .transaction-card .transaction-detail .label {
+            color: #666;
+            font-weight: 500;
+        }
+
+        .transaction-card .transaction-detail .value {
+            color: #333;
+            font-weight: 600;
+            text-align: right;
+        }
+
+        .transaction-card .transaction-type {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .transaction-card .transaction-type.credit {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .transaction-card .transaction-type.debit {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        /* Coupon Card Improvements */
+        .coupon-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .coupon-card button {
+            background: white;
+            color: #667eea;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: transform 0.2s;
+        }
+
+        .coupon-card button:hover {
+            transform: scale(1.1);
+        }
+
+        /* Referral Section */
+        .Referal {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 25px;
+            border-radius: 12px;
+            color: white;
+            margin-bottom: 20px;
+        }
+
+        .innerReferal {
+            background: rgba(255,255,255,0.2);
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+
+        #clipboardCopy, #copyCoupon {
+            background: white;
+            color: #667eea;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-weight: bold;
+            margin: 0 10px;
+        }
+
+        /* Toast Notification */
+        #toast {
+            visibility: hidden;
+            min-width: 250px;
+            background-color: #333;
+            color: white;
+            text-align: center;
+            border-radius: 8px;
+            padding: 16px;
+            position: fixed;
+            z-index: 1000;
+            bottom: 30px;
+            right: 30px;
+            font-size: 14px;
+        }
+
+        #toast.show {
+            visibility: visible;
+            animation: fadein 0.5s, fadeout 0.5s 2.5s;
+        }
+
+        @keyframes fadein {
+            from { bottom: 0; opacity: 0; }
+            to { bottom: 30px; opacity: 1; }
+        }
+
+        @keyframes fadeout {
+            from { bottom: 30px; opacity: 1; }
+            to { bottom: 0; opacity: 0; }
+        }
+
+        /* Pagination Styles */
+        nav1 ul {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+            padding: 20px 0;
+        }
+
+        nav1 ul li {
+            list-style: none;
+        }
+
+        nav1 ul li a, nav1 ul li strong {
+            display: inline-block;
+            padding: 8px 12px;
+            background: #667eea;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            transition: background 0.3s;
+        }
+
+        nav1 ul li a:hover {
+            background: #764ba2;
+        }
+
+        /* Card Improvements */
+        .card {
+            border-radius: 12px;
+            transition: transform 0.3s, box-shadow 0.3s;
+            overflow: hidden;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        }
+
+        .card .img-fluid {
+            height: 200px;
+            object-fit: cover;
+        }
+
+        /* ==================== MOBILE RESPONSIVE STYLES ==================== */
+
+        /* Tablet View (768px - 991px) */
+        @media (max-width: 991px) {
+            .tab-content {
+                padding: 25px 20px;
+            }
+            
+            .sidebar {
+                width: 250px;
+            }
+            
+            table {
+                font-size: 13px;
+            }
+            
+            table th, table td {
+                padding: 10px 8px;
+            }
+        }
+
+        /* Mobile View (max-width: 768px) */
+        @media (max-width: 768px) {
+            /* Show mobile toggle */
+            .mobile-sidebar-toggle {
+                display: flex !important;
+            }
+            
+            /* Account Content Stack */
+            .account-content {
+                flex-direction: column;
+                position: relative;
+            }
+            
+            /* Sidebar Mobile */
+            .sidebar {
+                position: fixed;
+                left: -280px;
+                top: 0;
+                height: 100vh;
+                z-index: 1000;
+                width: 280px;
+                box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+                overflow-y: auto;
+            }
+            
+            .sidebar.show {
+                transform: translateX(280px);
+            }
+            
+            /* Overlay when sidebar is open */
+            .sidebar.show::before {
+                content: '';
+                position: fixed;
+                top: 0;
+                left: 280px;
+                right: 0;
+                bottom: 0;
+                background: rgba(0,0,0,0.5);
+                z-index: -1;
+            }
+            
+            /* Tab Content Mobile */
+            .tab-content {
+                padding: 20px 15px;
+                width: 100%;
+            }
+            
+            .tab-content h2 {
+                font-size: 24px;
+                margin-bottom: 15px;
+            }
+            
+            /* Form Groups Mobile */
+            .form-group1 {
+                margin-bottom: 15px;
+            }
+            
+            /* Buttons Full Width on Mobile */
+            .btn, .save-btn {
+                width: 100%;
+                margin: 5px 0 !important;
+                padding: 12px;
+            }
+            
+            .btn-small {
+                display: inline-block;
+                width: auto;
+                margin: 5px 5px 5px 0;
+            }
+            
+            /* Address Cards Mobile */
+            .address-card {
+                padding: 15px;
+                margin-bottom: 15px;
+            }
+            
+            /* Order Cards Mobile */
+            .card .img-fluid {
+                height: 180px;
+            }
+            
+            /* Transaction Table Mobile - Switch to Card View */
+            .table-responsive table {
+                display: none;
+            }
+            
+            .transaction-card {
+                display: block !important;
+            }
+            
+            /* Coupon Cards Mobile */
+            .coupon-card {
+                padding: 15px;
+                margin-bottom: 10px;
+            }
+            
+            /* Referral Section Mobile */
+            .Referal {
+                padding: 20px 15px;
+            }
+            
+            .innerReferal {
+                padding: 12px;
+            }
+            
+            #clipboardCopy, #copyCoupon {
+                padding: 6px 10px;
+                margin: 5px;
+                display: inline-block;
+            }
+            
+            /* Pagination Mobile */
+            nav1 ul {
+                gap: 5px;
+                padding: 15px 0;
+            }
+            
+            nav1 ul li a, nav1 ul li strong {
+                padding: 6px 10px;
+                font-size: 12px;
+            }
+            
+            /* Toast Mobile */
+            #toast {
+                min-width: 200px;
+                right: 15px;
+                left: 15px;
+                bottom: 20px;
+            }
+            
+            /* Profile Header Mobile */
+            .account-header {
+                padding: 15px;
+            }
+            
+            .img-div1 img, .class-img img {
+                width: 80px !important;
+                height: 80px !important;
+            }
+        }
+
+        /* Extra Small Mobile (max-width: 576px) */
+        @media (max-width: 576px) {
+            .main-content {
+                padding: 0 10px;
+            }
+            
+            .tab-content {
+                padding: 15px 10px;
+            }
+            
+            .tab-content h2 {
+                font-size: 20px;
+            }
+            
+            /* Make all columns full width */
+            .col-lg-6, .col-md-6 {
+                margin-bottom: 15px;
+            }
+            
+            /* Card adjustments */
+            .card .img-fluid {
+                height: 150px;
+            }
+            
+            .card-body {
+                padding: 15px;
+            }
+            
+            .card-title {
+                font-size: 16px;
+            }
+            
+            /* Transaction cards smaller */
+            .transaction-card {
+                padding: 12px;
+            }
+            
+            .transaction-card .transaction-header img {
+                width: 50px;
+                height: 50px;
+            }
+            
+            .transaction-card .transaction-detail {
+                font-size: 12px;
+                padding: 6px 0;
+            }
+            
+            /* Sidebar narrower */
+            .sidebar {
+                width: 260px;
+                left: -260px;
+            }
+            
+            .sidebar.show {
+                transform: translateX(260px);
+            }
+            
+            /* Buttons smaller */
+            .btn, .save-btn {
+                font-size: 14px;
+                padding: 10px;
+            }
+            
+            .btn-small {
+                font-size: 12px;
+                padding: 6px 12px;
+            }
+            
+            /* Form inputs */
+            .form-group input {
+                font-size: 14px;
+                padding: 10px;
+            }
+            
+            /* Coupon cards smaller */
+            .coupon-card {
+                padding: 12px;
+            }
+            
+            .coupon-card small {
+                font-size: 11px;
+            }
+            
+            /* Referral section */
+            .Referal h2 {
+                font-size: 18px;
+            }
+            
+            .innerReferal h5 {
+                font-size: 14px;
+            }
+            
+            #clipboardCopy, #copyCoupon {
+                font-size: 12px;
+                padding: 5px 8px;
+            }
+        }
+
+        /* Landscape Mobile */
+        @media (max-width: 768px) and (orientation: landscape) {
+            .sidebar {
+                height: 100vh;
+                overflow-y: auto;
+            }
+            
+            .tab-content {
+                max-height: calc(100vh - 60px);
+                overflow-y: auto;
+            }
+        }
+
+        /* Print Styles */
+        @media print {
+            .sidebar, .mobile-sidebar-toggle, .btn, .save-btn, #toast {
+                display: none !important;
+            }
+            
+            .tab-content {
+                padding: 0;
+            }
+            
+            .account-content {
+                flex-direction: column;
+            }
+        }
+    </style>
 </head>
-<body>
+<body data-user-id="<%= user._id %>">
  <main class="main-content">
         <div class="container">
             <section class="account-section">
@@ -135,9 +884,14 @@
                             </div>
                             <%}%>
                             </div>
-                            <a href="/edit-profile" class="btn btn-primary"> Edit Profile </a>
-                            <a href="/verifyCurrentEmail" class="btn btn-primary mx-5"> Edit Email </a>
-                            <!-- <button class="save-btn">Edit Profile</button> -->
+                            <div class="row">
+                                <div class="col-md-6 col-12 mb-2">
+                                    <a href="/edit-profile" class="btn btn-primary w-100">Edit Profile</a>
+                                </div>
+                                <div class="col-md-6 col-12">
+                                    <a href="/verifyCurrentEmail" class="btn btn-primary w-100">Edit Email</a>
+                                </div>
+                            </div>
                         </div>
 
                         <!-- Address Tab -->
@@ -162,12 +916,10 @@
                                                        <p> Alt Phone <%= address.altPhone %></p>
                                                      
                                                     </address>
-                                                    <div class="d-flex">
+                                                    <div class="d-flex flex-wrap">
                                                         <a href="/editAddress?id=<%= address._id %>" class="btn-small">Edit</a>
 
                                                         <a href="#" class="btn-small delete-btn" data-id="<%= address._id %>">Delete</a>
-
-                                                        <!-- <a href="/deleteAddress?id=<%=address._id %>" class="btn-small" onclick="return confirm('Are you sure you want delete this address')" >Delete</a> -->
                                                     </div>
                                                 </div>
                                             </div>
@@ -232,7 +984,6 @@
 
                                         <!-- Actions -->
                                         <a href="/viewOrderDetails/<%=order.orderId%>" class="btn btn-sm btn-primary me-2">View</a>
-                                        <!-- <a href="#" class="btn btn-sm btn-outline-secondary">Track</a> -->
                                         </div>
                                     </div>
                                     </div>
@@ -303,24 +1054,12 @@
                                     <small class="text-muted"><%= item.couponType %></small><br>
                                     <small class="text-muted">MIN Purchase : <%= item.minPurchase.toLocaleString('en-IN',{style:'currency',currency:"INR"}) %></small><br>
                                     <small class=" text-success">Active : <%= item.isActive %></small><br>
-                                    <!-- <small class="text-muted"><%= item.maxDiscount %></small><br> -->
                                     </div>
                                 <% }) %>
                                 </div>
                             <% }else{ %>
                                 <p>No coupons available right now.</p>
                             <% } %>
-                               
-                                
-                                <!-- <div class="d-flex flex-wrap gap-3">
-                                <p>referral coupon reward</p>
-                                    <div class="coupon-card">
-                                    <p class="coupon-code"></p>
-                                    <small></small><br>
-                                    <small></small>
-                                    </div>
-                                
-                                </div> -->
                               </div>
                             </div>
                         </div>
@@ -338,8 +1077,11 @@
                                 </div>
                             </div>
                             <div class="mt-4">
-                                 <table>
                                 <h5>Transaction History</h5>
+                                
+                                <!-- Desktop Table View -->
+                                <div class="table-responsive">
+                                 <table>
                                     <tr>
                                         <th>OrderId</th>
                                         <th>Product Name</th>
@@ -348,17 +1090,33 @@
                                         <th>paymentMethod</th>
                                         <th>Description</th>
                                         <th>Date</th>
+                                        <th>TIme</th>
                                     </tr>
                                      <% if(transaction ){ %>
                                     <% transaction.forEach(txn=>{ %>
                                     <tr>   
+                                        <% if(txn.orderId){%>
                                         <td><%= txn.orderId  %></td>
+                                        <% }else{%>
+                                         <td>No OrderId </td>    
+                                        <%}%>
                                         <%if(txn.orderDetails && txn.orderDetails.orderedItems ){ %>
                                         <% txn.orderDetails.orderedItems.forEach(i=>{ %>
-                                        <td><img class="p-2" src="<%= i.product.productImage[0] %>" alt="">
-                                        <%= i.product?.productName ? i.product.productName : 'No product'%></td>
+                                        <td>
+                                            <%if(i.product){%>
+                                            <%if(i.product.productImage[0]){%>
+                                            <img class="p-2" src="<%= i.product.productImage[0] %>" alt="">
+                                            <% } %>
+                                        <%= i.product?.productName ? i.product.productName : 'No product'%>
+                                        </td>
+                                            <% }else {%>
+                                                <td>No Product</td>
+                                            <% } %>
+                                    
                                         <% }) %>
-                                        <% } %>
+                                        <% }else{ %>
+                                            No Poducts
+                                       <% } %>
                                         <td class="<%= txn.type ==='Credit' ? 'text-success' :'text-danger' %>"><%= txn.type %></td>
                                         <td><%= txn.amount %></td>
                                         <td><%= txn.paymentMethod %></td>
@@ -377,9 +1135,81 @@
                               
                                 <% }) %>
                                 <% } else {%>
-                                    No transaction Found
+                                    <tr><td colspan="7">No transaction Found</td></tr>
                                 <% } %>
                                   </table>
+                                  </div>
+                                  
+                                  <!-- Mobile Card View -->
+                                  <% if(transaction && transaction.length > 0){ %>
+                                      <% transaction.forEach(txn=>{ %>
+                                          <div class="transaction-card">
+                                              <div class="transaction-header">
+                                                  <%if(txn.orderDetails && txn.orderDetails.orderedItems && txn.orderDetails.orderedItems.length > 0){ %>
+                                                      <img src="<%= txn.orderDetails.orderedItems[0].product.productImage[0] %>" alt="Product">
+                                                      <div class="product-name">
+                                                          <%= txn.orderDetails.orderedItems[0].product?.productName || 'No product' %>
+                                                          <% if(txn.orderDetails.orderedItems.length > 1){ %>
+                                                              <span class="badge bg-secondary" style="font-size: 10px;">+<%= txn.orderDetails.orderedItems.length - 1 %> more</span>
+                                                          <% } %>
+                                                      </div>
+                                                  <% } else { %>
+                                                      <div class="product-name">Wallet Transaction</div>
+                                                  <% } %>
+                                              </div>
+                                              
+                                              <div class="transaction-detail">
+                                                  <span class="label">Order ID:</span>
+                                                  <span class="value"><%= txn.orderId %></span>
+                                              </div>
+                                              
+                                              <div class="transaction-detail">
+                                                  <span class="label">Type:</span>
+                                                  <span class="value">
+                                                      <span class="transaction-type <%= txn.type === 'Credit' ? 'credit' : 'debit' %>">
+                                                          <%= txn.type %>
+                                                      </span>
+                                                  </span>
+                                              </div>
+                                              
+                                            <div class="transaction-detail">
+                                                <span class="label">Amount:</span>
+                                                <span class="value <%= txn.type === 'Credit' ? '#28a745' : '#dc3545' %>;">
+                                                <%= txn.type === 'Credit' ? '+' : '-' %>₹<%= txn.amount %>
+                                                </span>
+                                            </div>
+  
+                                              
+                                              <div class="transaction-detail">
+                                                  <span class="label">Payment Method:</span>
+                                                  <span class="value"><%= txn.paymentMethod %></span>
+                                              </div>
+                                              
+                                              <div class="transaction-detail">
+                                                  <span class="label">Description:</span>
+                                                  <span class="value"><%= txn.description %></span>
+                                              </div>
+                                              
+                                              <div class="transaction-detail">
+                                                  <span class="label">Date:</span>
+                                                  <span class="value">
+                                                      <%= new Date(txn.date).toLocaleString("en-IN", {
+                                                          day: "2-digit",
+                                                          month: "2-digit",
+                                                          year: "numeric",
+                                                          hour: "2-digit",
+                                                          minute: "2-digit"
+                                                      }) %>
+                                                  </span>
+                                              </div>
+                                          </div>
+                                      <% }) %>
+                                  <% } else { %>
+                                      <div class="transaction-card">
+                                          <p class="text-center text-muted">No transactions found</p>
+                                      </div>
+                                  <% } %>
+                                  
                                   <!-- 🔹 Pagination Controls -->
                                 <div style="margin-top: 20px;">
                                 <% if (pagination.totalPages > 1) { %>
@@ -430,354 +1260,594 @@
      <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
     <script>
        
- document.addEventListener('DOMContentLoaded',()=>{
+// Enhanced JavaScript for Responsive User Profile
+
+document.addEventListener('DOMContentLoaded', () => {
+    // Initialize tab from URL parameter
+    initializeTabFromURL();
+    
+    // Setup all event listeners
+    setupTabNavigation();
+    setupMobileSidebar();
+    setupAddressDeletion();
+    setupPasswordChange();
+    setupWalletTopUp();
+    setupClipboardCopy();
+});
+
+// Initialize tab based on URL parameter
+function initializeTabFromURL() {
     const urlParams = new URLSearchParams(window.location.search);
     const tab = urlParams.get('tab');
-    if(tab){
-        document.querySelectorAll('.sidebar-link').forEach(l=>l.classList.remove('active'));
-        document.querySelectorAll('.tab-pane').forEach(p=>p.classList.remove('show','active'));
-       
-        const targestLink = document.querySelector(`.sidebar-link[data-tab="${tab}"]`);
-        const targestpane = document.getElementById(tab)
+    
+    if (tab) {
+        // Remove active class from all links and panes
+        document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
+        document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('show', 'active'));
         
-        if(targestLink && targestpane){
-            targestLink.classList.add('active');
-            targestpane.classList.add('show','active')
-        }
-    }
- })
-        // Mobile menu toggle
-        const hamburger = document.getElementById('hamburger');
-        const navLinks = document.getElementById('navLinks');
-
-        if (hamburger) {
-            hamburger.addEventListener('click', () => {
-                hamburger.classList.toggle('active');
-                navLinks.classList.toggle('active');
-            });
-        }
-
-        // Close mobile menu when clicking on a link
-        document.querySelectorAll('.nav-links a').forEach(link => {
-            link.addEventListener('click', () => {
-                if (hamburger) {
-                    hamburger.classList.remove('active');
-                    navLinks.classList.remove('active');
-                }
-            });
-        });
-
-        // Tab functionality
-        document.querySelectorAll('.sidebar-link').forEach(link => {
-            link.addEventListener('click', (e) => {
-                e.preventDefault();
-                
-                const targetTab = link.getAttribute('data-tab');
-                
-                // Remove active class from all sidebar links
-                document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
-                
-                // Add active class to clicked link
-                link.classList.add('active');
-                
-                // Hide all tab panes
-                document.querySelectorAll('.tab-pane').forEach(pane => {
-                    pane.classList.remove('show', 'active');
-                });
-                
-                // Show target tab pane
-                const targetPane = document.getElementById(targetTab);
-                if (targetPane) {
-                    targetPane.classList.add('show', 'active');
-                }
-            });
-        });
-
-       document.addEventListener('DOMContentLoaded',()=>{
-    const urlParams = new URLSearchParams(window.location.search);
-    const tab = urlParams.get('tab');
-    if(tab){
-        document.querySelectorAll('.sidebar-link').forEach(l=>l.classList.remove('active'));
-        document.querySelectorAll('.tab-pane').forEach(p=>p.classList.remove('show','active'));
-
+        // Activate target tab
         const targetLink = document.querySelector(`.sidebar-link[data-tab="${tab}"]`);
         const targetPane = document.getElementById(tab);
         
-        if(targetLink && targetPane){
+        if (targetLink && targetPane) {
             targetLink.classList.add('active');
-            targetPane.classList.add('show','active');
+            targetPane.classList.add('show', 'active');
         }
     }
-})
+}
 
-       
-// <--------address deletion---------------->
-        document.addEventListener('DOMContentLoaded',function (){
-            const deleteButtons = document.querySelectorAll('.delete-btn');
+// Setup tab navigation
+function setupTabNavigation() {
+    document.querySelectorAll('.sidebar-link').forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            
+            const targetTab = link.getAttribute('data-tab');
+            
+            // Skip if it's a logout link or doesn't have data-tab
+            if (!targetTab) return;
+            
+            // Update active states
+            document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
+            link.classList.add('active');
+            
+            // Switch tab panes
+            document.querySelectorAll('.tab-pane').forEach(pane => {
+                pane.classList.remove('show', 'active');
+            });
+            
+            const targetPane = document.getElementById(targetTab);
+            if (targetPane) {
+                targetPane.classList.add('show', 'active');
+            }
+            
+            // Close mobile sidebar after selection
+            if (window.innerWidth <= 768) {
+                closeMobileSidebar();
+            }
+            
+            // Update URL without reload
+            const newUrl = new URL(window.location);
+            newUrl.searchParams.set('tab', targetTab);
+            window.history.pushState({}, '', newUrl);
+        });
+    });
+}
 
-            deleteButtons.forEach(button => {
-              button.addEventListener('click',function(e){
-                    e.preventDefault();
+// Setup mobile sidebar toggle
+function setupMobileSidebar() {
+    const sidebarToggle = document.getElementById('sidebarToggle');
+    const sidebar = document.getElementById('sidebarMenu');
+    
+    if (sidebarToggle && sidebar) {
+        sidebarToggle.addEventListener('click', (e) => {
+            e.stopPropagation();
+            sidebar.classList.toggle('show');
+        });
+        
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', (e) => {
+            if (window.innerWidth <= 768) {
+                const isClickInsideSidebar = sidebar.contains(e.target);
+                const isClickOnToggle = sidebarToggle.contains(e.target);
+                
+                if (!isClickInsideSidebar && !isClickOnToggle && sidebar.classList.contains('show')) {
+                    closeMobileSidebar();
+                }
+            }
+        });
+        
+        // Close sidebar on window resize to desktop
+        window.addEventListener('resize', () => {
+            if (window.innerWidth > 768) {
+                sidebar.classList.remove('show');
+            }
+        });
+    }
+}
 
-                    const addressId = this.getAttribute('data-id');
+// Close mobile sidebar
+function closeMobileSidebar() {
+    const sidebar = document.getElementById('sidebarMenu');
+    if (sidebar) {
+        sidebar.classList.remove('show');
+    }
+}
 
-                      Swal.fire({
-                            title: 'Are you sure?',
-                            text: "Do you really want to delete this address?",
-                            icon: 'warning',
-                            showCancelButton: true,
-                            confirmButtonColor: '#d33',
-                            cancelButtonColor: '#3085d6',
-                            confirmButtonText: 'Yes, delete it!'
-                         }).then((result)=>{
-                            if(result.isConfirmed){
-                                fetch(`/deleteAddress?id=${addressId}`,{
-                                    method:'GET'
-                                })
-                                .then(response => response.json())
-                                .then(data =>{
-                                    if(data.message === "Address Delected Successfully"){
-                                        Swal.fire(
-                                            'Deleted!',
-                                            'Your address has been deleted.',
-                                            'success'
-                                        ).then(()=>{
-                                            window.location.reload()
-                                        });
-                                    }else{
-                                        Swal.fire('Error',data.message || "Something Went Wrong");
-                                    }
-                                })
-                                .catch(error =>{
-                                    console.log("error in fetch in deleteing address");
-                                    Swal.fire('Error', 'Server error occurred.', 'error');;
-                                });
-                            }
-                         });
-                });
+// Setup address deletion
+function setupAddressDeletion() {
+    const deleteButtons = document.querySelectorAll('.delete-btn');
+    
+    deleteButtons.forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            const addressId = this.getAttribute('data-id');
+            
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "Do you really want to delete this address?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Yes, delete it!',
+                cancelButtonText: 'Cancel'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    deleteAddress(addressId);
+                }
             });
         });
+    });
+}
 
-        // <---------------fetch for change password ----------------->
+// Delete address function
+function deleteAddress(addressId) {
+    fetch(`/deleteAddress?id=${addressId}`, {
+        method: 'GET'
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.message === "Address Delected Successfully" || data.success) {
+            Swal.fire({
+                icon: 'success',
+                title: 'Deleted!',
+                text: 'Your address has been deleted.',
+                confirmButtonColor: '#667eea'
+            }).then(() => {
+                window.location.reload();
+            });
+        } else {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: data.message || "Something went wrong"
+            });
+        }
+    })
+    .catch(error => {
+        console.error("Error deleting address:", error);
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Server error occurred.'
+        });
+    });
+}
 
-             // Form validation for password change
-        // document.getElementById('newPassword')?.addEventListener('blur', function() {
-        //     const confirmPassword = document.getElementById('confirmPassword');
-        //     if (confirmPassword.value && this.value !== confirmPassword.value) {
-        //         confirmPassword.setCustomValidity('Passwords do notd match');
-        //     } else {
-        //         confirmPassword.setCustomValidity('');
-        //     }
-        // });
-
-        // document.getElementById('confirmPassword')?.addEventListener('input', function() {
-        //     const newPassword = document.getElementById('newPassword');
-        //     if (this.value !== newPassword.value) {
-        //         this.setCustomValidity('Passwords do not vqxkuhvgkumatch');
-        //     } else {
-        //         this.setCustomValidity('');
-        //     }
-        // });
-
-            document.getElementById('changePassword').addEventListener('submit', async (e)=>{
-                e.preventDefault();
-
-               try {
-                 const currentPassword = document.getElementById('currentPassword').value.trim();
+// Setup password change
+function setupPasswordChange() {
+    const changePasswordForm = document.getElementById('changePassword');
+    
+    if (changePasswordForm) {
+        changePasswordForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            try {
+                const currentPassword = document.getElementById('currentPassword').value.trim();
                 const newPassword = document.getElementById('newPassword').value.trim();
                 const confirmPassword = document.getElementById('confirmPassword').value.trim();
-
-                if(newPassword !== confirmPassword){
+                
+                // Validate passwords match
+                if (newPassword !== confirmPassword) {
                     Swal.fire({
-                        icon:'error',
-                        title:"Oops",
-                        text:"Password do not Match",
-                        showConfrimButton:true
-                    })
+                        icon: 'error',
+                        title: 'Oops',
+                        text: 'Passwords do not match',
+                        confirmButtonColor: '#667eea'
+                    });
+                    return;
                 }
-
-                const data = await fetch('/changePassword',{
-                    method:'POST',
-                    headers:{
-                        'Content-Type':'application/json'
+                
+                // Validate password strength
+                if (newPassword.length < 8) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Weak Password',
+                        text: 'Password must be at least 8 characters long',
+                        confirmButtonColor: '#667eea'
+                    });
+                    return;
+                }
+                
+                const response = await fetch('/changePassword', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
                     },
-                    body:JSON.stringify({currentPassword,newPassword,confirmPassword})
-                })
-
-                const response = await data.json();
-
-                if(response.success){
+                    body: JSON.stringify({ currentPassword, newPassword, confirmPassword })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
                     Swal.fire({
-                        icon:'success',
-                        title:'Success',
-                        text:response.message
-                    }).then(()=>{
-                        window.location.reload();
-                    })
-                }else{
+                        icon: 'success',
+                        title: 'Success',
+                        text: data.message,
+                        confirmButtonColor: '#667eea'
+                    }).then(() => {
+                        changePasswordForm.reset();
+                    });
+                } else {
                     Swal.fire({
-                        icon:'error',
-                        title:'Oops',
-                        text:response.message
-                    })
+                        icon: 'error',
+                        title: 'Oops',
+                        text: data.message,
+                        confirmButtonColor: '#667eea'
+                    });
                 }
-               } catch (error) {
-                console.log("error in fecth",error)
-                        Swal.fire({
-                        icon:'error',
-                        title:'ERROR',
-                        text:response.message
-                    })
-               }
+            } catch (error) {
+                console.error("Error changing password:", error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'ERROR',
+                    text: 'Something went wrong. Please try again.',
+                    confirmButtonColor: '#667eea'
+                });
+            }
+        });
+    }
+}
+
+// Setup wallet top-up
+function setupWalletTopUp() {
+    const walletButton = document.getElementById('walletButton');
+    
+    if (walletButton) {
+        walletButton.addEventListener('click', async () => {
+            const { value: amount } = await Swal.fire({
+                title: 'ADD MONEY TO WALLET',
+                input: 'number',
+                inputLabel: 'Enter amount in ₹',
+                inputPlaceholder: 'e.g., 500',
+                showCancelButton: true,
+                confirmButtonText: 'ADD',
+                cancelButtonText: 'Cancel',
+                confirmButtonColor: '#667eea',
+                inputValidator: (value) => {
+                    if (!value || value <= 0) {
+                        return 'Please enter a valid amount';
+                    }
+                    if (value > 100000) {
+                        return 'Maximum amount is ₹1,00,000';
+                    }
+                }
+            });
+            
+            if (amount) {
+                await processWalletTopUp(amount);
+            }
+        });
+    }
+}
+
+// Process wallet top-up
+async function processWalletTopUp(amount) {
+    const userId = document.body.getAttribute('data-user-id') || '';
+    
+    try {
+        const response = await fetch('/wallet-top-up', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ userId, amount })
+        });
+        
+        const data = await response.json();
+        
+        if (!data.orderId) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Something went wrong. Please try again.',
+                confirmButtonColor: '#667eea'
+            });
+            return;
+        }
+        
+        // Razorpay options
+        const options = {
+            'key': data.key,
+            'amount': data.amount,
+            'currency': 'INR',
+            'name': 'HOURLY WATCHES',
+            'description': 'Add to Wallet',
+            'order_id': data.orderId,
+            'handler': function(response) {
+                verifyWalletTopUp(response, amount, userId);
+            },
+            'modal': {
+                'ondismiss': function() {
+                    Swal.fire({
+                        icon: 'info',
+                        title: 'Payment Cancelled',
+                        text: 'You cancelled the payment process',
+                        confirmButtonColor: '#667eea'
+                    });
+                }
+            },
+            'theme': {
+                'color': '#667eea'
+            }
+        };
+        
+        const rzp = new Razorpay(options);
+        rzp.open();
+        
+    } catch (error) {
+        console.error("Error in wallet top-up:", error);
+        Swal.fire({
+            icon: 'error',
+            title: 'ERROR',
+            text: 'Something went wrong',
+            confirmButtonColor: '#667eea'
+        });
+    }
+}
+
+// Verify wallet top-up
+function verifyWalletTopUp(response, amount, userId) {
+    fetch('/verify-wallet-topup', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ ...response, amount, userId })
+    })
+    .then(res => {
+        if (!res.ok) {
+            throw new Error("Network response was not ok");
+        }
+        return res.json();
+    })
+    .then(result => {
+        if (result.success) {
+            Swal.fire({
+                icon: 'success',
+                title: 'Success',
+                text: 'Money added to wallet successfully!',
+                confirmButtonColor: '#667eea'
+            }).then(() => {
+                window.location.reload();
+            });
+        } else {
+            Swal.fire({
+                icon: 'error',
+                title: 'Failed',
+                text: 'Payment verification failed',
+                confirmButtonColor: '#667eea'
+            });
+        }
+    })
+    .catch(err => {
+        console.error("Error in verify-wallet-topup:", err);
+        Swal.fire({
+            icon: 'error',
+            title: 'ERROR',
+            text: 'Something went wrong in verification',
+            confirmButtonColor: '#667eea'
+        });
+    });
+}
+
+// Setup clipboard copy functions
+function setupClipboardCopy() {
+    // These functions are called from inline onclick handlers in your HTML
+    window.copyToClipboard = function() {
+        const referralCode = document.getElementById('clipboardCopy')?.innerText;
+        
+        if (!referralCode) {
+            showToast('Error: Referral code not found');
+            return;
+        }
+        
+        navigator.clipboard.writeText(referralCode)
+            .then(() => {
+                showToast('Referral Code Copied: ' + referralCode);
             })
-      
-      
-      
-      
-            // mobileview toggle
-                document.getElementById('sidebarToggle')?.addEventListener('click', ()=>{
-                    const sidebar = document.getElementById('sidebarMenu')
-                    sidebar.classList.toggle('show')
-                })
-               document.querySelectorAll('.sidebar-link').forEach(link => {
-    link.addEventListener('click', () => {
-        const sidebar = document.getElementById('sidebarMenu');
-        if (window.innerWidth <= 768) {
-            sidebar.classList.remove('show');
+            .catch(err => {
+                console.error("Failed to copy referral code:", err);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Failed to Copy',
+                    text: 'Unable to copy to clipboard',
+                    confirmButtonColor: '#667eea'
+                });
+            });
+    };
+    
+    window.copyToCoupon = function() {
+        // Get the coupon code from the clicked button's parent element
+        const button = event.target;
+        const couponCard = button.closest('.coupon-card');
+        const copyElement = couponCard ? couponCard.querySelector('#copyCoupon, [id^="copyCoupon"]') : null;
+        const couponCode = copyElement ? copyElement.innerText : document.getElementById('copyCoupon')?.innerText;
+        
+        if (!couponCode) {
+            showToast('Error: Coupon code not found');
+            return;
+        }
+        
+        navigator.clipboard.writeText(couponCode)
+            .then(() => {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success',
+                    text: `Successfully copied: ${couponCode}`,
+                    timer: 2000,
+                    showConfirmButton: false,
+                    toast: true,
+                    position: 'top-end'
+                });
+            })
+            .catch(err => {
+                console.error("Failed to copy coupon:", err);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Failed to Copy',
+                    text: 'Unable to copy to clipboard',
+                    confirmButtonColor: '#667eea'
+                });
+            });
+    };
+}
+
+// Show toast notification
+function showToast(message) {
+    const toast = document.getElementById('toast');
+    
+    if (!toast) {
+        console.warn('Toast element not found');
+        return;
+    }
+    
+    toast.innerText = message;
+    toast.className = 'show';
+    
+    setTimeout(() => {
+        toast.className = toast.className.replace('show', '');
+    }, 3000);
+}
+
+// Prevent form submission on enter (except for textareas)
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && e.target.tagName !== 'TEXTAREA' && e.target.type !== 'submit') {
+        const form = e.target.closest('form');
+        if (form) {
+            e.preventDefault();
+        }
+    }
+});
+
+// Handle responsive images - lazy loading
+if ('IntersectionObserver' in window) {
+    const imageObserver = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const img = entry.target;
+                if (img.dataset.src) {
+                    img.src = img.dataset.src;
+                    img.removeAttribute('data-src');
+                    observer.unobserve(img);
+                }
+            }
+        });
+    });
+    
+    document.querySelectorAll('img[data-src]').forEach(img => {
+        imageObserver.observe(img);
+    });
+}
+
+// Smooth scroll for anchor links
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function(e) {
+        const href = this.getAttribute('href');
+        if (href !== '#' && href.length > 1) {
+            e.preventDefault();
+            const target = document.querySelector(href);
+            if (target) {
+                target.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
         }
     });
 });
 
-// ---------------------------add money to wallet -----------------------------
-    document.getElementById('walletButton').addEventListener('click',async()=>{
-        const {value:amount} = await Swal.fire({
-            title:"ADD MONEY TO WALLET",
-            input:'number',
-            inputLabel:'Enter amount in rs',
-            inputPlaceholder:"Eg: 500",
-            showCancelButton:true,
-            confirmButtonText:'ADD',
-            cancelButtonText:'Cancel',
-            inputValidator:(value)=>{
-                if(!value || value<=0){
-                    return "Please Enter a Valid Amount";
-                }
-            }
-        });
+// Add loading state to buttons
+function addButtonLoadingState(button, isLoading = true) {
+    if (isLoading) {
+        button.disabled = true;
+        button.dataset.originalText = button.innerText;
+        button.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Loading...';
+    } else {
+        button.disabled = false;
+        button.innerHTML = button.dataset.originalText || button.innerText;
+    }
+}
 
-        if(amount){
-            const userId = '<%= user._id%>';
-            try { 
-                
-                const response = await fetch('/wallet-top-up',{
-                    method:'POST',
-                    headers:{
-                        'Content-Type':'application/json'
-                    },
-                    body:JSON.stringify({userId,amount})
-                });
-               
-                    const data = await response.json()
-     
-                    if(!data.orderId){
-                        Swal.fire('Error','Something Went Wrong ,Please try again')
-                    }
-                     
-                    var options = {
-                        'key' : data.key,
-                        'amount':data.amount,
-                        'currency':'INR',
-                        'name':'HOURLY WATCHES',
-                        'description':'Add to Wallet',
-                        'order_id':data.orderId,
-                        'handler':function(response){
-                            fetch('/verify-wallet-topup',{
-                                method:'POST',
-                                headers:{
-                                    'Content-Type':'application/json'
-                                },
-                                body:JSON.stringify({...response,amount,userId})
-                            })
-                            .then(res => {
-                                 if(!res.ok){
-                                throw new Error("Network response was not ok")
-                                 } 
-                                 return res.json();
-                            })
-                            .then(result =>{
-                                
-                                if(result.success){
-                                    Swal.fire('Success',"Money Added To wallet",'success').then(()=>{
-                                        window.location.reload()
-                                    })
-                                }else{
-                                    Swal.fire('Failed','Payment Verification Failed','error')
-                                }
-                              })
-                              .catch(err =>{
-                                        console.error("Error in verify-wallet-topup:", err);
-                                        Swal.fire("OOPS","Something Went Wrong in verification",'error');
-                                    });
-                        },
-                        // 'theme':{'color':'#3399cc'}
-                    };
-                    var rzp1 = new Razorpay(options);
-                    rzp1.open();
+// Handle network errors gracefully
+window.addEventListener('online', () => {
+    showToast('Connection restored');
+});
 
-            } catch (error) {
-                console.log("errror in the razorpay verification",error);
-                Swal.fire("OoOPS","Something Went Wrong",'error')
-                
-            }
+window.addEventListener('offline', () => {
+    showToast('No internet connection');
+});
+
+// Debounce function for performance
+function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+        const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+    };
+}
+
+// Add resize handler with debounce
+const handleResize = debounce(() => {
+    // Add any resize-specific logic here
+    if (window.innerWidth > 768) {
+        closeMobileSidebar();
+    }
+}, 250);
+
+window.addEventListener('resize', handleResize);
+
+// Prevent double submission of forms
+document.querySelectorAll('form').forEach(form => {
+    form.addEventListener('submit', function() {
+        const submitBtn = this.querySelector('button[type="submit"]');
+        if (submitBtn && !submitBtn.disabled) {
+            addButtonLoadingState(submitBtn, true);
+            setTimeout(() => {
+                addButtonLoadingState(submitBtn, false);
+            }, 5000); // Reset after 5 seconds as fallback
         }
-        
-    });  
-    function copyToClipboard(){
-        const referralCode = document.getElementById('clipboardCopy').innerText;
+    });
+});
 
-        navigator.clipboard.writeText(referralCode)
-        .then(()=>{
-           showToast('Referral Code Copied'+referralCode)
-        })
-        .catch(err=>{
-            console.log("Failed to copy in copyclipboard",err)
-            Swal.fire({
-                icon:'error',
-                title:'Failed to Copy'
-            })
-        })
-    }
-    function showToast(message){
-        const toast = document.getElementById('toast')
-        toast.innerText = message;
-        toast.className = 'show';
+// Add touch feedback for mobile
+if ('ontouchstart' in window) {
+    document.querySelectorAll('.btn, .btn-small, .sidebar-link, .card').forEach(element => {
+        element.addEventListener('touchstart', function() {
+            this.style.opacity = '0.8';
+        });
+        element.addEventListener('touchend', function() {
+            this.style.opacity = '1';
+        });
+    });
+}
 
-        setTimeout(()=>{
-            toast.className = toast.className.replace('show','')
-        },3000)
-    }
-
-    function copyToCoupon(){
-        const copy = document.getElementById('copyCoupon').innerText;
-
-        navigator.clipboard.writeText(copy)
-        .then(()=>{
-            Swal.fire({
-                icon:'success',
-                title:'Success',
-                text:`Succeesfully copied ${copy}`,
-
-            })
-        })
-        .catch(err=>{
-            console.log("error in copy ",err)
-            Swal.fire({
-                icon:'error',
-                title:'Failed to copy'
-            })
-
-        })
-    }
     </script>
    
 </body>

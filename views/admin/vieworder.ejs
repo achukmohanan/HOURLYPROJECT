@@ -159,7 +159,7 @@
                                     </select>
                                 </div>
                                 <div class="col-md-6">
-                                   <% if(order.status === 'Return Requested'){%>
+                                   <% if(order.status === 'Return Requested' || order.orderedItems.some(status => status.status==='Return Requested')){%>
                                      <button class="btn btn-success mt-4" onclick="approveRequest(true)">
                                         <i class="bi bi-check2-circle"></i> Approve Request
                                     </button>

@@ -122,7 +122,7 @@ router.post(
   userAuth,
   orderController.cancelOrder
 );
-router.post("/return-order/:id", userAuth, orderController.returnOrder);
+router.post("/return-order/:orderId/:itemId", userAuth, orderController.returnOrder);
 router.get("/viewOrderDetails/:id", userAuth, orderController.viewOrderDetails);
 router.get("/invoice/:id", invoiceController.invoice);
 

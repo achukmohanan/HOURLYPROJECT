@@ -217,34 +217,33 @@ const cancelOrder = async (req,res) =>{
 }
 const returnOrder = async(req,res) =>{
     try {
-        const {id} = req.params
+        // console.log("req.params",req.params);
+        const {orderId,itemId} = req.params
         const {reason} = req.body;
         
-        let   order = await Order.findOne({orderId:id}).populate('userId');
+        let  order = await Order.findOne({orderId:orderId}).populate('userId');
         if(!order){
             return res.status(STATUS_CODE.NOT_FOUND).json({success:false,message:"Order is not Found"})
         }
+
+        const item =  order.orderedItems.find(i => i._id.toString() === itemId);
+        // console.log("item found in return order",item)
+
+        if(!item){
+            return res.status(STATUS_CODE.NOT_FOUND).json({success:false,message:"Item not Found in the Order"})
+        }
+        if(item.status !== 'Delivered'){
+            return res.status(STATUS_CODE.BAD_REQUEST).json({success:false,message:"Only Delievered items can be returned"})
+        }
+
+        item.status = 'Return Requested';
+ 
         order.returnRequest={
             requested:true,
             requestedAt:new Date(),
             verified:false
         }
-         order.orderedItems.forEach(item =>{
-            if(item.status === 'Delivered'){
-                item.status = "Return Requested" 
-            }else if(item.status === 'Return Requested'){
-            order.status = 'Return Requested'
-           }
-        });
-            
-        const totalDelivered = order.orderedItems.filter(item=> item.status === 'Delivered').length;
-        const totalReturnRequest = order.orderedItems.filter(item => item.status === 'Return Requested').length;
-        if(totalDelivered === 0 && totalReturnRequest > 0){
-            order.status = "Return Requested";
-        }else if(totalDelivered > 0 && totalReturnRequest > 0){
-            order.status = "Partially Returned"
-        }
-           
+          
         order.returnReason = reason;
         await order.save();   
        return res.json({ success: true,message:"Return request submitted",order });
@@ -267,7 +266,7 @@ const returnOrder = async(req,res) =>{
                ).lean();
                order.fullAddress = parent?.address
            }
-console.log("orders ",orders)
+// console.log("orders ",orders)
            return res.render('user/orderView',{orders})
        } catch (error) {
            console.log("error in the viewOrderDetails ",error);
