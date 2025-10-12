@@ -36,9 +36,10 @@ const postPayment = async (req,res) =>{
         },0)
 
         let disamount = (discount/100)*total;
+        disamount = parseFloat(disamount.toFixed(2));
         console.log("discount is =",disamount)
         total=total-disamount;
-
+        total = parseFloat(total.toFixed(2));
         console.log("total is total",total)
         const orderData = {
             findUser,
