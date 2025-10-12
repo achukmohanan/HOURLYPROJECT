@@ -159,14 +159,18 @@
                                     </select>
                                 </div>
                                 <div class="col-md-6">
-                                   <% if(order.status === 'Return Requested' || order.orderedItems.some(status => status.status==='Return Requested')){%>
-                                     <button class="btn btn-success mt-4" onclick="approveRequest(true)">
-                                        <i class="bi bi-check2-circle"></i> Approve Request
+                                    <!-- -------------return request-------------- -->
+                                    <% order.orderedItems.forEach(item =>{ %>
+                                   <% if(item.status === 'Return Requested'){%>
+                                     <button class="btn btn-success mt-4" onclick="approveRequest('<%= item._id %>',true)">
+                                        <i class="bi bi-check2-circle"></i> Approve Return Request
                                     </button>
-                                    <button class="btn btn-success mt-4" onclick="approveRequest(false)">
-                                        <i class="bi bi-x-circle"></i></i> Reject Request
+                                    <button class="btn btn-success mt-4" onclick="approveRequest('<%= item._id %>',false)">
+                                        <i class="bi bi-x-circle"></i></i> Reject Return Request
                                     </button>
                                    <%} %>
+                                    <% }) %>
+        <!-- ------------------------cancel request--------------- -->
                                    <% order.orderedItems.forEach(item =>{%>
                                        <% if(item.status === "Cancellation Requested"){ %>
                                     <button class="btn btn-success mt-4" onclick="handleCancelRequest('<%=order.orderId %>','<%= item._id %>','approve')">
@@ -334,7 +338,7 @@
                         </div>
                         <div class="card-body">
                             <div class="d-flex justify-content-between">    
-                            <span> <strong>Reason is : </strong><%= order.returnReason%></span>
+                            <span> <strong>Return Reason is : </strong><%= order.returnReason%></span>
                             </div>
                             <% order.orderedItems.forEach(item => { %>
                                 <span> <strong>Cancel Reason for the product  : </strong><%= item.cancelRequest.reason %> </span><br>
@@ -493,11 +497,11 @@
            
         }
 
-       async function approveRequest(approve){
-            
+       async function approveRequest(itemId,approve){
+            alert("approve request invoked")
             const orderId = "<%= order.orderId %>";
             try {
-                const response = await fetch(`/admin/returnRequest/${orderId}`,{
+                const response = await fetch(`/admin/returnRequest/${orderId}/${itemId}`,{
                     method:'PUT',
                     headers:{
                         'Content-Type':'application/json'

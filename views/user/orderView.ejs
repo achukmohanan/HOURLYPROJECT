@@ -79,7 +79,7 @@
                                     </span>
                                     </h6>
                                     
-                               <% if(!(item.status === 'Cancelled' ||order.status === 'Delivered' || item.status === "Returned" ||item.status ==='Return Approved'||item.status ==='Return Requested' || item.status === 'Cancellation Requested' )){ %>
+                               <% if(!(item.status === 'Cancelled' ||order.status === 'Delivered' || item.status === "Returned" ||item.status ==='Return Approved'||item.status ==='Return Requested' || item.status === 'Cancellation Requested' ||order.status === 'Returned' ||item.status === 'Delivered')){ %>
                                  <button type="button" 
                                         class="btn btn-danger mt-2" 
                                         

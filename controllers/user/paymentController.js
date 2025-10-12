@@ -37,7 +37,7 @@ const postPayment = async (req,res) =>{
 
         let disamount = (discount/100)*total;
         console.log("discount is =",disamount)
-        total=total-(20/100) * total;
+        total=total-disamount;
 
         console.log("total is total",total)
         const orderData = {

@@ -171,7 +171,7 @@ const orderSuccess = async(req,res) =>{
 const cancelOrder = async (req,res) =>{
     try {
         const { orderId,itemId } = req.params;
-        console.log("req.body is testing ",req.body)
+        // console.log("req.body is testing ",req.body)
         const {action,reason,discount} = req.body;
         
         const userId = req.session.user;
