@@ -257,8 +257,8 @@ const getEditProduct = async (req,res)=>{
         })
 
     } catch (error) {
+        console.log("error in the get edit page ",error)
         res.redirect('/pageerror');
-        
         
     }
 }
@@ -267,6 +267,7 @@ const editProduct = async (req,res) =>{
     try {
         const id = req.params.id;
         const product = await Product.findOne({_id:id});
+        console.log("req.body is",req.body)
         const data = req.body;
         const existingProduct = await Product.findOne({
             productName:data.productName,
@@ -286,7 +287,7 @@ const editProduct = async (req,res) =>{
             productName:data.productName,
             description:data.description,
             brand:data.brand,
-            category:product.category,
+            category:data.category,
             regularPrice:data.regularPrice,
             salePrice:data.salePrice,
             quantity:data.quantity,

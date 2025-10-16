@@ -302,7 +302,7 @@ const confirmwithotp = async (req, res) => {
                         code:generateCouponCode(refer._id),
                         purpose:'Referral',
                         discountType:'percentage',
-                        discountValue:500,
+                        discountValue:10,
                         maxDiscount:500,
                         description:"Referral Reward",
                         limit:1,

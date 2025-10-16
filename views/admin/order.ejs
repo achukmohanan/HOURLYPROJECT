@@ -124,7 +124,7 @@
                                 <option value="Processing">Processing</option>
                                 <option value="Shipped">Shipped</option>
                                 <option value="Delivered">Delivered</option>
-                                <option value="Cancelled">Cancelled</option>
+                                <!-- <option value="Cancelled">Cancelled</option> -->
                             </select>
                         </div>
                     <div class="col-md-3">
@@ -142,14 +142,6 @@
                         <div class="input-group">
                             <input type="text" class="form-control" id="searchInput" placeholder="Search by Order ID, Customer Name...">
                             <button class="btn btn-primary" type="button"><i class="fas fa-search"></i></button>
-                        </div>
-                    </div>
-                     <div class="col-md-2">
-                        <label class="form-label fw-bold">&nbsp;</label>
-                        <div class="d-grid">
-                            <button class="btn btn-success" onclick="refreshOrders()">
-                                <i class="fas fa-sync-alt me-2"></i>Refresh
-                            </button>
                         </div>
                     </div>
                 </div>
@@ -302,31 +294,8 @@
             });
         }
 })
-        // function filterOrders() {
-        //     const statusFilter = document.getElementById('statusFilter').value;
-        //     const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-            
-        //     currentOrders = sampleOrders.filter(order => {
-        //         const matchesStatus = !statusFilter || order.status === statusFilter;
-        //         const matchesSearch = !searchTerm || 
-        //             order.id.toLowerCase().includes(searchTerm) ||
-        //             order.customer.toLowerCase().includes(searchTerm) ||
-        //             order.email.toLowerCase().includes(searchTerm);
-                
-        //         return matchesStatus && matchesSearch;
-        //     });
-
-        //     currentPage = 1;
-        //     loadOrders();
-        // }
-
-        
-       
-     function refreshOrders() {
-           window.location.reload()
-        }
-
-     
+  
+ 
     </script>
    
 </body>

@@ -23,13 +23,18 @@ const postPayment = async (req,res) =>{
 
         const findUser = await User.findById(userId);
         
-       
-
+        
         const cart = await Cart.findOne({userId}).populate('items.productId')
         if(!cart || !cart.items.length){
             res.redirect('/cart')
         }
         
+        const outofstock = cart.items.filter(
+            (item)=>item.productId.quantity < 1
+        );  
+        if(outofstock.length > 0){
+            return ;
+        }
 
         let total = cart.items.reduce((sum,item)=>{
            return sum + item.productId.salePrice * item.quantity

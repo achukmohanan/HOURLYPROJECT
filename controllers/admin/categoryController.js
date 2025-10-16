@@ -21,13 +21,15 @@ const categoryInfo  = async (req,res)=>{
         const totalCategories = await Category.countDocuments(search ? searchResult : {});
         const totalPages = Math.ceil(totalCategories/limit);
 
+        const noResult =  categoryData.length === 0;
         res.render('admin/category',{
          
             cat: categoryData,
             currentPage:page,
             totalPages:totalPages,
             totalCategories:totalCategories,
-            searchValue:search  
+            searchValue:search,
+            noResult  
         })
     } catch (error) {
         console.log("error happend in categoryInfo",error);

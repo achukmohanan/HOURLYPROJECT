@@ -80,6 +80,7 @@ const forgotEmailOtp = async (req, res) => {
         const findUser = await User.findOne({ email: email });
         console.log('Email:', email);
         
+        
         if (findUser) {
             const otp = generateOtp();
             const emailSent = await sendVerificationEmail(email, otp);
@@ -95,9 +96,9 @@ const forgotEmailOtp = async (req, res) => {
                 res.json({ success: false, message: "Failed to send OTP. Please try again" });
             }
         } else {
-            res.render('user/forgotpassword', {
-                message: "User with this email does not exist"
-            });
+            
+            return  res.status(STATUS_CODE.NOT_FOUND).json({success:false,message: "User with this email does not exist"});
+            
         }
     } catch (error) {
         console.log("Error happened in post route:", error);

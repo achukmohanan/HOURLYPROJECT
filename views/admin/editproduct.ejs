@@ -230,9 +230,12 @@
                                 <div class="row">
                                     <div class="col-lg-6 mb-4">
                                         <label class="form-label">Brand</label>
-                                        <select class="form-select" name="brand">
+                                        <select class="form-select" name="brand">   
                                             <% for(let i=0; i<brand.length; i++) { %>
-                                            <option value="<%= brand[i].brandName %>"><%=brand[i].brandName %></option>
+                                            <option value="<%= brand[i].brandName %>"
+                                                <%if(product.brand === brand[i].brandName) { %> selected  <% }   %>>
+                                                <%=brand[i].brandName %>
+                                            </option>
                                             <%}%>
                                         </select>
                                         <div id="brand-error" class="error-message"></div>
@@ -241,7 +244,10 @@
                                         <label class="form-label">Category</label>
                                         <select class="form-select" name="category">
                                             <% for(let i=0; i<cat.length; i++){ %>
-                                            <option value="<%=cat[i].name%> "><%= cat[i].name %></option>
+                                            <option value="<%=cat[i]._id %>"
+                                                <%= (product.category.toString() === cat[i]._id.toString()) ?  'selected' : ''   %>>
+                                                <%= cat[i].name %>
+                                            </option>
                                             <%}%>
                                         </select>
                                         <div id="category-error" class="error-message"></div>

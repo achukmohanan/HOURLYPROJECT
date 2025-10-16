@@ -552,7 +552,10 @@
                 Swal.fire({
                     icon:'success',
                     title:'Copied !',
-                    text:`Successfully Copied ${code}`
+                    text:`Successfully Copied ${code}`,
+                    toast:true,
+                    position:'top-right',
+                    showConfirmButton:false
                 })
             })
             .catch(err=>{

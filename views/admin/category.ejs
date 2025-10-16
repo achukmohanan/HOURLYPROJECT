@@ -201,6 +201,12 @@
             margin-bottom: 0;
         }
 
+        .no-results {
+  color: #999;
+  font-size: 18px;
+  padding: 20px;
+  text-align: center;
+}
         .search-section {
             background: white;
             border-radius: 10px;
@@ -421,13 +427,18 @@
         <div class="search-section">
             <form action="/admin/category" method="get" class="search-form">
                 <div class="input-group">
-                    <input type="text" class="form-control" placeholder="Search categories..." name="search" value="<%= typeof searchValue !== 'undefined' ? searchValue : '' %>"/>
+                    <input type="text" class="form-control" placeholder="Search categories..." name="search" />
 
                     <button class="btn" type="submit">
                         <i class="fas fa-search"></i> Search
                     </button>
                 </div>
             </form>
+            <% if(noResult){ %>
+                <div class="no-results" style="text-align:center; margin-top:20px;">
+    <h4>No categories found for "<%= searchValue %>"</h4>
+  </div>
+            <% } %>
         </div>
 
         <!-- Category Management Card -->
@@ -476,6 +487,8 @@
                                     </tr>
                                 </thead>
                                 <tbody>
+                                    <%if(cat){%>
+
                                     <%cat.reverse().forEach((category,index)=>{%>
 
                     <tr>
@@ -524,6 +537,9 @@
                         </td>
                     </tr>
                     <%})%>
+                <% }else{ %>
+                    
+               <% } %>
 
                                 </tbody>
                             </table>
@@ -534,17 +550,7 @@
         </div>
 
         <!-- Pagination -->
-        <!-- <div class="pagination-container">
-            <div class="pagination">
-               <% if (currentPage > 1) { %>
-      <a href="?page=<%= currentPage - 1 %>">&laquo; Previous</a>
-      <% } %>
-                <span class="current-page">1</span>
-                <a href="#">2</a>
-                <a href="#">3</a>
-                <a href="#">Next &raquo;</a>
-            </div>
-        </div> -->
+      
         <div class="pagination-container">
       <% if (currentPage > 1) { %>
         <div class="pagination">
@@ -578,15 +584,7 @@
 
 
     <script>
-        // const menuToggle2 = document.getElementById('menuToggle2');
-        // const sidebar = document.getElementById('sidebar');
-        // const mainContent = document.getElementById('mainContent');
-
-        // menuToggle2.addEventListener('click', function() {
-        //     sidebar.classList.toggle('collapsed');
-        //     mainContent.classList.toggle('expanded');
-        // });
-        // Form submission handler
+    
         function handleFormSubmit(event) {
             event.preventDefault();
             if (!validateForm()) {
@@ -649,6 +647,9 @@
                 isValid = false;   
             } else if (!/^[a-zA-Z\s]+$/.test(name)) {
                 displayErrorMessage("name-error", "Category name should contain only alphabetic characters");
+                isValid = false;
+            }else if(name.length >=16){
+                displayErrorMessage("name-error", "Category name cannot exceed 15 letters");
                 isValid = false;
             }
             

@@ -91,10 +91,8 @@ router.post("/updateEmail", userAuth, profileEditing.postUpdateEmail);
 //product management
 router.get("/productDetails", productController.productDetails);
 router.get("/shop",productController.loadShoppingpage);
-router.get("/filter", productController.filterProduct);
-router.get("/filterPrice", productController.filterByPrice);
-router.get("/search", productController.searchProducts);
-// router.get('/shop/sort',productController.sortProducts);
+
+
 // cart
 router.get("/cart", cartController.getCart);
 router.post("/addtocart", cartController.addToCart);

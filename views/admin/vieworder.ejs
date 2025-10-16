@@ -195,67 +195,7 @@
                 </div>
             </div>
 
-            <!-- Order Progress Timeline -->
-            <div class="row mb-4">
-                <div class="col-12">
-                    <div class="card">
-                        <div class="card-header">
-                            <h5 class="mb-0"><i class="fas fa-route me-2"></i>Order Progress</h5>
-                        </div>
-                        <div class="card-body">
-                            <div class="row" id="progressTimeline">
-                                <div class="col progress-step completed">
-                                    <div class="position-relative">
-                                        <div class="step-icon">
-                                            <i class="fas fa-check"></i>
-                                        </div>
-                                        <div class="timeline-line completed"></div>
-                                    </div>
-                                    <small class="fw-bold">Order Placed</small>
-                                    <br><small class="text-muted"><%= order.createdOn.toLocaleDateString('en-IN') %></small>
-                                </div>
-                                <div class="col progress-step completed">
-                                    <div class="position-relative">
-                                        <div class="step-icon">
-                                            <i class="fas fa-cog"></i>
-                                        </div>
-                                        <div class="timeline-line completed"></div>
-                                    </div>
-                                    <small class="fw-bold">Processing</small>
-                                    <!-- <br><small class="text-muted">Mar 15, 4:45 PM</small> -->
-                                </div>
-                                <div class="col progress-step active">
-                                    <div class="position-relative">
-                                        <div class="step-icon">
-                                            <i class="fas fa-shipping-fast"></i>
-                                        </div>
-                                        <div class="timeline-line"></div>
-                                    </div>
-                                    <small class="fw-bold">Shipped</small>
-                                    <!-- <br><small class="text-muted">Mar 16, 10:20 AM</small> -->
-                                </div>
-                                <div class="col progress-step">
-                                    <div class="position-relative">
-                                        <div class="step-icon">
-                                            <i class="fas fa-truck"></i>
-                                        </div>
-                                        <div class="timeline-line"></div>
-                                    </div>
-                                    <small class="fw-bold">Out for Delivery</small>
-                                    <!-- <br><small class="text-muted">Pending</small> -->
-                                </div>
-                                <div class="col progress-step">
-                                    <div class="step-icon">
-                                        <i class="fas fa-home"></i>
-                                    </div>
-                                    <small class="fw-bold">Delivered</small>
-                                    <!-- <br><small class="text-muted">Pending</small> -->
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            
 
             <div class="row">
                 <!-- Customer Information -->
@@ -279,9 +219,6 @@
                         </div>
                         <div class="card-body">
                             <p><strong>Payment Method : </strong><%= order.paymentMethod %></p>
-                            <!-- <p><strong>Payment Status:</strong> <span class="badge bg-<%= order.paymentStatus === 'Paid' ? 'success' : 'warning' %>"><%= order.paymentStatus %></span></p> -->
-                            <!-- <p><strong>Transaction ID:</strong> <%= order.transactionId %></p> -->
-                            <!-- <p><strong>Payment Date:</strong><%= order.paymentDate ? order.paymentDate.toLocaleDateString("en-IN") : "-" %> </p> -->
                         </div>
                     </div>
                 </div>
@@ -317,10 +254,7 @@
                                 <span>Shipping:</span>
                                 <span>free</span>
                             </div>
-                            <!-- <div class="d-flex justify-content-between">
-                                <span>Tax:</span>
-                                <span>$7.20</span>
-                            </div> -->
+                            
                             <hr>
                             <div class="d-flex justify-content-between fw-bold">
                                 <span>Total:</span>
@@ -342,10 +276,7 @@
                             </div>
                             <% order.orderedItems.forEach(item => { %>
                                 <span> <strong>Cancel Reason for the product  : </strong><%= item.cancelRequest.reason %> </span><br>
-                            <% }) %>
-                            
-
-                            
+                            <% }) %>  
                         </div>
                     </div>
             <!-- ---------------------------------------------- -->
@@ -409,48 +340,8 @@
             console.log('Order view page loaded');
         });
 
-        function updateTimeline(status) {
-        const steps = document.querySelectorAll(".progress-step");
-
-        steps.forEach(step => step.classList.remove("completed", "active"));
-
-        const statusOrder = ["Pending","Processing","Shipped","Delivered","Cancelled","Return Requested","Returned","Out-for-delivery","Payment-failed"];
-
-        let index = statusOrder.indexOf(status);
-
-        steps.forEach((step, i) => {
-            if (i < index) {
-                step.classList.add("completed");
-            } else if (i === index) {
-                step.classList.add("active");
-            }
-        });
-    }
-        function updateOrderStatus() {
-            const statusSelect = document.getElementById('orderStatus');
-            const selectedStatus = statusSelect.value;
-            const statusBadge = document.querySelector('.status-badge');
-            
-            // Update status badge
-            statusBadge.className = 'status-badge status-' + selectedStatus;
-            
-            // Update badge text and icon based on status
-            const statusInfo = {
-                'pending': { text: 'Pending', icon: 'fas fa-clock' },
-                'processing': { text: 'Processing', icon: 'fas fa-cog' },
-                'shipped': { text: 'Shipped', icon: 'fas fa-shipping-fast' },
-                'out-for-delivery': { text: 'Out for Delivery', icon: 'fas fa-truck' },
-                'delivered': { text: 'Delivered', icon: 'fas fa-check-circle' },
-                'payment-failed': { text: 'Payment Failed', icon: 'fas fa-exclamation-triangle' },
-                'cancelled': { text: 'Cancelled', icon: 'fas fa-times-circle' },
-                'return-request': { text: 'Return Request', icon: 'fas fa-undo' },
-                'returned': { text: 'Returned', icon: 'fas fa-arrow-left' }
-            };
-            
-            if (statusInfo[selectedStatus]) {
-                statusBadge.innerHTML = `<i class="${statusInfo[selectedStatus].icon} me-2"></i>${statusInfo[selectedStatus].text}`;
-            }
-        }
+        
+       
 // --------------
       async  function saveStatusUpdate() {
             const statusSelect = document.getElementById('orderStatus');
@@ -472,11 +363,10 @@
                     title:'Success',
                     text:data.message,
 
-                }).then(()=>{
+                })
+                .then(()=>{
                     window.location.reload()
                 })
-                updateOrderStatus();
-                updateTimeline(selectedStatus)
             }else{
                 Swal.fire({
                     icon:'error',
@@ -486,19 +376,18 @@
                 })
             }
           } catch (error) {
-              console.log("error in frontend view order admin ",error)
-              alert("errror in frontend view Order")
+            console.log("error in frontend view order admin ",error)
             Swal.fire({
                 icon:'error',
                 title:'ERROR',
-                text:data.message || "Internal server error"
+                text: "Internal server error"
             })
           }
            
         }
 
        async function approveRequest(itemId,approve){
-            alert("approve request invoked")
+            
             const orderId = "<%= order.orderId %>";
             try {
                 const response = await fetch(`/admin/returnRequest/${orderId}/${itemId}`,{
