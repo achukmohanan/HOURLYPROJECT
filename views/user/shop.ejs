@@ -265,15 +265,16 @@
     .add-to-cart-btn {
       background: linear-gradient(135deg, #1e918b 0%, #0d7a78 100%);
       color: #fff;
-      padding: 12px 20px;
+      padding: 12px 12px;
       border: none;
       border-radius: 10px;
       cursor: pointer;
-      width: 100%;
-      margin-top: auto;
+      width: calc(100% - 10px);
+      margin: 10px auto;
       transition: all 0.3s ease;
       font-weight: 600;
       font-size: 14px;
+     
     }
 
     .add-to-cart-btn:hover:not(:disabled) {
@@ -372,11 +373,13 @@
       background: #ffe0e0;
       color: #d32f2f;
       font-weight: bold;
-      padding: 10px 16px;
+      padding: 12px;
       border-radius: 8px;
       display: inline-block;
-      margin-top: 10px;
+      width: calc(100% - 10px);
+      margin: 10px auto;
       font-size: 13px;
+      text-align: center;
     }
 
     .results-bar {
@@ -953,7 +956,7 @@
 
         <div class="product-list-container">
           <aside class="sidebar" id="filterSidebar"> 
-            <form action="/shop" method="get" >
+            <form action="/shop" method="get" id="filterForm">
             <div class="filter-section">
               <div class="filter-title">Categories</div>
               <div class="category-brand-container">
@@ -1015,8 +1018,9 @@
                   </label>
                 </div>
               </div>
-              <div class="filter-action">
-                <button class="btn btn-dark mx-5" type="submit"> Apply Filter </button>
+              <div class="filter-action mt-3">
+                <button class="btn btn-dark mx-5 my-3" type="submit"> Apply Filter </button>
+                <button id="clearFilterBtn" class="btn btn-outline-secondary mx-5  " type="button" style="display:   none;">Clear Filter </button>
               </div>
             </form>
           </aside>
@@ -1048,7 +1052,7 @@
                   </a>
                   <% if(user) { %>
                     <% if(products[i].quantity > 0) { %>
-                      <button class="add-to-cart-btn" data-productId="<%= products[i]._id %>" type="button">Add to Cart</button>
+                      <button class="add-to-cart-btn " data-productId="<%= products[i]._id %>" type="button">Add to Cart</button>
                     <% } else { %>
                       <span class="outofstock">Out of Stock</span>
                     <% } %> 
@@ -1206,6 +1210,39 @@
     }
 
     feather.replace();
+
+    document.addEventListener('DOMContentLoaded',function(){
+      // alert("eluywhj")
+      const filterForm = document.getElementById('filterForm');
+      const clearBtn = document.getElementById('clearFilterBtn');
+      const inputs = filterForm.querySelectorAll("input[name='category'],input[name='brand'],input[name='price']");
+
+      //funciton to check if any filter is applied
+      function checkFilter(){
+        let anySelected = false;
+        inputs.forEach(input =>{
+          if((input.type === 'checkbox' || input.type === 'radio') && input.checked){
+            anySelected = true;
+          }
+        });
+        clearBtn.style.display = anySelected ? "inline-block" : "none";
+      }
+      // add event listener to all inputs 
+      inputs.forEach(input =>{
+        input.addEventListener('change',checkFilter)
+      });
+
+      //On Clear button click — uncheck all filters instantly
+      clearBtn.addEventListener('click',function(){
+        inputs.forEach(input=> input.checked = false)
+            clearBtn.style.display = "none";
+            window.location.href = '/shop'
+        
+      });
+      // Run once when page loads (for pre-checked filters)
+      checkFilter()
+// 
+    })
   </script>
   
   <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@300;700&display=swap" rel="stylesheet">
