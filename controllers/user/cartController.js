@@ -206,7 +206,7 @@ const getCheckOut = async (req,res) =>{
                 {userId:{$in:[userId]}},
                 {userId:{$size:0}}
             ]
-        })
+        }).sort({expireOn:-1})
 
         return res.render('user/checkout',{
             coupons,

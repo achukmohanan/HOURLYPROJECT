@@ -375,11 +375,15 @@
 
   <% if (coupons.length > 0) { %>
     <div class="d-flex flex-wrap gap-3">
-      <% coupons.forEach(coupon => { %>
-        <div class="coupon-card">
+      <% coupons.forEach(coupon => { 
+       let isExpired = new Date(coupon.expireOn) < new Date()  %>
+        <div class="coupon-card <%= isExpired ? 'expired-coupon' : '' %>">
           <p  class="coupon-code"><%= coupon.code %></p>
+          <%if(!isExpired && totalPrice > coupon.minPurchase ){%>
           <button type="button" onClick="copyClip('<%= coupon.code %>')">📋</button>
+         <% } %>
           <small><%= coupon.description %></small><br>
+          <small><%= coupon.minPurchase.toLocaleString('en-IN',{style:'currency',currency:'INR'}    )%></small><br>
           <small>Expires: <%= coupon.expireOn.toDateString() %></small>
         </div>
       <% }) %>

@@ -104,7 +104,7 @@
                             <th>Code</th>
                             <th>Coupon type</th>
                             <th>minimum purchase</th>
-                            <th>Maximum discount</th>
+                            <!-- <th>Maximum discount</th> -->
                             <th>Usage Limit</th>
                             <th>Created On</th>
                             <th>Expiry Date</th>
@@ -120,7 +120,7 @@
                             <td><strong><%= c.code %></strong></td>
                             <td><%= c.discountType %></td>
                             <td><%= c.minPurchase %></td>
-                            <td><%= c.maxDiscount %></td>
+                            <!-- <td><%= c.maxDiscount %></td> -->
                             <td><%= c.limit%></td>
                             <td><%= c.createdOn.toLocaleDateString('en-GB') %></td>
                             <td><%= c.expireOn.toLocaleDateString('en-GB') %></td>
@@ -173,20 +173,18 @@
                     </div>
                     <div class="col-md-3 mb-3">
                         <label class="form-label">DiscountType Type</label>
-                        <select name="discountType" class="form-select" required>
-                        <option value="percentage">Percentage</option>
-                        
-                        </select>
+                        <input type="text" name="discountType" class="form-control"   value="percentage" readonly>
+                 
                     </div>
                     <div class="col-md-3 mb-3">
                         <label class="form-label">Discount Percentage</label>
                         <input type="number" name="discountValue" class="form-control" placeholder="Enter discount value" required>
                     </div>
 
-                    <div class="col-md-3 mb-3">
+                    <!-- <div class="col-md-3 mb-3">
                         <label class="form-label">Max Discount Value</label>
                         <input type="number" name="maxDiscount" class="form-control" placeholder="Enter max discount">
-                    </div>
+                    </div> -->
                     <div class="col-md-3 mb-3">
                         <label class="form-label">Description</label>
                         <input type="text" name="description" class="form-control" placeholder="Enter description">

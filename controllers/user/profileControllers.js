@@ -216,7 +216,20 @@ const userProfile = async (req,res) =>{
         const userId =    req.session.user;  
         const userData = await User.findById(userId)
         const addressData = await Address.findOne({userId:userId});
-        const orders = await Order.find({userId:req.session.user }).populate('orderedItems.product').sort({createdOn:-1})
+
+        //orders
+        const orderPage = parseInt(req.query.orderPage) || 1;
+        const orderLimit = 3;
+        const orderSkip = (orderPage-1)*orderLimit
+        
+        const totalOrders = await Order.countDocuments({userId:userId})  
+        const orders = await Order.find({userId:userId })
+        .populate('orderedItems.product')
+        .sort({createdOn:-1})
+        .skip(orderSkip)
+        .limit(orderLimit)
+        .lean();
+        
         const coupons = await Coupon.find({
                                 isActive:true,
                                 $or:[
@@ -259,6 +272,11 @@ const userProfile = async (req,res) =>{
                 totalPages:Math.ceil(totalTransaction/limit),
                 totalTransaction
             },
+            orderPagination:{
+                orderPage,
+                totalOrderPages : Math.ceil(totalOrders/orderLimit),
+                totalOrders
+            },  
             referredName:referredName,
             coupons:coupons
         });

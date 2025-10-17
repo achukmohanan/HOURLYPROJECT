@@ -147,7 +147,7 @@ body {
 .sidebar-menu a.active,
 .sidebar-link:hover,
 .sidebar-link.active {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #B98F7D 0%, #B98F7D 100%);
     color: white;
     border-left-color: #764ba2;
 }
@@ -278,16 +278,16 @@ body {
 
 /* ==================== BUTTONS ==================== */
 .btn-small {
-    color: #007bff;
+    color: #B98F7D;
     font-size: 13px;
     text-decoration: none;
     transition: all 0.3s ease;
-    border: 1px solid #dee2e6;
+    border: 1px solid #836659;
     display: inline-block;
     border-radius: 4px;
     padding: 6px 12px;
     margin-right: 8px;
-    background: #667eea;
+    background: #B98F7D;
     color: white;
 }
 
@@ -306,8 +306,8 @@ body {
 }
 
 .btn-primary {
-    background-color: #007bff;
-    border-color: #007bff;
+    background-color: #B98F7D;
+    border-color: #806457;
     padding: 10px 20px;
     font-size: 14px;
     border-radius: 6px;
@@ -315,14 +315,14 @@ body {
 }
 
 .btn-primary:hover {
-    background-color: #0056b3;
-    border-color: #0056b3;
+    background-color: #B98F7D;
+    border-color: #71594f;
     transform: translateY(-2px);
     box-shadow: 0 5px 15px rgba(0,0,0,0.2);
 }
 
 .save-btn {
-    background: linear-gradient(45deg, #52a2ed, #1b7ddf);
+    background: #B98F7D;
     color: white;
     padding: 12px 30px;
     border: none;
@@ -333,7 +333,7 @@ body {
 }
 
 .save-btn:hover {
-    background: #004bbce0;
+    background: #8a6a5c;
     transform: translateY(-2px);
     box-shadow: 0 5px 15px rgba(0,0,0,0.2);
 }
@@ -383,7 +383,7 @@ table {
 }
 
 th {
-    background: linear-gradient(135deg, #52a2ed 0%, #1b7ddf 100%);
+    background: linear-gradient(135deg, #B98F7D 0%, #533a2f 100%);
     color: white;
     text-align: center;
     padding: 12px;
@@ -531,7 +531,7 @@ nav1 ul li strong {
 /* ==================== COUPONS & REFERRAL ==================== */
 .coupon-card {
     padding: 15px;
-    background: linear-gradient(135deg, #c5cbe9 0%, #e0d4ed 100%);
+    background: linear-gradient(135deg, #d4aa98 0%, #c79681 100%);
     border: 2px dashed #27ae60;
     border-radius: 10px;
     text-align: center;
@@ -541,6 +541,11 @@ nav1 ul li strong {
     cursor: default;
     margin-bottom: 15px;
     color: white;
+}
+.expired-coupon {
+  filter: grayscale(100%);
+  opacity: 0.6;
+  pointer-events: none; /* disables button clicks */
 }
 
 .coupon-card:hover {
@@ -563,7 +568,7 @@ nav1 ul li strong {
 }
 
 .Referal {
-    background: linear-gradient(135deg, #1b7ddf 0%, #52a2ed 100%);
+    background: linear-gradient(135deg, #a88170 0%, #B98F7D 100%);
     border: 1px solid #dedfdd;
     padding: 50px;
     border-radius: 12px;
@@ -581,7 +586,7 @@ nav1 ul li strong {
 
 #clipboardCopy, 
 #copyCoupon {
-    background: rgb(246, 231, 231);
+    /* background: rgb(106, 80, 80); */
     color: #667eea;
     padding: 8px 12px;
     border-radius: 6px;

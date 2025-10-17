@@ -1,6 +1,6 @@
 <%- include("../../views/partials/user/header") %>
 
-<section class="py-0" id="header">
+<section class="py-0 bg-dark" id="header">
   <div class="bg-holder" style="background-image:url('/assets/img/gallery/homewallpaper.png'); background-position: center; background-size: cover; background-repeat: no-repeat; width: 100%;">
   </div>
   <!--/.bg-holder-->
@@ -14,21 +14,21 @@
     </div>
   </div>
 </section>
-     <section class="bg-black py-8 pt-0" id="store">      
+     <section class="bg-light py-8 pt-0" id="store">      
   <div class="container">
     <div class="row justify-content-center">
       <div class="col-12 col-lg-10">
-        <h3 class="p-4 text-light d-flex justify-content-center m-3">BRANDS IN HOURLY</h3>
+        <h3 class="p-4 text-dark d-flex justify-content-center m-3">BRANDS IN HOURLY</h3>
 
         <div class="row g-5 px-3 mt-2">
           <% if (brand) { %>
             <% for (let i = 0; i < brand.length; i++) { %>
               <div class="col-6 col-sm-4 col-md-3 col-lg-2 d-flex justify-content-center ">
                 <a href="/filter?brand=<%=brand[i]._id %>">
-                <div class="image-container text-center ">
-                  <img class="image-containerhome" src="<%= brand[i].brandImage %>" alt="">
+                <div class="image-container text-center border border-2 p-3 ">
+                  <img class="image-containerhome " src="<%= brand[i].brandImage %>" alt="">
                   <h6 class="text-light mt-2 "><%= brand[i].brandName %></h6>
-                </div>
+                </div>  
                 </a>
               </div>
               
@@ -150,7 +150,7 @@
 
       </section>
   
-<section id="testimonial">
+<!-- <section id="testimonial">
 
         <div class="container">
           <div class="row">
@@ -269,7 +269,7 @@
         </div>
         
 
-      </section>
+      </section> -->
 
     <%- include("../../views/partials/user/footer") %>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

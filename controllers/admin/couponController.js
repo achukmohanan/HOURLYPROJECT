@@ -26,7 +26,7 @@ const getCouponPage = async(req,res) =>{
 const postCoupon = async (req,res) =>{
     try {
         console.log("data is received ",req.body)
-        const {code,discountType,discountValue,maxDiscount,description,limit,expiryDate,minPurchase,} = req.body
+        const {code,discountType,discountValue,description,limit,expiryDate,minPurchase,} = req.body
 
         if(!code || !discountType || !expiryDate){
             return res.status(STATUS_CODE.BAD_REQUEST).json({success:false,message:"Required fields are missing"})
@@ -45,7 +45,7 @@ const postCoupon = async (req,res) =>{
             purpose:'General',
             discountType,
             discountValue,
-            maxDiscount,
+            
             description,
             limit,
             expireOn:expiryDate,

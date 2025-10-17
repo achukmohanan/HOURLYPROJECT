@@ -236,11 +236,36 @@
                                         </p>
 
                                         <!-- Actions -->
-                                        <a href="/viewOrderDetails/<%=order.orderId%>" class="btn btn-sm btn-primary me-2">View</a>
+                                        <a href="/viewOrderDetails/<%=order.orderId%>" class="btn btn-sm  me-2"style="background-color:#B98F7D; color:white; border:none;">View</a>
                                         </div>
                                     </div>
                                     </div>
                                 <% }) %>
+                                <!-- Order Pagination -->
+<div class="d-flex justify-content-center mt-4">
+  <nav>
+    <ul class="pagination">
+      <% if(orderPagination.orderPage > 1){ %>
+        <li class="page-item">
+          <a class="page-link" href="?orderPage=<%= orderPagination.orderPage - 1 %>&tab=orders">Previous</a>
+        </li>
+      <% } %>
+
+      <% for(let i = 1; i <= orderPagination.totalOrderPages; i++){ %>
+        <li class="page-item <%= orderPagination.orderPage === i ? 'active' : '' %>">
+          <a class="page-link" href="?orderPage=<%= i %>&tab=orders"><%= i %></a>
+        </li>
+      <% } %>
+
+      <% if(orderPagination.orderPage < orderPagination.totalOrderPages){ %>
+        <li class="page-item">
+          <a class="page-link" href="?orderPage=<%= orderPagination.orderPage + 1 %>&tab=orders">Next</a>
+        </li>
+      <% } %>
+    </ul>
+  </nav>
+</div>
+
                                 <% } %>
                             </div>
                             </div>
@@ -337,13 +362,13 @@
                                  <table>
                                     <tr>
                                         <th>OrderId</th>
-                                        <th>Product Name</th>
+                                        
                                         <th>Type</th>
                                         <th>Amount</th>
                                         <th>paymentMethod</th>
                                         <th>Description</th>
                                         <th>Date</th>
-                                        <th>TIme</th>
+                                    
                                     </tr>
                                      <% if(transaction ){ %>
                                     <% transaction.forEach(txn=>{ %>
@@ -355,16 +380,7 @@
                                         <%}%>
                                         <%if(txn.orderDetails && txn.orderDetails.orderedItems ){ %>
                                         <% txn.orderDetails.orderedItems.forEach(i=>{ %>
-                                        <td>
-                                            <%if(i.product){%>
-                                            <%if(i.product.productImage[0]){%>
-                                            <img class="p-2" src="<%= i.product.productImage[0] %>" alt="">
-                                            <% } %>
-                                        <%= i.product?.productName ? i.product.productName : 'No product'%>
-                                        </td>
-                                            <% }else {%>
-                                                <td>No Product</td>
-                                            <% } %>
+                                       
                                     
                                         <% }) %>
                                         <% }else{ %>

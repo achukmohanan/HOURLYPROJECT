@@ -102,32 +102,67 @@ const viewOrderDetails = async (req,res) =>{
          return res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({success:false,message:"Server Error"});
     }
 }
+
 const updateOrderStatus = async (req, res) =>{
     try {
 
         const {orderId} = req.params;
         const {status} = req.body;
-        // console.log("status",status)
-        // console.log("orderId",orderId)
-        const order = await Order.findOneAndUpdate(
-            {orderId},
-            {$set:{"orderedItems.$[elem].status":status,
-                status:status
-            }},
-            {new:true,
-                arrayFilters:[{"elem.status":{$ne:'Cancelled'}}]
-            }
-        );
+      
+        const STATUS_SEQUENCE = [
+                                    "Pending",
+                                    "Processing",
+                                    "Shipped",
+                                    "Out-for-delivery",
+                                    "Delivered"
+                                    ];
+
+        // const order = await Order.findOneAndUpdate(
+        //     {orderId},
+        //     {$set:{"orderedItems.$[elem].status":status,
+        //         status:status
+        //     }},
+        //     {new:true,
+        //         arrayFilters:[{"elem.status":{$ne:'Cancelled'}}]
+        //     }
+        // );
+        const order = await Order.findOne({orderId})
         
         if(!order){
             return res.status(STATUS_CODE.NOT_FOUND).json({success:false,message:"Order is Not Found"})
         }
+
+        let canUpdate = false;
+         // Check all items status
+         order.orderedItems.forEach((item)=>{
+            const currentIndex = STATUS_SEQUENCE.indexOf(item.status);
+            const newIndex = STATUS_SEQUENCE.indexOf(status);
+            if(newIndex === -1) return;
+            if(newIndex >= currentIndex){
+                canUpdate = true;
+            }
+         });
+         if(!canUpdate){
+            return res.status(STATUS_CODE.BAD_REQUEST).json({success:false,message:"Cannot Move to Previous Status"})
+         }
+          // Update all items that are not cancelled
+          order.orderedItems.forEach((item)=>{
+            if(item.status !== "Cancelled"){
+                const currentIndex  = STATUS_SEQUENCE.indexOf(item.status);
+                const newIndex = STATUS_SEQUENCE.indexOf(status);
+                if(newIndex >= currentIndex){
+                    item.status = status
+                }
+            }
+          });
+          order.status = status
+
         if(status === 'Delivered'){
             order.deliveredAt = new Date();
-            order.save();
             console.log("deleiverd status updated");
             
         }
+        order.save();
         return res.json({success:true,message:`Order status updatd to ${status}`,order})
     } catch (error) {
         console.log("error in the backenndn===",error);
