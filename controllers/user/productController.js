@@ -95,6 +95,7 @@ const loadShoppingpage = async(req,res) =>{
         filterQuery.brand = {$in : selectedBrand }
      }
   
+  
      if(selectedPrice){
         if(selectedPrice === "under5000"){
             filterQuery.salePrice = {$lt:5000}
