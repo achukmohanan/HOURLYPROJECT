@@ -448,7 +448,7 @@
                 <div class="col-lg-4">
                     <div class="category-form">
                         <h5 class="mb-4">Add New Category</h5>
-                        <form method="post" action="/admin/addCategory" onsubmit="return handleFormSubmit(event)">
+                        <form  onsubmit="return handleFormSubmit(event)">
                             <div class="mb-3">
                                 <label for="product_name" class="form-label">Category Name</label>
                                 <input type="text" name="name" placeholder="Enter category name" class="form-control" id="product_name" required/>
@@ -599,41 +599,29 @@
                 headers: {
                     'content-type': 'application/json'
                 },
-                body: JSON.stringify({name, description})
+                body: JSON.stringify({name,description})
             })
-            .then(response => {
-                if (!response.ok) {
-                    return response.json().then(err => {
-                        throw new Error(err.error);
-                    });
-                }
-                return response.json();
-            })
+            .then(res => res.json())  
             .then(data => {
+                if(data.success){
                 Swal.fire({
                     icon: 'success',
                     title: 'Success!',
-                    text: 'Category added successfully',
+                    text: data.message,
                     timer: 1500
                 }).then(() => {
                     window.location.reload();
                 });
-            })
-            .catch(error => {
-                if (error.message === "Category already Exists") {
-                    Swal.fire({
-                        icon: "error",
-                        title: "Oops!",
-                        text: "Category already exists"
-                    });
-                } else {
-                    Swal.fire({
-                        icon: "error",
-                        title: "Error!",
-                        text: "An error occurred while adding the category"
-                    });
-                }
-            });
+            }else{
+                Swal.fire({
+                    icon:'error',
+                    title:'OOPS',
+                    text:data.message || "Error Happended",
+                    showConfirmButton:true
+                })
+            }
+        })
+            
         }
 
         function validateForm() {

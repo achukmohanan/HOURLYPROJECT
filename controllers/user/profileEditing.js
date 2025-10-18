@@ -14,6 +14,8 @@ const changePassword = async (req,res) =>{
             return res.status(STATUS_CODE.BAD_REQUEST).json({success:false,message:"You are Login through Google, You Can't change Email and Password"})
         }
         const {currentPassword,newPassword,confirmPassword} = req.body;
+        console.log("currentPassword",currentPassword)
+        console.log("newPassword",newPassword)
         
         console.log("user from data base",userId)
         if(!userId){    
@@ -24,7 +26,9 @@ const changePassword = async (req,res) =>{
         if(!isMatch){
           return  res.status(STATUS_CODE.BAD_REQUEST).json({success:false,message:"current Password is incorrect"});
         }
-
+        if(currentPassword === newPassword){
+            return res.status(STATUS_CODE.BAD_REQUEST).json({success:false,message:"New password cannot be the same as the current password"})
+        }
         const hashPassword = await bcrypt.hash(newPassword,10);
         userId.password = hashPassword;
         userId.save();

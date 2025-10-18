@@ -25,9 +25,12 @@ const getBrandPage = async (req,res) =>{
 const addBrand = async (req,res) =>{
     try {
         const brand = req.body.name;
-        const findBrand = await Brand.findOne({brand});
+        console.log("brabd is ",brand);
+        
+        const findBrand = await Brand.findOne({brandName:{$regex:`^${brand}$`,$options:'i'}})
+        console.log("regex b",findBrand)
         if(findBrand){
-            res.json({success:false,message:"Exsiting Brand "})
+          return  res.json({success:false,message:"Exsiting Brand "})
         }
         console.log(req.body.brandImage)
         if(!findBrand){

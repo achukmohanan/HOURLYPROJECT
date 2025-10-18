@@ -24,7 +24,7 @@
                     </div>
                     <%}
                       %>
-                      <h6 class="text-muted mx-5 greet-typing">🗨️Hi, <%= user.name %></h6>
+                      <!-- <h6 class="text-muted mx-5 greet-typing">🗨️Hi, <%= user.name %></h6> -->
                 <div class="account-header d-flex  flex-column align-items-center     m-2"> 
                     <h5 class="text"><%= user.name %></h5>
                     <p><strong>Joined On: </strong><%= new Date(user.createdOn).toLocaleDateString('en-IN')%></p>
@@ -90,6 +90,18 @@
                                 <a href="/logout">
                                     <span class="icon">🚪</span>
                                     Logout
+                                </a>
+                            </li>
+                            <li>
+                                <a href="/shop">
+                                    <span class="icon"><i class="bi bi-bag"></i></span>
+                                    Shop
+                                </a>
+                            </li>
+                            <li>
+                                <a href="/home">
+                                    <span class="icon"><i class="bi bi-house"></i></span>
+                                    Home
                                 </a>
                             </li>
                         </ul>

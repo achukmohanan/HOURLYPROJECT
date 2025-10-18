@@ -40,16 +40,19 @@ const categoryInfo  = async (req,res)=>{
 const addCategory = async (req,res) =>{
     const {name,description} = req.body;
     try {
-        const existingCategory = await Category.findOne({name})
+        console.log("req is",name)
+        const existingCategory = await Category.findOne({name:{$regex:`^${name}$`,$options:'i'}});
+        console.log("existing category is ",existingCategory)
         if(existingCategory){
-            return res.status(STATUS_CODE.BAD_REQUEST).json({error:"Category already exists"})
+            console.log("existing cateegory")
+            return res.status(STATUS_CODE.BAD_REQUEST).json({success:false, message:"Category already exists"})
         }
         const newCategory = new Category({
             name,
             description
         }) 
         await newCategory.save();
-        return res.json({message:"Category added Successfully"})
+        return res.json({success:true,message:"Category added Successfully"})
     } catch (error) {
         return res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({error:"Internal Server Error"});
     }

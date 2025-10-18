@@ -19,10 +19,10 @@ const categorySchema = new mongoose.Schema({
         type:Number,
         default:0
     },
-        createdAt:{
+    createdAt:{
             type:Date,
             default:Date.now
-        }
+     }
 })
 
 const Category = mongoose.model("Category",categorySchema)
