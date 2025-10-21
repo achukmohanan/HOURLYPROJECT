@@ -139,6 +139,11 @@ body {
     font-size: 14px;
 }
 
+.add-to-cart{
+    background: linear-gradient(135deg, #1e918b 0%, #0d7a78 100%);;
+    
+}
+
 .remove-btn {
     background: none;
     border: none;
@@ -432,7 +437,7 @@ body {
                     <div class="item-price">
                        <a href="/productDetails?id=<%= item.productId._id %>" class="item-price no-underline">Tap here to see the Price</a> 
                     </div>
-                    <button class="btn btn-primary add-to-cart" data-productId="<%= item.productId._id %>" type="button">Add to Cart </button>  
+                    <button class="btn  add-to-cart text-light" data-productId="<%= item.productId._id %>" type="button">Add to Cart </button>  
                     <button class="deletebtn remove-btn" data-productId="<%= item.productId._id %>" type="button" ><i class="bi bi-x-circle text-danger"></i></button>
                 </div>
                   <%}) %> 
