@@ -247,7 +247,7 @@
         <div class="container">
             <nav class="nav">
                 <div class="logo">
-                    <a href="/home" class="logo" style="font-family: 'Lakki Reddy'"  >HOURLY</a>
+                    <a  class="logo" style="font-family: 'Lakki Reddy'"  >HOURLY</a>
                 </div>
                 <ul class="nav-links" id="navLinks">
                     <li><a href="/home">Home</a></li>
@@ -257,9 +257,12 @@
                 
                 <div class="user-dropdown">
                        <% if (locals.user) { %>
-                            <a class="" href="/cart"><i class="bi bi-cart mx-2" style="color: #000000"></i></a>
-                            <a class="" href="/wishlist"><i class="bi bi-suit-heart-fill mx-2"></i></a>
-                             <a class="" href="/account"><i class="bi bi-person-circle mx-2"></i></a>
+                        <a class="position-relative" href="/cart">
+                            <i class="bi bi-cart mx-2" style="color: #000000"></i>
+                      
+                        </a>
+                            <a class="text-danger" href="/wishlist"><i class="bi bi-suit-heart-fill mx-2"></i></a>
+                             <a class="text-dark" href="/account"><i class="bi bi-person-circle mx-2"></i></a>
                              <div class="user-name ">
                                 <a href="#" class="text-dark fw-semibold no-underline" ><%= locals.user.name %></a>
                              <div class="dropdown-content">

@@ -1,5 +1,6 @@
 const { model } = require('mongoose');
 const User = require('../../models/userSchema');
+const { STATUS_CODE } = require('../../utils/statusCode');
 
 
 
@@ -39,17 +40,17 @@ const User = require('../../models/userSchema');
 
     } catch (error) {
         console.error("Error in customerInfo:", error);
-        res.status(500).send("Internal Server Error");
+        res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).send("Internal Server Error");
     }
 }
 const customerBlocked = async (req, res) => {
     try {
         let id = req.query.id;
         await User.updateOne({_id: id}, {$set: {isBlocked: true}});
-        res.status(200).json({ success: true, message: 'User blocked successfully' });
+        res.status(STATUS_CODE.SUCCESS).json({ success: true, message: 'User blocked successfully' });
     } catch (error) {
         console.error('Block error:', error);
-        res.status(500).json({ success: false, message: 'Server Error' });
+        res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ success: false, message: 'Server Error' });
     }
 }
 
@@ -57,10 +58,10 @@ const customerunBlocked = async (req, res) => {
     try {
         let id = req.query.id;
         await User.updateOne({_id: id}, {$set: {isBlocked: false}});
-        res.status(200).json({ success: true, message: 'User unblocked successfully' });
+        res.status(STATUS_CODE.SUCCESS).json({ success: true, message: 'User unblocked successfully' });
     } catch (error) {
         console.error('Unblock error:', error);
-        res.status(500).json({ success: false, message: 'Server Error' });
+        res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ success: false, message: 'Server Error' });
     }
 }
 // const customerBlocked = async (req,res) =>{

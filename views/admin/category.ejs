@@ -201,6 +201,12 @@
             margin-bottom: 0;
         }
 
+        .no-results {
+  color: #999;
+  font-size: 18px;
+  padding: 20px;
+  text-align: center;
+}
         .search-section {
             background: white;
             border-radius: 10px;
@@ -421,13 +427,18 @@
         <div class="search-section">
             <form action="/admin/category" method="get" class="search-form">
                 <div class="input-group">
-                    <input type="text" class="form-control" placeholder="Search categories..." name="search" value="<%= typeof searchValue !== 'undefined' ? searchValue : '' %>"/>
+                    <input type="text" class="form-control" placeholder="Search categories..." name="search" />
 
                     <button class="btn" type="submit">
                         <i class="fas fa-search"></i> Search
                     </button>
                 </div>
             </form>
+            <% if(noResult){ %>
+                <div class="no-results" style="text-align:center; margin-top:20px;">
+    <h4>No categories found for "<%= searchValue %>"</h4>
+  </div>
+            <% } %>
         </div>
 
         <!-- Category Management Card -->
@@ -437,7 +448,7 @@
                 <div class="col-lg-4">
                     <div class="category-form">
                         <h5 class="mb-4">Add New Category</h5>
-                        <form method="post" action="/admin/addCategory" onsubmit="return handleFormSubmit(event)">
+                        <form  onsubmit="return handleFormSubmit(event)">
                             <div class="mb-3">
                                 <label for="product_name" class="form-label">Category Name</label>
                                 <input type="text" name="name" placeholder="Enter category name" class="form-control" id="product_name" required/>
@@ -476,6 +487,8 @@
                                     </tr>
                                 </thead>
                                 <tbody>
+                                    <%if(cat){%>
+
                                     <%cat.reverse().forEach((category,index)=>{%>
 
                     <tr>
@@ -524,6 +537,9 @@
                         </td>
                     </tr>
                     <%})%>
+                <% }else{ %>
+                    
+               <% } %>
 
                                 </tbody>
                             </table>
@@ -534,17 +550,7 @@
         </div>
 
         <!-- Pagination -->
-        <!-- <div class="pagination-container">
-            <div class="pagination">
-               <% if (currentPage > 1) { %>
-      <a href="?page=<%= currentPage - 1 %>">&laquo; Previous</a>
-      <% } %>
-                <span class="current-page">1</span>
-                <a href="#">2</a>
-                <a href="#">3</a>
-                <a href="#">Next &raquo;</a>
-            </div>
-        </div> -->
+      
         <div class="pagination-container">
       <% if (currentPage > 1) { %>
         <div class="pagination">
@@ -578,15 +584,7 @@
 
 
     <script>
-        // const menuToggle2 = document.getElementById('menuToggle2');
-        // const sidebar = document.getElementById('sidebar');
-        // const mainContent = document.getElementById('mainContent');
-
-        // menuToggle2.addEventListener('click', function() {
-        //     sidebar.classList.toggle('collapsed');
-        //     mainContent.classList.toggle('expanded');
-        // });
-        // Form submission handler
+    
         function handleFormSubmit(event) {
             event.preventDefault();
             if (!validateForm()) {
@@ -601,41 +599,29 @@
                 headers: {
                     'content-type': 'application/json'
                 },
-                body: JSON.stringify({name, description})
+                body: JSON.stringify({name,description})
             })
-            .then(response => {
-                if (!response.ok) {
-                    return response.json().then(err => {
-                        throw new Error(err.error);
-                    });
-                }
-                return response.json();
-            })
+            .then(res => res.json())  
             .then(data => {
+                if(data.success){
                 Swal.fire({
                     icon: 'success',
                     title: 'Success!',
-                    text: 'Category added successfully',
+                    text: data.message,
                     timer: 1500
                 }).then(() => {
                     window.location.reload();
                 });
-            })
-            .catch(error => {
-                if (error.message === "Category already Exists") {
-                    Swal.fire({
-                        icon: "error",
-                        title: "Oops!",
-                        text: "Category already exists"
-                    });
-                } else {
-                    Swal.fire({
-                        icon: "error",
-                        title: "Error!",
-                        text: "An error occurred while adding the category"
-                    });
-                }
-            });
+            }else{
+                Swal.fire({
+                    icon:'error',
+                    title:'OOPS',
+                    text:data.message || "Error Happended",
+                    showConfirmButton:true
+                })
+            }
+        })
+            
         }
 
         function validateForm() {
@@ -649,6 +635,9 @@
                 isValid = false;   
             } else if (!/^[a-zA-Z\s]+$/.test(name)) {
                 displayErrorMessage("name-error", "Category name should contain only alphabetic characters");
+                isValid = false;
+            }else if(name.length >=16){
+                displayErrorMessage("name-error", "Category name cannot exceed 15 letters");
                 isValid = false;
             }
             

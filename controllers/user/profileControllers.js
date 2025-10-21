@@ -7,7 +7,7 @@ const env = require('dotenv').config();
 const session = require('express-session');
 const Transaction = require('../../models/transactionSchema');
 const Coupon = require('../../models/couponSchema');
-
+const {STATUS_CODE} = require('../../utils/statusCode')
 
 
 function generateOtp(){
@@ -80,6 +80,7 @@ const forgotEmailOtp = async (req, res) => {
         const findUser = await User.findOne({ email: email });
         console.log('Email:', email);
         
+        
         if (findUser) {
             const otp = generateOtp();
             const emailSent = await sendVerificationEmail(email, otp);
@@ -95,9 +96,9 @@ const forgotEmailOtp = async (req, res) => {
                 res.json({ success: false, message: "Failed to send OTP. Please try again" });
             }
         } else {
-            res.render('user/forgotpassword', {
-                message: "User with this email does not exist"
-            });
+            
+            return  res.status(STATUS_CODE.NOT_FOUND).json({success:false,message: "User with this email does not exist"});
+            
         }
     } catch (error) {
         console.log("Error happened in post route:", error);
@@ -121,7 +122,7 @@ const verifyForgotPassOtp = async (req,res)=>{
         }
     } catch (error) {
         console.log("errror in the verifyForgotPassOtp",error)
-        return res.status(500).json({success:false,message:"An error Occured. Please try again"});
+        return res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({success:false,message:"An error Occured. Please try again"});
         
     }
 }
@@ -137,13 +138,13 @@ const resendForgotOtp = async (req,res) =>{
         console.log("email is send ",emailSent)
         if(emailSent){
             console.log("Resend OTP For Forgot Password : ",otp)
-            return res.status(200).json({success:true,message:"OTP send Successfully"})
+            return res.status(STATUS_CODE.SUCCESS).json({success:true,message:"OTP send Successfully"})
         }else{
-            return res.status(500).json({success:false,message:"Failed to Send. Please Try Again!"})
+            return res.status(STATUS_CODE.NOT_FOUND).json({success:false,message:"Failed to Send. Please Try Again!"})
         }    
     } catch (error) {
         console.log("error in the resendForgotOtp otp is",error);
-        return res.status(500).json({success:false,message:'Internal Server Error'})
+        return res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({success:false,message:'Internal Server Error'})
     }
 }
 
@@ -163,11 +164,11 @@ const resendOtp = async (req,res) =>{
         const emailSent = await sendVerificationEmail(email,otp);
         if(emailSent){
             console.log("Resend OTP:",otp);
-            res.status(200).json({success:true,message:"Resend OTP succesful"})
+            res.status(STATUS_CODE.SUCCESS).json({success:true,message:"Resend OTP succesful"})
         }
     } catch (error) {
         console.error("Error in resend otp ",error);
-      res.status(500).json({success:false,message:"Internal Server Error"})  
+      res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({success:false,message:"Internal Server Error"})  
     }
 }
 
@@ -194,14 +195,14 @@ const postNewPassword = async (req,res) =>{
                 {$set:{password:passwordHash}}
             ) 
             
-         res.status(200).json({success:true, message:"new password updated Successfully"})
+         res.status(STATUS_CODE.SUCCESS).json({success:true, message:"new password updated Successfully"})
         
         }else{
-            res.status(400).json({message:"Password do not match"});
+            res.status(STATUS_CODE.BAD_REQUEST).json({message:"Password do not match"});
 
         }
     } catch (error) {
-       res.status(500).json({message:"Internal Server error"})
+       res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({message:"Internal Server error"})
        console.log("error happened in reset password");
        
     }
@@ -215,7 +216,20 @@ const userProfile = async (req,res) =>{
         const userId =    req.session.user;  
         const userData = await User.findById(userId)
         const addressData = await Address.findOne({userId:userId});
-        const orders = await Order.find({userId:req.session.user }).populate('orderedItems.product').sort({createdOn:-1})
+
+        //orders
+        const orderPage = parseInt(req.query.orderPage) || 1;
+        const orderLimit = 3;
+        const orderSkip = (orderPage-1)*orderLimit
+        
+        const totalOrders = await Order.countDocuments({userId:userId})  
+        const orders = await Order.find({userId:userId })
+        .populate('orderedItems.product')
+        .sort({createdOn:-1})
+        .skip(orderSkip)
+        .limit(orderLimit)
+        .lean();
+        
         const coupons = await Coupon.find({
                                 isActive:true,
                                 $or:[
@@ -258,12 +272,17 @@ const userProfile = async (req,res) =>{
                 totalPages:Math.ceil(totalTransaction/limit),
                 totalTransaction
             },
+            orderPagination:{
+                orderPage,
+                totalOrderPages : Math.ceil(totalOrders/orderLimit),
+                totalOrders
+            },  
             referredName:referredName,
             coupons:coupons
         });
     } catch (error) {
          console.log("error occured in account",error);
-        res.status(500).json("server error")
+        res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json("server error")
        
         
     }
@@ -301,11 +320,11 @@ const postaddAddress = async (req,res) =>{
             await userAddress.save();
 
         }
-        res.status(200).json({message:"Updated Successfully!"})
+        res.status(STATUS_CODE.SUCCESS).json({message:"Updated Successfully!"})
 
     } catch (error) {
         console.log("error in the post addAddress",error);
-        res.status(500).json({message:"Something Went Wrong!"})
+        res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({message:"Something Went Wrong!"})
         
     }
 }
@@ -316,14 +335,14 @@ const editAddress = async (req,res) =>{
         const currAddress = await Address.findOne({'address._id' : addressId})
 
         if(!currAddress){
-            return res.status(400).json({message:"Address data not Found!"});
+            return res.status(STATUS_CODE.BAD_REQUEST).json({message:"Address data not Found!"});
         }
         const addressData = currAddress.address.find((item)=>{
             return item._id.toString() === addressId.toString();
         });
 
         if(!addressData){
-            return res.status(400).json({message:"Addess data not found"});
+            return res.status(STATUS_CODE.BAD_REQUEST).json({message:"Addess data not found"});
         }
 
         const userData = await User.findById(user)
@@ -349,7 +368,7 @@ const postEditAddress = async (req,res) =>{
         const findAddress = await Address.findOne({"address._id":addressId})
 
         if(!findAddress){
-            return res.status(400).json({message:"No address data found"});
+            return res.status(STATUS_CODE.BAD_REQUEST).json({message:"No address data found"});
         }
 
         await Address.updateOne(
@@ -368,10 +387,10 @@ const postEditAddress = async (req,res) =>{
                 }
             }}
         )
-        res.status(200).json({message:"Address updated Successfully"});
+        res.status(STATUS_CODE.SUCCESS).json({message:"Address updated Successfully"});
     } catch (error) { 
             console.error("Error in postEditAddress:", error);
-            res.status(500).json({ message: "Internal Server Error" });     
+            res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ message: "Internal Server Error" });     
     }
 }
 
@@ -382,7 +401,7 @@ const deleteAddress = async (req,res) =>{
         const findAddress = await Address.findOne({"address._id" : addressId});
 
         if(!findAddress){
-            return res.status(404).json({message:"Address data not Found"});
+            return res.status(STATUS_CODE.NOT_FOUND).json({message:"Address data not Found"});
         }
 
         await Address.updateOne(
@@ -391,10 +410,10 @@ const deleteAddress = async (req,res) =>{
                 {address:{_id:addressId}}
             }
         )
-        res.status(200).json({message:"Address Delected Successfully"});
+        res.status(STATUS_CODE.SUCCESS).json({message:"Address Delected Successfully"});
     } catch (error) {
         console.log("error in delete Address", error);
-        res.status(500).json({message:"Internal Server Error"});
+        res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({message:"Internal Server Error"});
         
     }
 
@@ -428,7 +447,7 @@ const editProfile = async (req,res) =>{
         // console.log(userData);
         
         if(!userData){
-           return res.status(400).json({success:false,message:"User is not Found"})
+           return res.status(STATUS_CODE.BAD_REQUEST).json({success:false,message:"User is not Found"})
         }
         // await User.findByIdAndUpdate(userId,{
         //     name:username,
@@ -447,10 +466,10 @@ const editProfile = async (req,res) =>{
         }
         await User.findByIdAndUpdate(userId,updateData);
         
-        return res.status(200).json({message:"Details updated successfully",success:true})
+        return res.status(STATUS_CODE.SUCCESS).json({message:"Details updated successfully",success:true})
     } catch (error) {
         console.log("error happend in the edit profile page",error);
-        return res.status(500).json({ message: "Internal server error", success: false });
+        return res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ message: "Internal server error", success: false });
     }
 }
 

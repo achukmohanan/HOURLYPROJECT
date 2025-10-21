@@ -1,6 +1,6 @@
 const Category = require('../../models/categorySchema')
 const Product = require('../../models/productSchema')
-
+const {STATUS_CODE} = require('../../utils/statusCode')
 
 const categoryInfo  = async (req,res)=>{
     try {
@@ -21,12 +21,15 @@ const categoryInfo  = async (req,res)=>{
         const totalCategories = await Category.countDocuments(search ? searchResult : {});
         const totalPages = Math.ceil(totalCategories/limit);
 
+        const noResult =  categoryData.length === 0;
         res.render('admin/category',{
+         
             cat: categoryData,
             currentPage:page,
             totalPages:totalPages,
             totalCategories:totalCategories,
-            searchValue:search  
+            searchValue:search,
+            noResult  
         })
     } catch (error) {
         console.log("error happend in categoryInfo",error);
@@ -37,18 +40,21 @@ const categoryInfo  = async (req,res)=>{
 const addCategory = async (req,res) =>{
     const {name,description} = req.body;
     try {
-        const existingCategory = await Category.findOne({name})
+        console.log("req is",name)
+        const existingCategory = await Category.findOne({name:{$regex:`^${name}$`,$options:'i'}});
+        console.log("existing category is ",existingCategory)
         if(existingCategory){
-            return res.status(400).json({error:"Category already exists"})
+            console.log("existing cateegory")
+            return res.status(STATUS_CODE.BAD_REQUEST).json({success:false, message:"Category already exists"})
         }
         const newCategory = new Category({
             name,
             description
         }) 
         await newCategory.save();
-        return res.json({message:"Category added Successfully"})
+        return res.json({success:true,message:"Category added Successfully"})
     } catch (error) {
-        return res.status(500).json({error:"Internal Server Error"});
+        return res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({error:"Internal Server Error"});
     }
 }
 
@@ -62,7 +68,7 @@ const  addCategoryOffer = async (req,res) =>{
         const category = await Category.findById(categoryId);
 
         if(!category){
-            return res.status(404).json({status:false, message:"Category not found"});
+            return res.status(STATUS_CODE.NOT_FOUND).json({status:false, message:"Category not found"});
         }
         const products =  await Product.find({category:category._id})
         // const hasProductOffer = products.some((product)=>product.productOffer > percentage);
@@ -83,7 +89,7 @@ const  addCategoryOffer = async (req,res) =>{
         console.log("product sale price",products)
         res.json({status:true});
     } catch (error) {
-        res.status(500).json({status:false,message:"Internal Server Error"});
+        res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({status:false,message:"Internal Server Error"});
         console.log("error in add category offer",error);
         
     }
@@ -97,7 +103,7 @@ const  removeCategoryOffer = async (req,res)=>{
         const category = await Category.findById(categoryId);
 
         if(!category){
-         return res.status(404).json({status:false,message:"Category not found"})   
+         return res.status(STATUS_CODE.NOT_FOUND).json({status:false,message:"Category not found"})   
         }
         const percentage = category.categoryOffer;
         const products = await Product.find({category:category._id})
@@ -117,7 +123,7 @@ const  removeCategoryOffer = async (req,res)=>{
         await category.save()
         res.json({status:true});
     } catch (error){
-        res.status(500).json({status:false,message:"Internal Server Error"})
+        res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({status:false,message:"Internal Server Error"})
     }
 }
 
@@ -180,6 +186,8 @@ const editCategory = async (req, res) => {
         res.status(500).json({ error: "Internal Server error" });
     }
 }
+
+
 
 
 module.exports = {

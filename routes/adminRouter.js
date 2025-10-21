@@ -101,7 +101,7 @@ router.post(
 );
 // approve return order ;
 router.put(
-  "/returnRequest/:orderId",
+  "/returnRequest/:orderId/:itemId",
   adminAuth,
   orderController.approveReturnRequest
 );

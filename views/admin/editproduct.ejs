@@ -8,15 +8,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cropperjs/dist/cropper.min.css">
     <link href="https://unpkg.com/cropperjs/dist/cropper.min.css" rel="stylesheet" />
     <style>
-        :root {
-            --sidebar-width: 250px;
-            --header-height: 70px;
-            --primary-color: #2c3e50;
-            --secondary-color: #785d5d;
-            --accent-color: #3498db;
-            --text-light: #ecf0f1;
-            --bg-light: #f8f9fa;
-        }
+      
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -230,9 +222,12 @@
                                 <div class="row">
                                     <div class="col-lg-6 mb-4">
                                         <label class="form-label">Brand</label>
-                                        <select class="form-select" name="brand">
+                                        <select class="form-select" name="brand">   
                                             <% for(let i=0; i<brand.length; i++) { %>
-                                            <option value="<%= brand[i].brandName %>"><%=brand[i].brandName %></option>
+                                            <option value="<%= brand[i].brandName %>"
+                                                <%if(product.brand === brand[i].brandName) { %> selected  <% }   %>>
+                                                <%=brand[i].brandName %>
+                                            </option>
                                             <%}%>
                                         </select>
                                         <div id="brand-error" class="error-message"></div>
@@ -241,7 +236,10 @@
                                         <label class="form-label">Category</label>
                                         <select class="form-select" name="category">
                                             <% for(let i=0; i<cat.length; i++){ %>
-                                            <option value="<%=cat[i].name%> "><%= cat[i].name %></option>
+                                            <option value="<%=cat[i]._id %>"
+                                                <%= (product.category.toString() === cat[i]._id.toString()) ?  'selected' : ''   %>>
+                                                <%= cat[i].name %>
+                                            </option>
                                             <%}%>
                                         </select>
                                         <div id="category-error" class="error-message"></div>
@@ -305,7 +303,7 @@
                                      <%for(let i=0; i<product.productImage.length; i++){%>
                                     <div class="existing-image">
                                         <input type="hidden" value="<%=product.productImage[i] %>" id="imageDatas">
-                                        <img src="/uploads/reimage/<%= product.productImage[i] %>" alt="Product Image">
+                                        <img src="<%= product.productImage[i] %>" alt="Product Image">
                                         <button type="button" class="remove-btn" onclick="deleteSingleImage('<%=product.productImage[i] %>','<%=product._id %>')">
                                             <i class="fa fa-times"></i>
                                         </button>

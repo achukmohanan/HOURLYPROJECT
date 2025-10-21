@@ -1,6 +1,6 @@
 const User = require('../../models/userSchema');
 const Concern = require('../../models/concernSchema');
- 
+const {STATUS_CODE} = require('../../utils/statusCode')
 
 
 const getContactPage = async (req,res) =>{
@@ -34,7 +34,7 @@ const postContact = async (req,res) =>{
         await concern.save();
 
         console.log("concern is",concern)
-        return res.status(200).json({success:true,message:'Concern Submitted Successfully'})
+        return res.status(STATUS_CODE.SUCCESS).json({success:true,message:'Concern Submitted Successfully'})
     } catch (error) {
         console.log("error  in the post contact ",error);
         

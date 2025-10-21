@@ -1,10 +1,10 @@
 const express = require('express');
 const app = express();
 
-        app.use((req, res, next) => {
-          res.setHeader("Access-Control-Allow-Origin", "https://b293f2fd9eda.ngrok-free.app");
-          next();
-        });
+app.use((req, res, next) => {
+    res.setHeader("Access-Control-Allow-Origin", "https://b293f2fd9eda.ngrok-free.app");
+    next();
+});
     
 const passport = require('./config/passport')
 const env = require('dotenv').config();
@@ -14,7 +14,7 @@ const session = require('express-session')
 const userRouter = require('./routes/userRouter');
 const adminRouter = require('./routes/adminRouter');
 const nocache = require('nocache');
-
+const {STATUS_CODE} = require('./utils/statusCode')
 
 db()
 app.use(express.json())
@@ -65,7 +65,7 @@ app.use('/admin',adminRouter);
 
 
 app.use((req, res, next) => {
-    res.status(404).render('user/error404'); 
+    res.status(STATUS_CODE.NOT_FOUND).render('user/error404'); 
 });
 
 

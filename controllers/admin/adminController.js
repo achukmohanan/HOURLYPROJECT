@@ -2,9 +2,7 @@ const User =require("../../models/userSchema");
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const Order = require("../../models/orderSchema");
-
-// const { login } = require("../user/userController");
-// const { router } = require("../../app");
+const {STATUS_CODE} = require('../../utils/statusCode')
 
 const loadLogin = (req,res) =>{
     if(req.session.admin){ 
@@ -176,7 +174,7 @@ const login = async (req,res) =>{
                     return res.redirect("/admin/dashboard")                  
                 //    return res.status(200).json({success:true,redirect:"/admin/dashboard"})   
                 }else{                    
-                    return res.status(401).json({success:false, message:" you entered wrong password"})
+                    return res.status(STATUS_CODE.UNAUTHORIZED).json({success:false, message:" you entered wrong password"})
                     }
                 
         }else{ 

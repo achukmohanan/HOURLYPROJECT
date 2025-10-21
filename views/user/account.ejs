@@ -1,10 +1,12 @@
- <%- include("../../views/partials/user/supportheader") %>
+<%- include("../../views/partials/user/supportheader") %>
 <head>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <title>HOURLY WATCHES | CART</title>
+    
+
 </head>
-<body>
+<body data-user-id="<%= user._id %>">
  <main class="main-content">
         <div class="container">
             <section class="account-section">
@@ -22,7 +24,7 @@
                     </div>
                     <%}
                       %>
-                      <h6 class="text-muted mx-5" >Hi ,<%= user.name %></h6>
+                      <!-- <h6 class="text-muted mx-5 greet-typing">🗨️Hi, <%= user.name %></h6> -->
                 <div class="account-header d-flex  flex-column align-items-center     m-2"> 
                     <h5 class="text"><%= user.name %></h5>
                     <p><strong>Joined On: </strong><%= new Date(user.createdOn).toLocaleDateString('en-IN')%></p>
@@ -90,6 +92,18 @@
                                     Logout
                                 </a>
                             </li>
+                            <li>
+                                <a href="/shop">
+                                    <span class="icon"><i class="bi bi-bag"></i></span>
+                                    Shop
+                                </a>
+                            </li>
+                            <li>
+                                <a href="/home">
+                                    <span class="icon"><i class="bi bi-house"></i></span>
+                                    Home
+                                </a>
+                            </li>
                         </ul>
                     </aside>
                <!-- Tab content -->
@@ -98,7 +112,7 @@
                         <div class="tab-pane show active" id="account">
                             <h2>Account Information</h2>
                             <div class="row">
-                                <div class="form-group1 col-lg-6">
+                                <div class="col-md-6">
                                     <div class="form-group p-2">
                                        <% if(user){%>
                                         <label for="firstName" class="mx-3  "> USERNAME</label>
@@ -117,13 +131,13 @@
                                 </div>
                             </div>
                             <div class="row">
-                            <div class="form-group1   col-lg-6">
+                            <div class="col-md-6">
                                 <div class="form-group p-2">
                                 <label for="email" class="mx-3  ">EMAIL ADDRESS</label>
                                 <label class="mx-3 text-dark text-muted"><%= user.email %></label>
                                 </div>
                             </div>
-                            <div class="form-group1 col-lg-6">
+                            <div class="col-md-6">
                                 <div class="form-group p-2">
                                 <label class="mx-3" >PHONE NUMBER</label>
                                 <%if (user.phone){%>
@@ -135,9 +149,14 @@
                             </div>
                             <%}%>
                             </div>
-                            <a href="/edit-profile" class="btn btn-primary"> Edit Profile </a>
-                            <a href="/verifyCurrentEmail" class="btn btn-primary mx-5"> Edit Email </a>
-                            <!-- <button class="save-btn">Edit Profile</button> -->
+                            <div class="row">
+                                <div class="col-md-6 col-12 mb-2">
+                                    <a href="/edit-profile" class="btn btn-primary w-100">Edit Profile</a>
+                                </div>
+                                <div class="col-md-6 col-12">
+                                    <a href="/verifyCurrentEmail" class="btn btn-primary w-100">Edit Email</a>
+                                </div>
+                            </div>
                         </div>
 
                         <!-- Address Tab -->
@@ -162,12 +181,10 @@
                                                        <p> Alt Phone <%= address.altPhone %></p>
                                                      
                                                     </address>
-                                                    <div class="d-flex">
+                                                    <div class="d-flex flex-wrap">
                                                         <a href="/editAddress?id=<%= address._id %>" class="btn-small">Edit</a>
 
                                                         <a href="#" class="btn-small delete-btn" data-id="<%= address._id %>">Delete</a>
-
-                                                        <!-- <a href="/deleteAddress?id=<%=address._id %>" class="btn-small" onclick="return confirm('Are you sure you want delete this address')" >Delete</a> -->
                                                     </div>
                                                 </div>
                                             </div>
@@ -231,12 +248,36 @@
                                         </p>
 
                                         <!-- Actions -->
-                                        <a href="/viewOrderDetails/<%=order.orderId%>" class="btn btn-sm btn-primary me-2">View</a>
-                                        <!-- <a href="#" class="btn btn-sm btn-outline-secondary">Track</a> -->
+                                        <a href="/viewOrderDetails/<%=order.orderId%>" class="btn btn-sm  me-2"style="background-color:#B98F7D; color:white; border:none;">View</a>
                                         </div>
                                     </div>
                                     </div>
                                 <% }) %>
+                                <!-- Order Pagination -->
+<div class="d-flex justify-content-center mt-4">
+  <nav>
+    <ul class="pagination">
+      <% if(orderPagination.orderPage > 1){ %>
+        <li class="page-item">
+          <a class="page-link" href="?orderPage=<%= orderPagination.orderPage - 1 %>&tab=orders">Previous</a>
+        </li>
+      <% } %>
+
+      <% for(let i = 1; i <= orderPagination.totalOrderPages; i++){ %>
+        <li class="page-item <%= orderPagination.orderPage === i ? 'active' : '' %>">
+          <a class="page-link" href="?orderPage=<%= i %>&tab=orders"><%= i %></a>
+        </li>
+      <% } %>
+
+      <% if(orderPagination.orderPage < orderPagination.totalOrderPages){ %>
+        <li class="page-item">
+          <a class="page-link" href="?orderPage=<%= orderPagination.orderPage + 1 %>&tab=orders">Next</a>
+        </li>
+      <% } %>
+    </ul>
+  </nav>
+</div>
+
                                 <% } %>
                             </div>
                             </div>
@@ -258,7 +299,7 @@
                                 <label for="confirmPassword">Confirm Password</label>
                                 <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm new password" required>
                             </div>
-                            <button type="submit" class="save-btn">Update Password</button>
+                            <button type="submit" class="save-btn">Update Passsword</button>
                              </form>
                         </div>
 
@@ -281,7 +322,7 @@
                             </div>
                            
                         </div>
-                        <div id="toast">Copy to Clipboard</div>
+                        <div id="toast"> </div>
                       
                         <!-- //coupon -->
 
@@ -303,24 +344,12 @@
                                     <small class="text-muted"><%= item.couponType %></small><br>
                                     <small class="text-muted">MIN Purchase : <%= item.minPurchase.toLocaleString('en-IN',{style:'currency',currency:"INR"}) %></small><br>
                                     <small class=" text-success">Active : <%= item.isActive %></small><br>
-                                    <!-- <small class="text-muted"><%= item.maxDiscount %></small><br> -->
                                     </div>
                                 <% }) %>
                                 </div>
                             <% }else{ %>
                                 <p>No coupons available right now.</p>
                             <% } %>
-                               
-                                
-                                <!-- <div class="d-flex flex-wrap gap-3">
-                                <p>referral coupon reward</p>
-                                    <div class="coupon-card">
-                                    <p class="coupon-code"></p>
-                                    <small></small><br>
-                                    <small></small>
-                                    </div>
-                                
-                                </div> -->
                               </div>
                             </div>
                         </div>
@@ -338,27 +367,37 @@
                                 </div>
                             </div>
                             <div class="mt-4">
-                                 <table>
                                 <h5>Transaction History</h5>
+                                
+                                <!-- Desktop Table View -->
+                                <div class="table-responsive">
+                                 <table>
                                     <tr>
                                         <th>OrderId</th>
-                                        <th>Product Name</th>
+                                        
                                         <th>Type</th>
                                         <th>Amount</th>
                                         <th>paymentMethod</th>
                                         <th>Description</th>
                                         <th>Date</th>
+                                    
                                     </tr>
                                      <% if(transaction ){ %>
                                     <% transaction.forEach(txn=>{ %>
                                     <tr>   
+                                        <% if(txn.orderId){%>
                                         <td><%= txn.orderId  %></td>
+                                        <% }else{%>
+                                         <td>No OrderId </td>    
+                                        <%}%>
                                         <%if(txn.orderDetails && txn.orderDetails.orderedItems ){ %>
                                         <% txn.orderDetails.orderedItems.forEach(i=>{ %>
-                                        <td><img class="p-2" src="<%= i.product.productImage[0] %>" alt="">
-                                        <%= i.product?.productName ? i.product.productName : 'No product'%></td>
+                                       
+                                    
                                         <% }) %>
-                                        <% } %>
+                                        <% }else{ %>
+                                            No Poducts
+                                       <% } %>
                                         <td class="<%= txn.type ==='Credit' ? 'text-success' :'text-danger' %>"><%= txn.type %></td>
                                         <td><%= txn.amount %></td>
                                         <td><%= txn.paymentMethod %></td>
@@ -377,9 +416,81 @@
                               
                                 <% }) %>
                                 <% } else {%>
-                                    No transaction Found
+                                    <tr><td colspan="7">No transaction Found</td></tr>
                                 <% } %>
                                   </table>
+                                  </div>
+                                  
+                                  <!-- Mobile Card View -->
+                                  <% if(transaction && transaction.length > 0){ %>
+                                      <% transaction.forEach(txn=>{ %>
+                                          <div class="transaction-card">
+                                              <div class="transaction-header">
+                                                  <%if(txn.orderDetails && txn.orderDetails.orderedItems && txn.orderDetails.orderedItems.length > 0){ %>
+                                                      <img src="<%= txn.orderDetails.orderedItems[0].product.productImage[0] %>" alt="Product">
+                                                      <div class="product-name">
+                                                          <%= txn.orderDetails.orderedItems[0].product?.productName || 'No product' %>
+                                                          <% if(txn.orderDetails.orderedItems.length > 1){ %>
+                                                              <span class="badge bg-secondary" style="font-size: 10px;">+<%= txn.orderDetails.orderedItems.length - 1 %> more</span>
+                                                          <% } %>
+                                                      </div>
+                                                  <% } else { %>
+                                                      <div class="product-name">Wallet Transaction</div>
+                                                  <% } %>
+                                              </div>
+                                              
+                                              <div class="transaction-detail">
+                                                  <span class="label">Order ID:</span>
+                                                  <span class="value"><%= txn.orderId %></span>
+                                              </div>
+                                              
+                                              <div class="transaction-detail">
+                                                  <span class="label">Type:</span>
+                                                  <span class="value">
+                                                      <span class="transaction-type <%= txn.type === 'Credit' ? 'credit' : 'debit' %>">
+                                                          <%= txn.type %>
+                                                      </span>
+                                                  </span>
+                                              </div>
+                                              
+                                            <div class="transaction-detail">
+                                                <span class="label">Amount:</span>
+                                                <span class="value <%= txn.type === 'Credit' ? '#28a745' : '#dc3545' %>;">
+                                                <%= txn.type === 'Credit' ? '+' : '-' %>₹<%= txn.amount %>
+                                                </span>
+                                            </div>
+  
+                                              
+                                              <div class="transaction-detail">
+                                                  <span class="label">Payment Method:</span>
+                                                  <span class="value"><%= txn.paymentMethod %></span>
+                                              </div>
+                                              
+                                              <div class="transaction-detail">
+                                                  <span class="label">Description:</span>
+                                                  <span class="value"><%= txn.description %></span>
+                                              </div>
+                                              
+                                              <div class="transaction-detail">
+                                                  <span class="label">Date:</span>
+                                                  <span class="value">
+                                                      <%= new Date(txn.date).toLocaleString("en-IN", {
+                                                          day: "2-digit",
+                                                          month: "2-digit",
+                                                          year: "numeric",
+                                                          hour: "2-digit",
+                                                          minute: "2-digit"
+                                                      }) %>
+                                                  </span>
+                                              </div>
+                                          </div>
+                                      <% }) %>
+                                  <% } else { %>
+                                      <div class="transaction-card">
+                                          <p class="text-center text-muted">No transactions found</p>
+                                      </div>
+                                  <% } %>
+                                  
                                   <!-- 🔹 Pagination Controls -->
                                 <div style="margin-top: 20px;">
                                 <% if (pagination.totalPages > 1) { %>
@@ -430,354 +541,594 @@
      <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
     <script>
        
- document.addEventListener('DOMContentLoaded',()=>{
+// Enhanced JavaScript for Responsive User Profile
+
+document.addEventListener('DOMContentLoaded', () => {
+    // Initialize tab from URL parameter
+    initializeTabFromURL();
+    
+    // Setup all event listeners
+    setupTabNavigation();
+    setupMobileSidebar();
+    setupAddressDeletion();
+    setupPasswordChange();
+    setupWalletTopUp();
+    setupClipboardCopy();
+});
+
+// Initialize tab based on URL parameter
+function initializeTabFromURL() {
     const urlParams = new URLSearchParams(window.location.search);
     const tab = urlParams.get('tab');
-    if(tab){
-        document.querySelectorAll('.sidebar-link').forEach(l=>l.classList.remove('active'));
-        document.querySelectorAll('.tab-pane').forEach(p=>p.classList.remove('show','active'));
-       
-        const targestLink = document.querySelector(`.sidebar-link[data-tab="${tab}"]`);
-        const targestpane = document.getElementById(tab)
+    
+    if (tab) {
+        // Remove active class from all links and panes
+        document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
+        document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('show', 'active'));
         
-        if(targestLink && targestpane){
-            targestLink.classList.add('active');
-            targestpane.classList.add('show','active')
-        }
-    }
- })
-        // Mobile menu toggle
-        const hamburger = document.getElementById('hamburger');
-        const navLinks = document.getElementById('navLinks');
-
-        if (hamburger) {
-            hamburger.addEventListener('click', () => {
-                hamburger.classList.toggle('active');
-                navLinks.classList.toggle('active');
-            });
-        }
-
-        // Close mobile menu when clicking on a link
-        document.querySelectorAll('.nav-links a').forEach(link => {
-            link.addEventListener('click', () => {
-                if (hamburger) {
-                    hamburger.classList.remove('active');
-                    navLinks.classList.remove('active');
-                }
-            });
-        });
-
-        // Tab functionality
-        document.querySelectorAll('.sidebar-link').forEach(link => {
-            link.addEventListener('click', (e) => {
-                e.preventDefault();
-                
-                const targetTab = link.getAttribute('data-tab');
-                
-                // Remove active class from all sidebar links
-                document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
-                
-                // Add active class to clicked link
-                link.classList.add('active');
-                
-                // Hide all tab panes
-                document.querySelectorAll('.tab-pane').forEach(pane => {
-                    pane.classList.remove('show', 'active');
-                });
-                
-                // Show target tab pane
-                const targetPane = document.getElementById(targetTab);
-                if (targetPane) {
-                    targetPane.classList.add('show', 'active');
-                }
-            });
-        });
-
-       document.addEventListener('DOMContentLoaded',()=>{
-    const urlParams = new URLSearchParams(window.location.search);
-    const tab = urlParams.get('tab');
-    if(tab){
-        document.querySelectorAll('.sidebar-link').forEach(l=>l.classList.remove('active'));
-        document.querySelectorAll('.tab-pane').forEach(p=>p.classList.remove('show','active'));
-
+        // Activate target tab
         const targetLink = document.querySelector(`.sidebar-link[data-tab="${tab}"]`);
         const targetPane = document.getElementById(tab);
         
-        if(targetLink && targetPane){
+        if (targetLink && targetPane) {
             targetLink.classList.add('active');
-            targetPane.classList.add('show','active');
+            targetPane.classList.add('show', 'active');
         }
     }
-})
+}
 
-       
-// <--------address deletion---------------->
-        document.addEventListener('DOMContentLoaded',function (){
-            const deleteButtons = document.querySelectorAll('.delete-btn');
+// Setup tab navigation
+function setupTabNavigation() {
+    document.querySelectorAll('.sidebar-link').forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            
+            const targetTab = link.getAttribute('data-tab');
+            
+            // Skip if it's a logout link or doesn't have data-tab
+            if (!targetTab) return;
+            
+            // Update active states
+            document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
+            link.classList.add('active');
+            
+            // Switch tab panes
+            document.querySelectorAll('.tab-pane').forEach(pane => {
+                pane.classList.remove('show', 'active');
+            });
+            
+            const targetPane = document.getElementById(targetTab);
+            if (targetPane) {
+                targetPane.classList.add('show', 'active');
+            }
+            
+            // Close mobile sidebar after selection
+            if (window.innerWidth <= 768) {
+                closeMobileSidebar();
+            }
+            
+            // Update URL without reload
+            const newUrl = new URL(window.location);
+            newUrl.searchParams.set('tab', targetTab);
+            window.history.pushState({}, '', newUrl);
+        });
+    });
+}
 
-            deleteButtons.forEach(button => {
-              button.addEventListener('click',function(e){
-                    e.preventDefault();
+// Setup mobile sidebar toggle
+function setupMobileSidebar() {
+    const sidebarToggle = document.getElementById('sidebarToggle');
+    const sidebar = document.getElementById('sidebarMenu');
+    
+    if (sidebarToggle && sidebar) {
+        sidebarToggle.addEventListener('click', (e) => {
+            e.stopPropagation();
+            sidebar.classList.toggle('show');
+        });
+        
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', (e) => {
+            if (window.innerWidth <= 768) {
+                const isClickInsideSidebar = sidebar.contains(e.target);
+                const isClickOnToggle = sidebarToggle.contains(e.target);
+                
+                if (!isClickInsideSidebar && !isClickOnToggle && sidebar.classList.contains('show')) {
+                    closeMobileSidebar();
+                }
+            }
+        });
+        
+        // Close sidebar on window resize to desktop
+        window.addEventListener('resize', () => {
+            if (window.innerWidth > 768) {
+                sidebar.classList.remove('show');
+            }
+        });
+    }
+}
 
-                    const addressId = this.getAttribute('data-id');
+// Close mobile sidebar
+function closeMobileSidebar() {
+    const sidebar = document.getElementById('sidebarMenu');
+    if (sidebar) {
+        sidebar.classList.remove('show');
+    }
+}
 
-                      Swal.fire({
-                            title: 'Are you sure?',
-                            text: "Do you really want to delete this address?",
-                            icon: 'warning',
-                            showCancelButton: true,
-                            confirmButtonColor: '#d33',
-                            cancelButtonColor: '#3085d6',
-                            confirmButtonText: 'Yes, delete it!'
-                         }).then((result)=>{
-                            if(result.isConfirmed){
-                                fetch(`/deleteAddress?id=${addressId}`,{
-                                    method:'GET'
-                                })
-                                .then(response => response.json())
-                                .then(data =>{
-                                    if(data.message === "Address Delected Successfully"){
-                                        Swal.fire(
-                                            'Deleted!',
-                                            'Your address has been deleted.',
-                                            'success'
-                                        ).then(()=>{
-                                            window.location.reload()
-                                        });
-                                    }else{
-                                        Swal.fire('Error',data.message || "Something Went Wrong");
-                                    }
-                                })
-                                .catch(error =>{
-                                    console.log("error in fetch in deleteing address");
-                                    Swal.fire('Error', 'Server error occurred.', 'error');;
-                                });
-                            }
-                         });
-                });
+// Setup address deletion
+function setupAddressDeletion() {
+    const deleteButtons = document.querySelectorAll('.delete-btn');
+    
+    deleteButtons.forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            const addressId = this.getAttribute('data-id');
+            
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "Do you really want to delete this address?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Yes, delete it!',
+                cancelButtonText: 'Cancel'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    deleteAddress(addressId);
+                }
             });
         });
+    });
+}
 
-        // <---------------fetch for change password ----------------->
+// Delete address function
+function deleteAddress(addressId) {
+    fetch(`/deleteAddress?id=${addressId}`, {
+        method: 'GET'
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.message === "Address Delected Successfully" || data.success) {
+            Swal.fire({
+                icon: 'success',
+                title: 'Deleted!',
+                text: 'Your address has been deleted.',
+                confirmButtonColor: '#667eea'
+            }).then(() => {
+                window.location.reload();
+            });
+        } else {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: data.message || "Something went wrong"
+            });
+        }
+    })
+    .catch(error => {
+        console.error("Error deleting address:", error);
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Server error occurred.'
+        });
+    });
+}
 
-             // Form validation for password change
-        // document.getElementById('newPassword')?.addEventListener('blur', function() {
-        //     const confirmPassword = document.getElementById('confirmPassword');
-        //     if (confirmPassword.value && this.value !== confirmPassword.value) {
-        //         confirmPassword.setCustomValidity('Passwords do notd match');
-        //     } else {
-        //         confirmPassword.setCustomValidity('');
-        //     }
-        // });
-
-        // document.getElementById('confirmPassword')?.addEventListener('input', function() {
-        //     const newPassword = document.getElementById('newPassword');
-        //     if (this.value !== newPassword.value) {
-        //         this.setCustomValidity('Passwords do not vqxkuhvgkumatch');
-        //     } else {
-        //         this.setCustomValidity('');
-        //     }
-        // });
-
-            document.getElementById('changePassword').addEventListener('submit', async (e)=>{
-                e.preventDefault();
-
-               try {
-                 const currentPassword = document.getElementById('currentPassword').value.trim();
+// Setup password change
+function setupPasswordChange() {
+    const changePasswordForm = document.getElementById('changePassword');
+    
+    if (changePasswordForm) {
+        changePasswordForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            try {
+                const currentPassword = document.getElementById('currentPassword').value.trim();
                 const newPassword = document.getElementById('newPassword').value.trim();
                 const confirmPassword = document.getElementById('confirmPassword').value.trim();
-
-                if(newPassword !== confirmPassword){
+                
+                // Validate passwords match
+                if (newPassword !== confirmPassword) {
                     Swal.fire({
-                        icon:'error',
-                        title:"Oops",
-                        text:"Password do not Match",
-                        showConfrimButton:true
-                    })
+                        icon: 'error',
+                        title: 'Oops',
+                        text: 'Passwords do not match',
+                        confirmButtonColor: '#667eea'
+                    });
+                    return;
                 }
-
-                const data = await fetch('/changePassword',{
-                    method:'POST',
-                    headers:{
-                        'Content-Type':'application/json'
+                
+                // Validate password strength
+                if (newPassword.length < 8) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Weak Password',
+                        text: 'Password must be at least 8 characters long',
+                        confirmButtonColor: '#667eea'
+                    });
+                    return;
+                }
+                
+                const response = await fetch('/changePassword', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
                     },
-                    body:JSON.stringify({currentPassword,newPassword,confirmPassword})
-                })
-
-                const response = await data.json();
-
-                if(response.success){
+                    body: JSON.stringify({ currentPassword, newPassword, confirmPassword })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
                     Swal.fire({
-                        icon:'success',
-                        title:'Success',
-                        text:response.message
-                    }).then(()=>{
-                        window.location.reload();
-                    })
-                }else{
+                        icon: 'success',
+                        title: 'Success',
+                        text: data.message,
+                        confirmButtonColor: '#667eea'
+                    }).then(() => {
+                        changePasswordForm.reset();
+                    });
+                } else {
                     Swal.fire({
-                        icon:'error',
-                        title:'Oops',
-                        text:response.message
-                    })
+                        icon: 'error',
+                        title: 'Oops',
+                        text: data.message,
+                        confirmButtonColor: '#667eea'
+                    });
                 }
-               } catch (error) {
-                console.log("error in fecth",error)
-                        Swal.fire({
-                        icon:'error',
-                        title:'ERROR',
-                        text:response.message
-                    })
-               }
+            } catch (error) {
+                console.error("Error changing password:", error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'ERROR',
+                    text: 'Something went wrong. Please try again.',
+                    confirmButtonColor: '#667eea'
+                });
+            }
+        });
+    }
+}
+
+// Setup wallet top-up
+function setupWalletTopUp() {
+    const walletButton = document.getElementById('walletButton');
+    
+    if (walletButton) {
+        walletButton.addEventListener('click', async () => {
+            const { value: amount } = await Swal.fire({
+                title: 'ADD MONEY TO WALLET',
+                input: 'number',
+                inputLabel: 'Enter amount in ₹',
+                inputPlaceholder: 'e.g., 500',
+                showCancelButton: true,
+                confirmButtonText: 'ADD',
+                cancelButtonText: 'Cancel',
+                confirmButtonColor: '#667eea',
+                inputValidator: (value) => {
+                    if (!value || value <= 0) {
+                        return 'Please enter a valid amount';
+                    }
+                    if (value > 100000) {
+                        return 'Maximum amount is ₹1,00,000';
+                    }
+                }
+            });
+            
+            if (amount) {
+                await processWalletTopUp(amount);
+            }
+        });
+    }
+}
+
+// Process wallet top-up
+async function processWalletTopUp(amount) {
+    const userId = document.body.getAttribute('data-user-id') || '';
+    
+    try {
+        const response = await fetch('/wallet-top-up', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ userId, amount })
+        });
+        
+        const data = await response.json();
+        
+        if (!data.orderId) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Something went wrong. Please try again.',
+                confirmButtonColor: '#667eea'
+            });
+            return;
+        }
+        
+        // Razorpay options
+        const options = {
+            'key': data.key,
+            'amount': data.amount,
+            'currency': 'INR',
+            'name': 'HOURLY WATCHES',
+            'description': 'Add to Wallet',
+            'order_id': data.orderId,
+            'handler': function(response) {
+                verifyWalletTopUp(response, amount, userId);
+            },
+            'modal': {
+                'ondismiss': function() {
+                    Swal.fire({
+                        icon: 'info',
+                        title: 'Payment Cancelled',
+                        text: 'You cancelled the payment process',
+                        confirmButtonColor: '#667eea'
+                    });
+                }
+            },
+            'theme': {
+                'color': '#667eea'
+            }
+        };
+        
+        const rzp = new Razorpay(options);
+        rzp.open();
+        
+    } catch (error) {
+        console.error("Error in wallet top-up:", error);
+        Swal.fire({
+            icon: 'error',
+            title: 'ERROR',
+            text: 'Something went wrong',
+            confirmButtonColor: '#667eea'
+        });
+    }
+}
+
+// Verify wallet top-up
+function verifyWalletTopUp(response, amount, userId) {
+    fetch('/verify-wallet-topup', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ ...response, amount, userId })
+    })
+    .then(res => {
+        if (!res.ok) {
+            throw new Error("Network response was not ok");
+        }
+        return res.json();
+    })
+    .then(result => {
+        if (result.success) {
+            Swal.fire({
+                icon: 'success',
+                title: 'Success',
+                text: 'Money added to wallet successfully!',
+                confirmButtonColor: '#667eea'
+            }).then(() => {
+                window.location.reload();
+            });
+        } else {
+            Swal.fire({
+                icon: 'error',
+                title: 'Failed',
+                text: 'Payment verification failed',
+                confirmButtonColor: '#667eea'
+            });
+        }
+    })
+    .catch(err => {
+        console.error("Error in verify-wallet-topup:", err);
+        Swal.fire({
+            icon: 'error',
+            title: 'ERROR',
+            text: 'Something went wrong in verification',
+            confirmButtonColor: '#667eea'
+        });
+    });
+}
+
+// Setup clipboard copy functions
+function setupClipboardCopy() {
+    // These functions are called from inline onclick handlers in your HTML
+    window.copyToClipboard = function() {
+        const referralCode = document.getElementById('clipboardCopy')?.innerText;
+        
+        if (!referralCode) {
+            showToast('Error: Referral code not found');
+            return;
+        }
+        
+        navigator.clipboard.writeText(referralCode)
+            .then(() => {
+                showToast('Referral Code Copied: ' + referralCode);
             })
-      
-      
-      
-      
-            // mobileview toggle
-                document.getElementById('sidebarToggle')?.addEventListener('click', ()=>{
-                    const sidebar = document.getElementById('sidebarMenu')
-                    sidebar.classList.toggle('show')
-                })
-               document.querySelectorAll('.sidebar-link').forEach(link => {
-    link.addEventListener('click', () => {
-        const sidebar = document.getElementById('sidebarMenu');
-        if (window.innerWidth <= 768) {
-            sidebar.classList.remove('show');
+            .catch(err => {
+                console.error("Failed to copy referral code:", err);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Failed to Copy',
+                    text: 'Unable to copy to clipboard',
+                    confirmButtonColor: '#667eea'
+                });
+            });
+    };
+    
+    window.copyToCoupon = function() {
+        // Get the coupon code from the clicked button's parent element
+        const button = event.target;
+        const couponCard = button.closest('.coupon-card');
+        const copyElement = couponCard ? couponCard.querySelector('#copyCoupon, [id^="copyCoupon"]') : null;
+        const couponCode = copyElement ? copyElement.innerText : document.getElementById('copyCoupon')?.innerText;
+        
+        if (!couponCode) {
+            showToast('Error: Coupon code not found');
+            return;
+        }
+        
+        navigator.clipboard.writeText(couponCode)
+            .then(() => {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success',
+                    text: `Successfully copied: ${couponCode}`,
+                    timer: 2000,
+                    showConfirmButton: false,
+                    toast: true,
+                    position: 'top-end'
+                });
+            })
+            .catch(err => {
+                console.error("Failed to copy coupon:", err);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Failed to Copy',
+                    text: 'Unable to copy to clipboard',
+                    confirmButtonColor: '#667eea'
+                });
+            });
+    };
+}
+
+// Show toast notification
+function showToast(message) {
+    const toast = document.getElementById('toast');
+    
+    if (!toast) {
+        console.warn('Toast element not found');
+        return;
+    }
+    
+    toast.innerText = message;
+    toast.className = 'show';
+    
+    setTimeout(() => {
+        toast.className = toast.className.replace('show', '');
+    }, 3000);
+}
+
+// Prevent form submission on enter (except for textareas)
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && e.target.tagName !== 'TEXTAREA' && e.target.type !== 'submit') {
+        const form = e.target.closest('form');
+        if (form) {
+            e.preventDefault();
+        }
+    }
+});
+
+// Handle responsive images - lazy loading
+if ('IntersectionObserver' in window) {
+    const imageObserver = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const img = entry.target;
+                if (img.dataset.src) {
+                    img.src = img.dataset.src;
+                    img.removeAttribute('data-src');
+                    observer.unobserve(img);
+                }
+            }
+        });
+    });
+    
+    document.querySelectorAll('img[data-src]').forEach(img => {
+        imageObserver.observe(img);
+    });
+}
+
+// Smooth scroll for anchor links
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function(e) {
+        const href = this.getAttribute('href');
+        if (href !== '#' && href.length > 1) {
+            e.preventDefault();
+            const target = document.querySelector(href);
+            if (target) {
+                target.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
         }
     });
 });
 
-// ---------------------------add money to wallet -----------------------------
-    document.getElementById('walletButton').addEventListener('click',async()=>{
-        const {value:amount} = await Swal.fire({
-            title:"ADD MONEY TO WALLET",
-            input:'number',
-            inputLabel:'Enter amount in rs',
-            inputPlaceholder:"Eg: 500",
-            showCancelButton:true,
-            confirmButtonText:'ADD',
-            cancelButtonText:'Cancel',
-            inputValidator:(value)=>{
-                if(!value || value<=0){
-                    return "Please Enter a Valid Amount";
-                }
-            }
-        });
+// Add loading state to buttons
+function addButtonLoadingState(button, isLoading = true) {
+    if (isLoading) {
+        button.disabled = true;
+        button.dataset.originalText = button.innerText;
+        button.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Loading...';
+    } else {
+        button.disabled = false;
+        button.innerHTML = button.dataset.originalText || button.innerText;
+    }
+}
 
-        if(amount){
-            const userId = '<%= user._id%>';
-            try { 
-                
-                const response = await fetch('/wallet-top-up',{
-                    method:'POST',
-                    headers:{
-                        'Content-Type':'application/json'
-                    },
-                    body:JSON.stringify({userId,amount})
-                });
-               
-                    const data = await response.json()
-     
-                    if(!data.orderId){
-                        Swal.fire('Error','Something Went Wrong ,Please try again')
-                    }
-                     
-                    var options = {
-                        'key' : data.key,
-                        'amount':data.amount,
-                        'currency':'INR',
-                        'name':'HOURLY WATCHES',
-                        'description':'Add to Wallet',
-                        'order_id':data.orderId,
-                        'handler':function(response){
-                            fetch('/verify-wallet-topup',{
-                                method:'POST',
-                                headers:{
-                                    'Content-Type':'application/json'
-                                },
-                                body:JSON.stringify({...response,amount,userId})
-                            })
-                            .then(res => {
-                                 if(!res.ok){
-                                throw new Error("Network response was not ok")
-                                 } 
-                                 return res.json();
-                            })
-                            .then(result =>{
-                                
-                                if(result.success){
-                                    Swal.fire('Success',"Money Added To wallet",'success').then(()=>{
-                                        window.location.reload()
-                                    })
-                                }else{
-                                    Swal.fire('Failed','Payment Verification Failed','error')
-                                }
-                              })
-                              .catch(err =>{
-                                        console.error("Error in verify-wallet-topup:", err);
-                                        Swal.fire("OOPS","Something Went Wrong in verification",'error');
-                                    });
-                        },
-                        // 'theme':{'color':'#3399cc'}
-                    };
-                    var rzp1 = new Razorpay(options);
-                    rzp1.open();
+// Handle network errors gracefully
+window.addEventListener('online', () => {
+    showToast('Connection restored');
+});
 
-            } catch (error) {
-                console.log("errror in the razorpay verification",error);
-                Swal.fire("OoOPS","Something Went Wrong",'error')
-                
-            }
+window.addEventListener('offline', () => {
+    showToast('No internet connection');
+});
+
+// Debounce function for performance
+function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+        const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+    };
+}
+
+// Add resize handler with debounce
+const handleResize = debounce(() => {
+    // Add any resize-specific logic here
+    if (window.innerWidth > 768) {
+        closeMobileSidebar();
+    }
+}, 250);
+
+window.addEventListener('resize', handleResize);
+
+// Prevent double submission of forms
+document.querySelectorAll('form').forEach(form => {
+    form.addEventListener('submit', function() {
+        const submitBtn = this.querySelector('button[type="submit"]');
+        if (submitBtn && !submitBtn.disabled) {
+            addButtonLoadingState(submitBtn, true);
+            setTimeout(() => {
+                addButtonLoadingState(submitBtn, false);
+            }, 5000); // Reset after 5 seconds as fallback
         }
-        
-    });  
-    function copyToClipboard(){
-        const referralCode = document.getElementById('clipboardCopy').innerText;
+    });
+});
 
-        navigator.clipboard.writeText(referralCode)
-        .then(()=>{
-           showToast('Referral Code Copied'+referralCode)
-        })
-        .catch(err=>{
-            console.log("Failed to copy in copyclipboard",err)
-            Swal.fire({
-                icon:'error',
-                title:'Failed to Copy'
-            })
-        })
-    }
-    function showToast(message){
-        const toast = document.getElementById('toast')
-        toast.innerText = message;
-        toast.className = 'show';
+// Add touch feedback for mobile
+if ('ontouchstart' in window) {
+    document.querySelectorAll('.btn, .btn-small, .sidebar-link, .card').forEach(element => {
+        element.addEventListener('touchstart', function() {
+            this.style.opacity = '0.8';
+        });
+        element.addEventListener('touchend', function() {
+            this.style.opacity = '1';
+        });
+    });
+}
 
-        setTimeout(()=>{
-            toast.className = toast.className.replace('show','')
-        },3000)
-    }
-
-    function copyToCoupon(){
-        const copy = document.getElementById('copyCoupon').innerText;
-
-        navigator.clipboard.writeText(copy)
-        .then(()=>{
-            Swal.fire({
-                icon:'success',
-                title:'Success',
-                text:`Succeesfully copied ${copy}`,
-
-            })
-        })
-        .catch(err=>{
-            console.log("error in copy ",err)
-            Swal.fire({
-                icon:'error',
-                title:'Failed to copy'
-            })
-
-        })
-    }
     </script>
    
 </body>

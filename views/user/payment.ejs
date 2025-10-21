@@ -1,7 +1,6 @@
- <%- include("../../views/partials/user/supportheader") %>
-    <title>HOURLY | Choose Payment </title>
+<%- include("../../views/partials/user/supportheader") %>
+    <title>HOURLY | Choose Payment</title>
     <style> 
-    
         * {
             margin: 0;
             padding: 0;
@@ -11,24 +10,41 @@
         body {
             font-family: Arial, sans-serif;
             background-color: #f5f5f5;
-            
+            overflow-x: hidden;
+            padding-bottom: 20px;
+        }
+
+        .checkout-wrapper {
+            padding: 20px;
+            min-height: 100vh;
         }
 
         .checkout-container {
-            max-width: 500px;
-            margin: 0 auto;
+            max-width: 600px;
+            margin: 80px auto 0;
             background: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
             overflow: hidden;
-            
         }
 
         .checkout-header {
-            background: #333;
+            background: linear-gradient(135deg, #333 0%, #555 100%);
             color: white;
-            padding: 5px;
+            padding: 20px;
             text-align: center;
+        }
+
+        .checkout-header h1 {
+            font-size: 24px;
+            margin-top: 8px;
+            font-weight: 600;
+        }
+
+        .user-greeting {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-bottom: 5px;
         }
 
         .checkout-content {
@@ -37,12 +53,13 @@
 
         .section {
             margin-bottom: 30px;
-            padding-bottom: 20px;
-            border-bottom: 1px solid #eee;
+            padding-bottom: 25px;
+            border-bottom: 2px solid #f0f0f0;
         }
 
         .section:last-child {
             border-bottom: none;
+            margin-bottom: 0;
         }
 
         .section-title {
@@ -50,46 +67,88 @@
             font-weight: bold;
             margin-bottom: 15px;
             color: #333;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .section-icon {
+            font-size: 20px;
         }
 
         .address-box, .order-box {
             background: #f9f9f9;
             padding: 20px;
-            border-radius: 5px;
-            border: 1px solid #ddd;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-             
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
         }
 
-        .product-name{
-            flex: 1;
+        .address-item {
+            margin-bottom: 10px;
+            line-height: 1.6;
+            color: #555;
+        }
+
+        .address-item strong {
+            color: #333;
+            font-size: 16px;
+        }
+
+        .address-item span {
+            display: inline-block;
+        }
+
+        .order-item {
+            display: flex;
+            justify-content: space-between;
             align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+            padding: 10px 0;
+            border-bottom: 1px dashed #e0e0e0;
+        }
+
+        .order-item:last-of-type {
+            border-bottom: none;
+        }
+
+        .product-name {
+            flex: 1;
+            font-size: 14px;
+            color: #333;
+            word-break: break-word;
         }
 
         .product-qty {
-        flex: 0 0 80px; /* fixed width for qty section */
-        text-align: center;
-        }
-        .product-amount {
-        flex: 0 0 100px; /* fixed width for amount */
-        text-align: right;
-        }
-        .address-item, .order-item {
-            margin-bottom: 8px;
-            display: flex;
-            /* justify-content: space-between; */
-            gap: 10px;
+            flex: 0 0 auto;
+            padding: 4px 12px;
+            background: #e3f2fd;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #1976d2;
+            white-space: nowrap;
         }
 
-        .order-item1{
-            font-weight: bold;
-            border-top: 1px solid #ddd;
-            padding-top: 10px;
-            margin-top: 10px;
+        .product-amount {
+            flex: 0 0 auto;
+            text-align: right;
+            font-weight: 600;
+            color: #333;
+            font-size: 14px;
+            white-space: nowrap;
+        }
+
+        .order-item1 {
             display: flex;
             justify-content: space-between;
+            align-items: center;
+            font-weight: bold;
+            font-size: 16px;
+            border-top: 2px solid #333;
+            padding-top: 15px;
+            margin-top: 15px;
+            color: #333;
         }
 
         .payment-options {
@@ -100,32 +159,51 @@
 
         .payment-option {
             border: 2px solid #ddd;
-            border-radius: 5px;
-            padding: 15px;
+            border-radius: 8px;
+            padding: 16px;
             cursor: pointer;
             transition: all 0.3s ease;
             display: flex;
-            align-items: center;
-            gap: 10px;
+            align-items: flex-start;
+            gap: 12px;
+            position: relative;
         }
 
         .payment-option:hover {
             border-color: #007bff;
+            background-color: #f8f9fa;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,123,255,0.1);
         }
 
         .payment-option.selected {
             border-color: #007bff;
-            background-color: #f0f8ff;
+            background-color: #e7f3ff;
+            box-shadow: 0 2px 8px rgba(0,123,255,0.2);
         }
 
-        .payment-option.disabled {
-            opacity: 0.5;
+        .payment-option.disabled-option {
+            opacity: 0.6;
             cursor: not-allowed;
             background-color: #f5f5f5;
         }
 
+        .payment-option.disabled-option:hover {
+            transform: none;
+            box-shadow: none;
+            border-color: #ddd;
+        }
+
         .payment-option input[type="radio"] {
-            margin-right: 10px;
+            margin-top: 2px;
+            cursor: pointer;
+            width: 18px;
+            height: 18px;
+            flex-shrink: 0;
+        }
+
+        .payment-option.disabled-option input[type="radio"] {
+            cursor: not-allowed;
         }
 
         .payment-info {
@@ -134,282 +212,600 @@
 
         .payment-title {
             font-weight: bold;
-            margin-bottom: 5px;
+            font-size: 15px;
+            margin-bottom: 6px;
+            color: #333;
         }
 
         .payment-desc {
-            font-size: 14px;
+            font-size: 13px;
             color: #666;
+            line-height: 1.5;
+        }
+
+        .not-available {
+            background: #dc3545;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: bold;
+            margin-left: 8px;
         }
 
         .coming-soon {
             background: #ffc107;
             color: #000;
             padding: 2px 8px;
-            border-radius: 3px;
-            font-size: 12px;
+            border-radius: 12px;
+            font-size: 11px;
             font-weight: bold;
+            margin-left: 8px;
         }
 
         .checkout-button {
             width: 100%;
-            padding: 15px;
-            background: #28a745;
+            padding: 16px;
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
             color: white;
             border: none;
-            border-radius: 5px;
+            border-radius: 8px;
             font-size: 16px;
             font-weight: bold;
             cursor: pointer;
-            margin-top: 20px;
+            margin-top: 25px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(40,167,69,0.3);
         }
 
         .checkout-button:hover {
-            background: #218838;
+            background: linear-gradient(135deg, #218838 0%, #1ab889 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(40,167,69,0.4);
+        }
+
+        .checkout-button:active {
+            transform: translateY(0);
         }
 
         .checkout-button:disabled {
             background: #ccc;
             cursor: not-allowed;
+            box-shadow: none;
         }
 
-        @media (max-width: 600px) {
-            .checkout-container {
-                margin: 10px;
+        /* Tablet Responsive (768px and below) */
+        @media (max-width: 768px) {
+            .checkout-wrapper {
+                padding: 12px;
             }
-            
+
+            .checkout-container {
+                margin: 70px auto 0;
+                border-radius: 10px;
+            }
+
+            .checkout-header {
+                padding: 18px 15px;
+            }
+
+            .checkout-header h1 {
+                font-size: 22px;
+            }
+
+            .user-greeting {
+                font-size: 13px;
+            }
+
             .checkout-content {
                 padding: 20px;
             }
-            
-            .address-item, .order-item {
-                /* flex-direction: column; */
-                gap: 5px;
-                justify-content: space-between;
+
+            .section {
+                margin-bottom: 25px;
+                padding-bottom: 20px;
+            }
+
+            .section-title {
+                font-size: 17px;
+            }
+
+            .address-box, .order-box {
+                padding: 16px;
             }
         }
-      
 
+        /* Mobile Responsive (576px and below) */
+        @media (max-width: 576px) {
+            .checkout-wrapper {
+                padding: 8px;
+            }
 
+            .checkout-container {
+                margin: 60px auto 0;
+                border-radius: 8px;
+            }
 
+            .checkout-header {
+                padding: 15px 12px;
+            }
+
+            .checkout-header h1 {
+                font-size: 20px;
+            }
+
+            .user-greeting {
+                font-size: 12px;
+            }
+
+            .checkout-content {
+                padding: 16px;
+            }
+
+            .section {
+                margin-bottom: 20px;
+                padding-bottom: 18px;
+            }
+
+            .section-title {
+                font-size: 16px;
+            }
+
+            .section-icon {
+                font-size: 18px;
+            }
+
+            .address-box, .order-box {
+                padding: 14px;
+            }
+
+            .address-item {
+                font-size: 13px;
+                margin-bottom: 8px;
+            }
+
+            .address-item strong {
+                font-size: 15px;
+            }
+
+            .order-item {
+                flex-wrap: wrap;
+                padding: 8px 0;
+                margin-bottom: 10px;
+            }
+
+            .product-name {
+                font-size: 13px;
+                flex: 1 1 100%;
+                margin-bottom: 6px;
+            }
+
+            .product-qty {
+                font-size: 12px;
+                padding: 3px 10px;
+            }
+
+            .product-amount {
+                font-size: 13px;
+            }
+
+            .order-item1 {
+                font-size: 15px;
+                padding-top: 12px;
+                margin-top: 12px;
+            }
+
+            .payment-option {
+                padding: 14px;
+                gap: 10px;
+            }
+
+            .payment-option input[type="radio"] {
+                width: 16px;
+                height: 16px;
+            }
+
+            .payment-title {
+                font-size: 14px;
+            }
+
+            .payment-desc {
+                font-size: 12px;
+            }
+
+            .checkout-button {
+                padding: 14px;
+                font-size: 15px;
+                margin-top: 20px;
+            }
+
+            .not-available,
+            .coming-soon {
+                font-size: 10px;
+                padding: 2px 6px;
+            }
+        }
+
+        /* Extra Small Mobile (420px and below) */
+        @media (max-width: 420px) {
+            .checkout-wrapper {
+                padding: 6px;
+            }
+
+            .checkout-container {
+                margin: 55px auto 0;
+            }
+
+            .checkout-header {
+                padding: 12px 10px;
+            }
+
+            .checkout-header h1 {
+                font-size: 18px;
+            }
+
+            .user-greeting {
+                font-size: 11px;
+            }
+
+            .checkout-content {
+                padding: 14px;
+            }
+
+            .section {
+                margin-bottom: 18px;
+                padding-bottom: 16px;
+            }
+
+            .section-title {
+                font-size: 15px;
+            }
+
+            .address-box, .order-box {
+                padding: 12px;
+            }
+
+            .address-item {
+                font-size: 12px;
+                margin-bottom: 7px;
+            }
+
+            .address-item strong {
+                font-size: 14px;
+            }
+
+            .order-item {
+                padding: 6px 0;
+            }
+
+            .product-name {
+                font-size: 12px;
+            }
+
+            .product-qty {
+                font-size: 11px;
+                padding: 2px 8px;
+            }
+
+            .product-amount {
+                font-size: 12px;
+            }
+
+            .order-item1 {
+                font-size: 14px;
+            }
+
+            .payment-option {
+                padding: 12px;
+                gap: 8px;
+            }
+
+            .payment-title {
+                font-size: 13px;
+            }
+
+            .payment-desc {
+                font-size: 11px;
+            }
+
+            .checkout-button {
+                padding: 12px;
+                font-size: 14px;
+            }
+        }
+
+        /* Very Small Screens (360px and below) */
+        @media (max-width: 360px) {
+            .checkout-wrapper {
+                padding: 4px;
+            }
+
+            .checkout-container {
+                margin: 50px auto 0;
+            }
+
+            .checkout-header h1 {
+                font-size: 16px;
+            }
+
+            .checkout-content {
+                padding: 12px;
+            }
+
+            .section-title {
+                font-size: 14px;
+            }
+
+            .address-box, .order-box {
+                padding: 10px;
+            }
+
+            .address-item {
+                font-size: 11px;
+            }
+
+            .product-name {
+                font-size: 11px;
+            }
+
+            .product-qty {
+                font-size: 10px;
+                padding: 2px 6px;
+            }
+
+            .product-amount {
+                font-size: 11px;
+            }
+
+            .order-item1 {
+                font-size: 13px;
+            }
+
+            .payment-option {
+                padding: 10px;
+            }
+
+            .payment-title {
+                font-size: 12px;
+            }
+
+            .payment-desc {
+                font-size: 10px;
+            }
+
+            .checkout-button {
+                padding: 10px;
+                font-size: 13px;
+            }
+        }
     </style>
 </head>
 <body>
-    <div class="checkout-container">
-        <div class="checkout-header">
-            Hi <%= orderData.findUser.name %>
-           <h1>Your Order Summary</h1>
-        </div>
-        
-        <div class="checkout-content">
-            <!-- Delivery Address Section -->
-            <div class="section">
-                <h2 class="section-title">Delivery Address</h2>
-                <div class="address-box">
-               
-                    <div class="address-item">
-                        <strong> <%= orderData.address.name %> </strong>
-                    </div>
-                    
-                    <div class="address-item">
-                        <span><%= orderData.address.name %></span>
-                        <%= orderData.address.landMark  %>(H)
-                        <span><%= orderData.address.city  %>,</span>
-                        <span><%= orderData.address.state  %>,</span>
-                        <span><%= orderData.address.pincode  %></span>
-                    </div>
-                    <div class="address-item">
-                        <span>Mobile +91:  <%= orderData.address.phone  %></span>
-                    </div>
-                    <!-- <div class="address-item">
-                        <span>Email: john.doe@email.com</span>
-                    </div> -->
-                </div>
+    <div class="checkout-wrapper">
+        <div class="checkout-container">
+            <div class="checkout-header">
+                <div class="user-greeting">Hi <%= orderData.findUser.name %></div>
+                <h1>Your Order Summary</h1>
             </div>
-
-            <!-- Order Details Section -->
-            <div class="section">
-                <h2 class="section-title">Order Details</h2>
-                <div class="order-box">
-                    <% orderData.items.forEach(item => { %>   
-                    <div class="order-item">
-                        <span class="product-name" ><%= item.productId.productName%></span>
-                        *
-                        <span class="product-qty" ><%= item.quantity%></span>
-                       <span class="product-amount" >₹<%= item.productId.salePrice * item.quantity %></span>
-                    </div>  
-                    
-                   <% }) %>
-                   <div class="order-item">
-
-                       <span class="product-name" > Coupon Discount </span> 
-                       <span class="product-amount">- <%= orderData.discount %></span>
-                   </div>
-                    <div class="order-item1">
-                        <span>Total Amount</span>
-                        <span>₹ <%= orderData.totalPrice %></span>
+            
+            <div class="checkout-content">
+                <!-- Delivery Address Section -->
+                <div class="section">
+                    <h2 class="section-title">
+                        <span class="section-icon">📍</span>
+                        Delivery Address
+                    </h2>
+                    <div class="address-box">
+                        <div class="address-item">
+                            <strong><%= orderData.address.name %></strong>
+                        </div>
+                        
+                        <div class="address-item">
+                            <span><%= orderData.address.name %>,</span>
+                            <span><%= orderData.address.landMark %> (H),</span>
+                            <span><%= orderData.address.city %>,</span>
+                            <span><%= orderData.address.state %>,</span>
+                            <span><%= orderData.address.pincode %></span>
+                        </div>
+                        <div class="address-item">
+                            <span>📱 Mobile: +91 <%= orderData.address.phone %></span>
+                        </div>
                     </div>
                 </div>
-            </div>
-        
-            <!-- Payment Method Section -->
-            <div class="section">
-                <h2 class="section-title">Payment Method</h2>
-                <div class="payment-options">
-                    
-                  <!-- Cash on Delivery -->
-                   <%if(orderData.totalPrice <= 1000){%>
-                        <div class="payment-option" >
-                            <input type="radio" name="payment" value="COD">
-                            <div class="payment-info">
-                                <div class="payment-title">💰 Cash on Delivery</div>
-                                <div class="payment-desc">Pay when your order is delivered to your doorstep</div>
-                            </div>
+
+                <!-- Order Details Section -->
+                <div class="section">
+                    <h2 class="section-title">
+                        <span class="section-icon">🛍️</span>
+                        Order Details
+                    </h2>
+                    <div class="order-box">
+                        <% orderData.items.forEach(item => { %>   
+                            <div class="order-item">
+                                <span class="product-name"><%= item.productId.productName %></span>
+                                <span class="product-qty">Qty: <%= item.quantity %></span>
+                                <span class="product-amount">₹<%= (item.productId.salePrice * item.quantity).toLocaleString('en-IN') %></span>
+                            </div>  
+                        <% }) %>
+                        
+                        <div class="order-item">
+                            <span class="product-name">Coupon Discount</span> 
+                            <span class="product-amount" style="color: #28a745;">- ₹<%= orderData.discount %></span>
                         </div>
-                    <% }else{%>
-                        <div class="payment-option disabled-option" >
-                            <input type="radio" name="payment" value="COD" disabled>
-                            <div class="payment-info">
-                                <div class="payment-title">💰 Cash on Delivery <span class="not-available">(Not Available)</span></div>
-                                <div class="payment-desc">COD is only available for orders up to ₹1000</div>
-                            </div>
+                        
+                        <div class="order-item1">
+                            <span>Total Amount</span>
+                            <span>₹<%= orderData.totalPrice.toLocaleString('en-IN') %></span>
                         </div>
-                   <% } %>
-                        <!-- Razorpay  -->
-                        <div class="payment-option ">
-                            <input type="radio" name="payment" value="razorpay" >
-                            <div class="payment-info">
-                                <div class="payment-title">
-                                    💳 Online Payment Razorpay
-                                    <!-- <span class="coming-soon">Coming Soon</span> -->
+                    </div>
+                </div>
+            
+                <!-- Payment Method Section -->
+                <div class="section">
+                    <h2 class="section-title">
+                        <span class="section-icon">💳</span>
+                        Payment Method
+                    </h2>
+                    <div class="payment-options">
+                        <!-- Cash on Delivery -->
+                        <% if(orderData.totalPrice <= 1000) { %>
+                            <div class="payment-option" onclick="selectPayment(this)">
+                                <input type="radio" name="payment" value="COD">
+                                <div class="payment-info">
+                                    <div class="payment-title">💰 Cash on Delivery</div>
+                                    <div class="payment-desc">Pay when your order is delivered to your doorstep</div>
                                 </div>
-                                <div class="payment-desc">Pay securely using Razorpay </div>
+                            </div>
+                        <% } else { %>
+                            <div class="payment-option disabled-option">
+                                <input type="radio" name="payment" value="COD" disabled>
+                                <div class="payment-info">
+                                    <div class="payment-title">
+                                        💰 Cash on Delivery 
+                                        <span class="not-available">Not Available</span>
+                                    </div>
+                                    <div class="payment-desc">COD is only available for orders up to ₹1000</div>
+                                </div>
+                            </div>
+                        <% } %>
+
+                        <!-- Razorpay -->
+                        <div class="payment-option" onclick="selectPayment(this)">
+                            <input type="radio" name="payment" value="razorpay">
+                            <div class="payment-info">
+                                <div class="payment-title">💳 Online Payment (Razorpay)</div>
+                                <div class="payment-desc">Pay securely using credit/debit card, UPI, or net banking</div>
                             </div>
                         </div>
-                        <div class="payment-option ">
+
+                        <!-- Wallet Payment -->
+                        <div class="payment-option" onclick="selectPayment(this)">
                             <input type="radio" name="payment" value="wallet">
                             <div class="payment-info">
                                 <div class="payment-title">
-                                    <i class="bi bi-wallet"></i> Wallet Payment 
-                                    <!-- <span class="coming-soon">Coming Soon</span> -->
+                                    <i class="bi bi-wallet"></i> Wallet Payment
                                 </div>
-                                <div class="payment-desc"> Payment using Wallet</div>
+                                <div class="payment-desc">Pay using your wallet balance</div>
                             </div>
                         </div>
+                    </div>
                 </div>
-            </div>
 
-            <!-- Place Order Button -->
-            <button class="checkout-button" id="paymentid">
-                Place Order - ₹ <%= orderData.totalPrice %>
-            </button>
+                <!-- Place Order Button -->
+                <button class="checkout-button" id="paymentid">
+                    Place Order - ₹<%= orderData.totalPrice.toLocaleString('en-IN') %>
+                </button>
+            </div>
         </div>
     </div>
- <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
- <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
     <script>
-
-        document.getElementById('paymentid').addEventListener('click',function(){
-            const selectedPayment = document.querySelector("input[name='payment']:checked").value;
-
-            // console.log("payment method is ",selectedPayment)
+        // Select payment option
+        function selectPayment(element) {
+            if (element.classList.contains('disabled-option')) return;
             
-            if(!selectedPayment){
+            document.querySelectorAll('.payment-option').forEach(option => {
+                option.classList.remove('selected');
+            });
+            
+            element.classList.add('selected');
+            element.querySelector('input[type="radio"]').checked = true;
+        }
+
+        // Place order handler
+        document.getElementById('paymentid').addEventListener('click', function() {
+            const selectedPayment = document.querySelector("input[name='payment']:checked");
+
+            if (!selectedPayment) {
                 Swal.fire({
-                    icon:'warning',
-                    title:'Select Payment Method',
+                    icon: 'warning',
+                    title: 'Select Payment Method',
                     text: 'Please choose a payment method before placing the order.'
-                })
+                });
                 return;  
             }
-            const discount = '<%= orderData.discount %>'
+
+            const paymentValue = selectedPayment.value;
+            const discount = '<%= orderData.discount %>';
             const totalAmount = '<%= orderData.totalPrice %>';
-            const result = fetch('/place-order',{
-                method:'POST',
-                headers:{
-                    'Content-Type':'application/json'   
+
+            fetch('/place-order', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'   
                 },
-                body:JSON.stringify({
-                    address:"<%=orderData.address._id %>",
-                    paymentMethod:selectedPayment,
-                    totalAmount:totalAmount,
-                    discount:discount
+                body: JSON.stringify({
+                    address: "<%=orderData.address._id %>",
+                    paymentMethod: paymentValue,
+                    totalAmount: totalAmount,
+                    discount: discount
                 })
             })
             .then(res => res.json())
-            .then(data =>{
-                if(data.success){
-                   if(data.payment === 'razorpay'){
+            .then(data => {
+                if (data.success) {
+                    if (data.payment === 'razorpay') {
                         var options = {
-                            "key":data.key,
-                            amount:data.order.amount,
-                            'currency':data.order.currency,
-                            'name':'HOURLY WATCHES',
-                            'description':'Order Payment',
+                            "key": data.key,
+                            amount: data.order.amount,
+                            'currency': data.order.currency,
+                            'name': 'HOURLY WATCHES',
+                            'description': 'Order Payment',
                             'order_id': data.order.id,
-                            'handler':function(response){
-                                fetch('/verify-payment',{
-                                    method:'POST',
-                                    headers:{
-                                        'Content-Type':'application/json'
+                            'handler': function(response) {
+                                fetch('/verify-payment', {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json'
                                     },
-                                    body:JSON.stringify({
+                                    body: JSON.stringify({
                                         razorpay_order_id: response.razorpay_order_id,
                                         razorpay_payment_id: response.razorpay_payment_id,
                                         razorpay_signature: response.razorpay_signature,
                                         orderId: data.orderId,
-                                        address:"<%=orderData.address._id %>",
-                                        amount:data.order.amount,
-                                        discount:"<%=orderData.discount%>"
-
+                                        address: "<%=orderData.address._id %>",
+                                        amount: data.order.amount,
+                                        discount: "<%=orderData.discount%>"
                                     })  
                                 })
-                                .then((res=>res.json()))
-                                .then(result=>{
-                                    
-                                    if(result.success){
+                                .then(res => res.json())
+                                .then(result => {
+                                    if (result.success) {
                                         window.location.href = '/order-success';
-                                    }else{
-                                        
+                                    } else {
                                         window.location.href = '/order-failure';
                                     }
                                 });
                             }
                         };
-                            var rzp1 = new Razorpay(options)
-                            rzp1.on('payment.failed',function (response){
-                                console.log("payment Failed ",response.error)
-                                window.location.href = '/order-failure';
-                            })
-                            rzp1.open()
+                        var rzp1 = new Razorpay(options);
+                        rzp1.on('payment.failed', function(response) {
+                            console.log("Payment Failed", response.error);
+                            window.location.href = '/order-failure';
+                        });
+                        rzp1.open();
                     }
-                     if(data.payment === 'COD'){
-                        
-                        window.location.href = '/order-success'
+                    if (data.payment === 'COD') {
+                        window.location.href = '/order-success';
                     }
-                    if(data.payment === 'Wallet'){
-                        window.location.href = '/order-success'
+                    if (data.payment === 'Wallet') {
+                        window.location.href = '/order-success';
                     }
-                }else{
+                } else {
                     Swal.fire({
-                        icon:'error',
-                        title:'OOPS',
-                        text:data.message,
-                        showConfirmButton:true
-                    })
+                        icon: 'error',
+                        title: 'OOPS',
+                        text: data.message,
+                        showConfirmButton: true
+                    });
                 }
             })
-            .catch(err=>{
-                console.error("Error in the verification:",err)
-                window.location.href = '/order-failure'
-        })
-        })
-        
-        async function placeOrder(paymentMethod){
-            const address = document.querySelector("input[name='address']")
-        }
-
-
-    
+            .catch(err => {
+                console.error("Error in the verification:", err);
+                window.location.href = '/order-failure';
+            });
+        });
     </script>
 </body>

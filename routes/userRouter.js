@@ -90,11 +90,9 @@ router.post("/updateEmail", userAuth, profileEditing.postUpdateEmail);
 
 //product management
 router.get("/productDetails", productController.productDetails);
-router.get("/shop", productController.loadShoppingpage);
-router.get("/filter", productController.filterProduct);
-router.get("/filterPrice", productController.filterByPrice);
-router.get("/search", productController.searchProducts);
-// router.get('/shop/sort',productController.sortProducts);
+router.get("/shop",productController.loadShoppingpage);
+
+
 // cart
 router.get("/cart", cartController.getCart);
 router.post("/addtocart", cartController.addToCart);
@@ -109,6 +107,7 @@ router.get(
   cartController.addAddressInCheckout
 );
 //payement and confirm order
+
 router.post("/payment", paymentController.postPayment);
 router.post("/verify-payment", userAuth, paymentController.confirmRazorpay);
 // order management
@@ -121,7 +120,7 @@ router.post(
   userAuth,
   orderController.cancelOrder
 );
-router.post("/return-order/:id", userAuth, orderController.returnOrder);
+router.post("/return-order/:orderId/:itemId", userAuth, orderController.returnOrder);
 router.get("/viewOrderDetails/:id", userAuth, orderController.viewOrderDetails);
 router.get("/invoice/:id", invoiceController.invoice);
 
@@ -148,5 +147,11 @@ router.post("/apply-coupon", userAuth, cartController.applyCoupon);
 //contact
 router.get("/contact", userAuth, contactController.getContactPage);
 router.post('/contact',userAuth , contactController.postContact)
+
+
+
+
 router.get("/testing", cartController.gettest);
+
+
 module.exports = router;
