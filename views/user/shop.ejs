@@ -1071,7 +1071,9 @@
                     <% if(products[i].productOffer) { %>
                       <div class="offer-badge"><%= products[i].productOffer %>% OFF</div>
                     <% } %>
+                    <%if(user){%>
                     <span class="wishlist-btn" onclick="addToWishlist('<%= products[i]._id %>')">❤️</span>
+                    <%}%>
                     <img src="<%= products[i].productImage[0] %>" alt="<%= products[i].productName %>" />
                   </div>
                   <a href="/productDetails?id=<%= products[i]._id %>">

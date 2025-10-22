@@ -17,14 +17,14 @@ const contactController = require("../controllers/user/contactController");
 router.get("/pagenotfound", userController.pageNotFound);
 
 //signup management
-router.get("/signup",checksession, userController.loadSignup);
+router.get("/signup", checksession, userController.loadSignup);
 router.post("/signup", userController.signup);
 //resend otp in signup
 router.post("/resend-otp", userController.resendOtp);
 router.post("/resend-Forgot-passwordOtp", profileController.resendForgotOtp);
 
 router.get("/confirmwithotp", checksession, userController.confirmWithOtp);
-router.post("/confirmwithotp",checksession, userController.confirmwithotp);
+router.post("/confirmwithotp", checksession, userController.confirmwithotp);
 //google login
 router.get(
   "/google",
@@ -90,8 +90,7 @@ router.post("/updateEmail", userAuth, profileEditing.postUpdateEmail);
 
 //product management
 router.get("/productDetails", productController.productDetails);
-router.get("/shop",productController.loadShoppingpage);
-
+router.get("/shop", productController.loadShoppingpage);
 
 // cart
 router.get("/cart", cartController.getCart);
@@ -120,7 +119,11 @@ router.post(
   userAuth,
   orderController.cancelOrder
 );
-router.post("/return-order/:orderId/:itemId", userAuth, orderController.returnOrder);
+router.post(
+  "/return-order/:orderId/:itemId",
+  userAuth,
+  orderController.returnOrder
+);
 router.get("/viewOrderDetails/:id", userAuth, orderController.viewOrderDetails);
 router.get("/invoice/:id", invoiceController.invoice);
 
@@ -146,12 +149,8 @@ router.post("/apply-coupon", userAuth, cartController.applyCoupon);
 
 //contact
 router.get("/contact", userAuth, contactController.getContactPage);
-router.post('/contact',userAuth , contactController.postContact)
-
-
-
+router.post("/contact", userAuth, contactController.postContact);
 
 router.get("/testing", cartController.gettest);
-
 
 module.exports = router;

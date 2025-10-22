@@ -8,7 +8,7 @@ const productController = require("../controllers/admin/productController");
 const orderController = require("../controllers/admin/orderController");
 const couponController = require("../controllers/admin/couponController");
 const salesController = require("../controllers/admin/salesController");
-const concernController = require('../controllers/admin/concernController')
+const concernController = require("../controllers/admin/concernController");
 const { adminAuth, adminchecksession } = require("../middlewares/adminAuth");
 const multer = require("multer");
 const storage = require("../helpers/multer");
@@ -20,9 +20,9 @@ router.get("/adminlogin", checksession, adminController.loadLogin);
 router.post("/adminlogin", adminController.login);
 
 router.get("/dashboard", adminAuth, adminController.loaddashboard);
-router.get('/load-chart',adminAuth,adminController.salesChart)
+router.get("/load-chart", adminAuth, adminController.salesChart);
 
-router.get("/pageerror", adminController.pageerror);  
+router.get("/pageerror", adminController.pageerror);
 router.get("/logout", adminAuth, adminController.logout);
 
 //customer management
@@ -58,7 +58,6 @@ router.post(
 );
 router.get("/blockBrand", adminAuth, brandController.blockBrand);
 router.get("/unBlockBrand", adminAuth, brandController.unBlockBrand);
-
 
 //product management
 router.get("/addProducts", adminAuth, productController.getProductAddPage);
@@ -123,11 +122,11 @@ router.delete("/deleteCoupon/:code", adminAuth, couponController.deleteCoupon);
 router.get("/salesReport", adminAuth, salesController.getsalesReport);
 router.get("/sales-Report", adminAuth, salesController.filterSales);
 
-//concern 
-router.get('/concerns',adminAuth ,concernController.getConcernPage )
-router.get('/viewConcern/:id',adminAuth ,concernController.viewConcernpage)
+//concern
+router.get("/concerns", adminAuth, concernController.getConcernPage);
+router.get("/viewConcern/:id", adminAuth, concernController.viewConcernpage);
 
-router.post('/updateConcern/:id',adminAuth, concernController.updateConcern)
+router.post("/updateConcern/:id", adminAuth, concernController.updateConcern);
 
 // router.get('/users',customerController.loadcustomerInfo)
 // router.get('/dashboard',adminController.loaddashboard)

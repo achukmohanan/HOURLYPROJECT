@@ -1,253 +1,270 @@
 <%- include("../../views/partials/admin/sidebar") %>
 
- <style>
-           .page-item {
+<style>
+  .page-item {
     margin: 0 3px;
-}
+  }
 
-.page-link {
+  .page-link {
     padding: 6px 12px;
     border: 1px solid #dee2e6;
     color: #007bff;
     border-radius: 4px;
     text-decoration: none;
-}
+  }
 
-.page-item.active .page-link {
+  .page-item.active .page-link {
     background-color: #007bff;
     color: white;
     border-color: #007bff;
-}
-.pagination {
+  }
+  .pagination {
     display: flex;
     justify-content: center;
-    flex-wrap: wrap;  
-    gap: 5px; 
+    flex-wrap: wrap;
+    gap: 5px;
     padding-left: 0;
     list-style: none;
-}
+  }
 
-            .error-message {
-                color: red;
-            }
-            
-            .ml-105 {
-                margin-left: 105px;
-            }
-            
-            .mt-20 {
-                margin-top: 20px;
-            }
-            
-            .content-header {
-                margin-bottom: 25px;
-            }
-            
-            .content-title {
-                font-size: 24px;
-                font-weight: 600;
-                color: var(--primary-color);
-                margin: 0;
-            }
-        </style>
+  .error-message {
+    color: red;
+  }
+
+  .ml-105 {
+    margin-left: 105px;
+  }
+
+  .mt-20 {
+    margin-top: 20px;
+  }
+
+  .content-header {
+    margin-bottom: 25px;
+  }
+
+  .content-title {
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--primary-color);
+    margin: 0;
+  }
+</style>
 <!-- Sidebar Overlay for Mobile -->
 <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
 <!-- Main Content -->
 <main class="main-content" id="mainContent">
-    <div class="content-card">
-        
-        <section class="content-main">
-            <div class="content-header">
-                <div>
-                    <h2 class="content-title card-title">Brands</h2>
+  <div class="content-card">
+    <section class="content-main">
+      <div class="content-header">
+        <div>
+          <h2 class="content-title card-title">Brands</h2>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-3">
+              <form id="brandform" enctype="multipart/form-data">
+                <div class="mb-4">
+                  <label for="product_name" class="form-label"
+                    >Brand Name</label
+                  >
+                  <input
+                    type="text"
+                    name="name"
+                    id="brandname"
+                    placeholder="Type here"
+                    class="form-control"
+                  />
                 </div>
-            </div>
-            <div class="card">
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-3">
-                            <form   id="brandform"   enctype="multipart/form-data">
-                                <div class="mb-4">
-                                    <label for="product_name" class="form-label">Brand Name</label>
-                                    <input type="text" name="name" id="brandname" placeholder="Type here" class="form-control" />
-                                </div>
-                                <label for="product_name" class="form-label">Brand Image</label>
-                                <div class="input-upload"> 
-                                    <img src="" alt=""/>
-                                    <input class="form-control border" id="brandimg" name="image" type="file" />
-                                </div>
-                                <div class="d-grid">
-                                    <button class="btn btn-primary mt-20" type="submit">
-                                        Add Brand
-                                    </button>
-                                </div>
-                            </form>
-                        </div>
-                        <div class="col-md-7 ml-105">
-                            <div class="table-responsive">
-                                <table class="table table-hover">
-                                    <thead>
-                                        <tr>
-                                            <th>Brand</th>
-                                            <th>Logo</th>
-                                            <th>Status</th>
-                                            <th>Block/Unblock</th>
-                                        </tr>
-                                    </thead>
-                                   
-                                    <tbody>
-                                      <% data.reverse().forEach((brand,index)=>{%>
-                                        <tr>
-                                            <td class="text-start"><%=brand.brandName%></td>
-                                            <td class="text-start">
-                                                <div
-                                                    class="d-flex align-items-center justify-content-center"
-                                                    style="width: 50px; height: 50px;">
-                                                    <img
-                                                        src="<%= brand.brandImage%>"
-                                                        alt="<%=brand.brandName%>"
-                                                        class="img-fluid rounded-circle"
-                                                        style="width: 100%; height: auto"
-                                                    />
-                                                </div>
-                                            </td>
-                                            <td class="text-start">
-                                              <% if(brand.isBlocked === true){ %>
-                                                <span
-                                                    class="badge rounded-pill bg-danger alert-danger bg-opacity-50 text-white"
-                                                    style="width: 60px"
-                                                >Blocked</span>
-                                                <%}else{%>
-                                                <span
-                                                    class="badge rounded-pill alert-success bg-success bg-opacity-50 text-white"
-                                                    style="width: 60px"
-                                                >Active</span>
-                                                <%}%>
-                                            </td>
-                                            <td class="text-start">
-                                              <%if(brand.isBlocked === false){%>
-                                                <!-- <button class="btn btn-danger" style="width: 90px"> -->
-                                                    <a href="/admin/blockBrand?id=<%=brand._id%>" class=" btn btn-danger text-white no-underline"> Block </a>
-                                                <!-- </button> -->
-                                                <%}else{%>
-                                                <!-- <button class="btn btn-success" style="width: 90px"> -->
-                                                    <a href="/admin/unBlockBrand?id=<%=brand._id%>" class="btn btn-success text-white ">Unblock</a>
-                                                <!-- </button> -->
-                                                <%}%>  
-                                            </td>
-                                        </tr>
-                                        <%})%>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
+                <label for="product_name" class="form-label">Brand Image</label>
+                <div class="input-upload">
+                  <img src="" alt="" />
+                  <input
+                    class="form-control border"
+                    id="brandimg"
+                    name="image"
+                    type="file"
+                  />
                 </div>
+                <div class="d-grid">
+                  <button class="btn btn-primary mt-20" type="submit">
+                    Add Brand
+                  </button>
+                </div>
+              </form>
             </div>
-            <div class="pagination-container  d-flex  justify-content-center m-4">
-                <ul class="pagination">
-              <% if(currentPage >1){%>
-                <li class="page-item">
-                    <a class="page-link" href="?page=<%= currentPage-1 %>" >prev</a>
-                </li>
-              <%}%>
+            <div class="col-md-7 ml-105">
+              <div class="table-responsive">
+                <table class="table table-hover">
+                  <thead>
+                    <tr>
+                      <th>Brand</th>
+                      <th>Logo</th>
+                      <th>Status</th>
+                      <th>Block/Unblock</th>
+                    </tr>
+                  </thead>
 
-              <%for(let i=1; i<=totalPages; i++){%>
-                <li class="page-item <%= currentPage === i ? 'active' : '' %>">
-                <a class="page-link" href="?page=<%= i %>"><%= i%></a>
-                </li>
-                <%}%>
-
-                <%if(currentPage < totalPages){%>
-                    <li class="page-item">
-                    <a class="page-link" href="?page=<%= currentPage + 1 %>">next</a>
-                    </li>
-                <%}%>
-                </ul>
+                  <tbody>
+                    <% data.reverse().forEach((brand,index)=>{%>
+                    <tr>
+                      <td class="text-start"><%=brand.brandName%></td>
+                      <td class="text-start">
+                        <div
+                          class="d-flex align-items-center justify-content-center"
+                          style="width: 50px; height: 50px"
+                        >
+                          <img
+                            src="<%= brand.brandImage%>"
+                            alt="<%=brand.brandName%>"
+                            class="img-fluid rounded-circle"
+                            style="width: 100%; height: auto"
+                          />
+                        </div>
+                      </td>
+                      <td class="text-start">
+                        <% if(brand.isBlocked === true){ %>
+                        <span
+                          class="badge rounded-pill bg-danger alert-danger bg-opacity-50 text-white"
+                          style="width: 60px"
+                          >Blocked</span
+                        >
+                        <%}else{%>
+                        <span
+                          class="badge rounded-pill alert-success bg-success bg-opacity-50 text-white"
+                          style="width: 60px"
+                          >Active</span
+                        >
+                        <%}%>
+                      </td>
+                      <td class="text-start">
+                        <%if(brand.isBlocked === false){%>
+                        <!-- <button class="btn btn-danger" style="width: 90px"> -->
+                        <a
+                          href="/admin/blockBrand?id=<%=brand._id%>"
+                          class="btn btn-danger text-white no-underline"
+                        >
+                          Block
+                        </a>
+                        <!-- </button> -->
+                        <%}else{%>
+                        <!-- <button class="btn btn-success" style="width: 90px"> -->
+                        <a
+                          href="/admin/unBlockBrand?id=<%=brand._id%>"
+                          class="btn btn-success text-white"
+                          >Unblock</a
+                        >
+                        <!-- </button> -->
+                        <%}%>
+                      </td>
+                    </tr>
+                    <%})%>
+                  </tbody>
+                </table>
+              </div>
             </div>
-        </section>
-    </div>
-</main> 
+          </div>
+        </div>
+      </div>
+      <div class="pagination-container d-flex justify-content-center m-4">
+        <ul class="pagination">
+          <% if(currentPage >1){%>
+          <li class="page-item">
+            <a class="page-link" href="?page=<%= currentPage-1 %>">prev</a>
+          </li>
+          <%}%> <%for(let i=1; i<=totalPages; i++){%>
+          <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+            <a class="page-link" href="?page=<%= i %>"><%= i%></a>
+          </li>
+          <%}%> <%if(currentPage < totalPages){%>
+          <li class="page-item">
+            <a class="page-link" href="?page=<%= currentPage + 1 %>">next</a>
+          </li>
+          <%}%>
+        </ul>
+      </div>
+    </section>
+  </div>
+</main>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
-    
- 
+  document
+    .getElementById("brandform")
+    .addEventListener("submit", async function (event) {
+      event.preventDefault();
 
-  document.getElementById('brandform').addEventListener('submit', async function(event) {
-    event.preventDefault();
+      const form = document.getElementById("brandform");
+      const brandImageInput = document.getElementById("brandimg");
+      const file = brandImageInput.files[0];
 
-    const form = document.getElementById('brandform');
-    const brandImageInput = document.getElementById('brandimg');
-    const file = brandImageInput.files[0];
-
-    if (!file) {
+      if (!file) {
         Swal.fire({
-            icon: "error",
-            title: "No Image",
-            text: "Please select an image before submitting."
+          icon: "error",
+          title: "No Image",
+          text: "Please select an image before submitting.",
         });
         return;
-    }
+      }
 
-    const formData = new FormData(form);
-    
-    // Upload image to Cloudinary
-    const cloudUrl = 'https://api.cloudinary.com/v1_1/dbl2eazti/image/upload';
-    const cloudFormData = new FormData();
-    cloudFormData.append('file', file);
-    cloudFormData.append('upload_preset', 'hourly'); // Preset created in your Cloudinary settings
+      const formData = new FormData(form);
 
-    try {
+      // Upload image to Cloudinary
+      const cloudUrl = "https://api.cloudinary.com/v1_1/dbl2eazti/image/upload";
+      const cloudFormData = new FormData();
+      cloudFormData.append("file", file);
+      cloudFormData.append("upload_preset", "hourly"); // Preset created in your Cloudinary settings
+
+      try {
         const cloudResponse = await fetch(cloudUrl, {
-            method: 'POST',
-            body: cloudFormData
+          method: "POST",
+          body: cloudFormData,
         });
 
         const cloudResult = await cloudResponse.json();
 
         if (cloudResult.secure_url) {
-            const uploadedImageUrl = cloudResult.secure_url;
-            formData.append("brandImage", uploadedImageUrl);
+          const uploadedImageUrl = cloudResult.secure_url;
+          formData.append("brandImage", uploadedImageUrl);
 
-            // Send to backend
-            const response = await fetch('/admin/addBrand', {
-                method: 'POST',
-                body: formData
+          // Send to backend
+          const response = await fetch("/admin/addBrand", {
+            method: "POST",
+            body: formData,
+          });
+
+          const result = await response.json();
+
+          if (result.success) {
+            Swal.fire({
+              icon: "success",
+              title: "Brand Added",
+              text: result.message,
+              showConfirmButton: false,
+              timer: 2000,
+            }).then(() => {
+              window.location.reload();
             });
-
-            const result = await response.json();
-
-            if (result.success) {
-                Swal.fire({
-                    icon: "success",
-                    title: "Brand Added",
-                    text: result.message,
-                    showConfirmButton: false,
-                    timer: 2000
-                }).then(() => {
-                    window.location.reload();
-                });
-            } else {
-                Swal.fire({
-                    icon: "error",
-                    title: "Oops",
-                    text: result.message || "Something went wrong",
-                });
-            }
+          } else {
+            Swal.fire({
+              icon: "error",
+              title: "Oops",
+              text: result.message || "Something went wrong",
+            });
+          }
         } else {
-            throw new Error("Cloudinary upload failed");
+          throw new Error("Cloudinary upload failed");
         }
-    } catch (error) {
+      } catch (error) {
         console.error("Error during brand upload:", error);
         Swal.fire({
-            icon: "error",
-            title: "Upload Failed",
-            text: "Something went wrong. Try again.",
+          icon: "error",
+          title: "Upload Failed",
+          text: "Something went wrong. Try again.",
         });
-    }
-});
-
+      }
+    });
 </script>
-
