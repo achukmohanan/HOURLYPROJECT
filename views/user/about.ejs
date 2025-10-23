@@ -1,0 +1,415 @@
+<%- include("../../views/partials/user/supportheader") %>
+    <title>Hourly Watches - Who We Are</title>
+    <style>
+        /* Reset only for Who We Are page - use more specific selectors */
+        .who-we-are-page * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            margin-top: 0;
+        }
+
+        /* Override body styles only for this page content */
+        .who-we-are-page {
+            font-family: 'Arial', sans-serif;
+            /* line-height: 1.6; */
+            color: #333;
+            background-color: #f5f5f5;
+        }
+
+        /* Use a more specific class name to avoid conflicts with header container */
+        .who-container {
+            max-width: 1200px;
+            margin:  auto ;
+            padding: 20px;
+            background-color: white;
+        }
+
+        /* Page Header Section - different from navigation header */
+        .page-header {
+            text-align: center;
+            padding: 30px 20px;
+        }
+
+        .page-header h1 {
+            font-size: 1.5rem;
+            font-weight: bold;
+            letter-spacing: 2px;
+            margin-bottom: 30px;
+        }
+
+        /* Watch Images Grid */
+        .watch-gallery {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+            margin-bottom: 40px;
+        }
+
+        .watch-image {
+            width: 100%;
+            height: auto;
+            border-radius: 8px;
+            object-fit: cover;
+        }
+
+        /* Mission Statement */
+        .mission {
+            background-color: #1a9b8e;
+            color: white;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 40px;
+            text-align: center;
+        }
+
+        .mission p {
+            font-size: 0.95rem;
+            line-height: 1.8;
+            margin-bottom: 15px;
+        }
+
+        .mission-highlight {
+            font-size: 0.9rem;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+
+        /* Features Section */
+        .features-title {
+            text-align: center;
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            font-weight: bold;
+        }
+
+        .features-subtitle {
+            text-align: center;
+            font-size: 0.95rem;
+            margin-bottom: 40px;
+            color: #666;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .feature-card {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+        .feature-icon {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+        }
+
+        .feature-title {
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .feature-list {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .feature-list li {
+            padding: 8px 0;
+            font-size: 0.9rem;
+            color: #555;
+            position: relative;
+            padding-left: 20px;
+        }
+
+        .feature-list li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #1a9b8e;
+            font-weight: bold;
+        }
+
+        /* Vision Section */
+        .vision {
+            text-align: center;
+            padding: 30px 20px;
+            background-color: #f9f9f9;
+            border-radius: 10px;
+            margin-bottom: 40px;
+        }
+
+        .vision-icon {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+        }
+
+        .vision h3 {
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+        }
+
+        .vision p {
+            font-size: 0.9rem;
+            color: #666;
+            line-height: 1.8;
+        }
+
+        /* Journey Section */
+        .journey {
+            text-align: center;
+            padding: 30px 20px;
+            margin-bottom: 40px;
+        }
+
+        .journey-icon {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+        }
+
+        .journey h3 {
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+        }
+
+        .journey p {
+            font-size: 0.9rem;
+            color: #666;
+            line-height: 1.8;
+            margin-bottom: 15px;
+        }
+
+        /* Brand Statement */
+        .brand-statement {
+            background-color: #f0f0f0;
+            padding: 25px;
+            border-radius: 10px;
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .brand-name {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .brand-tagline {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        /* Final Statement */
+        .final-statement {
+            background-color: #d4f1ec;
+            padding: 25px;
+            border-radius: 10px;
+            text-align: center;
+            font-size: 0.95rem;
+            line-height: 1.8;
+            color: #333;
+        }
+
+        /* Tablet Styles */
+        @media (min-width: 768px) {
+            .page-header h1 {
+                font-size: 2rem;
+            }
+
+            .watch-gallery {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 20px;
+            }
+
+            .mission p {
+                font-size: 1rem;
+            }
+
+            .features-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 25px;
+            }
+
+            .feature-card {
+                padding: 25px;
+            }
+
+            .feature-list li {
+                font-size: 0.95rem;
+            }
+        }
+
+        /* Desktop Styles */
+        @media (min-width: 1024px) {
+            .who-container {
+                padding: 40px;
+            }
+
+            .page-header {
+                padding: 50px 20px;
+            }
+
+            .page-header h1 {
+                font-size: 2.5rem;
+            }
+
+            .mission {
+                padding: 35px 50px;
+            }
+
+            .mission p {
+                font-size: 1.1rem;
+            }
+
+            .features-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 30px;
+            }
+
+            .watch-gallery {
+                gap: 25px;
+            }
+
+            .vision, .journey {
+                padding: 40px;
+            }
+
+            .brand-statement, .final-statement {
+                padding: 35px 50px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="who-we-are-page">
+        <div class="who-container">
+            <!-- Page Header (not navigation header) -->
+            <header class="page-header">
+                <h1>WHO WE ARE</h1>
+                
+                <!-- Watch Gallery -->
+                <div class="watch-gallery">
+                    <img src="https://res.cloudinary.com/dbl2eazti/image/upload/v1761222775/A2_kojg9l.webp" alt="Luxury watches in wooden box" class="watch-image">
+                    <img src="https://res.cloudinary.com/dbl2eazti/image/upload/v1761222778/A1_hakygp.webp" alt="Person wearing black watch" class="watch-image">
+                    <img src="https://res.cloudinary.com/dbl2eazti/image/upload/v1761222775/A3_zmldtc.webp" alt="Chronograph watch close-up" class="watch-image">
+                </div>
+            </header>
+
+            <!-- Mission Statement -->
+            <section class="mission">
+                <p>
+                    Welcome to HOURLY WATCHES, your one-stop destination for premium quality watches at unbeatable prices. 
+                    We combine style, durability, and precision to bring you watches that redefine every occasion.
+                </p>
+                <p class="mission-highlight">What Makes Us Different</p>
+            </section>
+
+            <!-- Features Title -->
+            <h2 class="features-title">At HOURLY - we don't just sell watches —</h2>
+            <p class="features-subtitle">
+                We curate an effortless shopping experience. Where comfort meets convenience. Here's what sets us apart:
+            </p>
+
+            <!-- Features Grid -->
+            <div class="features-grid">
+                <!-- Smart Shopping Features -->
+                <div class="feature-card">
+                    <div class="feature-title">
+                        <span class="feature-icon">🛒</span>
+                        <span>Smart Shopping Features</span>
+                    </div>
+                    <ul class="feature-list">
+                        <li>Cash on Delivery for peace of mind and easy check-out</li>
+                        <li>Buy Now Pay Later and Installment Plans for flexible payment options</li>
+                        <li>90 Days Buy Now, Get It Later, Pay Monthly etc at Look at Quality</li>
+                        <li>Free Shipping on all orders above ₹2500. Because luxury should be accessible</li>
+                        <li>7 Days Easy Returns if you change your mind. No questions asked</li>
+                    </ul>
+                </div>
+
+                <!-- Exclusive Deals & Discounts -->
+                <div class="feature-card">
+                    <div class="feature-title">
+                        <span class="feature-icon">🎁</span>
+                        <span>Exclusive Deals & Discounts</span>
+                    </div>
+                    <ul class="feature-list">
+                        <li>Huge Discounts & Irresistible Pricing all year long</li>
+                        <li>Buy 2, Get 1 Free on select styles</li>
+                        <li>Referral rewards - sharing the gift of style</li>
+                        <li>Join our exclusive club for VIP benefits</li>
+                    </ul>
+                </div>
+
+                <!-- 24/7 Customer Support -->
+                <div class="feature-card">
+                    <div class="feature-title">
+                        <span class="feature-icon">💬</span>
+                        <span>24/7 Customer Support</span>
+                    </div>
+                    <ul class="feature-list">
+                        <li>24x7 chat support - We are always here</li>
+                        <li>Email assistance: support@hourly.co.in for detailed questions and support</li>
+                        <li>Live Video calls with our style experts for personalized assistance—helping you pick the right watch</li>
+                    </ul>
+                </div>
+
+                <!-- Style & Earn Rewards -->
+                <div class="feature-card">
+                    <div class="feature-title">
+                        <span class="feature-icon">⏰</span>
+                        <span>Style & Earn Rewards</span>
+                    </div>
+                    <ul class="feature-list">
+                        <li>Loyalty points: Earn ₹100 for every purchase</li>
+                        <li>Refer a friend and earn ₹150 per referral. Gift them ₹100 referral bonus too</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Vision Section -->
+            <section class="vision">
+                <div class="vision-icon">👁️</div>
+                <h3>Our Vision</h3>
+                <p>
+                    To make premium watches accessible to everyone, redefining luxury, affordability, and fun in fashion.
+                </p>
+            </section>
+
+            <!-- Journey Section -->
+            <section class="journey">
+                <div class="journey-icon">🌟</div>
+                <h3>Join the Journey</h3>
+                <p>
+                    Discover the perfect blend of style, functionality, and value.
+                </p>
+                <p>
+                    Experience watches that look as good as you do. 
+                    Choose Hourly Watches, where quality and value go hand in hand.
+                </p>
+            </section>
+
+            <!-- Brand Statement -->
+            <div class="brand-statement">
+                <div class="brand-name">HOURLY WATCHES - Premium Style. Trusted Quality</div>
+            </div>
+
+            <!-- Final Statement -->
+            <div class="final-statement">
+                We believe a watch is more than just a timekeeper — it's a reflection of your lifestyle, confidence, 
+                and individuality. That's why we bring you stylish, versatile, and affordable watches that combine modern 
+                design with timeless craftsmanship.
+            </div>
+        </div>
+    </div>
+</body>
+
+<%- include("../../views/partials/user/supportfooter") %>
