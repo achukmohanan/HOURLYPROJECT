@@ -568,17 +568,17 @@ nav1 ul li strong {
 }
 
 .Referal {
-    background: linear-gradient(135deg, #a88170 0%, #B98F7D 100%);
+    /* background: linear-gradient(135deg, #1e918b 0%, #0d7a78 100%); */
     border: 1px solid #dedfdd;
-    padding: 50px;
+    padding: 50px;  
     border-radius: 12px;
     color: white;
     margin-bottom: 20px;
 }
 
 .innerReferal {
-    background: rgba(200, 169, 169, 0.2);
-    border: 1px solid rgb(124, 252, 82);
+    background:     rgba(254, 254, 254, 0.2);
+    border: 1px solid/ rgb(124, 252, 82);
     padding: 40px;
     border-radius: 8px;
     margin-top: 10px;

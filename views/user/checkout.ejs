@@ -380,7 +380,7 @@
         <div class="coupon-card <%= isExpired ? 'expired-coupon' : '' %>">
           <p  class="coupon-code"><%= coupon.code %></p>
           <%if(!isExpired && totalPrice > coupon.minPurchase ){%>
-          <button type="button" onClick="copyClip('<%= coupon.code %>')">📋</button>
+          <i class="bi bi-copy" style="cursor: pointer;" onClick="copyClip('<%= coupon.code %>')"></i>
          <% } %>
           <small><%= coupon.description %></small><br>
           <small><%= coupon.minPurchase.toLocaleString('en-IN',{style:'currency',currency:'INR'}    )%></small><br>

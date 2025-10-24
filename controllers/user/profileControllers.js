@@ -464,14 +464,10 @@ const deleteAddress = async (req, res) => {
 };
 
 //edit profile get route
-
 const getEditProfile = async (req, res) => {
   try {
     const user = req.session.user;
     const findUser = await User.findById(user);
-    // console.log("This is user",user)
-    // console.log("this is findUser",findUser);
-
     return res.render("user/editProfile", {
       user: findUser,
     });
@@ -480,25 +476,16 @@ const getEditProfile = async (req, res) => {
 
 const editProfile = async (req, res) => {
   try {
-    // console.log(req.body);
-
     const userId = req.session.user;
 
     const { profileUrl, username, gender, email, phone } = req.body;
     const userData = await User.findById(userId);
-    // console.log(userData);
 
     if (!userData) {
       return res
         .status(STATUS_CODE.BAD_REQUEST)
         .json({ success: false, message: "User is not Found" });
     }
-    // await User.findByIdAndUpdate(userId,{
-    //     name:username,
-    //     email,
-    //     gender,
-    //     phone
-    // })
     const updateData = {
       name: username,
       email,

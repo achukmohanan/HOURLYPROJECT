@@ -87,12 +87,6 @@
                                 </a>
                             </li>
                             <li>
-                                <a href="/logout">
-                                    <span class="icon">🚪</span>
-                                    Logout
-                                </a>
-                            </li>
-                            <li>
                                 <a href="/shop">
                                     <span class="icon"><i class="bi bi-bag"></i></span>
                                     Shop
@@ -102,6 +96,12 @@
                                 <a href="/home">
                                     <span class="icon"><i class="bi bi-house"></i></span>
                                     Home
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#" onclick="logoutFunc(event)" >
+                                    <span class="icon">🚪</span>
+                                    Logout
                                 </a>
                             </li>
                         </ul>
@@ -308,8 +308,8 @@
                             <div class="Referal">
                             <h2 >REFERRAL CODE</h2>
                               <div class="innerReferal">
-                                <h5 >Your Referral Code is : <span id="clipboardCopy" class="border mx-3" ><%= user.referralCode %></span>
-                                     <button onClick="copyToClipboard()">📋</button></h5>
+                                <h5 class="text-dark">Your Referral Code is : <span id="clipboardCopy" class="border mx-3" ><%= user.referralCode %></span>
+                                    <i class="bi bi-copy text-dark " style="cursor: pointer;" onClick="copyToClipboard()"></i>
                               </div>
                             </div>
                             <div class="border mt-5 ">
@@ -334,11 +334,14 @@
                                   
                                   <% if(coupons){ %>
                                     <div class="d-flex flex-wrap gap-2">
-                                        <% coupons.forEach(item => { %>
-                                            <div class="coupon-card">
+                                        <% coupons.forEach(item => {
+                                            let isExpired = new Date(item.expireOn) < new Date() %>
+                                        <div class="coupon-card <%= isExpired ? ' expired-coupon' : '' %>">
                                     <p class="coupon-code"></p>
                                     <span id="copyCoupon"><strong><%= item.code %></strong></span>
-                                    <button onClick="copyToCoupon()"> 📋 </button></h5><br>
+                                    <% if(!isExpired){%>
+                                    <i class="bi bi-copy" onClick="copyToCoupon()" style="cursor:pointer;" ></i> <br>
+                                    <%}%>
                                     <small class="text-muted"><%= item.description%></small><br>
                                     <small class="text-muted"><%= item.expireOn.toLocaleString('en-IN') %></small><br>
                                     <small class="text-muted"><%= item.couponType %></small><br>
@@ -1116,6 +1119,52 @@ document.querySelectorAll('form').forEach(form => {
         }
     });
 });
+function logoutFunc(e){
+    e.preventDefault()
+    Swal.fire({
+        title:'Are you Sure?',
+        text:"You will be logged out!",
+        icon:'warning',
+        showCancelButton:true,
+        confirmButtonText:'Yes,Logout',
+        cancelButtonText:'Cancel'
+    })
+    .then((res)=>{
+        if(res.isConfirmed){
+            fetch('/logout',{method:'GET'})
+            .then((res)=>{
+                if(res.ok){
+                    Swal.fire('Logged Out','You have been logged out successfully.','success')
+                    .then(()=>{
+                        window.location.href = '/logout'
+                    });
+                } else {
+            Swal.fire('Error!', 'Logout failed. Please try again.', 'error');
+          }
+            })
+        }
+    })
+}
+
+setInterval(async()=>{
+    try {
+        const response = await fetch('/check-status');
+
+        const data = await response.json();
+        if(data.isBlocked){
+            Swal.fire({
+                icon: 'error',
+                title: 'Access Denied',
+                text: 'You were blocked by admin.',
+                confirmButtonText: 'OK'
+            }).then(()=>{
+                window.location.href = '/login'
+            })
+        }
+    } catch (error) {
+        console.error("Error in account ejs chechking user status",error)
+    }
+},5000)
 
 // Add touch feedback for mobile
 if ('ontouchstart' in window) {
@@ -1132,4 +1181,4 @@ if ('ontouchstart' in window) {
     </script>
    
 </body>
-</html>
+z

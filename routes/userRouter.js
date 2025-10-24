@@ -154,6 +154,8 @@ router.post("/contact", userAuth, contactController.postContact);
 
 //about
 router.get('/about',aboutController.getAboutPage)
+//chechk user status
+router.get('/check-status',profileEditing.checkUserStatus)
 
 router.get("/testing", cartController.gettest);
 

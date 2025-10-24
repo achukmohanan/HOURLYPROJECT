@@ -212,6 +212,25 @@ const postUpdateEmail = async (req, res) => {
     console.log("error in postUpdateEmail", error);
   }
 };
+//chechk user status;
+
+const checkUserStatus = async (req,res)=> {
+  try {
+    const userId = req.session.user;
+   
+    const user = await User.findById(userId);
+    console.log("kwjhsbevljksehdbvl",user);
+    if(user.isBlocked){
+      return res.json({isBlocked:true})
+    }
+res.json({isBlocked:false})
+
+  } catch (error) {
+    console.log("error in the checkuserstatus",error);
+    
+  }
+  
+}
 
 module.exports = {
   changePassword,
@@ -221,4 +240,5 @@ module.exports = {
   postEmailEditOtp,
   getUpdateEmail,
   postUpdateEmail,
+  checkUserStatus
 };
