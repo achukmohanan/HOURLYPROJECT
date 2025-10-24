@@ -253,13 +253,13 @@
         error2.innerHTML = 'Invalid Email Format'
         return false;
       }
-      const domain = emailval.split('@')[1]
+      // const domain = emailval.split('@')[1]
 
-      if(!allowedDomains.includes(domain)){
-        error2.style.display = "block";
-        error2.innerHTML = `Only ${allowedDomains.join(',')} emails are allowed`;
-        return false;
-      }
+      // if(!allowedDomains.includes(domain)){
+      //   error2.style.display = "block";
+      //   error2.innerHTML = `Only ${allowedDomains.join(',')} emails are allowed`;
+      //   return false;
+      // }
       // if valid
       error2.style.display = "none";
       error2.innerHTML = "";

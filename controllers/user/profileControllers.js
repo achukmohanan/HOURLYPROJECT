@@ -61,10 +61,9 @@ const getForgotEmailOtp = async (req, res) => {
     // res.redirect('/pagenotfound')
   }
 };
+
 //sset the timer
 const forgotEmailOtp = async (req, res) => {
-  console.log("Request body:", req.body); // Debug log
-
   try {
     const { email } = req.body;
 
@@ -73,6 +72,9 @@ const forgotEmailOtp = async (req, res) => {
     }
 
     const findUser = await User.findOne({ email: email });
+    if(!findUser){
+      return res.status(STATUS_CODE.BAD_REQUEST).json({success:false,message:"Email with User Not Found"})
+    }
     console.log("Email:", email);
 
     if (findUser) {
@@ -297,11 +299,15 @@ const addAddress = async (req, res) => {
   try {
     const user = req.session.user;
     const userData = await User.findById(user);
+    console.log("userDate is ",userData)
     res.render("user/addAddress", {
-      user: user,
+      
       name: userData,
     });
-  } catch (error) {}
+  } catch (error) {
+    console.log("error in the get address ",error);
+    
+  }
 };
 
 const postaddAddress = async (req, res) => {

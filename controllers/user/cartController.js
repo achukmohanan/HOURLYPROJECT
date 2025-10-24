@@ -213,7 +213,7 @@ const addAddressInCheckout = async (req, res) => {
 
     const user = await User.findById(userId);
     return res.render("user/checkoutaddress", {
-      user: userId,
+      
       name: user,
     });
   } catch (error) {

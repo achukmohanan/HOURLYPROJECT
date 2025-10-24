@@ -290,10 +290,7 @@
             text-decoration: none;
         }
 
-        .body-fade-out {
-            opacity: 0;
-            transition: opacity 0.5s ease;
-        }
+        
 
         .empty-cart {
             text-align: center;
@@ -809,13 +806,7 @@
                 if(totalPrice) { 
                     totalPrice.textContent = `₹${result.total.toLocaleString('en-IN')}`;
                 }
-              
-                setTimeout(() => {
-                    document.body.classList.add('body-fade-out');
-                    setTimeout(() => {
-                        window.location.reload();
-                    }, 100);
-                }, 200);
+            
             } else {
                 Swal.fire({
                     icon: 'warning',
@@ -836,18 +827,7 @@
     }
 
     // Add smooth animations
-    document.addEventListener('DOMContentLoaded', function() {
-        const cartItems = document.querySelectorAll('.cart-item');
-        cartItems.forEach((item, index) => {
-            item.style.opacity = '0';
-            item.style.transform = 'translateY(20px)';
-            setTimeout(() => {
-                item.style.transition = 'all 0.5s ease';
-                item.style.opacity = '1';
-                item.style.transform = 'translateY(0)';
-            }, index * 100);
-        });
-    });
+
 </script>
 </body>
-<!-- <%- include("../../views/partials/user/supportfooter") %> -->
+<%- include("../../views/partials/user/supportfooter") %>
