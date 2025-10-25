@@ -18702,3 +18702,63 @@ Calaendar icon input[type="date"]::-webkit-calendar-picker-indicator {
     /* .product-img {
   position: relative;
 }   */
+
+.why-choose{
+  padding: 60px 20px;
+  background-color: #fff;
+  text-align: center;
+}
+.why-choose .title {
+  font-size: 28px;
+  font-weight: bold;
+  margin-bottom: 40px;
+  border-radius: 20px;
+  padding: 10px;
+
+  /* Gradient text */
+  background: linear-gradient(135deg, #1e918b 0%, #0d7a78 100%);
+  -webkit-background-clip: text; /* Clips gradient to text */
+  -webkit-text-fill-color: transparent; /* Makes text transparent so gradient shows */
+}
+
+
+.features{
+  display: grid;
+  grid-template-columns: repeat(3,1fr);
+  gap: 30px;
+  
+}
+.feature h3 {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: black;
+}
+.feature p {
+  font-size: 14px;
+  color: #555;
+  line-height: 1.5;
+}
+/* Responsive for tablets */
+@media (max-width: 1024px) {
+  .features {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Responsive for mobile */
+@media (max-width: 768px) {
+  .features {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  .why-choose .title {
+    font-size: 24px;
+  }
+  .feature h3 {
+    font-size: 16px;
+  }
+  .feature p {
+    font-size: 14px;
+  }
+}
