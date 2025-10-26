@@ -210,7 +210,7 @@ const updateCartQuantity = async (req, res) => {
 const addAddressInCheckout = async (req, res) => {
   try {
     const userId = req.session.user;
-
+  
     const user = await User.findById(userId);
     return res.render("user/checkoutaddress", {
       
@@ -220,46 +220,48 @@ const addAddressInCheckout = async (req, res) => {
     console.log("error in add address in checkout controller ", error);
   }
 };
-const getCheckOut = async (req, res) => {
-  try {
-    const userId = req.session.user;
-    const user = await User.findById(userId);
+  const getCheckOut = async (req, res) => {
+    try {
+      const userId = req.session.user;
+      const user = await User.findById(userId);
+      const savedDiscount = req.session.discountValue || 0;
+      console.log("discount page trigger".discount)
+      const cart = await Cart.findOne({ userId }).populate("items.productId");
+      if (
+        !cart ||
+        !cart.items ||
+        cart.items.length === 0 ||
+        cart.items.quantity < 0
+      ) {
+        res.redirect("/cart");
+      }
 
-    const cart = await Cart.findOne({ userId }).populate("items.productId");
-    if (
-      !cart ||
-      !cart.items ||
-      cart.items.length === 0 ||
-      cart.items.quantity < 0
-    ) {
-      res.redirect("/cart");
+      let total = cart.items.reduce((sum, item) => {
+        return sum + item.productId.salePrice * item.quantity;
+      }, 0);
+
+      const addressList = await Address.find({ userId: userId });
+      const coupons = await Coupon.find({
+        isActive: true,
+        $or: [{ userId: { $in: [userId] } }, { userId: { $size: 0 } }],
+      }).sort({ expireOn: -1 });
+
+      return res.render("user/checkout", {
+        coupons,
+        user: user,
+        cart,
+        totalPrice: total,
+        addressList,
+        savedDiscount
+      });
+    } catch (error) {
+      console.log("error in get checkout ", error);
     }
-
-    let total = cart.items.reduce((sum, item) => {
-      return sum + item.productId.salePrice * item.quantity;
-    }, 0);
-
-    const addressList = await Address.find({ userId: userId });
-    const coupons = await Coupon.find({
-      isActive: true,
-      $or: [{ userId: { $in: [userId] } }, { userId: { $size: 0 } }],
-    }).sort({ expireOn: -1 });
-
-    return res.render("user/checkout", {
-      coupons,
-      user: user,
-      cart,
-      totalPrice: total,
-      addressList,
-    });
-  } catch (error) {
-    console.log("error in get checkout ", error);
-  }
-};
+  };
 const applyCoupon = async (req, res) => {
   try {
     const { code } = req.body;
-
+    
     const coupon = await Coupon.findOne({ code });
 
     if (!coupon) {
@@ -271,7 +273,7 @@ const applyCoupon = async (req, res) => {
     if (new Date() > coupon.expireOn) {
       return res.json({ success: false, message: "Coupon has expired" });
     }
-
+    req.session.discountValue = coupon.discountValue
     console.log("couupon discoubr value is", coupon.discountValue);
 
     res.json({ success: true, discount: coupon.discountValue });

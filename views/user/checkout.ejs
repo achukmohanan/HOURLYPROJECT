@@ -417,7 +417,7 @@
                         id="couponCode"
                         placeholder="Enter coupon code"
                     >   
-                    <input type="hidden" name="discount" id="discountInput" value="0">
+                    <input type="hidden" name="discount" id="discountInput" value="<%=savedDiscount %>">
 
                     <button type="button" class="btn btn-primary" id="applyCouponBtn">Apply</button>
                     <div id="couponMessage"></div>
@@ -511,6 +511,22 @@
             }
         })
 
+        window.addEventListener('DOMContentLoaded', () => {
+  const discountInput = document.getElementById('discountInput');
+  const savedDiscount = parseFloat(discountInput.value) || 0;
+
+  if (savedDiscount > 0) {
+    const totalEl = document.getElementById('total');
+    const originalTotal = parseFloat(totalEl.dataset.originalTotal);
+    let newTotal = originalTotal - (savedDiscount / 100) * originalTotal;
+    if (newTotal < 0) newTotal = 0;
+    totalEl.innerText = `₹ ${newTotal.toLocaleString('en-IN')}`;
+
+    const couponMsg = document.getElementById('couponMessage');
+    couponMsg.style.color = 'green';
+    couponMsg.innerText = `Coupon reapplied! Discount: ${savedDiscount}%`;
+  }
+});
 
         // Handle shipping option selection
         document.querySelectorAll('.shipping-option').forEach(option => {

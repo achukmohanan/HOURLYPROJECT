@@ -110,6 +110,7 @@ router.get(
 
 router.post("/payment", paymentController.postPayment);
 router.post("/verify-payment", userAuth, paymentController.confirmRazorpay);
+
 // order management
 router.post("/place-order", userAuth, orderController.postOrder);
 router.get("/order-success", userAuth, orderController.orderSuccess);

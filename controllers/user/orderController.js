@@ -84,6 +84,7 @@ const postOrder = async (req, res) => {
         }
 
         await Cart.deleteOne({ userId });
+        req.session.discountValue = 0;
 
         return res.json({ success: true, orderId: order._id, payment: "COD" });
       } else {
@@ -160,6 +161,8 @@ const postOrder = async (req, res) => {
       await Cart.deleteOne({ userId });
       console.log("order is placed", order);
       console.log("user is in wallet ", user);
+      req.session.discountValue = 0;
+
       return res.json({ success: true, orderId: order._id, payment: "Wallet" });
     }
   } catch (error) {

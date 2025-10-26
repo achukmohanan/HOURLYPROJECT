@@ -14,6 +14,8 @@ const postPayment = async (req, res) => {
     const selectedIndex = req.body.addressId;
     const discount = req.body.discount;
 
+    // req.session.discount = discount;
+
     console.log("discount is discount", discount);
     const address = await Address.find({ userId: userId });
     if (!address || !address.length) {
@@ -43,6 +45,7 @@ const postPayment = async (req, res) => {
     total = total - disamount;
     total = parseFloat(total.toFixed(2));
     console.log("total is total", total);
+   
     const orderData = {
       findUser,
       userId,
@@ -57,6 +60,8 @@ const postPayment = async (req, res) => {
     console.log("error in the post payment ", error);
   }
 };
+
+
 
 const confirmRazorpay = async (req, res) => {
   try {
@@ -129,6 +134,8 @@ const confirmRazorpay = async (req, res) => {
         description: `Order is Placed`,
       });
       // console.log("transaction is in the razor pay is success")
+      req.session.discountValue = 0;
+
       return res.json({
         success: true,
         message: "Payment verified successfully",
