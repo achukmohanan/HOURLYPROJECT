@@ -243,7 +243,7 @@ const cancelOrder = async (req, res) => {
       .json({ success: false, message: "Internal Server Error" });
   }
 };
-const returnOrder = async (req, res) => {
+const returnOrder = async (req, res) => {postOrder
   try {
     // console.log("req.params",req.params);
     const { orderId, itemId } = req.params;

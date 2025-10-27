@@ -17464,7 +17464,9 @@ ul {
   backface-visibility: hidden;
   background-repeat: no-repeat;
   z-index: 0;
+  
 }
+
 
 .bg-holder.bg-right {
   left: auto;
@@ -18624,6 +18626,7 @@ Calaendar icon input[type="date"]::-webkit-calendar-picker-indicator {
 .header {
     position: relative;
     z-index: 500;
+    min-height: 100vh; /* ensures header takes full screen height */
 }
 
 /* Make sure navbar doesn't interfere */
@@ -18710,7 +18713,7 @@ Calaendar icon input[type="date"]::-webkit-calendar-picker-indicator {
 }
 .why-choose .title {
   font-size: 28px;
-  font-weight: bold;
+  font-weight: bold;  
   margin-bottom: 40px;
   border-radius: 20px;
   padding: 10px;
@@ -18748,6 +18751,7 @@ Calaendar icon input[type="date"]::-webkit-calendar-picker-indicator {
 
 /* Responsive for mobile */
 @media (max-width: 768px) {
+   
   .features {
     grid-template-columns: 1fr;
     gap: 20px;
@@ -18761,4 +18765,8 @@ Calaendar icon input[type="date"]::-webkit-calendar-picker-indicator {
   .feature p {
     font-size: 14px;
   }
+  .bg-holder {
+    height: 80vh;
+  }
+   
 }

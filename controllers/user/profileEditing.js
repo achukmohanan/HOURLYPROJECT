@@ -219,7 +219,7 @@ const checkUserStatus = async (req,res)=> {
     const userId = req.session.user;
    
     const user = await User.findById(userId);
-    console.log("kwjhsbevljksehdbvl",user);
+    console.log("checkUserStatus",user);
     if(user.isBlocked){
       return res.json({isBlocked:true})
     }
