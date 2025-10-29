@@ -110,7 +110,8 @@ router.get(
 
 router.post("/payment", paymentController.postPayment);
 router.post("/verify-payment", userAuth, paymentController.confirmRazorpay);
-
+//order failure
+router.post('/payment-failed',userAuth, paymentController.paymentFailed)
 // order management
 router.post("/place-order", userAuth, orderController.postOrder);
 router.get("/order-success", userAuth, orderController.orderSuccess);
@@ -145,6 +146,8 @@ router.post(
   userAuth,
   walletController.verifyWalletTopup
 );
+//wallet failed
+router.post('/wallet-failed',userAuth,walletController.walletFailed)
 
 //coupon management
 router.post("/apply-coupon", userAuth, cartController.applyCoupon);

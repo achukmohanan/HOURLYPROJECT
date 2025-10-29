@@ -48,6 +48,16 @@ const verifyWalletTopup = async (req, res) => {
       .digest("hex");
 
     if (expectedSignature !== razorpay_signature) {
+
+      await Transaction.create({
+        userId:userId,
+        orderId:razorpay_order_id,
+        type:"Failed",
+        amount:amount,
+        paymentMethod:"Razorpay",
+        description:"Wallet Topup - Payment verification failed"
+      })
+
       return res
         .status(STATUS_CODE.BAD_REQUEST)
         .json({ success: false, message: "Invalid payment signature" });
@@ -81,8 +91,27 @@ const verifyWalletTopup = async (req, res) => {
       .json({ success: false, message: "Internal Server Error" });
   }
 };
+const walletFailed = async (req,res) =>{
+  try {
+    const {userId,amount,reason} = req.body;
 
+    await Transaction.create({
+      userId:userId,
+      orderId:null,
+      type:"Failed",
+      amount:amount,
+      paymentMethod:"Razorpay",
+      description: reason || "Wallet Topup Failed"
+    })
+      return res.status(200).json({ success: true });
+  } catch (error) {
+  console.log("Error in walletFailed controller:", error);
+    return res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ success: false, message: "Internal Server Error" });
+    
+  }
+}
 module.exports = {
   walletTopUp,
   verifyWalletTopup,
+  walletFailed
 };

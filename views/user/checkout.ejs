@@ -375,7 +375,7 @@
 
   <% if (coupons.length > 0) { %>
     <div class="d-flex flex-wrap gap-3">
-      <% coupons.forEach(coupon => { 
+      <% coupons.slice(0,5).forEach(coupon => { 
        let isExpired = new Date(coupon.expireOn) < new Date()  %>
         <div class="coupon-card <%= isExpired ? 'expired-coupon' : '' %>">
           <p  class="coupon-code"><%= coupon.code %></p>

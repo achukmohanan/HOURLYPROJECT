@@ -254,33 +254,33 @@
                                     </div>
                                 <% }) %>
                                 <!-- Order Pagination -->
-<div class="d-flex justify-content-center mt-4">
-  <nav>
-    <ul class="pagination">
-      <% if(orderPagination.orderPage > 1){ %>
-        <li class="page-item">
-          <a class="page-link" href="?orderPage=<%= orderPagination.orderPage - 1 %>&tab=orders">Previous</a>
-        </li>
-      <% } %>
+                        <div class="d-flex justify-content-center mt-4">
+                                <nav>
+                                    <ul class="pagination">
+                                    <% if(orderPagination.orderPage > 1){ %>
+                                        <li class="page-item">
+                                        <a class="page-link" href="?orderPage=<%= orderPagination.orderPage - 1 %>&tab=orders">Previous</a>
+                                        </li>
+                                    <% } %>
 
-      <% for(let i = 1; i <= orderPagination.totalOrderPages; i++){ %>
-        <li class="page-item <%= orderPagination.orderPage === i ? 'active' : '' %>">
-          <a class="page-link" href="?orderPage=<%= i %>&tab=orders"><%= i %></a>
-        </li>
-      <% } %>
+                                    <% for(let i = 1; i <= orderPagination.totalOrderPages; i++){ %>
+                                        <li class="page-item <%= orderPagination.orderPage === i ? 'active' : '' %>">
+                                        <a class="page-link" href="?orderPage=<%= i %>&tab=orders"><%= i %></a>
+                                        </li>
+                                    <% } %>
 
-      <% if(orderPagination.orderPage < orderPagination.totalOrderPages){ %>
-        <li class="page-item">
-          <a class="page-link" href="?orderPage=<%= orderPagination.orderPage + 1 %>&tab=orders">Next</a>
-        </li>
-      <% } %>
-    </ul>
-  </nav>
-</div>
+                                    <% if(orderPagination.orderPage < orderPagination.totalOrderPages){ %>
+                                        <li class="page-item">
+                                        <a class="page-link" href="?orderPage=<%= orderPagination.orderPage + 1 %>&tab=orders">Next</a>
+                                        </li>
+                                    <% } %>
+                                    </ul>
+                                </nav>
+                                </div>
 
                                 <% } %>
                             </div>
-                            </div>
+                        </div>
 
 
                         <!-- Password Tab -->
@@ -295,7 +295,7 @@
                                 <label for="newPassword">New Password</label>
                                 <input type="password" id="newPassword" name="newPassword" placeholder="Enter new password" required>
                             </div>
-                            <div class="form-group">
+                            <div class="form-group">    
                                 <label for="confirmPassword">Confirm Password</label>
                                 <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm new password" required>
                             </div>
@@ -377,7 +377,6 @@
                                  <table>
                                     <tr>
                                         <th>OrderId</th>
-                                        
                                         <th>Type</th>
                                         <th>Amount</th>
                                         <th>paymentMethod</th>
@@ -393,14 +392,14 @@
                                         <% }else{%>
                                          <td>No OrderId </td>    
                                         <%}%>
-                                        <%if(txn.orderDetails && txn.orderDetails.orderedItems ){ %>
+                                        <!-- <%if(txn.orderDetails && txn.orderDetails.orderedItems ){ %>
                                         <% txn.orderDetails.orderedItems.forEach(i=>{ %>
                                        
                                     
                                         <% }) %>
                                         <% }else{ %>
                                             No Poducts
-                                       <% } %>
+                                       <% } %> -->
                                         <td class="<%= txn.type ==='Credit' ? 'text-success' :'text-danger' %>"><%= txn.type %></td>
                                         <td><%= txn.amount %></td>
                                         <td><%= txn.paymentMethod %></td>
@@ -429,17 +428,17 @@
                                       <% transaction.forEach(txn=>{ %>
                                           <div class="transaction-card">
                                               <div class="transaction-header">
-                                                  <%if(txn.orderDetails && txn.orderDetails.orderedItems && txn.orderDetails.orderedItems.length > 0){ %>
-                                                      <img src="<%= txn.orderDetails.orderedItems[0].product.productImage[0] %>" alt="Product">
+                                                  <!-- <%if(txn.orderDetails && txn.orderDetails.orderedItems && txn.orderDetails.orderedItems.length > 0){ %> -->
+                                                      <!-- <img src="<%= txn.orderDetails.orderedItems[0].product.productImage[0] %>" alt="Product"> -->
                                                       <div class="product-name">
-                                                          <%= txn.orderDetails.orderedItems[0].product?.productName || 'No product' %>
-                                                          <% if(txn.orderDetails.orderedItems.length > 1){ %>
-                                                              <span class="badge bg-secondary" style="font-size: 10px;">+<%= txn.orderDetails.orderedItems.length - 1 %> more</span>
-                                                          <% } %>
+                                                          <!-- <%= txn.orderDetails.orderedItems[0].product?.productName || 'No product' %> -->
+                                                          <!-- <% if(txn.orderDetails.orderedItems.length > 1){ %> -->
+                                                              <!-- <span class="badge bg-secondary" style="font-size: 10px;">+<%= txn.orderDetails.orderedItems.length - 1 %> more</span> -->
+                                                          <!-- <% } %> -->
                                                       </div>
-                                                  <% } else { %>
-                                                      <div class="product-name">Wallet Transaction</div>
-                                                  <% } %>
+                                                  <!-- <% } else { %> -->
+                                                      <!-- <div class="pr/oduct-name">Wallet Transaction</div> -->
+                                                  <!-- <% } %> -->
                                               </div>
                                               
                                               <div class="transaction-detail">
@@ -811,7 +810,7 @@ function setupWalletTopUp() {
                 cancelButtonText: 'Cancel',
                 confirmButtonColor: '#667eea',
                 inputValidator: (value) => {
-                    if (!value || value <= 0) {
+                    if (!value || value < 0) {
                         return 'Please enter a valid amount';
                     }
                     if (value > 100000) {
@@ -864,13 +863,28 @@ async function processWalletTopUp(amount) {
                 verifyWalletTopUp(response, amount, userId);
             },
             'modal': {
-                'ondismiss': function() {
+                'ondismiss':async function() {
+                    await fetch('/wallet-failed',{
+                        method:'POST',
+                        headers:{
+                            'Content-Type':'application/json'
+                        },
+                        body:JSON.stringify({
+                            userId:userId,
+                            amount:amount,
+                            reason:'User Cancelled Payment'
+                        }) 
+                    })
+
+
                     Swal.fire({
                         icon: 'info',
                         title: 'Payment Cancelled',
                         text: 'You cancelled the payment process',
                         confirmButtonColor: '#667eea'
-                    });
+                    }).then(()=>{
+                        window.location.reload()
+                    })
                 }
             },
             'theme': {
@@ -879,6 +893,26 @@ async function processWalletTopUp(amount) {
         };
         
         const rzp = new Razorpay(options);
+
+        rzp.on('payment.failed',async function(response){
+            await fetch('/wallet-failed',{
+                method:'POST',
+                headers:{
+                    'Content-Type':'application/json'
+                },
+                body:JSON.stringify({
+                    userId,
+                    amount,
+                    reason:response.error.description || "Payment Failed"
+                })
+            })
+             Swal.fire({
+                icon: 'error',
+                title: 'Payment Failed',
+                text: response.error.description || 'Your payment was not completed.',
+                confirmButtonColor: '#667eea'
+            });
+        })
         rzp.open();
         
     } catch (error) {

@@ -223,8 +223,8 @@
           // ✅ Validation
                     let errors = [];
 
-                    if (!data.code || !/^[A-Za-z0-9]{4,10}$/.test(data.code)) {
-                        errors.push("Coupon code is required (4–10 letters/numbers).");
+                    if (!data.code || !/^(?!.*-.*-)[A-Za-z0-9-]{4,10}$/.test(data.code)) {
+                        errors.push("Coupon code is required (4–15 letters/numbers).");
                     }
 
                     if (!data.discountType) {

@@ -783,7 +783,23 @@
                         var rzp1 = new Razorpay(options);
                         rzp1.on('payment.failed', function(response) {
                             console.log("Payment Failed", response.error);
-                            window.location.href = '/order-failure';
+                            fetch('/payment-failed',{
+                                method:'POST',
+                                headers:{'Content-Type':'application/json'},
+                                body:JSON.stringify({
+                                    razorpay_order_id:response.error.metadata.order_id,
+                                    razorpay_payment_id:response.error.metadata.payment_id,
+                                    reason:response.error.description,
+                                    amount:data.order.amount,
+                                    address:"<%=orderData.address._id %>",
+                                    discount:"<%=orderData.discount%>"
+                                })
+                            })
+                            .then(res => res.json())
+                            .then(result => {
+                                console.log("Failure logged in razorpay payment",result);
+                               window.location.href = '/order-failure' 
+                            })
                         });
                         rzp1.open();
                     }

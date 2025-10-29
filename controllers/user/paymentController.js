@@ -6,6 +6,7 @@ const Product = require("../../models/productSchema");
 const razorpayInstance = require("./razorpay");
 const crypto = require("crypto");
 const Transaction = require("../../models/transactionSchema");
+const { STATUS_CODE } = require("../../utils/statusCode");
 
 const postPayment = async (req, res) => {
   try {
@@ -149,7 +150,32 @@ const confirmRazorpay = async (req, res) => {
   }
 };
 
+const paymentFailed = async(req,res) =>{
+  try {
+    const userId = req.session.user;
+   
+    const {razorpay_order_id,razorpay_payment_id,reason,amount,address,discount}  = req.body;
+
+    // payment failed
+    await Transaction.create({
+      userId,
+      orderId:razorpay_order_id || null,
+      type:'Failed',
+      amount:Number(amount)/100,
+      paymentMethod:'Razorpay',
+      description:`Payment Failed : ${reason}`
+    });
+    return res.json({success:true,message:'Payment Failed'})
+  } catch (error) {
+     console.log("Error in paymentFailed:", error);
+    return res.status(500).json({ success: false, message: "Internal server error" });
+  }
+}
+
+
 module.exports = {
   postPayment,
   confirmRazorpay,
-};
+  paymentFailed,
+  
+};            
