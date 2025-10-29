@@ -37,7 +37,7 @@ const sendVerificationEmail = async (email, otp) => {
       html: `<b><h4> Your OTP: ${otp}</h4><br></b>`,
     };
     const info = await transporter.sendMail(mailOptions);
-    console.log("Email sent:", info.messageId);
+    
     return true;
   } catch (error) {
     console.error("error in sending email", error);
@@ -75,19 +75,21 @@ const forgotEmailOtp = async (req, res) => {
     if(!findUser){
       return res.status(STATUS_CODE.BAD_REQUEST).json({success:false,message:"Email with User Not Found"})
     }
-    console.log("Email:", email);
 
     if (findUser) {
       const otp = generateOtp();
+   
       const emailSent = await sendVerificationEmail(email, otp);
 
       if (emailSent) {
+         
         req.session.userOtp = otp;
         req.session.email = email;
 
         console.log("Forgot password OTP:", otp);
 
-        return res.render("user/forgotemailotp");
+        return res.status(STATUS_CODE.SUCCESS).json({success:true, message:'OTP Send Successfully'})
+        
       } else {
         res.json({
           success: false,
@@ -109,13 +111,12 @@ const forgotEmailOtp = async (req, res) => {
 };
 const verifyForgotPassOtp = async (req, res) => {
   try {
-    console.log("testing file check 1 i guess its a dat", req.body);
+    
     const { otp1, otp2, otp3, otp4 } = req.body;
     const enteredOtp = otp1 + otp2 + otp3 + otp4;
 
     if (enteredOtp === req.session.userOtp) {
-      console.log("enteredOtp === req.session.userOtp in verifyForgotPassOtp");
-
+      
       return res.json({ success: true, message: "OTP Verified Successfully" });
     } else {
       return res.json({ success: false, message: "OTP not Matching" });
@@ -129,14 +130,14 @@ const verifyForgotPassOtp = async (req, res) => {
 };
 const resendForgotOtp = async (req, res) => {
   try {
-    console.log("resend otp function invoke");
+    
     const otp = generateOtp();
     req.session.userOtp = otp;
-    console.log("type is in session", typeof otp);
+  
     const email = req.session.email;
-    console.log("email is in the resend forgot otp is ", email);
+    
     const emailSent = await sendVerificationEmail(email, otp);
-    console.log("email is send ", emailSent);
+   
     if (emailSent) {
       console.log("Resend OTP For Forgot Password : ", otp);
       return res
@@ -192,31 +193,41 @@ const securePassword = async (password) => {
 
 const postNewPassword = async (req, res) => {
   try {
-    console.log(req.body);
+    
     const { newPass1, newPass2 } = req.body;
     const email = req.session.email;
-    console.log(newPass1);
 
-    if (newPass1 === newPass2) {
+    if(newPass1 != newPass2){
+      return res.status(STATUS_CODE.NOT_FOUND).json({success:false,message:"Passwords are Not Matching"})
+    }
+
+    const user = await User.findOne({email})
+    if(!user){
+      return res.status(STATUS_CODE.NOT_FOUND).json({success:false,message:'User is Not Found'})
+    }
+
+    const isSamePassword = await bcrypt.compare(newPass1,user.password)
+    if(isSamePassword){
+      return res.status(STATUS_CODE.BAD_REQUEST).json({success:false,message:'New password cannot be the same as the previous one'})
+    }
+
+//
+     
       const passwordHash = await securePassword(newPass1);
       await User.updateOne(
-        { email: email },
+        { email },
         { $set: { password: passwordHash } }
       );
 
-      res
-        .status(STATUS_CODE.SUCCESS)
+   
+        return res.status(STATUS_CODE.SUCCESS)
         .json({ success: true, message: "new password updated Successfully" });
-    } else {
-      res
-        .status(STATUS_CODE.BAD_REQUEST)
-        .json({ message: "Password do not match" });
-    }
+    
   } catch (error) {
+    console.log("error happened in reset password",error);
     res
       .status(STATUS_CODE.INTERNAL_SERVER_ERROR)
       .json({ message: "Internal Server error" });
-    console.log("error happened in reset password");
   }
 };
 

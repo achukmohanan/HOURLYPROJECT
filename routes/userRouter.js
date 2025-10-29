@@ -56,6 +56,7 @@ router.get("/home", userAuth, userController.loadHomepage);
 //profile management
 router.get("/forgotpassword", profileController.forgotPassword);
 router.get("/forgotemailotp", profileController.getForgotEmailOtp);
+//forgot password enmnma pageinte post route ahnuu from forgot p[assword]
 router.post("/forgotemailotp", profileController.forgotEmailOtp);
 // verify
 router.post("/verify-passForgot-otp", profileController.verifyForgotPassOtp);
