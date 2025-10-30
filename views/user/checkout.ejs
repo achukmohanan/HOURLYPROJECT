@@ -420,6 +420,7 @@
                     <input type="hidden" name="discount" id="discountInput" value="<%=savedDiscount %>">
 
                     <button type="button" class="btn btn-primary" id="applyCouponBtn">Apply</button>
+                    <button type="button" class="btn btn-danger" id="removeCouponBtn" style="display: none;">Remove</button>
                     <div id="couponMessage"></div>
                 
 
@@ -460,6 +461,10 @@
 
         const applyBtn = document.getElementById('applyCouponBtn');
         const couponMsg = document.getElementById('couponMessage');
+        const discountInput = document.getElementById('discountInput');
+        const removeCouponBtn = document.getElementById('removeCouponBtn');
+        const totalEl = document.getElementById('total');
+
         let appliedDiscount = 0;
 
         applyBtn.addEventListener('click',async ()=>{
@@ -483,20 +488,24 @@
 
                 const data = await response.json();
 
-                const discountInput = document.getElementById('discountInput');
+                
 
                 if(data.success){
                     appliedDiscount = data.discount;
                     couponMessage.style.color = 'green';
                     couponMessage.innerText = `Coupon applied! Discount: ${appliedDiscount}%`;
                     
-                    const totalEl = document.getElementById('total');
+                   
                     let originalTotal =  parseFloat(totalEl.dataset.originalTotal);
                     let newTotal = originalTotal- (appliedDiscount/100)*originalTotal;
                     if(newTotal < 0) newTotal = 0;
-                    totalEl.innerText = `₹ ${newTotal.toLocaleString('en-IN')}`;
 
+                    totalEl.innerText = `₹ ${newTotal.toLocaleString('en-IN')}`;
                     discountInput.value = appliedDiscount
+
+                    //show cancel button
+                    removeCouponBtn.style.display = 'inline-block';
+                    // appliedDiscount.style.display = 'none'
                 }else{
                     couponMessage.style.color='red',
                     couponMsg.innerText = data.message
@@ -509,7 +518,27 @@
                 couponMsg.innerText = 'Something went wrong!';
                 appliedDiscount = 0;
             }
+        })  
+        //remove 
+        removeCouponBtn.addEventListener('click',()=>{
+            appliedDiscount = 0;
+            discountInput.value = 0;
+            document.getElementById('couponCode').value = "";
+            resetTotal();
+
+            couponMsg.style.color = 'grey';
+            couponMsg.innerText = "Coupon Removed";
+
+            removeCouponBtn.style.display = 'none'
+            applyBtn.style.display = 'inline-block'
         })
+
+function resetTotal(){
+    const totalEl = document.getElementById('total');
+    const originalTotal = parseFloat(totalEl.dataset.originalTotal);
+    totalEl.innerText = `${originalTotal.toLocaleString('en-IN')}`
+}
+
 
         window.addEventListener('DOMContentLoaded', () => {
   const discountInput = document.getElementById('discountInput');
@@ -525,6 +554,22 @@
     const couponMsg = document.getElementById('couponMessage');
     couponMsg.style.color = 'green';
     couponMsg.innerText = `Coupon reapplied! Discount: ${savedDiscount}%`;
+    
+    removeCouponBtn.style.display = 'inline-block';
+    applyBtn.style.display = 'none';
+
+     removeCouponBtn.addEventListener('click',()=>{
+            appliedDiscount = 0;
+            discountInput.value = 0;
+            document.getElementById('couponCode').value = "";
+            resetTotal();
+
+            couponMsg.style.color = 'grey';
+            couponMsg.innerText = "Coupon Removed";
+
+            removeCouponBtn.style.display = 'none'
+            applyBtn.style.display = 'inline-block'
+        })
   }
 });
 
