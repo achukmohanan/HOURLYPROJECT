@@ -285,6 +285,9 @@
 
                         <!-- Password Tab -->
                         <div class="tab-pane" id="password">
+                            <%if(!user.password){%> 
+                             <i class="bi bi-google"></i> <p>You are logged in with Google. Password change is not available.</p>
+                                <% }else{%>
                             <h2>Change Password</h2>
                             <form id="changePassword" >
                             <div class="form-group">         
@@ -301,6 +304,7 @@
                             </div>
                             <button type="submit" class="save-btn">Update Passsword</button>
                              </form>
+                            <% } %>
                         </div>
 
                         <!-- Referal Tab -->
