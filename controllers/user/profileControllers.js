@@ -310,9 +310,8 @@ const addAddress = async (req, res) => {
   try {
     const user = req.session.user;
     const userData = await User.findById(user);
-    console.log("userDate is ",userData)
+    // console.log("userDate is ",userData)
     res.render("user/addAddress", {
-      
       name: userData,
     });
   } catch (error) {
@@ -399,8 +398,6 @@ const editAddress = async (req, res) => {
 
     const userData = await User.findById(user);
 
-    // console.log("user data is ",  userData);
-
     res.render("user/editAddress", {
       address: addressData,
       user: user,
@@ -408,7 +405,7 @@ const editAddress = async (req, res) => {
     });
   } catch (error) {
     console.log("error in edit Address", error);
-    res.redirect("pagenotfound");
+    res.redirect("/pagenotfound");
   }
 };
 

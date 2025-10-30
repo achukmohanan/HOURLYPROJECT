@@ -153,9 +153,15 @@
                                 <div class="col-md-6 col-12 mb-2">
                                     <a href="/edit-profile" class="btn btn-primary w-100">Edit Profile</a>
                                 </div>
+                                <%if(user.password){%>
                                 <div class="col-md-6 col-12">
                                     <a href="/verifyCurrentEmail" class="btn btn-primary w-100">Edit Email</a>
                                 </div>
+                            <% }else{ %>
+                                <div class="col-md-6 col-12">
+                                    <p>You signed in with Google. Email cannot be changed here. </p>
+                                </div>
+                           <% } %>
                             </div>
                         </div>
 
@@ -286,7 +292,7 @@
                         <!-- Password Tab -->
                         <div class="tab-pane" id="password">
                             <%if(!user.password){%> 
-                             <i class="bi bi-google"></i> <p>You are logged in with Google. Password change is not available.</p>
+                           <p> <i class="bi bi-google"></i> You are logged in with Google. Password change is not available.</p>
                                 <% }else{%>
                             <h2>Change Password</h2>
                             <form id="changePassword" >
