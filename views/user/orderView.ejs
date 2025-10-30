@@ -1,4 +1,4 @@
- <%- include("../../views/partials/user/supportheader") %>
+<%- include("../../views/partials/user/supportheader") %>
     <title>Order Details</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
     <style>
@@ -12,6 +12,146 @@
             background-color: #f8f9fa;
             border-left: 4px solid #dc3545;
         }
+
+        /* Mobile Responsive Styles */
+        @media (max-width: 768px) {
+            .container-sm {
+                padding-left: 10px !important;
+                padding-right: 10px !important;
+            }
+
+            .breadcrumb {
+                font-size: 0.85rem;
+                flex-wrap: wrap;
+            }
+
+            .breadcrumb-item {
+                margin-bottom: 5px;
+            }
+
+            .card {
+                margin-bottom: 1rem;
+            }
+
+            .card-body {
+                padding: 0.75rem;
+            }
+
+            /* Product Row Mobile Layout */
+            .product-row {
+                flex-direction: column !important;
+                align-items: flex-start !important;
+            }
+
+            .product-img-col {
+                width: 100% !important;
+                display: flex;
+                justify-content: center;
+                margin-bottom: 1rem;
+            }
+
+            .product-img {
+                width: 120px;
+                height: 120px;
+            }
+
+            .product-details-col {
+                width: 100% !important;
+                margin-bottom: 1rem;
+            }
+
+            .product-details-col h4 {
+                font-size: 1.1rem;
+            }
+
+            .product-details-col p {
+                font-size: 0.9rem;
+                margin-bottom: 0.5rem;
+            }
+
+            .product-price-col {
+                width: 100% !important;
+                text-align: left !important;
+                border-top: 1px solid #dee2e6;
+                padding-top: 1rem;
+            }
+
+            .product-price-col h6 {
+                font-size: 1rem;
+                margin-bottom: 0.75rem;
+            }
+
+            .btn {
+                width: 100%;
+                margin-bottom: 0.5rem;
+            }
+
+            .btn-danger,
+            .btn-secondary,
+            .btn-primary {
+                font-size: 0.9rem;
+                padding: 0.5rem;
+            }
+
+            /* Order Total Section */
+            .cancel-section h5 {
+                font-size: 1.1rem;
+            }
+
+            .cancel-section p {
+                font-size: 0.85rem;
+                word-wrap: break-word;
+            }
+
+            /* Modal Adjustments */
+            .modal-dialog {
+                margin: 0.5rem;
+            }
+
+            .modal-body {
+                font-size: 0.9rem;
+            }
+
+            /* Text wrapping for long content */
+            .text-wrap-mobile {
+                word-wrap: break-word;
+                overflow-wrap: break-word;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .py-4 {
+                padding-top: 1rem !important;
+                padding-bottom: 1rem !important;
+            }
+
+            h2, h4, h5 {
+                font-size: 1rem;
+            }
+
+            .card-header h5 {
+                font-size: 1rem;
+            }
+
+            small {
+                font-size: 0.8rem;
+            }
+        }
+
+        /* Ensure buttons don't overflow */
+        .btn-group-mobile {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        /* Improved spacing for mobile */
+        @media (max-width: 768px) {
+            .border-bottom {
+                padding-bottom: 1rem;
+                margin-bottom: 1rem;
+            }
+        }
     </style>
 </head>
 <body class="bg-light">
@@ -19,8 +159,13 @@
         <!-- Header -->
         <div class="row mb-4">
             <div class="col">
-                <h2>Order Details page </h2>
-                
+                <div class="breadcrumb">
+                    <span class="breadcrumb-item">Account</span>
+                    <span class="breadcrumb-item active">Order</span>
+                    <%orders.forEach(order => { %>
+                        <span class="breadcrumb-item">OrderId : <%= order.orderId %></span>
+                    <% }) %>
+                </div>
             </div>
         </div>
 
@@ -30,139 +175,124 @@
                 <h5 class="mb-0">Order Items</h5>
             </div>
             <div class="card-body">
-            <% if (orders) { %>
-              <% orders.forEach(order => { %>
-             
-                    <!-- Loop through each item in the order -->
-                    <div class="row align-items-center py-3 border-bottom">
-                            <% order.orderedItems.forEach(item => { %>
-                                <hr>
-                            <!-- Product Image -->
-                            <div class="col-2">
-                                <img src="<%= item.product.productImage[0] %>" 
-                                    alt="<%= item.product.productName %>" 
-                                    class="product-img rounded">
-                            </div>
-                            
-                            <!-- Product Details -->
-                             
-                            <div class="col-6">
-                                <p><strong>Order Id : </strong> <%= order.orderId %></p>
-                               <strong> <h4 class="mb-1"><%= item.product.productName %></h4></strong>
-                                <p><strong>Description : </strong><%= item.product.description%></p>
-                                <p><strong>Brand : </strong><%= item.product.brand%></p>
-                                <p><strong>Category : </strong><%= item.product.category.name %></p>
-                                <p><strong>Color : </strong><%= item.product.color %></p>
-                                <small class="text-muted">Qty: <%= item.quantity %></small>
-                                <p><strong>Address : </strong><%= order.address.addressType %> </p>
-                                <p><b><%= order.address.name %></b>   <%= order.address.landMark %>(H),<%= order.address.city %>,
-                                <%= order.address.state %> <%= order.address.pincode %>,
-                            <br>  MOB: <%= order.address.phone %>,<%=order.address.altPhone %></p>
-                                <p style="color: rgb(223, 47, 2);" > <strong class="text-dark">Item Status :</strong> <%= item.status %></p>
-                                <p style="color: rgb(235, 47, 2);"><strong class="text-dark">Order Status : </strong> <%= order.status %></p>
-                                <p><strong>Payment Method : </strong> <%= order.paymentMethod %></p>
-                                <!-- <p><strong>payment status : </strong> <%= order.paymentStatus %></p> -->
-                                <p><strong>Order Placed On : </strong><%= order.createdOn.toLocaleString('en-IN') %></p>
+                <% if (orders) { %>
+                    <% orders.forEach(order => { %>
+                        <!-- Loop through each item in the order -->
+                        <% order.orderedItems.forEach(item => { %>
+                            <hr>
+                            <div class="row align-items-center py-3 border-bottom product-row">
+                                <!-- Product Image -->
+                                <div class="col-md-2 col-12 product-img-col">
+                                    <img src="<%= item.product.productImage[0] %>" 
+                                        alt="<%= item.product.productName %>" 
+                                        class="product-img rounded">
+                                </div>
                                 
-                                
-                                <% if(order.deliveredAt){%>
-                                    <p><strong>Order Delivered On : </strong><%= order.deliveredAt.toLocaleString('en-IN') %></p>
-                                 <% } %>
-                            </div>
+                                <!-- Product Details -->
+                                <div class="col-md-6 col-12 product-details-col">
+                                    <strong><h4 class="mb-1"><%= item.product.productName %></h4></strong>
+                                    <p class="text-wrap-mobile"><strong>Description : </strong><%= item.product.description%></p>
+                                    <p><strong>Brand : </strong><%= item.product.brand%></p>
+                                    <p><strong>Category : </strong><%= item.product.category.name %></p>
+                                    <p><strong>Color : </strong><%= item.product.color %></p>
+                                    <small class="text-muted">Qty: <%= item.quantity %></small>
+                                    <p style="color: rgb(223, 47, 2);"><strong class="text-dark">Item Status :</strong> <%= item.status %></p>
+                                    <p style="color: rgb(235, 47, 2);"><strong class="text-dark">Order Status : </strong> <%= order.status %></p>
+                                </div>
 
-                            <!-- Price & Cancel Button -->
-                            <div class="col-4 text-end">
+                                <!-- Price & Cancel Button -->
+                                <div class="col-md-4 col-12 text-md-end product-price-col">
                                     <h6>
-                                    <b>Item Price : </b>
-                                    <span data-bs-toggle="tooltip" title="Order Price: <%= orders[0].totalPrice.toLocaleString('en-IN',{style:'currency',currency:'INR'}) %>">
-                                        <%= item.price.toLocaleString('en-IN', { style: 'currency', currency: 'INR' }) %>
-                                    </span>
+                                        <b>Item Price : </b>
+                                        <span data-bs-toggle="tooltip" title="Order Price: <%= orders[0].totalPrice.toLocaleString('en-IN',{style:'currency',currency:'INR'}) %>">
+                                            <%= item.price.toLocaleString('en-IN', { style: 'currency', currency: 'INR' }) %>
+                                        </span>
                                     </h6>
                                     
-                               <% if(!(item.status === 'Cancelled' ||order.status === 'Delivered' || item.status === "Returned" ||item.status ==='Return Approved'||item.status ==='Return Requested' || item.status === 'Cancellation Requested' ||order.status === 'Returned' ||item.status === 'Delivered'||item.status === 'Cancellation Rejected')){ %>
-                                 <button type="button" 
-                                        class="btn btn-danger mt-2" 
+                                    <div class="btn-group-mobile">
+                                        <% if(!(item.status === 'Cancelled' ||order.status === 'Delivered' || item.status === "Returned" ||item.status ==='Return Approved'||item.status ==='Return Requested' || item.status === 'Cancellation Requested' ||order.status === 'Returned' ||item.status === 'Delivered'||item.status === 'Cancellation Rejected')){ %>
+                                            <button type="button" 
+                                                class="btn btn-danger" 
+                                                onclick="setCancelOrderId('<%= order.orderId %>','<%= item._id %>','<%= orders[0].discount %>')">
+                                                Cancel Item
+                                            </button>
+                                        <% } %>  
                                         
-                                        onclick="setCancelOrderId('<%= order.orderId %>','<%= item._id %>','<%= orders[0].discount %>')" >
-                                    Cancel Item
-                                </button>
-                            <% } %>  
-                                <% if(item.status === 'Cancellation Requested'){%>
-                                    <button type="button" 
-                                        class="btn btn-danger mt-2" 
+                                        <% if(item.status === 'Cancellation Requested'){%>
+                                            <button type="button" 
+                                                class="btn btn-danger" 
+                                                onclick='withdrawCancel("<%=order.orderId %>","<%= item._id%>")'>
+                                                Withdraw Cancel Request
+                                            </button>
+                                        <% } %>
                                         
-                                        onclick='withdrawCancel("<%=order.orderId %>","<%= item._id%>")' >
-                                   Withdraw Cancel Request
-                                </button>
-                                <% } %>
-                                <br>
-                                <!-- -------------------------message for admin reject the cancel order -->
-                                <% if(item.status === 'Cancellation Rejected'){%>
-                                   <span class="text-danger" >‘ Your cancel request was rejected by admin.Order is still active.’</span> 
-                                <% } %>
-                                    <% if(item.status === 'Cancellation Rejected' || order.status === 'Return Rejected'){%>
-                                   <span class="text-danger" >‘ Your Order Return request was rejected by admin ’ </span> 
-                                <% } %>
-                                <% if ((item.status === 'Delivered')) {%>
-                                <button type="button" 
-                                        class="btn btn-secondary mt-2" 
+                                        <!-- Messages for admin rejection -->
+                                        <% if(item.status === 'Cancellation Rejected'){%>
+                                            <span class="text-danger d-block mb-2">Your cancel request was rejected by admin. Order is still active.</span> 
+                                        <% } %>
                                         
-                                        onclick="returnOrder('<%= order.orderId %>','<%= item._id%>')" >
-                                    Return Order
-                                </button>
-                           <% } %>
-                           <% if ((item.status === 'Return Requested')) {%>
-                                <button type="button" 
-                                        class="btn btn-secondary mt-2" 
+                                        <% if(item.status === 'Cancellation Rejected' || order.status === 'Return Rejected'){%>
+                                            <span class="text-danger d-block mb-2">Your Order Return request was rejected by admin</span> 
+                                        <% } %>
                                         
-                                        onclick="" >
-                                    Cancel Return Request
-                                </button>
-                           <% } %>
-                            <% if(item.status === 'Delivered' ){%>
-                            <a href="/invoice/<%= order.orderId%>" class="btn btn-primary mt-2">Download Invoice</a>
-                            <% } %>
+                                        <% if ((item.status === 'Delivered')) {%>
+                                            <button type="button" 
+                                                class="btn btn-secondary" 
+                                                onclick="returnOrder('<%= order.orderId %>','<%= item._id%>')">
+                                                Return Order
+                                            </button>
+                                        <% } %>
+                                        
+                                        <% if ((item.status === 'Return Requested')) {%>
+                                            <button type="button" 
+                                                class="btn btn-secondary" 
+                                                onclick="">
+                                                Cancel Return Request
+                                            </button>
+                                        <% } %>
+                                        
+                                        <% if(item.status === 'Delivered' ){%>
+                                            <a href="/invoice/<%= order.orderId%>" class="btn btn-primary">Download Invoice</a>
+                                        <% } %>
+                                    </div>
+                                </div>
                             </div>
-                            
-                            <% }) %>
-                        
-                          
-                        </div>
                         <% }) %>
-           
-    <% } else { %>
-        <p>No orders found</p>
-    <% } %>
-</div>
-
- </div>
-<!-- --------------------order total---------------------- -->
- <div class="card mt-2">
-            <div class="card-body cancel-section">
-                <h5 class="text-danger mb-3"> Order Total</h5>
-                <p><strong>Coupon Applied : </strong><%= orders[0].couponApplied ? 'YES' : 'NO' %></p>
-             <p><strong>Discount  : </strong><%= orders[0].discount ?  orders[0].discount.toLocaleString('en-IN',{style:'currency',currency:'INR'}) : 0 %></p>
-                <!-- <p class="mb-3">You can cancel this order if it hasn't been shipped yet. Once cancelled, you'll receive a full refund within 3-5 business days.</p> -->
-                <p><strong>Order Total</strong> : <%=  orders[0].totalPrice.toLocaleString('en-IN',{style:'currency',currency:'INR'}) %></p>
-                <!-- Cancel Button with Confirmation -->
-               
+                    <% }) %>
+                <% } else { %>
+                    <p>No orders found</p>
+                <% } %>
             </div>
         </div>
 
-<!-- ------------------------------------------------ -->
-
-
+        <!-- Order Total -->
+        <div class="card mt-2">
+            <div class="card-body cancel-section">
+                <h5 class="text-danger mb-3">Order Total</h5>
+                <% orders.forEach(order =>{%>
+                    <p class="text-wrap-mobile"><strong>OrderId : </strong> <%=order.orderId%></p> 
+                    <p class="text-wrap-mobile"><strong>Address : </strong><b><%= order.address.name %></b> 
+                        <%= order.address.landMark %>(H), <%= order.address.city %>,
+                        <%= order.address.state %> <%= order.address.pincode %>,
+                        <br>MOB: <%= order.address.phone %>, <%=order.address.altPhone %>
+                    </p>
+                    <% if(order.deliveredAt){%>
+                        <p><strong>Order Placed On : </strong><%= order.createdOn.toLocaleString('en-IN') %></p>
+                        <p><strong>Order Delivered On : </strong><%= order.deliveredAt.toLocaleString('en-IN') %></p>
+                    <% } %>
+                    <p><strong>Payment Method : </strong> <%= order.paymentMethod %></p>
+                <%} ) %>
+                <p><strong>Coupon Applied : </strong><%= orders[0].couponApplied ? 'YES' : 'NO' %></p>
+                <p><strong>Discount : </strong><%= orders[0].discount ? orders[0].discount.toLocaleString('en-IN',{style:'currency',currency:'INR'}) : 0 %></p>
+                <p><strong>Order Total : </strong><%= orders[0].totalPrice.toLocaleString('en-IN',{style:'currency',currency:'INR'}) %></p>
+            </div>
+        </div>
 
         <!-- Cancel Order Section -->
         <div class="card mt-3">
             <div class="card-body cancel-section">
-                
-                    <h5 class="text-danger mb-3">Cancel Order</h5>
-             
+                <h5 class="text-danger mb-3">Cancel Order</h5>
                 <p class="mb-3">You can cancel this order if it hasn't been shipped yet. Once cancelled, you'll receive a full refund within 3-5 business days.</p>
-                
-                <!-- Cancel Button with Confirmation -->
-               
             </div>
         </div>
     </div>
@@ -176,8 +306,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <p id="cancelText" > </p>
-                    <!-- <p class="text-muted mb-0">This action cannot be undone. You will receive a full refund within 3-5 business days.</p> -->
+                    <p id="cancelText"></p>
                     <input type="hidden" id="cancelOrderId">
                     <input type="hidden" id="cancelItemId">
                 </div>
@@ -207,182 +336,176 @@
             </div>
         </div>
     </div>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
     <script>
-        function returnOrder(orderId,itemId) {
+        function returnOrder(orderId, itemId) {
             Swal.fire({
-            title: "Are you sure?",
-            text: "Please provide a reason for returning this order:",
-            input: "textarea",
-            inputPlaceholder:"Write your Reason here....",
-            showCancelButton: true,
-            confirmButtonText: "Yes, Submit Return",
-            cancelButtonText: "Cancel"
-                 }).then((result) => {
-                    if (result.isConfirmed && result.value.trim() !=="") {
-                        fetch(`/return-order/${orderId}/${itemId}`, {
+                title: "Are you sure?",
+                text: "Please provide a reason for returning this order:",
+                input: "textarea",
+                inputPlaceholder: "Write your Reason here....",
+                showCancelButton: true,
+                confirmButtonText: "Yes, Submit Return",
+                cancelButtonText: "Cancel"
+            }).then((result) => {
+                if (result.isConfirmed && result.value.trim() !== "") {
+                    fetch(`/return-order/${orderId}/${itemId}`, {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
-                        body:JSON.stringify({reason:result.value})
-                        })
-                        .then(res => res.json())
-                        .then(data => {
-                        if(data.success){
+                        body: JSON.stringify({ reason: result.value })
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.success) {
                             Swal.fire({
-                                icon:'success',
-                                title:"Requested",
-                                text:data.message
-                            })
-                            .then(() => location.reload());
-                        }else{
+                                icon: 'success',
+                                title: "Requested",
+                                text: data.message
+                            }).then(() => location.reload());
+                        } else {
                             Swal.fire("Error!", data.message, "error");
                         }
-                        })
-                        .catch(() => Swal.fire("Error!", "Something went wrong.", "error"));
-            }
-    });
-  }
+                    })
+                    .catch(() => Swal.fire("Error!", "Something went wrong.", "error"));
+                }
+            });
+        }
 
-
-
-
-    function setCancelOrderId(orderId,itemId,discount){
-        Swal.fire({
-            title:"Are you Sure?",
-            text:'Do you really want to cancel this order?',
-            icon:'warning',
-            showCancelButton:true,
-            confirmButtonText:'Yes ,Cancel',
-            cancelButtonText:'No , Keep Order',
-            confirmButtonColor: '#d33',
-            cancelButtonColor: '#3085d6'
-        }).then((result)=>{
-            if(result.isConfirmed){
-                Swal.fire({
-                    title:'Reason For Cancel',
-                    input:'radio',
-                    inputOptions:{
-                        'I change my mind':'I change my mind',
-                        'I dont’t like this color':'I dont’t like this color',
-                        'Found a better price': 'Found a better price',
-                        reason4: 'Other'
-                    },
-                    inputValidator:(value)=>{
-                        if(!value){
-                            return 'You need to choose a reason!';
-                        }
-                    },
-                    showCancelButton:true,
-                    confirmButtonText:'Next',
-                    cancelButtonText: 'No, Keep Order',
-                    confirmButtonColor: '#d33',
-                    cancelButtonColor: '#3085d6'
-                }).then((result)=>{
-                    if(result.isConfirmed){
-                        if(result.value === 'reason4'){
-                            Swal.fire({
-                                title:'Please specify your reason',
-                                input:'textarea',
-                                inputPlaceholder: 'Type your feedback here...',
-                                showCancelButton: true,
-                                confirmButtonText: 'Submit'
-                            }).then((feedResult)=>{
-                                if(feedResult.isConfirmed){
-                                    cancelOrder(orderId,itemId,feedResult.value,discount);
-                                }
-                            });
-                        }else{
-                            cancelOrder(orderId, itemId, result.value,discount);
-                        }
-                    }
-                });
-            }
-        })
-    } 
-              function cancelOrder (orderId,itemId,reason,discount) {
-                fetch(`/cancelOrder/${orderId}/${itemId}`,{
-                method:'POST',
-                headers:{
-                    'Content-Type':'application/json'
-                },
-                body:JSON.stringify({action:'request', reason,discount})
-            })
-            .then(res=>res.json())
-            .then(data=>{
-                if(data.success){
+        function setCancelOrderId(orderId, itemId, discount) {
+            Swal.fire({
+                title: "Are you Sure?",
+                text: 'Do you really want to cancel this order?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, Cancel',
+                cancelButtonText: 'No, Keep Order',
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6'
+            }).then((result) => {
+                if (result.isConfirmed) {
                     Swal.fire({
-                    icon: 'success',
-                    title: 'Order Cancellation Request Send...',
-                    text: data.message,
+                        title: 'Reason For Cancel',
+                        input: 'radio',
+                        inputOptions: {
+                            'I change my mind': 'I change my mind',
+                            "I don't like this color": "I don't like this color",
+                            'Found a better price': 'Found a better price',
+                            reason4: 'Other'
+                        },
+                        inputValidator: (value) => {
+                            if (!value) {
+                                return 'You need to choose a reason!';
+                            }
+                        },
+                        showCancelButton: true,
+                        confirmButtonText: 'Next',
+                        cancelButtonText: 'No, Keep Order',
+                        confirmButtonColor: '#d33',
+                        cancelButtonColor: '#3085d6'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            if (result.value === 'reason4') {
+                                Swal.fire({
+                                    title: 'Please specify your reason',
+                                    input: 'textarea',
+                                    inputPlaceholder: 'Type your feedback here...',
+                                    showCancelButton: true,
+                                    confirmButtonText: 'Submit'
+                                }).then((feedResult) => {
+                                    if (feedResult.isConfirmed) {
+                                        cancelOrder(orderId, itemId, feedResult.value, discount);
+                                    }
+                                });
+                            } else {
+                                cancelOrder(orderId, itemId, result.value, discount);
+                            }
+                        }
+                    });
+                }
+            });
+        }
+
+        function cancelOrder(orderId, itemId, reason, discount) {
+            fetch(`/cancelOrder/${orderId}/${itemId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ action: 'request', reason, discount })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Order Cancellation Request Send...',
+                        text: data.message,
                     }).then(() => {
                         window.location.reload();
                     });
-                }else{
+                } else {
                     Swal.fire({
-                icon: 'error',
-                title: 'OOPS',
-                text: data.message,
-                showConfirmButton: true
-            });
+                        icon: 'error',
+                        title: 'OOPS',
+                        text: data.message,
+                        showConfirmButton: true
+                    });
                 }
             })
-            .catch(err=>{
+            .catch(err => {
                 Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: 'Something went wrong while cancelling the order.'
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Something went wrong while cancelling the order.'
+                });
             });
-            }) 
-    }
-
-
-    async function withdrawCancel(orderId,itemId){
-        
-            fetch(`/cancelOrder/${orderId}/${itemId}`,{
-                method:'POST',
-                headers:{
-                    'Content-Type':'application/json'
-                },
-                body:JSON.stringify({action:'withdraw'})
-            })
-            .then(res=>res.json())
-            .then(data =>{
-                if(data.success){
-                    Swal.fire({
-                        icon:'success',
-                        title:'Succesfully Withdraw',
-                        text:data.message
-                    }).then(()=>{
-                        window.location.reload()
-                    })
-                }else{
-                    Swal.fire({
-                        icon:'error',
-                        title:'OOPS',
-                        text:data.message,
-                        showConfirmButton:true
-                    })
-                }
-            })
-            .catch(err=>{
-                Swal.fire({
-                    icon:'error',
-                    title:"ERROR",
-                    text:"Something Went Wrong"
-                })
-            })
-       
-    }
-        function goToOrders() {
-            // Redirect to orders page
-            window.location.href = '/viewOrder';
-            
         }
-       
-        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
-  var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-    return new bootstrap.Tooltip(tooltipTriggerEl)
-  })
+
+        async function withdrawCancel(orderId, itemId) {
+            fetch(`/cancelOrder/${orderId}/${itemId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ action: 'withdraw' })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Successfully Withdraw',
+                        text: data.message
+                    }).then(() => {
+                        window.location.reload();
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'OOPS',
+                        text: data.message,
+                        showConfirmButton: true
+                    });
+                }
+            })
+            .catch(err => {
+                Swal.fire({
+                    icon: 'error',
+                    title: "ERROR",
+                    text: "Something Went Wrong"
+                });
+            });
+        }
+
+        function goToOrders() {
+            window.location.href = '/viewOrder';
+        }
+
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
     </script>
 </body>
