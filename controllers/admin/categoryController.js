@@ -5,7 +5,7 @@ const { STATUS_CODE } = require("../../utils/statusCode");
 const categoryInfo = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
-    const limit = 4;
+    const limit = 5;
     const skip = (page - 1) * limit;
 
     const search = req.query.search || "";
@@ -182,7 +182,7 @@ const editCategory = async (req, res) => {
     const id = req.params.id;
     const { categoryName, description } = req.body;
 
-    const existingCategory = await Category.findOne({ name: categoryName });
+    const existingCategory = await Category.findOne({ name: {$regex:`${categoryName}$`,$options:'i'} });
 
     if (existingCategory && existingCategory._id.toString() !== id) {
       console.log("duplicate");

@@ -944,10 +944,10 @@
           <div class="search-bar">
             <form action="/shop" method="GET" class="search-form"  id="searchForm">
               <div style="position: relative; display: inline-block;">
-                <input type="text" name="query" placeholder="Search items..." class="search-input" value="<%= searchQuery || '' %>" id="searchInput"/>
+                <input type="text" name="query" placeholder="Search items..." class="search-input" value="<%= searchQuery || '' %>" id="searchInput" style="padding-right: 20px;"/>
                <% if(searchQuery) {%>
-                <button type="button" id="clearSearch" style="position:relative; right: 8px; top: 50%; transform: translateY(-50%); border:none; background: transparent; cursor: pointer;font-size: 18px; ">
-                  &times;
+                <button type="button" id="clearSearch" style="position:absolute; right: 8px; top: 50%; transform: translateY(-50%); border:none; background: transparent; cursor: pointer;font-size: 18px; ">
+                  &times;   
                 </button>
                <% } %>
                

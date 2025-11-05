@@ -215,16 +215,16 @@ const salesChart = async (req, res) => {
     let start, end;
 
     if (filter === "daily") {
-      start = new Date(today.setHours(0, 0, 0, 0));
-      end = new Date();
+      start = new Date(today.getFullYear(),today.getMonth(), today.getDate(), 0, 0, 0);
+      end = new Date(today.getFullYear(),today.getMonth(),today.getDate(),23, 59, 59);
     } else if (filter === "weekly") {
-      start = new Date();
+      start = new Date(); 
       start.setDate(today.getDate() - 7);
-      end = new Date();
+      end = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 23, 59, 59);
     } else if (filter === "monthly") {
-      start = new Date();
+      start = new Date(today.getFullYear(), today.getMonth() - 1, today.getDate());
       start.setMonth(today.getMonth() - 1);
-      end = new Date();
+      end = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 23, 59, 59);
     } else if (filter === "yearly") {
       start = new Date(today.getFullYear(), 0, 1);
       end = new Date(today.getFullYear(), 11, 31, 23, 59, 59, 999);
@@ -271,6 +271,8 @@ const salesChart = async (req, res) => {
       { $group: groupStage },
       { $sort: { "_id.year": 1, "_id.month": 1, "_id.year": 1 } },
     ]);
+console.log("Filter:", filter, "Start:", start, "End:", end);
+console.log("Chart Data:", chatData);
 
     res.json(chatData);
   } catch (error) {
