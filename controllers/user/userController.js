@@ -152,12 +152,18 @@ const signup = async (req, res) => {
       });
     }
     const findUser = await User.findOne({ email });
+    
     if (findUser) {
       return res.status(STATUS_CODE.BAD_REQUEST).json({
         success: false,
         message: "User with this Email already exists",
       });
     }
+    const findReferalCode = await User.findOne({referralCode:referalcode})
+    if(!findReferalCode){
+      return res.status(STATUS_CODE.NOT_FOUND).json({success:false,message:"Invalid Referal Code"})
+    }
+
     const otp = generateOtp();
 
     const emailSent = await sendVerificationEmail(email, otp);

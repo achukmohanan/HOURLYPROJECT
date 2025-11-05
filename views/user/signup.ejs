@@ -161,30 +161,30 @@
       </a>
       <form id="signupform">
         <div class="form-group">
-          <input type="text" id="name" name="name" placeholder="Enter Full Name"    />
           <div id="error1" class="error-message"></div>
+          <input type="text" id="name" name="name" placeholder="Enter Full Name"    />
         </div>
         <!-- <input type="text" placeholder="Last name" required /> -->
         <div class="form-group">
-          <input type="email" id="email" name="email" placeholder="Enter E-mail Address"    />
           <div id="error2" class="error-message"></div>
+          <input type="email" id="email" name="email" placeholder="Enter E-mail Address"    />
         </div>
         <div class="form-group">
-          <input type="tel" id="phone" name="phone" placeholder="Enter Mobile Number"    />
           <div id="error3" class="error-message"></div>
+          <input type="tel" id="phone" name="phone" placeholder="Enter Mobile Number"    />
         </div>
         <div class="form-group">
-          <input type="tel" id="referalcode" name="referalcode" placeholder="Referal Code"    />
           <div id="error6" class="error-message"></div>
+          <input type="tel" id="referalcode" name="referalcode" placeholder="Referal Code"    />
         </div>
 
         <div class="form-group">
-          <input type="password" id="password" name="password" placeholder="Enter Password"   />
           <div id="error4" class="error-message"></div>
+          <input type="password" id="password" name="password" placeholder="Enter Password"   />
         </div>
         <div class="form-group">
-          <input type="password" id="cPassword" name="cPassword" placeholder="Enter Confirm Password"   />
           <div id="error5" class="error-message"></div>
+          <input type="password" id="cPassword" name="cPassword" placeholder="Enter Confirm Password"   />
         </div>
           <% if (locals.message && locals.message.length > 0) { %>
   <div class="alert alert-danger text-center">
@@ -275,7 +275,7 @@
         return false;
       }else if(phoneval.length<10 || phoneval.length>10){
         error3.style.display = "block";
-        error3.innerHTML = "Enter 10 digit";
+        error3.innerHTML = "Enter 10 digit Number";
         return false;
       }else{
         error3.style.display = "none";
