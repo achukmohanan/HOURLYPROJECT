@@ -152,6 +152,7 @@ router.post('/wallet-failed',userAuth,walletController.walletFailed)
 
 //coupon management
 router.post("/apply-coupon", userAuth, cartController.applyCoupon);
+router.post('/remove-coupon',userAuth,cartController.removeCoupon)
 
 //contact
 router.get("/contact", userAuth, contactController.getContactPage);

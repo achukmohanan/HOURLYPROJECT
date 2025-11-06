@@ -418,11 +418,12 @@
                         placeholder="Enter coupon code"
                     >   
                     <input type="hidden" name="discount" id="discountInput" value="<%=savedDiscount %>">
+                    <input type="hidden" name="appliedCoupon" id="appliedCoupon" value="<%=couponcode%>">
 
                     <button type="button" class="btn btn-primary" id="applyCouponBtn">Apply</button>
                     <button type="button" class="btn btn-danger" id="removeCouponBtn" style="display: none;">Remove</button>
                     <div id="couponMessage"></div>
-                
+
 
             
                 <!-- <div class="summary-line">
@@ -494,6 +495,8 @@
                     appliedDiscount = data.discount;
                     couponMessage.style.color = 'green';
                     couponMessage.innerText = `Coupon applied! Discount: ${appliedDiscount}%`;
+
+                    document.getElementById('appliedCoupon').value = code;
                     
                    
                     let originalTotal =  parseFloat(totalEl.dataset.originalTotal);
@@ -543,8 +546,9 @@ function resetTotal(){
         window.addEventListener('DOMContentLoaded', () => {
   const discountInput = document.getElementById('discountInput');
   const savedDiscount = parseFloat(discountInput.value) || 0;
+const savedCoupon = document.getElementById('appliedCoupon').value  || "";
 
-  if (savedDiscount > 0) {
+  if (savedDiscount > 0  && savedCoupon) {
     const totalEl = document.getElementById('total');
     const originalTotal = parseFloat(totalEl.dataset.originalTotal);
     let newTotal = originalTotal - (savedDiscount / 100) * originalTotal;
@@ -553,12 +557,13 @@ function resetTotal(){
 
     const couponMsg = document.getElementById('couponMessage');
     couponMsg.style.color = 'green';
-    couponMsg.innerText = `Coupon reapplied! Discount: ${savedDiscount}%`;
+    couponMsg.innerText = `Coupon reapplied! (${savedCoupon}) Discount: ${savedDiscount}%`;
     
+    document.getElementById('couponCode').value = savedCoupon;
     removeCouponBtn.style.display = 'inline-block';
     applyBtn.style.display = 'none';
 
-     removeCouponBtn.addEventListener('click',()=>{
+     removeCouponBtn.addEventListener('click',async ()=>{
             appliedDiscount = 0;
             discountInput.value = 0;
             document.getElementById('couponCode').value = "";
@@ -569,6 +574,7 @@ function resetTotal(){
 
             removeCouponBtn.style.display = 'none'
             applyBtn.style.display = 'inline-block'
+            await fetch('/remove-coupon',{method:'post'})
         })
   }
 });

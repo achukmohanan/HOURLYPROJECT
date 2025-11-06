@@ -146,11 +146,11 @@
 
             const result = await response.json();
            
-            if(response.ok){
+            if(result.success){
                 Swal.fire({
                     icon:'success',
                     title:'SUCCESS',
-                    text:response.message || "Successfully updated your new email",
+                    text:result.message || "Successfully updated your new email",
                     showconfirmButton:true
                 }).then(()=>{
                     window.location.href = '/account'
@@ -159,14 +159,14 @@
                 Swal.fire({
                     icon:'error',
                     title:"FAILED TO UPDATE",
-                    text:response.message || "Something Went Wrong"
+                    text:result.message || "Something Went Wrong"
                 })
             }
            } catch (error) {
             Swal.fire({
                     icon:'error',
                     title:"OOPS",
-                    text:response.message || "Internal Server Error",
+                    text:result.message || "Internal Server Error",
                     showConfirmButton:true
                 })
            }

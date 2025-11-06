@@ -100,6 +100,12 @@ const postCurrentEmail = async (req, res) => {
   try {
     const { currentEmail } = req.body;
     const findEmail = await User.findOne({ email: currentEmail });
+   
+  if (!findEmail) {
+      return res
+        .status(STATUS_CODE.BAD_REQUEST)
+        .json({ success: false, message: "Entered Email not Found" });
+    }
 
     if (findEmail.password === undefined) {
       return res
@@ -110,11 +116,7 @@ const postCurrentEmail = async (req, res) => {
         });
     }
     const otp = generateOtp();
-    if (!findEmail) {
-      return res
-        .status(STATUS_CODE.BAD_REQUEST)
-        .json({ success: false, message: "Email not Found" });
-    }
+    
     const sent = await sendVerificationEmail(currentEmail, otp);
     if (sent) {
       req.session.otp = otp;
@@ -129,8 +131,7 @@ const postCurrentEmail = async (req, res) => {
         .status(STATUS_CODE.SERVICE_UNAVAILABLE)
         .json({ success: false, message: "Failed to send otp" });
     }
-
-    // req.session.userData.email ={currentEmail}
+   
     console.log("Otp for email changing", otp);
     // console.log("otp in session ",req.session.otp)
   } catch (error) {
@@ -151,9 +152,7 @@ const getEmailEditOtp = async (req, res) => {
 
 const postEmailEditOtp = async (req, res) => {
   try {
-    console.log(
-      "profile side email editing controller postemailEditOtp in profileediting"
-    );
+  
     const { otp1, otp2, otp3, otp4 } = req.body;
     const otp = otp1 + otp2 + otp3 + otp4;
 
@@ -187,7 +186,7 @@ const postUpdateEmail = async (req, res) => {
     const emailExisting = await User.findOne({ email: newEmail });
     if (emailExisting) {
       return res
-        .status(STATUS_CODE.CONFLICT)
+        .status(STATUS_CODE.BAD_REQUEST)
         .json({
           success: false,
           message: "This Email already in Use ,Try another Email",
@@ -212,8 +211,7 @@ const postUpdateEmail = async (req, res) => {
     console.log("error in postUpdateEmail", error);
   }
 };
-//chechk user status;
-
+//chechk user status
 const checkUserStatus = async (req,res)=> {
   try {
     const userId = req.session.user;
@@ -225,12 +223,9 @@ const checkUserStatus = async (req,res)=> {
     }
 res.json({isBlocked:false})
     }
-
   } catch (error) {
     console.log("error in the checkuserstatus",error);
-
-  }
-  
+  } 
 }
 
 module.exports = {

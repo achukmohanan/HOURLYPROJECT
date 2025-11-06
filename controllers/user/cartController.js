@@ -225,6 +225,7 @@ const addAddressInCheckout = async (req, res) => {
       const userId = req.session.user;
       const user = await User.findById(userId);
       const savedDiscount = req.session.discountValue || 0;
+      const couponcode =  req.session.couponcode || "";
       console.log("discount page trigger".discount)
       const cart = await Cart.findOne({ userId }).populate("items.productId");
       if (
@@ -252,7 +253,8 @@ const addAddressInCheckout = async (req, res) => {
         cart,
         totalPrice: total,
         addressList,
-        savedDiscount
+        savedDiscount,
+        couponcode
       });
     } catch (error) {
       console.log("error in get checkout ", error);
@@ -273,6 +275,8 @@ const applyCoupon = async (req, res) => {
     if (new Date() > coupon.expireOn) {
       return res.json({ success: false, message: "Coupon has expired" });
     }
+    console.log("code is ",coupon.code)
+    req.session.couponcode = coupon.code;
     req.session.discountValue = coupon.discountValue
     console.log("couupon discoubr value is", coupon.discountValue);
 
@@ -287,6 +291,16 @@ const gettest = async (req, res) => {
     return res.render("user/testing");
   } catch (error) {}
 };
+const removeCoupon = async (req,res) =>{
+  try {
+    req.session.couponcode = null
+     req.session.discountValue = 0
+     res.json({success:true})
+  } catch (error) {
+    console.log("error in the remove coupon",error);
+    
+  }
+}
 
 module.exports = {
   getCart,
@@ -297,4 +311,5 @@ module.exports = {
   getCheckOut,
   gettest,
   applyCoupon,
+  removeCoupon
 };
