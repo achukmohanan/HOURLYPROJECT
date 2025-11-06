@@ -1072,7 +1072,15 @@
                       <div class="offer-badge"><%= products[i].productOffer %>% OFF</div>
                     <% } %>
                     <%if(user){%>
-                    <span class="wishlist-btn" onclick="addToWishlist('<%= products[i]._id %>')">❤️</span>
+
+                    <span class="wishlist-btn" onclick="addToWishlist('<%= products[i]._id %>')">
+                      <% if (wishlistProductIds.includes(products[i]._id.toString())) { %>
+                       ✅
+                     <% }else{ %>
+                        ❤️
+                     <% } %>
+                    
+                    </span>
                     <%}%>
                     <img src="<%= products[i].productImage[0] %>" alt="<%= products[i].productName %>" />
                   </div>
@@ -1265,7 +1273,9 @@
             icon: 'success',
             title: "Success",
             text: result.message,
-          });
+          }).then(()=>{
+            window.location.reload()
+          })
         } else {
           Swal.fire({
             icon: 'error',

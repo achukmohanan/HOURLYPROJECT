@@ -2,6 +2,7 @@ const Product = require("../../models/productSchema");
 const Category = require("../../models/categorySchema");
 const User = require("../../models/userSchema");
 const Brand = require("../../models/brandSchema");
+const Wishlist = require('../../models/wishlistSchema')
 const { STATUS_CODE } = require("../../utils/statusCode");
 
 const productDetails = async (req, res) => {
@@ -129,6 +130,14 @@ const loadShoppingpage = async (req, res) => {
       name: c.name,
     }));
 
+    const checkproduct = await Product.find()
+   const checkwishlist = await Wishlist.findOne({ userId: req.session.user })
+
+let wishlistProductIds = []
+if (checkwishlist) {
+  wishlistProductIds = checkwishlist.products.map(item => item.productId.toString())
+}
+console.log("wishlistProductIds is ssssssssssssssss",wishlistProductIds)
     res.render("user/shop", {
       user: userData,
       products: products,
@@ -142,6 +151,7 @@ const loadShoppingpage = async (req, res) => {
       selectedBrand,
       selectedCategories,
       searchQuery,
+      wishlistProductIds
     });
   } catch (error) {
     console.error("error happemd in view image ", error);
