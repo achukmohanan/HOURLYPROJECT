@@ -14,6 +14,7 @@ const invoiceController = require("../controllers/user/invoiceController");
 const walletController = require("../controllers/user/walletController");
 const contactController = require("../controllers/user/contactController");
 const aboutController = require('../controllers/user/aboutController')
+const cartWishlistCount = require('../middlewares/cartWishlistCount');
 //error management
 router.get("/pagenotfound", userController.pageNotFound);
 
@@ -92,10 +93,10 @@ router.post("/updateEmail", userAuth, profileEditing.postUpdateEmail);
 
 //product management
 router.get("/productDetails", productController.productDetails);
-router.get("/shop", productController.loadShoppingpage);
+router.get("/shop",cartWishlistCount, productController.loadShoppingpage);
 
 // cart
-router.get("/cart", cartController.getCart);
+router.get("/cart",userAuth, cartController.getCart);
 router.post("/addtocart", cartController.addToCart);
 router.delete("/delete-cart-item", cartController.deleteCartItem);
 router.patch("/update-quantity-cart", cartController.updateCartQuantity);

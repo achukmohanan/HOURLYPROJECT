@@ -294,7 +294,7 @@
 
     if(passwordval.length <4){
       error4.style.display ="block";
-      error4.innerHTML= "Character Must be Eight Characters"
+      error4.innerHTML= "Password must be strong and at least 8 characters long "
       return false;
     }else if(!alpha.test(passwordval) || !digit.test(passwordval)){
       error4.style.display = "block";

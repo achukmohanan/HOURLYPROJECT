@@ -494,14 +494,17 @@
                 if(data.success){
                     appliedDiscount = data.discount;
                     couponMessage.style.color = 'green';
-                    couponMessage.innerText = `Coupon applied! Discount: ${appliedDiscount}%`;
+
+                    let originalTotal =  parseFloat(totalEl.dataset.originalTotal);
+                    let discountAmount = (appliedDiscount / 100) * originalTotal; 
+                    let newTotal = originalTotal- discountAmount;
+                    if(newTotal < 0) newTotal = 0;
+                    
+                    couponMessage.innerText = `Coupon applied! Discount:${discountAmount.toLocaleString('en-IN')} (${appliedDiscount}%) `;
 
                     document.getElementById('appliedCoupon').value = code;
                     
                    
-                    let originalTotal =  parseFloat(totalEl.dataset.originalTotal);
-                    let newTotal = originalTotal- (appliedDiscount/100)*originalTotal;
-                    if(newTotal < 0) newTotal = 0;
 
                     totalEl.innerText = `₹ ${newTotal.toLocaleString('en-IN')}`;
                     discountInput.value = appliedDiscount
@@ -551,13 +554,16 @@ const savedCoupon = document.getElementById('appliedCoupon').value  || "";
   if (savedDiscount > 0  && savedCoupon) {
     const totalEl = document.getElementById('total');
     const originalTotal = parseFloat(totalEl.dataset.originalTotal);
-    let newTotal = originalTotal - (savedDiscount / 100) * originalTotal;
+
+    let discountAmount = (savedDiscount / 100) * originalTotal
+
+    let newTotal = originalTotal - discountAmount;
     if (newTotal < 0) newTotal = 0;
     totalEl.innerText = `₹ ${newTotal.toLocaleString('en-IN')}`;
 
     const couponMsg = document.getElementById('couponMessage');
     couponMsg.style.color = 'green';
-    couponMsg.innerText = `Coupon reapplied! (${savedCoupon}) Discount: ${savedDiscount}%`;
+    couponMsg.innerText = `Coupon reapplied! (${savedCoupon}) Discount:₹${discountAmount.toLocaleString('en-IN')} ${savedDiscount}%`;
     
     document.getElementById('couponCode').value = savedCoupon;
     removeCouponBtn.style.display = 'inline-block';

@@ -258,10 +258,17 @@
                 <div class="user-dropdown">
                        <% if (locals.user) { %>
                         <a class="position-relative" href="/cart">
-                            <i class="bi bi-cart mx-2" style="color: #000000"></i>
-                      
+                            <i class="bi bi-cart mx-2" style="color: #000000"> </i>
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                <%= typeof cartCount !== 'undefined' ? cartCount : 0 %>
+                      </span>
                         </a>
-                            <a class="text-danger" href="/wishlist"><i class="bi bi-suit-heart-fill mx-2"></i></a>
+                            <a class="text-danger position-relative" href="/wishlist">
+                                <i class="bi bi-suit-heart-fill mx-2"></i>
+                                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                    <%= typeof wishlistCount !== 'undefined' ? wishlistCount : 0 %>
+                                    </span>
+                                </a>
                              <a class="text-dark" href="/account"><i class="bi bi-person-circle mx-2"></i></a>
                              <div class="user-name ">
                                 <a href="#" class="text-dark fw-semibold no-underline" ><%= locals.user.name %></a>

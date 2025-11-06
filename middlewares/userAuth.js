@@ -16,8 +16,8 @@ const userAuth = (req,res,next) =>{
                         Cart.findOne({userId:data._id}),
                         Wishlist.findOne({userId:data._id})
                     ]);
-                    console.log("cart")
                     res.locals.cartCount = cart ? cart.items.length : 0;
+                    
                     res.locals.wishlistCount = wishlist ? wishlist.products.length : 0;
 
                 } catch (error) {
