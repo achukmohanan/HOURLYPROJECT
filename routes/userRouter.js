@@ -27,32 +27,26 @@ router.post("/resend-Forgot-passwordOtp", profileController.resendForgotOtp);
 
 router.get("/confirmwithotp", checksession, userController.confirmWithOtp);
 router.post("/confirmwithotp", checksession, userController.confirmwithotp);
-  //google login
-  router.get(
-    "/google",checksession,
-    passport.authenticate("google", { scope: ["profile", "email"] })
-  );
-  router.get(
-    "/google/callback",
-    passport.authenticate("google", {
-      failureRedirect: "/login",
-      session: true,
-    }),
-    (req, res) => {
-      console.log("google login middleware");
-      req.session.user = req.session.user._id;
-      req.login(req.user,(err)=>{
-        if(err){
-          console.log("Error inn the req.login",err);
-          
-        }
-        res.redirect("/home"); // or wherever you want to redirect
-      })
-    }
-  );
+//google login
+router.get(
+  "/google",checksession,
+  passport.authenticate("google", { scope: ["profile", "email"] })
+);
+router.get(
+  "/google/callback",
+  passport.authenticate("google", {
+    failureRedirect: "/login",
+    session: true,
+  }),
+  (req, res) => {
+    console.log("google login middleware");
+    req.session.user = req.session.passport.user;
+    res.redirect("/home"); // or wherever you want to redirect
+  }
+);
 
-  //login management
-  router.get("/login", checksession, userController.loadLogin);
+//login management
+router.get("/login", checksession, userController.loadLogin);
 router.post("/login", userController.login);
 
 //home page
