@@ -130,14 +130,15 @@ const loadShoppingpage = async (req, res) => {
       name: c.name,
     }));
 
-    const checkproduct = await Product.find()
+    let wishlistProductIds = []
+   if(user){
    const checkwishlist = await Wishlist.findOne({ userId: req.session.user })
 
-let wishlistProductIds = []
 if (checkwishlist) {
   wishlistProductIds = checkwishlist.products.map(item => item.productId.toString())
 }
 console.log("wishlistProductIds is ssssssssssssssss",wishlistProductIds)
+   }
     res.render("user/shop", {
       user: userData,
       products: products,
