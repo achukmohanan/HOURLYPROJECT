@@ -268,11 +268,15 @@ const salesChart = async (req, res) => {
     const chatData = await Order.aggregate([
       { $unwind: "$orderedItems" },
       { $match: matchFilter },
+
       { $group: groupStage },
+
+
+
       { $sort: { "_id.year": 1, "_id.month": 1, "_id.year": 1 } },
     ]);
 console.log("Filter:", filter, "Start:", start, "End:", end);
-console.log("Chart Data:", chatData);
+// console.log("Chart Data:", chatData);
 
     res.json(chatData);
   } catch (error) {
