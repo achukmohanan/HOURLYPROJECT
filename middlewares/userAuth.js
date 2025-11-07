@@ -4,8 +4,8 @@ const Wishlist = require('../models/wishlistSchema');
 
 const userAuth = (req,res,next) =>{
     if(req.session.user){
-        
-        User.findById(req.session.user)
+        const userId = req.session.user._id || req.session.user 
+        User.findById(userId)
         .then(async data =>{
             if(data && !data.isBlocked){
 

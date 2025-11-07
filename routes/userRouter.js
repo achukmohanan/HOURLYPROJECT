@@ -39,9 +39,12 @@ router.get(
     session: true,
   }),
   (req, res) => {
-    console.log("google login middleware");
-    req.session.user = req.session.passport.user;
-    res.redirect("/home"); // or wherever you want to redirect
+    console.log("google login successful");
+    if (req.user) {
+    req.session.user = req.user; 
+  }
+    // req.session.user = req.session.user;
+    res.redirect("/home"); 
   }
 );
 

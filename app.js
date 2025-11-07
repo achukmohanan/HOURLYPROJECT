@@ -48,9 +48,7 @@ app.get('/auth/google',passport.authenticate('google',{scope:['profile','email']
 // })
 
 app.use((req,res,next)=>{
-    res.set('cache-control','no-cache , no-store,must-revalidate');
-    res.set('Pragma', 'no-cache');
-    res.set('Expires', '0');    
+    res.set('cache-control','no-store')
     next();
 })
 
