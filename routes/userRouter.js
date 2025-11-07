@@ -29,7 +29,7 @@ router.get("/confirmwithotp", checksession, userController.confirmWithOtp);
 router.post("/confirmwithotp", checksession, userController.confirmwithotp);
 //google login
 router.get(
-  "/google",
+  "/google",checksession,
   passport.authenticate("google", { scope: ["profile", "email"] })
 );
 router.get(
