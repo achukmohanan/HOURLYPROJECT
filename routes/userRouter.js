@@ -33,15 +33,21 @@ router.post("/confirmwithotp", checksession, userController.confirmwithotp);
     passport.authenticate("google", { scope: ["profile", "email"] })
   );
   router.get(
-    "/google/callback",checksession,
+    "/google/callback",
     passport.authenticate("google", {
       failureRedirect: "/login",
       session: true,
     }),
     (req, res) => {
       console.log("google login middleware");
-      req.session.user = req.session.passport.user;
-      res.redirect("/home"); // or wherever you want to redirect
+      req.session.user = req.session.user._id;
+      req.login(req.user,(err)=>{
+        if(err){
+          console.log("Error inn the req.login",err);
+          
+        }
+        res.redirect("/home"); // or wherever you want to redirect
+      })
     }
   );
 
