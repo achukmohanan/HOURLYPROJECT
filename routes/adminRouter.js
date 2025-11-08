@@ -121,6 +121,7 @@ router.delete("/deleteCoupon/:code", adminAuth, couponController.deleteCoupon);
 // salesReport
 router.get("/salesReport", adminAuth, salesController.getsalesReport);
 router.get("/sales-Report", adminAuth, salesController.filterSales);
+router.get("/sales-report/filter", adminAuth, salesController.getFilteredSalesData);
 
 //concern
 router.get("/concerns", adminAuth, concernController.getConcernPage);
