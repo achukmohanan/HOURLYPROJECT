@@ -9,6 +9,7 @@ const nodemailer = require("nodemailer");
 const env = require("dotenv").config();
 const bcrypt = require("bcrypt");
 const { STATUS_CODE } = require("../../utils/statusCode");
+
 const pageNotFound = async (req, res) => {
   try {
     return res.render("user/error404");
@@ -32,7 +33,7 @@ const landingPage = async (req, res) => {
 
     if (userId) {
       const userData = await User.findById(userId);
-      res.render("user/home", {
+      res.render("user/landingPage", {
         user: userData,
         products: productData,
         brand: brand,
@@ -43,11 +44,11 @@ const landingPage = async (req, res) => {
         brand: brand,
       });
     }
-    console.log(
-      "Products sent to EJS:,its working in landing page ",
-      productData.length
-    );
-  } catch (error) {}
+   
+  } catch (error) {
+    console.log("error in the landing page ",error);
+    
+  }
 };
 
 const loadHomepage = async (req, res) => {

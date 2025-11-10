@@ -5,7 +5,7 @@ const { STATUS_CODE } = require("../../utils/statusCode");
 
 const getsalesReport = async (req, res) => {
   try {
-     let { page = 1, limit = 5 } = req.query;
+     let { page = 1, limit = 10 } = req.query;
      page = parseInt(page);
      limit = parseInt(limit);
 
@@ -37,7 +37,7 @@ const filterSales = async (req, res) => {
     const matchfilter = {
       "orderedItems.status": "Delivered",
     };
-    console.log("chechkinng 1", matchfilter);
+    // console.log("chechkinng 1", matchfilter);
 
     if (startDate && endDate) {
       const start = new Date(startDate);
@@ -45,7 +45,7 @@ const filterSales = async (req, res) => {
       end.setHours(23, 59, 59, 999);
       matchfilter.createdOn = { $gte: start, $lte: end };
     }
-    console.log("Aggregation filter:", matchfilter);
+    // console.log("Aggregation filter:", matchfilter);
     //chose filter
     if (!startDate && !endDate && filter) {
       const today = new Date();
