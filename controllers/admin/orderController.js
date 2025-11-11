@@ -3,12 +3,13 @@ const User = require("../../models/userSchema");
 const Product = require("../../models/productSchema");
 const Transaction = require("../../models/transactionSchema");
 const { STATUS_CODE } = require("../../utils/statusCode");
+
 const getOrderPage = async (req, res) => {
   try {
     // console.log(req.query)
     const { status, date, search } = req.query;
     let filter = {};
-
+console.log("search is ",search)
     //status
     if (status && status !== "") {
       filter.status = status;
@@ -41,12 +42,19 @@ const getOrderPage = async (req, res) => {
     }
     //search
 
-    if (search && search.trim() !== "") {
-      filter.$or = [
-        { orderId: { $regex: search, $options: "i" } },
-        { "userId.name": { $regex: search, $options: "i" } },
-      ];
-    }
+      if (search && search.trim() !== "") {
+
+        const matchedUsers = await User.find({
+          name:{$regex:search,$options:'i'},
+        }).select('_id');
+
+        const userIds = matchedUsers.map((u)=>u._id);
+
+        filter.$or = [  
+          { orderId: { $regex: search, $options: "i" } },
+          { userId: {$in:userIds } },
+        ];
+      }
 
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 5;
@@ -120,15 +128,7 @@ const updateOrderStatus = async (req, res) => {
       "Delivered",
     ];
 
-    // const order = await Order.findOneAndUpdate(
-    //     {orderId},
-    //     {$set:{"orderedItems.$[elem].status":status,
-    //         status:status
-    //     }},
-    //     {new:true,
-    //         arrayFilters:[{"elem.status":{$ne:'Cancelled'}}]
-    //     }
-    // );
+
     const order = await Order.findOne({ orderId });
 
     if (!order) {
@@ -166,7 +166,7 @@ const updateOrderStatus = async (req, res) => {
 
     if (status === "Delivered") {
       order.deliveredAt = new Date();
-      console.log("deleiverd status updated");
+      
     }
     order.save();
     return res.json({
@@ -175,7 +175,7 @@ const updateOrderStatus = async (req, res) => {
       order,
     });
   } catch (error) {
-    console.log("error in the backenndn===", error);
+    console.log("error in the backennd updateOrderStatus controller function", error);
     return res
       .status(STATUS_CODE.INTERNAL_SERVER_ERROR)
       .json({ success: false, message: "Internal server error" });

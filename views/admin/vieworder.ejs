@@ -124,11 +124,11 @@
                         <h1 class="mb-2">Order# <%= order.orderId%></h1>
                         <p class="mb-0"><%=order.createdOn.toLocaleDateString('en-IN') %></p>
                     </div>
-                    <div class="col-md-4 text-end">
+                    <!-- <div class="col-md-4 text-end">
                         <span class="status-badge status-shipped">
                             <i class="fas fa-shipping-fast me-2"></i>Shipped
                         </span>
-                    </div>
+                    </div> -->
                 </div>
             </div>
         </div>
@@ -145,17 +145,16 @@
                             <div class="row align-items-center">
                                 <div class="col-md-6">
                                     <label for="orderStatus" class="form-label fw-bold">Update Order Status:</label>
-                                    <select class="form-select" id="orderStatus" onchange="updateOrderStatus()">
+                                    <select class="form-select" id="orderStatus" >
                                         <option value="<%= order.status%>"><%= order.status%></option>
                                         <option value="Pending">Pending</option>
                                         <option value="Processing">Processing</option>
                                         <option value="Shipped" >Shipped</option>
                                         <option value="Out-for-delivery">Out for Delivery</option>
                                         <option value="Delivered">Delivered</option>
-                                        <option value="Payment-failed">Payment Failed</option>
+                                        
                                         <option value="Cancelled">Cancelled</option>
-                                        <option value="Return Requested">Return Request</option>
-                                        <option value="Returned">Returned</option>
+                                        
                                     </select>
                                 </div>
                                 <div class="col-md-6">
@@ -331,15 +330,16 @@
             </div>
            
         </div>
+       
     </main>
     </body>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
     <script>
-           // Initialize page
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('Order view page loaded');
-        });
+        //    // Initialize page
+        // document.addEventListener('DOMContentLoaded', function() {
+        //     console.log('Order view page loaded');
+        // });
 
         
        
