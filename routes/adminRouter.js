@@ -58,6 +58,7 @@ router.post(
 );
 router.get("/blockBrand", adminAuth, brandController.blockBrand);
 router.get("/unBlockBrand", adminAuth, brandController.unBlockBrand);
+router.get('/editBrand',adminAuth, brandController.getBrandEditPage)
 
 //product management
 router.get("/addProducts", adminAuth, productController.getProductAddPage);

@@ -1,0 +1,155 @@
+<%- include("../../views/partials/admin/sidebar") %>
+    <style>
+        /* Remove conflicting body styles */
+        .main-content {
+            background-color: #f8f9fa;
+        }
+        
+        .brand-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .breadcrumb {
+            background-color: transparent;
+            padding: 0;
+            margin-bottom: 20px;
+        }
+        
+        .form-section {
+            background-color: white;
+            border-radius: 8px;
+            padding: 30px;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.08);
+        }
+        
+        .brand-image-preview {
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            padding: 20px;
+            text-align: center;
+            background-color: #fff;
+            min-height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .brand-image-preview img {
+            max-width: 100%;
+            height: auto;
+            max-height: 200px;
+        }
+        
+        .form-label {
+            font-weight: 600;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            font-size: 14px;
+        }
+        
+        .file-input-wrapper {
+            position: relative;
+        }
+        
+        .file-input-label {
+            display: inline-block;
+            padding: 8px 16px;
+            background-color: #e9ecef;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+        
+        .file-input-label:hover {
+            background-color: #dee2e6;
+        }
+        
+        input[type="file"] {
+            display: none;
+        }
+        
+        @media (max-width: 768px) {
+            .form-section {
+                padding: 20px;
+            }
+            .brand-image-preview {
+                margin-top: 20px;
+            }
+        }
+    </style>
+
+    <!-- Sidebar Overlay (Mobile) -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- Main Content -->
+    <main class="main-content" id="mainContent">
+        <div class="brand-container">
+            <h2 class="mb-3">Edit Brand</h2>
+            
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/admin/brands" class="text-decoration-none">Brand</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Edit Brand</li>
+                </ol>
+            </nav>
+
+            <div class="form-section">
+                <form>
+                    <div class="row">
+                        <div class="col-lg-6 col-md-12 mb-4">
+                            <label for="brandName" class="form-label"  >Brand Name</label>
+                            <input type="text" class="form-control" id="brandName" value="<%= brand.brandName %>" placeholder="Enter brand name">
+                        </div>
+                        
+                        <div class="col-lg-6 col-md-12 mb-4">
+                            <div class="brand-image-preview">
+                                <img src="<%=brand.brandImage %>" alt="Brand Image" id="imagePreview">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-12 mb-3">
+                            <label for="brandImage" class="form-label">Brand Image</label>
+                            <div class="file-input-wrapper">
+                                <label for="brandImage" class="file-input-label">Choose File</label>
+                                <input type="file" id="brandImage" accept="image/*" onchange="previewImage(event)">
+                                <span id="fileName" class="text-muted">no file Chosen</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-primary me-2">Save Changes</button>
+                            <button type="button" class="btn btn-secondary">Cancel</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        function previewImage(event) {
+            const file = event.target.files[0];
+            const fileName = document.getElementById('fileName');
+            const imagePreview = document.getElementById('imagePreview');
+            
+            if (file) {
+                fileName.textContent = file.name;
+                
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    imagePreview.src = e.target.result;
+                }
+                reader.readAsDataURL(file);
+            } else {
+                fileName.textContent = 'no file Chosen';
+            }
+        }
+    </script>
+</body>
+</html>

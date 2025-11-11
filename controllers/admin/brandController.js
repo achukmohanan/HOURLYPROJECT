@@ -75,10 +75,26 @@ const unBlockBrand = async (req, res) => {
   }
 };
 
+const getBrandEditPage = async(req,res) =>{
+  try {
+    const brandId = req.query.id;
+    const brand = await Brand.findById(brandId)
+
+    console.log("brand is in get brandEditPage is",brand)
+    // console.log('req.body.',brand)
+    return res.render('admin/editBrand',{
+      brand
+    })
+  } catch (error) {
+    console.log("error getBrandEditPage",error);
+    
+  }
+}
+
 module.exports = {
   getBrandPage,
   addBrand,
   unBlockBrand,
-
   blockBrand,
+  getBrandEditPage
 };
