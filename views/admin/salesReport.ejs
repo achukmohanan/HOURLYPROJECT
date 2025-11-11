@@ -292,6 +292,7 @@
                     <th>Qty</th>
                     <th>Price</th>
                     <th>paymentMethod</th>
+                    <th>Date</th>
                     <th>couponApplied</th>
                     <th>Discount</th>
                     <th>Total</th>
@@ -309,6 +310,7 @@
                 <td><%= item.quantity%></td>
                 <td><%= item.price%></td>
                 <td><%= order.paymentMethod %></td>
+                <td><%= order.createdOn.toLocaleString('en-IN') %></td>
                 <td><%=order.couponApplied %></td>
                 <td><%= order.discount %></td>
                 <td><%= order.totalPrice%></td>
@@ -402,7 +404,14 @@ window.addEventListener('DOMContentLoaded', () => {
 
         const res = await fetch(`/admin/sales-report/filter?startDate=${startDate}&endDate=${endDate}&filter=${filterCategory}&page=${page}`);
             const data = await res.json();
-
+        if(data.message){
+            Swal.fire({
+                icon:'error',
+                title:'OOPS',
+                text:data.message,
+                showConfirmButton:true
+            })
+        }
         renderTable(data.orders)
         renderPagination(data.currentPage,data.totalPages);
     }else{
@@ -442,7 +451,8 @@ window.addEventListener('DOMContentLoaded', () => {
                     <td>${item.product?._id || '-'}</td>    
                     <td>${item.quantity}</td>    
                     <td>${item.price}</td>    
-                    <td>${order.paymentMethod}</td>    
+                    <td>${order.paymentMethod}</td> 
+                    <td> ${ order.createdOn.toLocaleString('en-IN') } </td>   
                     <td>${order.couponApplied}</td>    
                     <td>${order.discount}</td>    
                     <td>${order.totalPrice}</td>          

@@ -33,7 +33,7 @@ const totalOrders = await Order.countDocuments(matchFilter);
 const filterSales = async (req, res) => {
   try {
     const { startDate, endDate, filter, type } = req.query;
-    console.log("filter is ", type);
+    
     const matchfilter = {
       "orderedItems.status": "Delivered",
     };
@@ -123,7 +123,7 @@ const filterSales = async (req, res) => {
         doc.page.width - (doc.page.margins.left + doc.page.margins.right);
 
       // Adjusted column widths to fit within page
-      const colWidths = [70, 100, 100, 35, 50, 60, 45, 60]; // Reduced widths
+      const colWidths = [70, 110, 100, 30, 50, 60, 45, 60, 50, 80]; // Reduced widths
       const totalTableWidth = colWidths.reduce((sum, width) => sum + width, 0);
 
       // If still too wide, scale down proportionally
@@ -142,7 +142,9 @@ const filterSales = async (req, res) => {
         "Price",
         "Payment",
         "Coupon",
+        "Discount",
         "Total",
+        "Date/Time"
       ];
       const tableTop = 100;
       const rowHeight = 25;
@@ -190,7 +192,17 @@ const filterSales = async (req, res) => {
             "₹" + item.price,
             order.paymentMethod,
             order.couponApplied ? "Yes" : "No",
-            "₹" + item.price * item.quantity, // Fixed: per item total
+            "₹" + (order.discount || 0) ,
+            "₹" +((item.price * item.quantity)- order.discount) , // Fixed: per item total
+            new Date(order.createdOn).toLocaleDateString('en-IN',{
+              timeZone:'Asia/Kolkata',
+              year:'numeric',
+              month:'short',
+              day:'2-digit',
+              hour:'2-digit',
+              minute:'2-digit',
+              hour12:true
+            })
           ];
 
           // Alternate row background color
@@ -212,16 +224,16 @@ const filterSales = async (req, res) => {
               .fillColor("#2c3e50")
               .font("Helvetica")
               .fontSize(8) // Reduced font size
-              .text(text, x + 2, y + 8, {
-                width: colWidths[i] - 4,
-                align: i >= 3 ? "right" : "left",
+              .text(text, x + 4, y + 8, {
+                width: colWidths[i] - 8,
+                align: i === 3 || i>=4  ? "right" : "left",
                 ellipsis: true, // Truncate long text
               });
             x += colWidths[i];
           });
 
           // Calculate totals
-          totalSales += item.price * item.quantity;
+          totalSales += ((item.price * item.quantity) - order.discount) ;
           totalOrders += 1;
           totalQuantity += item.quantity;
 
@@ -264,11 +276,21 @@ const filterSales = async (req, res) => {
         { header: "Price", key: "price", width: 10 },
         { header: "Payment Method", key: "payment", width: 15 },
         { header: "Coupon Applied", key: "coupon", width: 15 },
-        { header: "Total Price", key: "total", width: 15 },
+        { header: "Discount", key: "discount", width: 12 },
+        { header: "Total Price (₹)", key: "total", width: 15 },
+        { header: "Date/Time" , key :'date', width:22}
       ];
+      let totalOrders = 0;
+      let totalQuantity = 0;
+      let totalSales = 0;
 
       orders.forEach((order) => {
         order.orderedItems.forEach((item) => {
+
+      const itemTotal = item.price * item.quantity;
+      const discountValue = order.discount;
+      const finalTotal = itemTotal - discountValue;
+
           sheet.addRow({
             name: order.userId?.name || "-",
             email: order.userId?.email || "-",
@@ -277,10 +299,73 @@ const filterSales = async (req, res) => {
             price: item.price,
             payment: order.paymentMethod,
             coupon: order.couponApplied ? "Yes" : "No",
-            total: order.totalPrice,
+            discount:order.discount || 0,
+            total: finalTotal,
+            date:new Date(order.createdOn).toLocaleDateString('en-IN',{
+              timeZone: "Asia/Kolkata",
+              year: "numeric",
+              month: "short",
+              day: "2-digit",
+              hour: "2-digit",
+              minute: "2-digit",
+              hour12: true,
+            })
           });
+ // Update totals
+      totalOrders += 1;
+      totalQuantity += item.quantity;
+      totalSales += finalTotal;
+      sheet.getRow(1).font = { bold: true };
+
         });
       });
+      
+
+       // Add empty row before summary
+  sheet.addRow([]);
+
+  // Add total summary row
+  const summaryRow = sheet.addRow({
+    name: "TOTAL SUMMARY →",
+    quantity: totalQuantity,
+    total: totalSales,
+  });
+
+  
+  // Style the summary row
+  summaryRow.font = { bold: true };
+  summaryRow.eachCell((cell) => {
+    cell.fill = {
+      type: "pattern",
+      pattern: "solid",
+      fgColor: { argb: "FFDCE6F1" },
+    };
+    cell.border = {
+      top: { style: "thin" },
+      left: { style: "thin" },
+      bottom: { style: "thin" },
+      right: { style: "thin" },
+    };
+  });
+
+  // Auto filter for table header
+  sheet.autoFilter = {
+    from: "A1",
+    to: "J1",
+  };
+
+  // Auto fit column width (optional improvement)
+  sheet.columns.forEach((column) => {
+    let maxLength = 0;
+    column.eachCell({ includeEmpty: true }, (cell) => {
+      const columnLength = cell.value ? cell.value.toString().length : 10;
+      if (columnLength > maxLength) {
+        maxLength = columnLength;
+      }
+    });
+    column.width = maxLength < 10 ? 10 : maxLength;
+  });
+
 
       res.setHeader(
         "Content-Type",
@@ -311,9 +396,15 @@ const getFilteredSalesData = async(req,res) =>{
 
      // Date logic
     const today = new Date();
+
     if (startDate && endDate) {
       const start = new Date(startDate);
       const end = new Date(endDate);
+      
+      if(end > today){ 
+        return res.status(STATUS_CODE.BAD_REQUEST).json({success:false,message:"Future dates are not allowed."})
+      }
+
       end.setHours(23, 59, 59, 999);
       matchfilter.createdOn = { $gte: start, $lte: end };
     } else if (filter) {
