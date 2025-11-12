@@ -1,5 +1,7 @@
 <%- include("../../views/partials/admin/sidebar") %>
-
+<head>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cropperjs@1.5.13/dist/cropper.min.css" />
+</head>
 <style>
   .page-item {
     margin: 0 3px;
@@ -95,7 +97,15 @@
                   </button>
                 </div>
               </form>
+              <!-- 🟩 Place this crop modal here -->
+            <div id="cropModal" style="display: none;">
+                  <div style="text-align: center;">
+                    <img id="imagePreview" style="max-width: 100%; height: auto;" />
+                  </div>
+                  <button id="cropButton" class="btn btn-success mt-3">Crop & Upload</button>
+                </div>
             </div>
+           
             <div class="col-md-7 ml-105">
               <div class="table-responsive">
                 <table class="table table-hover">
@@ -192,81 +202,111 @@
   </div>
 </main>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdn.jsdelivr.net/npm/cropperjs@1.5.13/dist/cropper.min.js"></script>
 <script>
-  document
-    .getElementById("brandform")
-    .addEventListener("submit", async function (event) {
-      event.preventDefault();
+  let cropper; // for global access
 
-      const form = document.getElementById("brandform");
-      const brandImageInput = document.getElementById("brandimg");
-      const file = brandImageInput.files[0];
+  const brandImageInput = document.getElementById("brandimg");
+  const imagePreview = document.getElementById("imagePreview");
+  const cropModal = document.getElementById("cropModal");
+  const cropButton = document.getElementById("cropButton");
 
-      if (!file) {
-        Swal.fire({
-          icon: "error",
-          title: "No Image",
-          text: "Please select an image before submitting.",
-        });
-        return;
-      }
+  // Step 1: When user selects an image
+  brandImageInput.addEventListener("change", (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
 
-      const formData = new FormData(form);
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      imagePreview.src = e.target.result;
+      cropModal.style.display = "block"; // show crop modal
 
-      // Upload image to Cloudinary
-      const cloudUrl = "https://api.cloudinary.com/v1_1/dbl2eazti/image/upload";
-      const cloudFormData = new FormData();
-      cloudFormData.append("file", file);
-      cloudFormData.append("upload_preset", "hourly"); // Preset created in your Cloudinary settings
+      // Destroy old cropper instance if it exists
+      if (cropper) cropper.destroy();
 
-      try {
-        const cloudResponse = await fetch(cloudUrl, {
-          method: "POST",
-          body: cloudFormData,
-        });
+      // Create new cropper
+      cropper = new Cropper(imagePreview, {
+        viewMode: 1,
+        autoCropArea: 1,
+        responsive: true,
+        movable: true,
+        zoomable: true,
+        rotatable: false,
+        scalable: false,
+        // 👇 allows free ratio (you can adjust or lock aspectRatio)
+        aspectRatio: NaN, 
+      });
+    };
+    reader.readAsDataURL(file);
+  });
 
-        const cloudResult = await cloudResponse.json();
-
-        if (cloudResult.secure_url) {
-          const uploadedImageUrl = cloudResult.secure_url;
-          formData.append("brandImage", uploadedImageUrl);
-
-          // Send to backend
-          const response = await fetch("/admin/addBrand", {
-            method: "POST",
-            body: formData,
-          });
-
-          const result = await response.json();
-
-          if (result.success) {
-            Swal.fire({
-              icon: "success",
-              title: "Brand Added",
-              text: result.message,
-              showConfirmButton: false,
-              timer: 2000,
-            }).then(() => {
-              window.location.reload();
-            });
-          } else {
-            Swal.fire({
-              icon: "error",
-              title: "Oops",
-              text: result.message || "Something went wrong",
-            });
-          }
-        } else {
-          throw new Error("Cloudinary upload failed");
-        }
-      } catch (error) {
-        console.error("Error during brand upload:", error);
-        Swal.fire({
-          icon: "error",
-          title: "Upload Failed",
-          text: "Something went wrong. Try again.",
-        });
-      }
+  // Step 2: When user clicks "Crop & Upload"
+  cropButton.addEventListener("click", async () => {
+    const canvas = cropper.getCroppedCanvas({
+      width: 400, // optional, set desired output width
+      imageSmoothingQuality: "high",
     });
+
+    const croppedBlob = await new Promise((resolve) =>
+      canvas.toBlob(resolve, "image/jpeg")
+    );
+
+    cropModal.style.display = "none"; // hide crop UI
+
+    // Upload cropped image to Cloudinary
+    const cloudUrl = "https://api.cloudinary.com/v1_1/dbl2eazti/image/upload";
+    const cloudFormData = new FormData();
+    cloudFormData.append("file", croppedBlob);
+    cloudFormData.append("upload_preset", "hourly");
+
+    try {
+      const cloudResponse = await fetch(cloudUrl, {
+        method: "POST",
+        body: cloudFormData,
+      });
+
+      const cloudResult = await cloudResponse.json();
+
+      if (cloudResult.secure_url) {
+        // append brand image URL to form
+        const formData = new FormData(document.getElementById("brandform"));
+        formData.append("brandImage", cloudResult.secure_url);
+
+        // send to backend
+        const response = await fetch("/admin/addBrand", {
+          method: "POST",
+          body: formData,
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+          Swal.fire({
+            icon: "success",
+            title: "Brand Added",
+            text: result.message,
+            showConfirmButton: false,
+            timer: 2000,
+          }).then(() => window.location.reload());
+        } else {
+          Swal.fire({
+            icon: "error",
+            title: "Oops",
+            text: result.message || "Something went wrong",
+          });
+        }
+      } else {
+        throw new Error("Cloudinary upload failed");
+      }
+    } catch (error) {
+      console.error("Error during brand upload:", error);
+      Swal.fire({
+        icon: "error",
+        title: "Upload Failed",
+        text: "Something went wrong. Try again.",
+      });
+    }
+  });
 </script>
+
     
