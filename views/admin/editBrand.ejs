@@ -1,4 +1,7 @@
 <%- include("../../views/partials/admin/sidebar") %>
+<head>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css"rel="stylesheet"/>
+</head>
     <style>
         /* Remove conflicting body styles */
         .main-content {
@@ -96,11 +99,15 @@
             </nav>
 
             <div class="form-section">
-                <form>
+                <form id="editBrandForm" enctype="multipart/form-data">
                     <div class="row">
                         <div class="col-lg-6 col-md-12 mb-4">
                             <label for="brandName" class="form-label"  >Brand Name</label>
+                            <% if(brand){%>
                             <input type="text" class="form-control" id="brandName" value="<%= brand.brandName %>" placeholder="Enter brand name">
+                            <% }else{ %>
+                                <p class="text-danger">Brand not found</p>
+                            <% } %>
                         </div>
                         
                         <div class="col-lg-6 col-md-12 mb-4">
@@ -118,12 +125,14 @@
                                 <input type="file" id="brandImage" accept="image/*" onchange="previewImage(event)">
                                 <span id="fileName" class="text-muted">no file Chosen</span>
                             </div>
+                            <p>If you wants to change Brand Name and Image tap the Crop and Upload </p>
+                            <button type="button"  id="uploadBtn" class="btn btn-success mt-2">Crop & Upload</button>
                         </div>
                     </div>
 
                     <div class="row mt-4">
                         <div class="col-12">
-                            <button type="submit" class="btn btn-primary me-2">Save Changes</button>
+                            <button type="submit"  id="cropBtn" class="btn btn-primary me-2">Save</button>
                             <button type="button" class="btn btn-secondary">Cancel</button>
                         </div>
                     </div>
@@ -131,25 +140,146 @@
             </div>
         </div>
     </main>
-
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
     <script>
+        document.getElementById('editBrandForm').addEventListener('submit', (e)=> e.preventDefault());
+        let cropper;
+
         function previewImage(event) {
             const file = event.target.files[0];
             const fileName = document.getElementById('fileName');
             const imagePreview = document.getElementById('imagePreview');
             
-            if (file) {
-                fileName.textContent = file.name;
+            if (!file) return;
+                // fileName.textContent = file.name;
                 
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     imagePreview.src = e.target.result;
-                }
+
+                     // Destroy old cropper if it exists
+                    if(cropper) cropper.destroy();
+
+                    // Wait until image is visible
+                    imagePreview.onload = () => {
+                        cropper = new Cropper(imagePreview, {
+                            aspectRatio: NaN,    
+                            viewMode: 2,
+                            autoCropArea: 1,
+                            dragMode: 'crop',   
+                            movable: true,       
+                            zoomable: true,     
+                            rotatable: true,    
+                            scalable: true,   
+                            cropBoxResizable: true, 
+                            cropBoxMovable: true     
+                        });
+                        };
+
+
+                }   
                 reader.readAsDataURL(file);
-            } else {
-                fileName.textContent = 'no file Chosen';
+            } 
+        
+
+        //
+
+        document.getElementById('uploadBtn').addEventListener('click',async ()=>{
+            if(!cropper){
+               return Swal.fire({
+                    icon:'error',
+                    title:'Please Select Image',
+                    text:'Please choose an image first!',
+                    showConfirmButton:true
+                })
             }
-        }
+
+            const brandName = document.getElementById('brandName').value.trim();
+             if (!brandName) {
+                return Swal.fire({
+                icon: 'error',
+                title: 'Brand Name Required'
+                });
+            }
+
+              // Get cropped image as blob
+              const canvas = cropper.getCroppedCanvas({
+                width:500,
+                height:500
+              })
+
+                // Convert to blob
+                canvas.toBlob(async (blob)=>{
+
+                    const formData = new FormData();
+                    formData.append('brandImage',blob,'brand.jpg');
+                    formData.append('brandName',brandName);
+                
+
+                const response = await fetch('/admin/editBrand?id=<%= brand._id %>',{
+                    method:'POST',
+                    body:formData
+                });
+
+                const data = await response.json()
+
+                if(response.ok){
+                    Swal.fire({
+                        icon:'success',
+                        title:'Success',
+                        text:data.message ||  'Updated!'
+                    }).then(()=>{
+
+                        window.location.reload()
+                    })
+                    if(data.imageUrl) document.getElementById('imagePreview').src = data.imageUrl;
+                }else{
+                    Swal.fire({
+                        icon:'error',
+                        title:'OOPS',
+                        text:data.message || 'Something went wrong!'
+                    })
+                }
+                },"image/jpeg");
+        });
+
+        //save 
+        document.getElementById('cropBtn').addEventListener('click',async()=>{
+            const brandName = document.getElementById('brandName').value.trim();
+            if(!brandName){
+                return Swal.fire({
+                    icon:'error',
+                    title:'Brand Name Required',
+
+                })
+            }
+
+            const formData = new FormData();
+            formData.append('brandName', brandName);
+
+             const response = await fetch(`/admin/editBrand?id=<%= brand._id %>`, {
+                method: 'POST',
+                body: formData
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                Swal.fire({
+                icon: 'success',
+                title: 'Updated!',
+                text: data.message || 'Brand name updated successfully!'
+                });
+            } else {
+                Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: data.message || 'Something went wrong!'
+                });
+            }
+        })
+
+
     </script>
 </body>
-</html>

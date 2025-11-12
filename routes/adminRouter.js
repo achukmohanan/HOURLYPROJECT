@@ -13,8 +13,9 @@ const { adminAuth, adminchecksession } = require("../middlewares/adminAuth");
 const multer = require("multer");
 const storage = require("../helpers/multer");
 const { checksession } = require("../middlewares/userAuth");
-const Concern = require("../models/concernSchema");
 const uploads = multer({ storage: storage });
+const upload = require('../helpers/multerCloudinary')
+
 
 router.get("/adminlogin", checksession, adminController.loadLogin);
 router.post("/adminlogin", adminController.login);
@@ -58,7 +59,9 @@ router.post(
 );
 router.get("/blockBrand", adminAuth, brandController.blockBrand);
 router.get("/unBlockBrand", adminAuth, brandController.unBlockBrand);
+
 router.get('/editBrand',adminAuth, brandController.getBrandEditPage)
+router.post('/editBrand',upload.single('brandImage'),brandController.postEditBrand)
 
 //product management
 router.get("/addProducts", adminAuth, productController.getProductAddPage);

@@ -1,6 +1,8 @@
 const Brand = require("../../models/brandSchema");
 const Product = require("../../models/productSchema");
 const { STATUS_CODE } = require("../../utils/statusCode");
+const streamifier = require('streamifier')
+const cloudinary = require('../../utils/cloudinary')
 
 const getBrandPage = async (req, res) => {
   try {
@@ -28,25 +30,20 @@ const getBrandPage = async (req, res) => {
 const addBrand = async (req, res) => {
   try {
     const brand = req.body.name;
-    console.log("brabd is ", brand);
-
     const findBrand = await Brand.findOne({
       brandName: { $regex: `^${brand}$`, $options: "i" },
     });
-    console.log("regex b", findBrand);
     if (findBrand) {
       return res.json({ success: false, message: "Exsiting Brand " });
     }
     console.log(req.body.brandImage);
     if (!findBrand) {
-      // const image = req.file.filename;
+      
       const newBrand = new Brand({
         brandName: brand,
         brandImage: req.body.brandImage,
       });
       await newBrand.save();
-      // console.log(newBrand);
-
       res
         .status(STATUS_CODE.SUCCESS)
         .json({ success: true, message: "Brand Uploaded successfully" });
@@ -62,7 +59,9 @@ const blockBrand = async (req, res) => {
     const id = req.query.id;
     await Brand.updateOne({ _id: id }, { $set: { isBlocked: true } });
     res.redirect("/admin/brands");
-  } catch (error) {}
+  } catch (error) {
+    console.log("error in the blockBrand",error);
+  }
 };
 
 const unBlockBrand = async (req, res) => {
@@ -80,21 +79,60 @@ const getBrandEditPage = async(req,res) =>{
     const brandId = req.query.id;
     const brand = await Brand.findById(brandId)
 
-    console.log("brand is in get brandEditPage is",brand)
-    // console.log('req.body.',brand)
+    if(!brand)return ;
+
     return res.render('admin/editBrand',{
       brand
     })
   } catch (error) {
-    console.log("error getBrandEditPage",error);
-    
+    console.log("error getBrandEditPage",error); 
   }
 }
 
+const postEditBrand = async(req,res) =>{
+  try {
+    const brandId = req.query.id;
+    
+    const brandName = req.body.brandName?.trim();
+
+      if(!brandId) return res.status(STATUS_CODE.BAD_REQUEST).json({success:false,message:'Brand is Required'})
+    if(brandName){
+      const Exsiting = await Brand.findOne({brandName:{$regex:`^${brandName}$`,$options:'i'},_id:{$ne:brandId}})
+      if(Exsiting)return res.status(STATUS_CODE.BAD_REQUEST).json({success:false,message:"Name is Already Existing"})
+    }
+   // If no file, just update name
+      if(!req.file){
+          await Brand.findByIdAndUpdate(brandId,{brandName},{new:true});
+          return res.json({message:'Brand Updated (Name Only) '})
+      }
+
+      const uploadFromBuffer = (buffer) =>{
+          return new Promise((resolve,reject)=>{
+            const stream = cloudinary.uploader.upload_stream(
+              {folder:'brands',resource_type:'image'},
+              (error,result) =>{
+                if(error) return reject(error)
+                  resolve(result)
+              }
+            );
+            streamifier.createReadStream(buffer).pipe(stream);
+          });
+      };
+
+      const result = await uploadFromBuffer(req.file.buffer);
+      const imageUrl = result.secure_url;
+      await Brand.findByIdAndUpdate(brandId,{brandName,brandImage:imageUrl},{new:true});
+      return res.json({message:"Brand updated Successfully",imageUrl})
+  } catch (error) {
+    console.log("error in the backend post Edit Brand",error);
+    return res.status(500).json({ message: 'Internal server error' });
+  }
+}
 module.exports = {
   getBrandPage,
   addBrand,
   unBlockBrand,
   blockBrand,
-  getBrandEditPage
+  getBrandEditPage,
+  postEditBrand
 };
