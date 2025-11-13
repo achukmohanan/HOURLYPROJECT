@@ -58,9 +58,15 @@ clip-path: polygon(
                     <li class="nav-item px-2">
                         <a class="nav-link fw-bold" aria-current="page" href="/shop">SHOP</a>
                     </li>
+                    <%if(locals.user){%>
                     <li class="nav-item px-2">
                         <a class="nav-link fw-bold active" href="/contact">CONTACT</a>
                     </li>
+                <% }else{ %>
+                    <li class="nav-item px-2">
+                        <a class="nav-link fw-bold active" href="#" onclick="notLoggin(event)">CONTACT</a>
+                    </li>
+                <% } %>
                     <li class="nav-item px-2">
                         <a class="nav-link fw-bold" href="/about">ABOUT US</a>
                     </li>
@@ -103,7 +109,18 @@ clip-path: polygon(
         </div>
     </nav>
 </main>
-    
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
           <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script> -->
+      <script>
+        function notLoggin(e){
+            e.preventDefault()
+
+            Swal.fire({
+                icon:'error',
+                title:'Login Required!',
+                text:'Please login to access this page.'
+            })
+        }
+      </script>
       </body> 
       </html>

@@ -250,9 +250,19 @@
                     <span style="font-family: 'Lakki Reddy'" class="text-dark fs-4 fw-bold ms-2">HOURLY</span>
                 </div>
                 <ul class="nav-links" id="navLinks">
+                    <%if(locals.user){%>
                     <li><a href="/home">Home</a></li>
+                    <% }else{ %>
+                        <li><a href="/">Home</a></li>
+                    <% } %>
+
                     <li><a href="/shop">Watches</a></li>
+
+                    <% if(locals.user){ %>
                     <li><a href="/contact">Contact</a></li>
+                    <% }else{%>
+                    <li><a href="/about">Contact</a></li>
+                    <% } %>
                 </ul>
                 
                 <div class="user-dropdown">

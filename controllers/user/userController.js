@@ -26,9 +26,10 @@ const landingPage = async (req, res) => {
       isBlocked: false,
       category: { $in: categories.map((category) => category._id) },
       quantity: { $gt: 0 },
-    });
-    productData.sort((a, b) => new Date(b.createdOn) - new Date(a.createdOn));
-    productData = productData.slice(0, 4);
+    })
+    .sort({createdAt:-1})
+    .limit(4)
+
     const brand = await Brand.find({ isBlocked: false });
 
     if (userId) {
@@ -90,7 +91,7 @@ const loadHomepage = async (req, res) => {
         wishlistCount: wishlistCount,
       });
     } else {
-      return res.render("user/home", {
+      return res.render("user/landingPage", {
         products: productData,
         brand: brand,
       });

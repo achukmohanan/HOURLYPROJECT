@@ -210,7 +210,11 @@
                                     </h6>
                                     
                                     <div class="btn-group-mobile">
-                                        <% if(!(item.status === 'Cancelled' ||order.status === 'Delivered' || item.status === "Returned" ||item.status ==='Return Approved'||item.status ==='Return Requested' || item.status === 'Cancellation Requested' ||order.status === 'Returned' ||item.status === 'Delivered'||item.status === 'Cancellation Rejected')){ %>
+                                        <% if(!(item.status === 'Cancelled' ||order.status === 'Delivered' || 
+                                        item.status === "Returned" ||item.status ==='Return Approved'||
+                                        item.status ==='Return Requested' || item.status === 'Cancellation Requested' ||
+                                        order.status === 'Returned' ||item.status === 'Delivered'||
+                                        item.status === 'Cancellation Rejected' || item.status ==='Payment-failed')){ %>
                                             <button type="button" 
                                                 class="btn btn-danger" 
                                                 onclick="setCancelOrderId('<%= order.orderId %>','<%= item._id %>','<%= orders[0].discount %>')">
@@ -250,7 +254,11 @@
                                                 Cancel Return Request
                                             </button>
                                         <% } %>
-                                        
+                                         
+                                        <% if(item.status === 'Payment-failed'){ %>
+                                        <a class="btn btn-warning text-dark fw-bolder" href="/checkout">Retry Payment</a>
+                                        <% } %>
+
                                         <% if(item.status === 'Delivered' ){%>
                                             <a href="/invoice/<%= order.orderId%>" class="btn btn-primary">Download Invoice</a>
                                         <% } %>

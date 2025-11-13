@@ -431,7 +431,7 @@ const getFilteredSalesData = async(req,res) =>{
 
      // Pagination setup
     const skip = (parseInt(page) - 1) * parseInt(limit);
-
+console.log("matchfilter is .............",matchfilter)
      const orders = await Order.find(matchfilter)
       .populate("userId", "name email")
       .populate("orderedItems.product", "productName salePrice")
@@ -440,6 +440,7 @@ const getFilteredSalesData = async(req,res) =>{
       .limit(parseInt(limit));
 
       const totalOrders = await Order.countDocuments(matchfilter);
+      console.log("total Orders aere",totalOrders)
     const totalPages = Math.ceil(totalOrders / limit);
 
      res.json({

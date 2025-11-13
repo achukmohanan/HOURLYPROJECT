@@ -21,9 +21,6 @@ const postOrder = async (req, res) => {
     console.log("total amount", totalAmount);
     console.log("discount  amount is", discount);
 
-    // console.log("address is in discount order is", address)
-    // console.log("address is in post order", address)
-    //eni ee id vech address fetch2. save cheyanam
     const findAddress = await Address.findOne(
       { "address._id": address },
       { "address.$": 1 }

@@ -51,9 +51,17 @@
                 <div class="footer-section">
                     <h3>Quick Links</h3>
                     <ul>
+                        <%if(locals.user){%>
                         <li><a href="/home">Home</a></li>
+                        <%}else{%>
+                            <li><a href="/">Home</a></li>
+                            <%}%>
                         <li><a href="/shop">Watches</a></li>
-                        <li><a href="#contact">Contact</a></li>
+                        <%if(locals.user){%>
+                        <li><a href="/contact">Contact</a></li>
+                        <% }else{%>
+                            <li><a href="/contact" onclick="notLoggin(event)">Contact</a></li>
+                            <%} %>
                     </ul>
                 </div>
                 <div class="footer-section">
@@ -76,3 +84,15 @@
         </div>
         <div class="copy text-center mt-2" > <i class="bi bi-c-circle "></i><a href=""style="text-decoration: none; color:#fff;"> achu k mohanan</a></div>
     </footer>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        function notLoggin(e){
+            e.preventDefault()
+
+            Swal.fire({
+                icon:'error',
+                title:'Login Required!',
+                text:'Please login to access this page.'
+            })
+        }
+    </script>

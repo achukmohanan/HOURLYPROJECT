@@ -155,11 +155,44 @@ const paymentFailed = async(req,res) =>{
     const userId = req.session.user;
    
     const {razorpay_order_id,razorpay_payment_id,reason,amount,address,discount}  = req.body;
+    //order
+    const cart = await Cart.findOne({userId}).populate('items.productId');
 
+    if(!cart){
+      return res.status(STATUS_CODE.NOT_FOUND).json({success:false,message:"Cart is not Found"})
+    }
+
+    const selectedAddress = await Address.findOne(
+      {"address._id":address,userId},
+      {"address.$":1}
+    )
+    if(!selectedAddress){
+      return res.status(STATUS_CODE.NOT_FOUND).json({success:false,message:"Address Not Found"})
+    }
+const price = Number(amount)/100;
+    const order = new Order({
+      userId,
+      orderedItems: cart.items.map((item) => ({
+        product:item.productId._id,
+        quantity:item.quantity,
+        price:item.productId.salePrice,
+        status:'Payment-failed'
+      })),
+      totalPrice:price,
+      paymentMethod:'Razorpay',
+      status:"Payment-failed",
+      discount:discount,
+      paymentId:razorpay_payment_id || 'N/A',
+      address:selectedAddress.address[0],
+      deliveredAt:null,
+      couponApplied:discount > 0 ? true : false,
+
+    })
+    await order.save()
     // payment failed
     await Transaction.create({
       userId,
-      orderId:razorpay_order_id || null,
+      orderId:razorpay_order_id || 'N/A',
       type:'Failed',
       amount:Number(amount)/100,
       paymentMethod:'Razorpay',
