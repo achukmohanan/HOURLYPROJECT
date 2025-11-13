@@ -15,6 +15,9 @@ const walletController = require("../controllers/user/walletController");
 const contactController = require("../controllers/user/contactController");
 const aboutController = require('../controllers/user/aboutController')
 const cartWishlistCount = require('../middlewares/cartWishlistCount');
+
+const retryPaymentController = require('../controllers/user/retryPaymentController');
+
 //error management
 router.get("/pagenotfound", userController.pageNotFound);
 
@@ -115,6 +118,10 @@ router.get(
 
 router.post("/payment", paymentController.postPayment);
 router.post("/verify-payment", userAuth, paymentController.confirmRazorpay);
+
+//retry payment
+router.post('/retry-payment',userAuth, retryPaymentController.retryPayment)
+
 //order failure
 router.post('/payment-failed',userAuth, paymentController.paymentFailed)
 // order management
@@ -166,6 +173,8 @@ router.post("/contact", userAuth, contactController.postContact);
 router.get('/about',cartWishlistCount, aboutController.getAboutPage)
 //chechk user status
 router.get('/check-status',profileEditing.checkUserStatus)
+
+
 
 router.get("/testing", cartController.gettest);
 

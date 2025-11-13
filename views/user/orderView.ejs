@@ -103,14 +103,7 @@
                 word-wrap: break-word;
             }
 
-            /* Modal Adjustments */
-            .modal-dialog {
-                margin: 0.5rem;
-            }
-
-            .modal-body {
-                font-size: 0.9rem;
-            }
+          
 
             /* Text wrapping for long content */
             .text-wrap-mobile {
@@ -256,7 +249,9 @@
                                         <% } %>
                                          
                                         <% if(item.status === 'Payment-failed'){ %>
-                                        <a class="btn btn-warning text-dark fw-bolder" href="/checkout">Retry Payment</a>
+                                        <button class="btn btn-warning text-dark fw-bolder"
+                                        onclick="retryPayment('<%= order.orderId %>' , '<%= item._id %>', '<%= item.price %>' )"
+                                        >Retry Payment</button>
                                         <% } %>
 
                                         <% if(item.status === 'Delivered' ){%>
@@ -305,46 +300,7 @@
         </div>
     </div>
 
-    <!-- Cancel Confirmation Modal -->
-    <div class="modal fade" id="cancelModal" tabindex="-1" aria-labelledby="cancelModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title text-danger" id="cancelModalLabel"></h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <p id="cancelText"></p>
-                    <input type="hidden" id="cancelOrderId">
-                    <input type="hidden" id="cancelItemId">
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Keep Order</button>
-                    <button type="button" class="btn btn-danger" onclick="cancelOrder()">Yes, Cancel Order</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Success Modal -->
-    <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title text-success" id="successModalLabel">Order Cancelled</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <p>Your order has been successfully cancelled.</p>
-                    <p class="text-muted mb-0">You will receive a confirmation email shortly and a full refund within 3-5 business days.</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-success" onclick="goToOrders()">View My Orders</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
+ 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
     <script>
@@ -507,13 +463,56 @@
             });
         }
 
-        function goToOrders() {
-            window.location.href = '/viewOrder';
+ async function retryPayment(orderId,itemId,itemPrice) {
+    try {
+        const respose = await fetch('/retry-payment',{
+            method:'POST',
+            headers:{
+                'Content-Type':'application/json'
+            },
+            body:JSON.stringify({orderId,itemId,itemPrice})
+        });
+
+        const data = await respose.json();
+
+        if(!data.success){
+            Swal.fire({
+                icon:'error',
+                title:'OOPS',
+                text:data.message,
+                showConfirmButton:true
+            })
+            return;
         }
 
-        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-            return new bootstrap.Tooltip(tooltipTriggerEl);
-        });
+        const options = {
+            key:data.key,
+            amount:data.amount,
+            currency:'INR',
+            name:'HOURLY WATCHES',
+            description:'Retry Payment',
+            order_id:data.razorpayOrderId,
+
+            handler: async function(response){
+                const verifyRes = await fetch('/verify-retry-payment',{
+                    method:'POST',
+                    headers:{'Content-Type':'application/json'},
+                    body:JSON.stringify({
+                        orderId,
+                        itemId,
+                        razorpay_order_id:response.
+                    })
+                })
+            }
+        }
+    } catch (error) {
+        
+    }
+    
+ }
+ 
+       
+
+      
     </script>
 </body>
