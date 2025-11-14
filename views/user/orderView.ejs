@@ -300,7 +300,7 @@
         </div>
     </div>
 
- 
+ <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
     <script>
@@ -493,6 +493,7 @@
             description:'Retry Payment',
             order_id:data.razorpayOrderId,
 
+            //success
             handler: async function(response){
                 const verifyRes = await fetch('/verify-retry-payment',{
                     method:'POST',
@@ -500,13 +501,81 @@
                     body:JSON.stringify({
                         orderId,
                         itemId,
-                        razorpay_order_id:response.
+                        razorpay_order_id:response.razorpay_order_id,
+                        razorpay_payment_id:response.razorpay_payment_id,
+                        razorpay_signature:response.razorpay_signature
                     })
-                })
+                });
+
+                const verify = await verifyRes.json();
+
+                if(verify.success){
+                    Swal.fire({
+                        icon:'success',
+                        title:'Success',
+                        text:verify.message || 'Payment verified & order updated successfully'
+                    }).then(()=>{
+                        window.location.href = '/order-success'
+                    })
+                }else{
+                    Swal.fire({
+                        icon:'error',
+                        title:'OOPS',
+                        text:verify.message || "Payment Verification Went Wrong"
+                    })
+                }
+            },
+
+             modal : {
+                ondismiss : function (){
+                    console.log("Payment popup was closed by the user.")
+                }
             }
-        }
-    } catch (error) {
+        };
+
+           const rzp = new Razorpay(options);
+
+        rzp.on('payment.failed',async function(response){
+                    const failResponse = await fetch('/verify-retry-payment',{
+                        method:'POST',
+                        headers:{'Content-Type' : 'application/json'},
+                        body:JSON.stringify({
+                            orderId,
+                            itemId,
+                            razorpay_order_id: response.error.metadata.order_id,
+                            razorpay_payment_id:null,
+                            razorpay_signature:null,
+                            error:response.error
+                        })
+                    });
+
+                    const fail = await failResponse.json();
+
+                    Swal.fire({
+                        icon:'error',
+                        title:'Payment Failed',
+                        text:fail.message || 'Retry Payment Failed'
+                    }).then(()=>{
+                        window.location.reload()
+                    })
+
+                })
+            
+
+           
+            rzp.open();
         
+
+     
+
+    } catch (error) {
+        console.log('error in the retry-verify script ',error)
+        Swal.fire({
+            icon:'error',
+            title:'ERROR',
+            text:"Somthing Went Wrong , Internal Server Error",
+            showConfirmButton:true
+        })
     }
     
  }

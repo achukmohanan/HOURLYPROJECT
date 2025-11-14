@@ -121,7 +121,7 @@ router.post("/verify-payment", userAuth, paymentController.confirmRazorpay);
 
 //retry payment
 router.post('/retry-payment',userAuth, retryPaymentController.retryPayment)
-
+router.post('/verify-retry-payment',userAuth , retryPaymentController.verifyRetryPayment)
 //order failure
 router.post('/payment-failed',userAuth, paymentController.paymentFailed)
 // order management
