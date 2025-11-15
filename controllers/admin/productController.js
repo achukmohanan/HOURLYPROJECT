@@ -6,6 +6,7 @@ const fs = require("fs");
 const path = require("path");
 const sharp = require("sharp");
 const { STATUS_CODE } = require("../../utils/statusCode");
+const mongoose = require('mongoose');
 
 const getProductAddPage = async (req, res) => {
   try {
@@ -163,7 +164,7 @@ const getAllProducts = async (req, res) => {
         { brand: { $regex: new RegExp(".*" + search + ".*", "i") } },
       ],
     })
-      .sort({ _id: -1 })
+      .sort({ createdAt: -1 })
       .limit(limit * 1)
       .skip((page - 1) * limit)
       .populate("category")
@@ -290,77 +291,67 @@ const getEditProduct = async (req, res) => {
 const editProduct = async (req, res) => {
   try {
     const id = req.params.id;
-    const product = await Product.findOne({ _id: id });
-    console.log("req.body is", req.body);
     const data = req.body;
-    const existingProduct = await Product.findOne({
-      productName: data.productName,
-      _id: { $ne: id },
+
+      
+    if (!data || !data.productName) {
+      return res.json({ success: false, message: "Invalid request" });
+    }
+
+    // checking name duplicate
+    const duplicate = await Product.findOne({
+      productName: { $regex: `^${data.productName.trim()}$`, $options: "i" },
+      _id: { $ne: id }
     });
-    if (existingProduct) {
-      return res
-        .status(STATUS_CODE.BAD_REQUEST)
-        .json({
-          error:
-            "Product with this name already exists .please try with another name",
-        });
+
+  if (duplicate) {
+       
+      return res.json({ success: false,message: "Product name already exists."});
     }
-    const images = [];
-    if (req.files && req.files.length > 0) {
-      for (let i = 0; i < req.files.length; i++) {
-        images.push(req.files[i].filename);
-      }
-    }
+   
+    // / Build final images: keep existing images (they are URLs) + newImages (array of {url, public_id})
+    const existing = Array.isArray(data.existingImages) ? data.existingImages : [];
+    const newImgs = Array.isArray(data.newImages) ? data.newImages.map(i => i.url || i) : [];
+
+    const finalImages = [...existing, ...newImgs];
+
+
+     // Build update object
     const updateFields = {
       productName: data.productName,
-      description: data.description,
-      brand: data.brand,
-      category: data.category,
-      regularPrice: data.regularPrice,
-      salePrice: data.salePrice,
-      quantity: data.quantity,
-      size: data.size,
-      color: data.color,
+      description: data.description || "",
+      brand: data.brand || "",
+      category: data.category || null,
+      regularPrice: data.regularPrice || 0,
+      salePrice: data.salePrice || 0,
+      quantity: data.quantity || 0,
+      color: data.color || "",
+      productImage: finalImages
     };
-    // if(req.files.length>0){
-    //     updateFields.$push = {productImages:{$each:images}};
-
-    // }
-    if (images.length > 0) {
-      updateFields.productImages = images;
-    }
-
-    await Product.findByIdAndUpdate(id, updateFields, { new: true });
-    res.redirect("/admin/products");
+  await Product.findByIdAndUpdate(id, updateFields, { new: true });
+  return res.json({ success: true });
+ 
   } catch (error) {
-    console.error(error);
-    res.redirect("admin/pageerror");
+    console.error("error in the editProduct controller",error);
+    return res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({success:false,message:"Internal Error Happened,Please Try again Later"})
   }
 };
 
 const deleteSingleImage = async (req, res) => {
   try {
-    const { imageNameToServer, productIdToServer } = req.body;
-    const product = await Product.findByIdAndUpdate(productIdToServer, {
-      $pull: { productImage: imageNameToServer },
+    const { imageUrlToDelete, productIdToServer } = req.body;
+     await Product.findByIdAndUpdate(productIdToServer, {
+      $pull: { productImage: imageUrlToDelete },
     });
-    const imagePath = path.join(
-      "public",
-      "uploads",
-      "re-image",
-      imageNameToServer
-    );
-    if (fs.existsSync(imagePath)) {
-      await fs.unlinkSync(imagePath);
-      console.log(`image ${imageNameToServer} deleted successfully`);
-    } else {
-      console.log(`image ${imageNameToServer} not found`);
-    }
-    res.send({ status: true });
+ 
+  
+   return  res.json({ success: true });
   } catch (error) {
-    res.redirect("/pageerror");
+    console.log("Delete error in the deleteSingleImage controller :", err);
+    return res.json({ success: false, message: "Server error" });
   }
-};
+  }
+
 
 const deleteProduct = async (req, res) => {
   try {
