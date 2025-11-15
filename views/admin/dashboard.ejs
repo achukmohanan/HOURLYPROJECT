@@ -319,8 +319,8 @@
                         <div class="cardd p-2 mb-5">
                          <select  id="chartFilter">
                         <option value="daily">Daily</option>
-                        <option value="weekly">Weekly</option>
-                        <option value="monthly" selected>Monthly</option>
+                        <option value="weekly" selected>Weekly</option>
+                        <option value="monthly" >Monthly</option>
                         <option value="yearly">Yearly</option>
                      </select> 
                      </div>
@@ -452,6 +452,6 @@ document.getElementById('chartFilter').addEventListener('change',(e) =>{
     loadChart(e.target.value);
 })
 
-loadChart('monthly')
+loadChart('weekly')
 
 </script>

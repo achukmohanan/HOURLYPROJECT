@@ -283,7 +283,7 @@
                              <div class="user-name ">
                                 <a href="#" class="text-dark fw-semibold no-underline" ><%= locals.user.name %></a>
                              <div class="dropdown-content">
-                                <a href="/logout" class="logout-btn dropdown-item ">
+                                <a href="#" onclick="logoutFunc(event)" class="logout-btn dropdown-item ">
                                     <i class="bi bi-box-arrow-right mx-2"></i>LOGOUT
                                 </a>
                             </div>
@@ -301,5 +301,32 @@
             </nav>
         </div>
     </header>
-  
+  <script>
+    function logoutFunc(e){
+    e.preventDefault()
+    Swal.fire({
+        title:'Are you Sure?',
+        text:"You will be logged out!",
+        icon:'warning',
+        showCancelButton:true,
+        confirmButtonText:'Yes,Logout',
+        cancelButtonText:'Cancel'
+    })
+    .then((res)=>{
+        if(res.isConfirmed){
+            fetch('/logout',{method:'GET'})
+            .then((res)=>{
+                if(res.ok){
+                    Swal.fire('Logged Out','You have been logged out successfully.','success')
+                    .then(()=>{
+                        window.location.href = '/logout'
+                    });
+                } else {
+            Swal.fire('Error!', 'Logout failed. Please try again.', 'error');
+          }
+            })
+        }
+    })
+}
+  </script>
  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js" integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q" crossorigin="anonymous"></script>

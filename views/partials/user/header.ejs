@@ -92,7 +92,7 @@ clip-path: polygon(
                             <a class="text-light" href="/account"><i class="bi bi-person-circle mx-2 "></i></a>
                             <a href="#" class="sign-in-link text-light fw-bold text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><%=locals.user ? locals.user.name : "" %></a>
                             <ul class="dropdown-menu dropdown-menu-end">
-                                <li><a class="dropdown-item mx-4" href="/logout">LOGOUT</a></li>
+                                <li><a onclick="logoutFunc(event)" class="dropdown-item mx-4" href="#">LOGOUT</a></li>
                                 
                             </ul>
                         </div>
@@ -121,6 +121,33 @@ clip-path: polygon(
                 text:'Please login to access this page.'
             })
         }
+function logoutFunc(e){
+    e.preventDefault()
+    Swal.fire({
+        title:'Are you Sure?',
+        text:"You will be logged out!",
+        icon:'warning',
+        showCancelButton:true,
+        confirmButtonText:'Yes,Logout',
+        cancelButtonText:'Cancel'
+    })
+    .then((res)=>{
+        if(res.isConfirmed){
+            fetch('/logout',{method:'GET'})
+            .then((res)=>{
+                if(res.ok){
+                    Swal.fire('Logged Out','You have been logged out successfully.','success')
+                    .then(()=>{
+                        window.location.href = '/logout'
+                    });
+                } else {
+            Swal.fire('Error!', 'Logout failed. Please try again.', 'error');
+          }
+            })
+        }
+    })
+}
+
       </script>
       </body> 
       </html>
