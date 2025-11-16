@@ -180,8 +180,19 @@
                                     </button>
                                     <%} %>
                                
-                                    <% }) %>      
-                              <% if(!(order.status === 'Return Requested' || order.orderedItems.some(i=>i.status === "Cancellation Requested"))){ %>
+                                    <% }) %>   
+                                    <%
+                                    const itemSaleClose = order.orderedItems.some(item =>item.status === 'Cancelled' || item.status === 'Returned' || item.status === 'Return Approved');
+                                    const orderSaleClose = (order.status === 'Cancelled' || order.status === 'Returned' || order.status === 'Return Approved')
+                                   
+                                   const returnRequest = order.status === 'Return Requested' || order.orderedItems.some(i => i.status === 'Return Requested');
+                                   
+                                   const cancelRequest = order.orderedItems.some(i => i.status === 'Cancellation Requested');
+
+                                   const hideButton = itemSaleClose || orderSaleClose || returnRequest || cancelRequest
+                                    %>
+                                        
+                              <% if(!hideButton){ %>
                                     <button class="btn btn-success mt-4" onclick="saveStatusUpdate()">
                                           <i class="fas fa-save me-2"></i>Save Changes
                                 </button>
@@ -266,21 +277,25 @@
             </div>
     
             <!-- -------------order cancel ------------ -->
-             <%if(order.returnReason){%>
+             
             <div class="card">
                         <div class="card-header">
                             <h5 class="mb-0"><i class="fas fa-calculator me-2"></i>Order Reason </h5>
                         </div>
                         <div class="card-body">
+                            <%if(order.returnRequest?.requested && order.returnReason ){%>
                             <div class="d-flex justify-content-between">    
-                            <span> <strong>Return Reason is : </strong><%= order.returnReason%></span>
+                            <span> <strong>Return Reason   : </strong><%= order.returnReason%></span>
                             </div>
+                             <% }  %>
                             <% order.orderedItems.forEach(item => { %>
-                                <span> <strong>Cancel Reason for the product  : </strong><%= item.cancelRequest.reason %> </span><br>
+                                <%if(item.cancelRequest?.requested){%>
+                                <span> <strong>Cancel Reason for the (product)  : </strong><%= item.cancelRequest.reason %> </span><br>
+                                <% }%>
                             <% }) %>  
                         </div>
                     </div>
-                <% }  %>
+               
              <!-- ---------------------------------------------- -->
             <!-- Order Items -->
             <div class="row mt-4">

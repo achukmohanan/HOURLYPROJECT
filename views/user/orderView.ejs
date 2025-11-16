@@ -228,7 +228,7 @@
                                             <span class="text-danger d-block mb-2">Your cancel request was rejected by admin. Order is still active.</span> 
                                         <% } %>
                                         
-                                        <% if(item.status === 'Cancellation Rejected' || order.status === 'Return Rejected'){%>
+                                        <% if(  order.status === 'Return Rejected'){%>
                                             <span class="text-danger d-block mb-2">Your Order Return request was rejected by admin</span> 
                                         <% } %>
                                         
