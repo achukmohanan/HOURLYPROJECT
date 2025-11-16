@@ -7,7 +7,7 @@ const { STATUS_CODE } = require("../../utils/statusCode");
 
 const getConcernPage = async (req, res) => {
   try {
-    const concerns = await Concern.find({});
+    const concerns = await Concern.find({}).sort({createdAt:-1});
     return res.render("admin/concern", { concerns });
   } catch (error) {
     console.log("error in get concern ", error);
@@ -20,9 +20,10 @@ const viewConcernpage = async (req, res) => {
     const concern = await Concern.find({ userId: userId });
     const address = await Address.findOne({ userId: userId });
     const user = await User.findById(userId);
-    const orders = await Order.find({ userId }).populate(
-      "orderedItems.product"
-    );
+    const orders = await Order.find({ userId })
+    .sort({createdAt:-1})
+    .limit(1)
+    .populate("orderedItems.product");
     const transactions = await Transaction.find({ userId });
 
     return res.render("admin/viewConcernView", {

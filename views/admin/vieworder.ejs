@@ -152,6 +152,7 @@
                                         <option value="Shipped" >Shipped</option>
                                         <option value="Out-for-delivery">Out for Delivery</option>
                                         <option value="Delivered">Delivered</option>
+                                        <option value="Returned">Returned</option>
                                         
                                         <option value="Cancelled">Cancelled</option>
                                         
@@ -230,6 +231,8 @@
                         <div class="card-body">
                             <p><strong>Payment Method : </strong><%= order.paymentMethod %></p>
                             <p><strong>Coupon Appiled : </strong><%= order.couponApplied %></p>
+                            <p><strong>Coupon Discount : </strong>RS : <%= order.discount.toLocaleString({style:'currency','currency':'INR'}) %></p>
+
                         </div>
                     </div>
                 </div>
@@ -258,12 +261,21 @@
                         </div>
                         <div class="card-body">
                             <div class="d-flex justify-content-between">
+                                <% let sum =  order.orderedItems.reduce((acc,item) =>  acc+item.price,0 ) %>
+                                <span>Amount: </span>
+                                <span><%= sum.toLocaleString('en-IN',{style:'currency',currency:'INR'}) %></span>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <span>Discount:</span>
+                                <span class="text-danger">-<%= order.discount.toLocaleString('en-IN',{style:'currency',currency:'INR'}) %></span>
+                            </div><br>
+                            <div class="d-flex justify-content-between">
                                 <span>Subtotal:</span>
                                 <span><%= order.totalPrice.toLocaleString('en-IN',{style:'currency',currency:'INR'}) %></span>
                             </div>
                             <div class="d-flex justify-content-between">
                                 <span>Shipping:</span>
-                                <span>free</span>
+                                <span class="text-success">free</span>
                             </div>
                             
                             <hr>
@@ -277,7 +289,11 @@
             </div>
     
             <!-- -------------order cancel ------------ -->
-             
+             <% 
+   const hasReturn = order.returnRequest?.requested && order.returnReason;
+   const hasCancel = order.orderedItems.some(item => item.cancelRequest?.requested);
+%>
+           <%if(hasReturn || hasCancel ){%>  
             <div class="card">
                         <div class="card-header">
                             <h5 class="mb-0"><i class="fas fa-calculator me-2"></i>Order Reason </h5>
@@ -295,6 +311,7 @@
                             <% }) %>  
                         </div>
                     </div>
+           <%} %>
                
              <!-- ---------------------------------------------- -->
             <!-- Order Items -->
