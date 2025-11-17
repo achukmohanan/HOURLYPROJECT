@@ -1,7 +1,7 @@
 const Brand = require("../../models/brandSchema");
 const Product = require("../../models/productSchema");
 const { STATUS_CODE } = require("../../utils/statusCode");
-const streamifier = require('streamifier')
+const streamifier =  require('streamifier')
 const cloudinary = require('../../utils/cloudinary')
 
 const getBrandPage = async (req, res) => {
