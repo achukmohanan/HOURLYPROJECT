@@ -178,14 +178,14 @@ const getEditCategory = async (req, res) => {
 
 const editCategory = async (req, res) => {
   try {
-    console.log(req.body);
+    // console.log(req.body);
     const id = req.params.id;
     const { categoryName, description } = req.body;
 
-    const existingCategory = await Category.findOne({ name: {$regex:`${categoryName}$`,$options:'i'} });
+    const existingCategory = await Category.findOne({ name: {$regex:`^${categoryName}$`,$options:'i'},_id:{$ne:id} });
 
     if (existingCategory && existingCategory._id.toString() !== id) {
-      console.log("duplicate");
+      // console.log("duplicate");
       return res.redirect("/admin/category?error=exist");
     }
 
@@ -204,8 +204,8 @@ const editCategory = async (req, res) => {
       return res.redirect("/admin/category?error=notfound");
     }
   } catch (error) {
-    console.log("error");
-    res.status(500).json({ error: "Internal Server error" });
+    console.log("error in the editCategory",error);
+   return res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ error: "Internal Server error" });
   }
 };
 

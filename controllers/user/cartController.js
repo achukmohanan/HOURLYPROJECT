@@ -93,10 +93,7 @@ const addToCart = async (req, res) => {
         quantity: 1,
       });
     }
-    // console.log("Cart items before saving:", cart.items);
-
     await cart.save();
-    // console.log("cart is ",cart)
     return res
       .status(STATUS_CODE.SUCCESS)
       .json({ success: true, message: "Successfully Added " });
@@ -112,7 +109,7 @@ const deleteCartItem = async (req, res) => {
   try {
     const userId = req.session.user;
     const { productId } = req.body;
-    // console.log("productId is",productId, typeof productId);
+   
     const cart = await Cart.findOne({ userId });
     if (!cart) {
       return res
@@ -210,10 +207,8 @@ const updateCartQuantity = async (req, res) => {
 const addAddressInCheckout = async (req, res) => {
   try {
     const userId = req.session.user;
-  
     const user = await User.findById(userId);
     return res.render("user/checkoutaddress", {
-      
       name: user,
     });
   } catch (error) {
@@ -226,7 +221,7 @@ const addAddressInCheckout = async (req, res) => {
       const user = await User.findById(userId);
       const savedDiscount = req.session.discountValue || 0;
       const couponcode =  req.session.couponcode || "";
-      console.log("discount page trigger".discount)
+      
       const cart = await Cart.findOne({ userId }).populate("items.productId");
       if (
         !cart ||
@@ -243,9 +238,15 @@ const addAddressInCheckout = async (req, res) => {
 
       const addressList = await Address.find({ userId: userId });
       const coupons = await Coupon.find({
-        isActive: true,
-        $or: [{ userId: { $in: [userId] } }, { userId: { $size: 0 } }],
+        isActive: true, 
+        expireOn : {$gte:new Date()},
+        minPurchase:{$lte:total},
+        $or: [
+          { userId: { $in: [userId] } },
+           { userId: { $size: 0 } }
+          ],
       }).sort({ expireOn: -1 });
+      
 
       return res.render("user/checkout", {
         coupons,

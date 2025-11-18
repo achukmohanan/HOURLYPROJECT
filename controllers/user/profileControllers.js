@@ -71,7 +71,13 @@ const forgotEmailOtp = async (req, res) => {
       return res.json({ success: false, message: "Email is required" });
     }
 
+    
     const findUser = await User.findOne({ email: email });
+
+     if(findUser.googleId){
+      return res.status(STATUS_CODE.BAD_REQUEST).json({success:false,message:'"This account uses Google login. Password reset is not available."'})
+     }
+
     if(!findUser){
       return res.status(STATUS_CODE.BAD_REQUEST).json({success:false,message:"Email with User Not Found"})
     }

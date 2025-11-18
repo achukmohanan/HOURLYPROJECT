@@ -267,22 +267,69 @@
     }
 
     function phoneValidateChecking(e){
-      const phoneval = phoneid.value;
+      const phoneval = phoneid.value.trim();
 
-      if(phoneval.trim() === ""){ 
+      //only numbers
+      const onlyNumbers = /^[0-9]+$/;  
+
+      if(phoneval === ""){ 
         error3.style.display = "block";
         error3.innerHTML = "Enter Valid Phone Number"
         return false;
-      }else if(phoneval.length<10 || phoneval.length>10){
+      }
+
+        // Must be exactly 10 digits
+      if (phoneval.length !== 10) {
         error3.style.display = "block";
         error3.innerHTML = "Enter 10 digit Number";
         return false;
-      }else{
+      }
+      
+      // if(phoneval.length<10 || phoneval.length>10){
+      //   error3.style.display = "block";
+      //   error3.innerHTML = "Enter 10 digit Number";
+      //   return false;
+      // }
+      // Block 0000000000
+        if (phoneval === "0000000000") {
+          error3.style.display = "block";
+          error3.innerHTML = "Invalid phone number";
+          return false;
+        }
+
+         // Block 1234567890
+        if (phoneval === "1234567890") {
+          error3.style.display = "block";
+          error3.innerHTML = "Invalid phone number";
+          return false;
+        }
+
+        // Must contain only digits
+        if (!onlyNumbers.test(phoneval)) {
+          error3.style.display = "block";
+          error3.innerHTML = "Phone number must contain only digits";
+          return false;
+        }
+
+
+           // Must contain only digits
+        if (!onlyNumbers.test(phoneval)) {
+          error3.style.display = "block";
+          error3.innerHTML = "Phone number must contain only digits";
+          return false;
+        }
+
+        if (/^(\d)\1{9}$/.test(phoneval)) {
+          error3.style.display = "block";
+          error3.innerHTML = "Invalid phone number";
+          return false;
+        }
+
+      
         error3.style.display = "none";
-        
         error3.innerHTML = "";
         return true;
-      }
+      
     }
 
    function  passwordValidateChecking(e){

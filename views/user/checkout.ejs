@@ -373,24 +373,28 @@
                     
                      <h5>Available Coupons</h5>
 
-  <% if (coupons.length > 0) { %>
-    <div class="d-flex flex-wrap gap-3">
-      <% coupons.slice(0,5).forEach(coupon => { 
-       let isExpired = new Date(coupon.expireOn) < new Date()  %>
-        <div class="coupon-card <%= isExpired ? 'expired-coupon' : '' %>">
-          <p  class="coupon-code"><%= coupon.code %></p>
-          <%if(!isExpired && totalPrice > coupon.minPurchase ){%>
-          <i class="bi bi-copy" style="cursor: pointer;" onClick="copyClip('<%= coupon.code %>')"></i>
-         <% } %>
-          <small><%= coupon.description %></small><br>
-          <small><%= coupon.minPurchase.toLocaleString('en-IN',{style:'currency',currency:'INR'}    )%></small><br>
-          <small>Expires: <%= coupon.expireOn.toDateString() %></small>
-        </div>
-      <% }) %>
-    </div>
-  <% } else { %>
-    <p>No coupons available right now.</p>
-  <% } %>
+ <% if (coupons.length > 0) { %>
+  <div class="d-flex flex-wrap gap-3">
+    <% coupons.slice(0,5).forEach(coupon => { 
+      let isExpired = new Date(coupon.expireOn) < new Date();
+    %>
+      <div class="coupon-card <%= isExpired ? 'expired-coupon' : '' %>">
+        <p class="coupon-code"><%= coupon.code %></p>
+
+        <% if (!isExpired) { %>
+          <i class="bi bi-copy" style="cursor: pointer;" onclick="copyClip('<%= coupon.code %>')"></i>
+        <% } %>
+
+        <small><%= coupon.description %></small><br>
+        <small><%= coupon.minPurchase.toLocaleString('en-IN',{style:'currency',currency:'INR'}) %></small><br>
+        <small>Expires: <%= coupon.expireOn.toDateString() %></small>
+      </div>
+    <% }) %>
+  </div>
+<% } else { %>
+  <p>No coupons available right now.</p>
+<% } %>
+
                </div>
     
         </div>
@@ -407,7 +411,7 @@
                     <span>Shipping</span>
                     <span style="color: #0bdb15;">Free</span>
                 </div>
-                
+               <% if(coupons.length > 0){%> 
             <h5>Apply Coupon</h5>
                 
                     <input 
@@ -424,7 +428,7 @@
                     <button type="button" class="btn btn-danger" id="removeCouponBtn" style="display: none;">Remove</button>
                     <div id="couponMessage"></div>
 
-
+              <%  } %>
             
                 <!-- <div class="summary-line">
                     <span> Coupon Discont </span>
