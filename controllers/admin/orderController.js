@@ -331,7 +331,7 @@ const approveCancelRequest = async (req, res) => {
     }
     if (action === "reject") {
       item.status = "Cancellation Rejected";
-
+      
       await order.save();
       return res
         .status(STATUS_CODE.SUCCESS)
@@ -342,6 +342,7 @@ const approveCancelRequest = async (req, res) => {
     }
   } catch (error) {
     console.log("error in the approvecancel request", error);
+    return res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({success:false,message:"Internal Server Error Happened"})
   }
 };
 
