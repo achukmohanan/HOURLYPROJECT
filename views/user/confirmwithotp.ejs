@@ -170,8 +170,8 @@
             <button class="confirm-btn">Confirm</button>
             </form>
            <div id="otpTimer" class="otp-timer">
-            <button type="button"    style="color: rgb(42, 34, 34); border: none; cursor: pointer;" onclick="resendOTP()">Resend OTP</button>
-            <span id="timerValue" style="color: red;">30</span>
+            <button type="button"   id="resendBtn" style="color: rgb(42, 34, 34); border: none; cursor: pointer;display: none;"  onclick="resendOTP()">Resend OTP</button>
+            <span id="timerValue" style="color: red;"></span>
            </div>
 
             <a href="/login" class="back-link">Go back to Login page</a>
@@ -183,21 +183,36 @@
     
     <script>
 
-        let timer = 60;
-        let timerInterval;
+    let totalTime = 60;
+    let timerInterval;
 
-        function startTimer(){
-            timerInterval = setInterval(()=>{
-                timer--;
-                document.getElementById("timerValue").textContent = timer;
-                if(timer<=0){
-                    clearInterval(timerInterval);
-                    document.getElementById("timerValue").classList.add("expired");
-                    document.getElementById("timerValue").textContent = "Expired"
-                    document.getElementById("otp").disabled = true;
-                }
-            },1000);
-        }
+    if(sessionStorage.getItem('otpStartTime') === null){
+        sessionStorage.setItem('otpStartTime',Date.now());
+    }
+
+    function startTimer(){
+        let startTime = Number(sessionStorage.getItem('otpStartTime'));
+
+        timerInterval = setInterval(()=>{
+            const elapsed = Math.floor((Date.now() - startTime) / 1000);
+            const remainingTime = totalTime - elapsed;
+
+            if(remainingTime <= 0){
+                clearInterval(timerInterval);
+
+                document.getElementById('timerValue').textContent = 'Expired';
+
+                document.querySelectorAll('.otp-input').forEach(i => i.disabled = true);
+
+                document.getElementById('resendBtn').style.display = 'inline';
+                return;
+            }
+            document.getElementById('resendBtn').style.display = 'none';
+            document.getElementById('timerValue').textContent = remainingTime;
+        },1000);
+    }
+    startTimer()
+       
 
 document.querySelectorAll('.otp-input').forEach((input, index, inputs) => {
     input.addEventListener('input', () => {
@@ -214,7 +229,6 @@ document.querySelectorAll('.otp-input').forEach((input, index, inputs) => {
 });
 
 
-startTimer()
 
         document.getElementById("otpForm").addEventListener("submit", validateOTPForm);
 
@@ -276,7 +290,9 @@ startTimer()
         async function resendOTP() {
             clearInterval(timerInterval);
             time = 60;
-            document.getElementById('otp').disabled = false;
+            sessionStorage.setItem("otpStartTime", Date.now());
+            document.querySelectorAll("#otp input").forEach(i => i.disabled = false);
+            // document.getElementById('otp').disabled = false;
             document.getElementById('timerValue').classList.remove("Expired");
             startTimer();
 

@@ -155,12 +155,19 @@
             console.log("fetch result",result)
 
             if(response.ok){
+                 
+                sessionStorage.setItem("otpExpires", result.otpExpires);
+                sessionStorage.setItem("otpStartTime", Date.now());
+
                 Swal.fire({
                     icon:'success',
                     title:'OTP Send',
                     text:result.message || "OTP Sended to your Current email",
-                    showConfirmButton:true
+                    showConfirmButton:false,
+                    timer:2000,
+                    timerProgressBar:true
                 }).then(()=>{
+                   
                     window.location.href = '/emailEditOtp'
                 })
             }else{

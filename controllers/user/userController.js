@@ -178,6 +178,8 @@ const signup = async (req, res) => {
       });
     }
     req.session.userOtp = otp;
+    req.session.userOtpExpires = Date.now() +  (60 * 1000);
+
     req.session.userData = { name, phone, email, password, referalcode };
 
     console.log("Signup Otp sent", otp);
@@ -281,7 +283,13 @@ const confirmwithotp = async (req, res) => {
         .status(STATUS_CODE.BAD_REQUEST)
         .json({ success: false, message: "All 4 OTP digits are required" });
     }
+
+    if(Date.now() > req.session.userOtpExpires){
+      return res.status(STATUS_CODE.BAD_REQUEST).json({success:false,message:"OTP expired. Please request a new one"});
+    }
+
     const otp = otp1 + otp2 + otp3 + otp4;
+
 
     if (otp === req.session.userOtp) {
       console.log("OTP verified successfully");
@@ -378,6 +386,7 @@ const resendOtp = async (req, res) => {
 
     const otp = generateOtp();
     req.session.userOtp = otp;
+    req.session.userOtpExpires = Date.now() + (60 * 1000);
 
     const emailSent = await sendVerificationEmail(email, otp);
     if (emailSent) {
@@ -417,7 +426,7 @@ const logout = async (req, res) => {
     console.log("logout error ", error);
     res.redirect("/pagenotfound");
   }
-};
+};  
 
 module.exports = {
   loadHomepage,

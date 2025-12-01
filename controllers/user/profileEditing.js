@@ -62,7 +62,10 @@ const changePassword = async (req, res) => {
 const getCurrentEmail = async (req, res) => {
   try {
     return res.render("user/currentEmail");
-  } catch (error) {}
+  } catch (error) {
+    console.log("error in the get Current email page",error);
+    
+  }
 };
 
 function generateOtp() {
@@ -112,7 +115,7 @@ const postCurrentEmail = async (req, res) => {
         .status(STATUS_CODE.BAD_REQUEST)
         .json({
           success: false,
-          message: "Google user cant change Email and Password",
+          message: "Google user can't change Email and Password",
         });
     }
     const otp = generateOtp();
@@ -120,11 +123,13 @@ const postCurrentEmail = async (req, res) => {
     const sent = await sendVerificationEmail(currentEmail, otp);
     if (sent) {
       req.session.otp = otp;
+      req.session.otpExpires = Date.now() + (60 * 1000);
       res
         .status(STATUS_CODE.SUCCESS)
         .json({
           success: true,
           message: "OTP Successfully Send to your Current Email",
+          otpExpires: req.session.otpExpires
         });
     } else {
       res
@@ -154,6 +159,15 @@ const postEmailEditOtp = async (req, res) => {
   try {
   
     const { otp1, otp2, otp3, otp4 } = req.body;
+
+    if(!otp1 || !otp2 || !otp3 || !otp4){
+      return res.status(STATUS_CODE.BAD_REQUEST).json({success:false,message:"All 4 OTP digits are required"})
+    }
+
+if(Date.now() > req.session.otpExpires){
+  return res.status(STATUS_CODE.BAD_REQUEST).json({success:false,message:'OTP expired. Please request a new one'})
+}
+
     const otp = otp1 + otp2 + otp3 + otp4;
 
     if (otp !== req.session.otp) {
@@ -183,6 +197,9 @@ const postUpdateEmail = async (req, res) => {
   try {
     const userId = req.session.user;
     const { newEmail } = req.body;
+    if(!newEmail){
+      return res.status(STATUS_CODE.NOT_FOUND).json({success:false,message:"Email is not Found"})
+    }
     const emailExisting = await User.findOne({ email: newEmail });
     if (emailExisting) {
       return res
@@ -228,6 +245,48 @@ res.json({isBlocked:false})
   } 
 }
 
+const emailResendOtp = async (req,res)=>{
+  try {
+    console.log("user id is",req.session.user)
+    const userId = req.session.user
+    if(!userId){
+      return res.status(STATUS_CODE.BAD_REQUEST).json({ success: false, message: "User not logged in" });
+    }
+
+const user = await User.findById(userId);
+console.log("user foount ",user)
+
+if(!user){
+  return res.status(STATUS_CODE.NOT_FOUND).json({success:false,message:"User is not Found"})
+}
+
+const email = user.email  
+console.log("current email is ",email)
+    if (!email) {
+          return res.status(STATUS_CODE.NOT_FOUND).json({ success: false, message: "Email not found in session" });
+      }
+
+      const newOtp = generateOtp();
+      const sent = await sendVerificationEmail(email, newOtp);
+
+       if (!sent) {
+            return res.status(503).json({ success: false, message: "Failed to resend OTP" });
+        }
+console.log("resend email otp is ",newOtp);
+        req.session.otp = newOtp;
+        req.session.otpExpires = Date.now() + (60 * 1000);
+
+        return res.status(STATUS_CODE.SUCCESS).json({
+            success: true,
+            message: "OTP resent successfully",
+            otpExpires: req.session.otpExpires
+        });
+  } catch (error) {
+    console.log("Error in resend OTP", error);
+        return res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ success: false, message: "Server error" });
+  }
+}
+
 module.exports = {
   changePassword,
   postCurrentEmail,
@@ -236,5 +295,6 @@ module.exports = {
   postEmailEditOtp,
   getUpdateEmail,
   postUpdateEmail,
-  checkUserStatus
+  checkUserStatus,
+  emailResendOtp
 };
