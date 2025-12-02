@@ -170,8 +170,8 @@
             <button class="confirm-btn" type="submit">Confirm</button>
             </form>
            <div id="otpTimer" class="otp-timer">
-            <button type="button"    style="color: rgb(42, 34, 34); border: none; cursor: pointer;" onclick="resendOTP()">Resend OTP</button>
-            <span id="timerValue" style="color: red;">60</span>
+            <button type="button" id="resendBtn"   style="color: rgb(42, 34, 34); border: none; cursor: pointer;display: none;" onclick="resendOTP()">Resend OTP</button>
+            <span id="timerValue" style="color: red;"></span>
            </div>
 
             <a href="/login" class="back-link">Go back to Login page</a>
@@ -183,21 +183,40 @@
     
     <script>
 
-        let timer = 30;
         let timerInterval;
-
         function startTimer(){
-            timerInterval = setInterval(()=>{
-                timer--;
-                document.getElementById("timerValue").textContent = timer;
-                if(timer<=0){
+        clearInterval(timerInterval); 
+
+            let otpExpires  = Number(sessionStorage.getItem('otpExpires'))
+               
+            if (!otpExpires) {
+                showExpiredState();
+                return;
+            }
+         timerInterval = setInterval(()=>{
+           const remainingTime =  Math.floor((otpExpires - Date.now())/1000);
+       
+            if(remainingTime <= 0){
                     clearInterval(timerInterval);
-                    document.getElementById("timerValue").classList.add("expired");
-                    document.getElementById("timerValue").textContent = "Expired"
-                    document.getElementById("otp").disabled = true;
+                    showExpiredState();
+
+                    return;
                 }
-            },1000);
-        }
+                document.getElementById('resendBtn').style.display = 'none';
+                document.getElementById('timerValue').textContent = remainingTime;
+        },1000)
+
+    }
+    function showExpiredState() {
+    document.getElementById("timerValue").textContent = "Expired";
+    document.getElementById("resendBtn").style.display = "inline";
+
+    // Disable OTP inputs
+    document.querySelectorAll(".otp-input").forEach(i => i.disabled = true);
+}
+
+    startTimer()
+        
 
 document.querySelectorAll('.otp-input').forEach((input, index, inputs) => {
     input.addEventListener('input', () => {
@@ -214,7 +233,7 @@ document.querySelectorAll('.otp-input').forEach((input, index, inputs) => {
 });
 
 
-startTimer()
+
 
         document.getElementById("otpForm").addEventListener("submit", validateOTPForm);
 
@@ -247,6 +266,10 @@ startTimer()
                 console.log(response.message)
                
                 if (response.success) {
+
+                    sessionStorage.removeItem("otpExpires");     // ⬅ ADD
+                    sessionStorage.removeItem("otpStartTime");  
+
                     Swal.fire({
                         icon: "success",
                         title: response.message,
@@ -276,13 +299,17 @@ startTimer()
 
         
         async function resendOTP() {
+           
             clearInterval(timerInterval);
-            timer = 30;
-            document.getElementById('otp').disabled = false;
-            document.getElementById('timerValue').classList.remove("expired");
-            document.getElementById('timerValue').textContent = timer;
-            startTimer();
+           
+             // reset new timer start time
+            // sessionStorage.setItem("otpStartTime", Date.now());
+            // sessionStorage.setItem("otpExpires", Date.now() + 60 * 1000);
+            // startTimer()
+            // document.querySelectorAll(".otp-input").forEach(inp => inp.disabled = false);
+            // document.getElementById("timerValue").classList.remove("expired");
 
+         
             try {
                 const response = await fetch('/resend-Forgot-passwordOtp', {
                     method: "POST",
@@ -293,13 +320,20 @@ startTimer()
 
                 const data = await response.json();
 
-                if (response.ok) {
+                if (data.success) {
+
+                    sessionStorage.setItem("otpExpires", data.otpExpires);
+                    sessionStorage.setItem("otpStartTime", Date.now());
+
+                    document.querySelectorAll(".otp-input").forEach(inp => inp.disabled = false);
+                    startTimer()
+
                     Swal.fire({
                         icon: "success", 
                         title: "OTP Sent",
                         showConfirmButton: false,
                         timer: 1000
-                    })
+                    });
                 } else {
                     Swal.fire({
                         icon: "error",
@@ -317,6 +351,8 @@ startTimer()
 
             return false;
         }
+
+
 
     </script>
 </body>

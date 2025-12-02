@@ -65,22 +65,21 @@ const getForgotEmailOtp = async (req, res) => {
 //sset the timer
 const forgotEmailOtp = async (req, res) => {
   try {
+    console.log("generating otp")
     const { email } = req.body;
 
     if (!email) {
       return res.json({ success: false, message: "Email is required" });
     }
+    const findUser = await User.findOne({ email });
 
-    
-    const findUser = await User.findOne({ email: email });
-
+      if(!findUser){
+        return res.status(STATUS_CODE.BAD_REQUEST).json({success:false,message:"Email with User Not Found"})
+      }
      if(findUser.googleId){
       return res.status(STATUS_CODE.BAD_REQUEST).json({success:false,message:'"This account uses Google login. Password reset is not available."'})
      }
 
-    if(!findUser){
-      return res.status(STATUS_CODE.BAD_REQUEST).json({success:false,message:"Email with User Not Found"})
-    }
 
     if (findUser) {
       const otp = generateOtp();
@@ -90,11 +89,15 @@ const forgotEmailOtp = async (req, res) => {
       if (emailSent) {
          
         req.session.userOtp = otp;
-        req.session.email = email;
+        req.session.otpExpires = Date.now() + 60 * 1000;
+        req.session.email = email; 
 
         console.log("Forgot password OTP:", otp);
 
-        return res.status(STATUS_CODE.SUCCESS).json({success:true, message:'OTP Send Successfully'})
+        return res.status(STATUS_CODE.SUCCESS).json({success:true
+          , message:'OTP Send Successfully',
+          otpExpires:req.session.otpExpires
+        })
         
       } else {
         res.json({
@@ -115,31 +118,35 @@ const forgotEmailOtp = async (req, res) => {
     res.json({ success: false, message: "Server error occurred" });
   }
 };
-const verifyForgotPassOtp = async (req, res) => {
-  try {
-    
-    const { otp1, otp2, otp3, otp4 } = req.body;
-    const enteredOtp = otp1 + otp2 + otp3 + otp4;
-
-    if (enteredOtp === req.session.userOtp) {
+  const verifyForgotPassOtp = async (req, res) => {
+    try {
       
-      return res.json({ success: true, message: "OTP Verified Successfully" });
-    } else {
-      return res.json({ success: false, message: "OTP not Matching" });
+      const { otp1, otp2, otp3, otp4 } = req.body;
+      const enteredOtp = otp1 + otp2 + otp3 + otp4;
+
+      if(!req.session.otpExpires || Date.now() > req.session.otpExpires){
+        return res.json({success:false,message:"OTP has expired"})
+      }
+
+      if (enteredOtp !== req.session.userOtp) {
+      return res.json({ success: false, message: "Invalid OTP" });
     }
-  } catch (error) {
-    console.log("errror in the verifyForgotPassOtp", error);
-    return res
-      .status(STATUS_CODE.INTERNAL_SERVER_ERROR)
-      .json({ success: false, message: "An error Occured. Please try again" });
-  }
-};
+    return res.json({ success: true, message: "OTP Verified Successfully" });
+     
+    } catch (error) {
+      console.log("errror in the verifyForgotPassOtp", error);
+      return res
+        .status(STATUS_CODE.INTERNAL_SERVER_ERROR)
+        .json({ success: false, message: "An error Occured. Please try again" });
+    }
+  };
+
 const resendForgotOtp = async (req, res) => {
   try {
     
     const otp = generateOtp();
     req.session.userOtp = otp;
-  
+   req.session.otpExpires = Date.now() + 60 * 1000; // reset expiry
     const email = req.session.email;
     
     const emailSent = await sendVerificationEmail(email, otp);
@@ -148,7 +155,7 @@ const resendForgotOtp = async (req, res) => {
       console.log("Resend OTP For Forgot Password : ", otp);
       return res
         .status(STATUS_CODE.SUCCESS)
-        .json({ success: true, message: "OTP send Successfully" });
+        .json({ success: true, message: "OTP Resend Successfully",otpExpires:req.session.otpExpires });
     } else {
       return res
         .status(STATUS_CODE.NOT_FOUND)
