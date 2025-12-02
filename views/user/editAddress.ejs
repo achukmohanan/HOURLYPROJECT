@@ -261,7 +261,7 @@
                                         </label>
                                         <input type="tel" class="form-control" id="phone" name="phone" 
                                                value="<%= address.phone %>" required pattern="[0-9]{10}" maxlength="10">
-                                          
+                                          <div class="invalid-feedback"></div>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
@@ -298,6 +298,12 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
+         document.querySelectorAll(".form-control").forEach(input => {
+    input.addEventListener("input", () => {
+        input.classList.remove("is-invalid");
+        if (input.nextElementSibling) input.nextElementSibling.textContent = "";
+    });
+});
         
 document.getElementById('addressForm').addEventListener('submit',async function (event) {
         event.preventDefault()
@@ -352,21 +358,55 @@ document.getElementById('addressForm').addEventListener('submit',async function 
 
 
    function validateForm() {
-    const requiredFields = ["addressType", "name", "city", "landMark", "state", "pincode", "phone", "altPhone"];
+    let isValid = true;
 
-    for (let field of requiredFields) {
-        const input = document.getElementById(field);
-        if (input.value.trim() === "") {
-            Swal.fire({
-                icon: 'error',
-                title: 'Validation Error',
-                text: `Please fill the ${field} field.`
-            });
-            return false;
+    document.querySelectorAll(".invalid-feedback").forEach(div => div.textContent = "");
+    document.querySelectorAll(".form-control").forEach(input => input.classList.remove("is-invalid"));
+
+   
+
+
+    const fields = {
+        addressType:{required:true,min:2},
+        name:{required:true,min:2},
+        city: { required: true, min: 2 },
+        landMark: { required: true, min: 2 },
+        state: { required: true, min: 2 },
+        pincode:{required:true,regex:/^[0-9]{6}$/,message:'Pincode must be 6 digits' },
+        phone:{required:true,regex:/^[0-9]{10}$/, message:'phone number must be 10 digits'},
+        altPhone:{required:false,regex:/^[0-9]{10}$/,message:'Alt phone number must be 10 digits'}
+    };
+
+    for(let key in fields){
+        const input = document.getElementById(key);
+        const value = input.value.trim();
+        const rules = fields[key]
+        const errorDiv = input.nextElementSibling;
+
+        if(rules.required && value === ''){
+            errorDiv.textContent  = `${key} is required`;
+            input.classList.add('is-invalid');
+            isValid = false;
+            continue;
+        }
+
+        if(rules.regex && value !== "" && !rules.regex.test(value)){
+            errorDiv.textContent = rules.message;
+            input.classList.add('is-invalid');
+            isValid = false
+            continue;
+        }
+
+        if(rules.min && value.length < rules.min){
+            errorDiv.textContent =  `Minimum ${rules.min} characters required`;
+            input.classList.add('is-invalid');
+            isValid = false
+            continue
         }
     }
 
-    return true;
+    return isValid
+
 }
         
     </script>
