@@ -267,7 +267,10 @@ const userProfile = async (req, res) => {
 
     const coupons = await Coupon.find({
       isActive: true,
-      $or: [{ userId: { $in: [userId] } }, { userId: { $size: 0 } }],
+      expireOn:{$gt:new Date()},
+      $or: [
+        { userId: { $in: [userId] } },
+        { userId: { $size: 0 } }],
     }).sort({ createdOn: -1 });
 
     let referredName = null;
