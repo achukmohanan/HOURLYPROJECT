@@ -9,6 +9,7 @@ const nodemailer = require("nodemailer");
 const env = require("dotenv").config();
 const bcrypt = require("bcrypt");
 const { STATUS_CODE } = require("../../utils/statusCode");
+const { STATES } = require("mongoose");
 
 const pageNotFound = async (req, res) => {
   try {
@@ -217,32 +218,27 @@ const loadLogin = async (req, res) => {
 const login = async (req, res) => {
   try {
     const { email, password } = req.body;
-    console.log(req.body)
+
+    console.log("req.body is in login",req.body)
     const findUser = await User.findOne({ isAdmin: 0, email: email });
+
     if (!findUser) {
-      return res.render("user/login", { message: "User not found" });
+      return res.status(STATUS_CODE.NOT_FOUND).json({success:false,  message: "User not found" });
     }
     if (findUser.isBlocked) {
-      return res.render("user/login", { message: "User is blocked by Admin" });
+      return res.status(STATUS_CODE.BAD_REQUEST).json({success:false, message: "User is blocked by Admin" });
     }
 
     const passwordMatch = await bcrypt.compare(password, findUser.password);
     if (!passwordMatch) {
-      return res.render("user/login", { message: "Incorrect Password" });
+      return res.status(STATUS_CODE.BAD_REQUEST).json({success:false, message: "Incorrect Password" });
     }
     req.session.user = findUser._id;
-    if (req.session.user) {
-      console.log("redirect is working");
-      return res.redirect("/home");
-    } else {
-      console.log("redirect is not working");
-      return res.render("user/login");
-    }
+   
+    return res.json({ success: true });
   } catch (error) {
     console.log("login error", error);
-    res.render("user/login", {
-      message: "login failed. Please try again later",
-    });
+     return res.json({ success: false, message: "Server Error" });
   }
 };
 
