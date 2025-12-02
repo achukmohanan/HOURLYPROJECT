@@ -349,9 +349,9 @@
                                         <div class="coupon-card <%= isExpired ? ' expired-coupon' : '' %>">
                                     <p class="coupon-code"></p>
                                     <span id="copyCoupon"><strong><%= item.code %></strong></span>
-                                    <% if(!isExpired){%>
+                                   
                                     <i class="bi bi-copy" onClick="copyToCoupon()" style="cursor:pointer;" ></i> <br>
-                                    <%}%>
+                                   
                                     <small class="text-muted"><%= item.description%></small><br>
                                     <small class="text-muted"><%= item.expireOn.toLocaleString('en-IN') %></small><br>
                                     <small class="text-muted"><%= item.couponType %></small><br>
