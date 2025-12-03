@@ -333,9 +333,11 @@ document.getElementById('addressForm').addEventListener('submit',async function 
                 title: 'Success!',
                 text: result.message,
                 timer: 2000,
-                showConfirmButton: false
+                showConfirmButton: false,
+                timer:2000,
+                timerProgressBar:true
             }).then(()=>{
-                window.location.href="/account"
+                window.location.href="/account?address=&tab=address"
             })
         }else{
             Swal.fire({

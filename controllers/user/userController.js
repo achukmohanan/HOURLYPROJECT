@@ -230,6 +230,7 @@ const login = async (req, res) => {
     }
 
     const passwordMatch = await bcrypt.compare(password, findUser.password);
+    
     if (!passwordMatch) {
       return res.status(STATUS_CODE.BAD_REQUEST).json({success:false, message: "Incorrect Password" });
     }

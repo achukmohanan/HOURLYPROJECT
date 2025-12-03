@@ -154,7 +154,7 @@
   </style>
 </head>
 <body>
-  <form id="loginForm">
+  <form id="loginForm" novalidate>
     <div class="login-container">
       <!-- Left: Login Form -->
       <div class="left-section">
@@ -164,8 +164,8 @@
           Login with Google
         </a>
         <div class="divider"><span>or</span></div>
-        <input type="email" name="email" placeholder="Email" required />
-        <input type="password" name="password" placeholder="Password" required />
+        <input type="email" name="email" placeholder="Email"  >
+        <input type="password" name="password" placeholder="Password"  >
 
         <a href="/forgotpassword" class="forgotpass">Forgot password?</a>  
         <button type="submit" class="login-btn">Login</button>
@@ -196,6 +196,10 @@
         password:formData.get('password')
       }
 
+      const isValid  = validateLogin(data);
+
+      if(!isValid) return; 
+      
       try {
         const response = await fetch('/login',{
           method:'post',
@@ -238,6 +242,48 @@
         confirmButtonText:"OK"
       })
     }
+
+    function validateLogin({email,password}){
+    
+      if(!email){
+        Swal.fire({
+          icon:'error',
+          title:'Email Required!',
+          text:'Please enter the email'
+        });
+        return false;
+      }
+
+      const emailpattern =  /^[^\/\s@]+@[^\/\s@]+\.[^\/\s@]+$/;
+
+      if(!emailpattern.test(email)){
+        Swal.fire({
+            icon: "warning",
+            title: "Invalid Email",
+            text: "Please enter a valid email address."
+        });
+        return false;
+      }
+
+        if (!password) {
+        Swal.fire({
+            icon: "warning",
+            title: "Password Required",
+            text: "Please enter your password."
+        });
+        return false;
+    }
+
+    if (password.length < 6) {
+        Swal.fire({
+            icon: "warning",
+            title: "Weak Password",
+            text: "Password must be at least 6 characters."
+        });
+      return false
+    }
+    return true
+  }
   </script>
 </body>
 </html>
