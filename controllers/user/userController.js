@@ -146,8 +146,7 @@ async function sendVerificationEmail(email, otp) {
 const signup = async (req, res) => {
   try {
     const { name, phone, email, password, cPassword, referalcode } = req.body;
-    console.log("referal code is ", referalcode);
-
+    
     if (password !== cPassword) {
       return res.status(STATUS_CODE.BAD_REQUEST).json({
         success: false,
@@ -219,7 +218,7 @@ const login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    console.log("req.body is in login",req.body)
+   
     const findUser = await User.findOne({ isAdmin: 0, email: email });
 
     if (!findUser) {
