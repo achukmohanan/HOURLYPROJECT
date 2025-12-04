@@ -8,6 +8,7 @@ const { STATUS_CODE } = require("../../utils/statusCode");
 const changePassword = async (req, res) => {
   try {
     const user = req.session.user;
+    console.log("alert")
     //  console.log("userId from session",user)
     const userId = await User.findById(user);
     if (userId.password === undefined) {

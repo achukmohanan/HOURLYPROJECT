@@ -1566,5 +1566,9 @@ img {
         font-size: 14px;
     }
 }
-
+.error-message {
+    color: red;
+    font-size: 14px;
+    margin-top: 3px;
+}
 /* ==================== END OF RESPONSIVE CSS ==================== */
