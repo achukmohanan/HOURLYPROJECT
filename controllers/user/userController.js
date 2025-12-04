@@ -150,7 +150,7 @@ const signup = async (req, res) => {
     if (password !== cPassword) {
       return res.status(STATUS_CODE.BAD_REQUEST).json({
         success: false,
-        message: "Password does not Match",
+        message: "Password do not Match",
       });
     }
     const findUser = await User.findOne({ email });
@@ -179,7 +179,6 @@ const signup = async (req, res) => {
     }
     req.session.userOtp = otp;
     req.session.userOtpExpires = Date.now() +  (60 * 1000);
-
     req.session.userData = { name, phone, email, password, referalcode };
 
     console.log("Signup Otp sent", otp);
@@ -189,21 +188,11 @@ const signup = async (req, res) => {
       .json({ success: true, message: "Otp send Successfully...!" });
   } catch (error) {
     console.log("signup error", error);
-    res.redirect("/pagenotfound");
+    return res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({success:false,message:"Internal Server Happened,Please Try Again!"});
   }
-  const otpSent = true;
-  if (otpSent) {
-    return res.json({
-      success: true,
-      message: "OTP sent to your Email",
-    });
-  } else {
-    return res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({
-      success: false,
-      message: "Failed to sent OTP,Please try again",
-    });
-  }
-};
+}
+
+
 
 const loadLogin = async (req, res) => {
   try {
