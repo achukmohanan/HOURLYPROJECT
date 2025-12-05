@@ -273,14 +273,27 @@ const unblockProduct = async (req, res) => {
 const getEditProduct = async (req, res) => {
   try {
     const id = req.query.id;
-    const product = await Product.findOne({ _id: id });
+    const product = await Product.findOne({ _id: id }).populate("category");
     const category = await Category.find({});
     const brand = await Brand.find({});
+
+    let saleprice = 0;
+
+    const productOffer = product.productOffer || 0;
+    const categoryOffer = product.category?.categoryOffer || 0;
+    const hasOffer = productOffer > 0 || categoryOffer > 0;
+    if( productOffer > 0 || categoryOffer > 0){
+      const maxOffer = Math.max(productOffer,categoryOffer);
+      saleprice = product.regularPrice - (product.regularPrice * maxOffer /100);
+    }
+    console.log('saleprice is',saleprice)
 
     res.render("admin/editproduct", {
       product: product,
       cat: category,
       brand: brand,
+      salePrice:saleprice,
+      hasOffer:hasOffer
     });
   } catch (error) {
     console.log("error in the get edit page ", error);
@@ -292,7 +305,7 @@ const editProduct = async (req, res) => {
   try {
     const id = req.params.id;
     const data = req.body;
-
+console.log("reqq is ",data)
       
     if (!data || !data.productName) {
       return res.json({ success: false, message: "Invalid request" });
@@ -323,7 +336,7 @@ const editProduct = async (req, res) => {
       brand: data.brand || "",
       category: data.category || null,
       regularPrice: data.regularPrice || 0,
-      salePrice: data.salePrice || 0,
+      // salePrice: data.salePrice || 0,
       quantity: data.quantity || 0,
       color: data.color || "",
       productImage: finalImages

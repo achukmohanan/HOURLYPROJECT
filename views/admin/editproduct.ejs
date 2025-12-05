@@ -267,11 +267,13 @@
                                         <input placeholder="$" name="regularPrice" type="number" value="<%=product.regularPrice %>" class="form-control">
                                         <div id="regularPrice-error" class="error-message"></div>
                                     </div>
+                                    <% if(hasOffer){ %>
                                     <div class="col-lg-4 mb-4">
                                         <label class="form-label">Sale price</label>
-                                        <input name="salePrice" type="number" value="<%= product.salePrice %>" class="form-control">
+                                        <input name="salePrice" type="number" value="<%= salePrice %>" class="form-control" readonly>
                                         <div id="salePrice-error" class="error-message"></div>
                                     </div>
+                                  <% } %>
                                     <div class="col-lg-4 mb-4">
                                         <label class="form-label">Quantity</label>
                                         <input name="quantity" type="number" value="<%= product.quantity%>" class="form-control">
@@ -532,7 +534,7 @@ function validateForm() {
   const name = document.getElementsByName('productName')[0].value.trim();
   const description = document.getElementsByName('description')[0].value.trim();
   const price = document.getElementsByName('regularPrice')[0].value;
-  const saleprice = document.getElementsByName('salePrice')[0].value;
+
   const color = document.getElementsByName('color')[0].value.trim();
   const quantity = document.getElementsByName('quantity')[0].value;
   const hasExistingImages  = document.querySelectorAll(".imageDatas").length > 0;
@@ -554,10 +556,7 @@ function validateForm() {
     displayErrorMessage('regularPrice-error', 'Please enter a valid non-negative price.');
     isValid = false;
   }
-  if (saleprice !== '' && (!/^\d+(\.\d{1,2})?$/.test(saleprice) || parseFloat(saleprice) < 0)) {
-    displayErrorMessage('salePrice-error', 'Please enter a valid non-negative sale price.');
-    isValid = false;
-  }
+  
   if (!color) {
     displayErrorMessage('color-error', 'Please enter a color.');
     isValid = false;
@@ -598,7 +597,7 @@ async function validateAndSubmit() {
     brand: document.getElementsByName("brand")[0].value,
     category: document.getElementsByName("category")[0].value,
     regularPrice: document.getElementsByName("regularPrice")[0].value,
-    salePrice: document.getElementsByName("salePrice")[0].value,
+
     quantity: document.getElementsByName("quantity")[0].value,
     color: document.getElementsByName("color")[0].value.trim(),
     existingImages: [],
