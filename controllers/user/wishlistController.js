@@ -24,7 +24,7 @@ const postWishList = async (req, res) => {
   try {
     const userId = req.session.user;
     const { productId } = req.body;
-    console.log("productId is ", productId);
+   
 
     if (!productId) {
       return res

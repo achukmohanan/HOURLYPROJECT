@@ -118,6 +118,7 @@ const loadShoppingpage = async (req, res) => {
     }
 
     const products = await Product.find(filterQuery)
+      // .collation({ locale: "en", strength: 2 }) 
       .sort(sortQuery)
       .skip(skip)
       .limit(limit);
@@ -137,7 +138,7 @@ const loadShoppingpage = async (req, res) => {
 if (checkwishlist) {
   wishlistProductIds = checkwishlist.products.map(item => item.productId.toString())
 }
-console.log("wishlistProductIds is ssssssssssssssss",wishlistProductIds)
+
    }
     res.render("user/shop", {
       user: userData,
@@ -155,7 +156,7 @@ console.log("wishlistProductIds is ssssssssssssssss",wishlistProductIds)
       wishlistProductIds
     });
   } catch (error) {
-    console.error("error happemd in view image ", error);
+    console.error("error happened in load  shop  controller ", error);
   }
 };
 

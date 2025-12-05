@@ -973,6 +973,10 @@
             <input type="hidden" name="price" value="<%=selectedPrice%>">
           <% } %>
 
+          <% if (searchQuery) { %>
+            <input type="hidden" name="query" value="<%= searchQuery %>">
+          <% } %>
+          
             <select class="sort-dropdown" name="sort" onchange="this.form.submit()">
               <option value="default" <%= sortOption === 'default' ? 'selected' : '' %>>Default sorting</option>
               <option value="price-low" <%= sortOption === 'price-low' ? 'selected' : '' %>>Price: Low to High</option>
@@ -991,6 +995,8 @@
         <div class="product-list-container">
           <aside class="sidebar" id="filterSidebar"> 
             <form action="/shop" method="get" id="filterForm">
+
+              
             <div class="filter-section">
               <div class="filter-title">Categories</div>
               <div class="category-brand-container">
@@ -1117,7 +1123,7 @@
 
         if(selectedBrand && selectedBrand.length > 0){
           selectedBrand.forEach(brand =>{
-            selectedBrand+= `&brand=${encodeURIComponent(brand)}`;
+            queryParam += `&brand=${encodeURIComponent(brand)}`;
           })
         }
 
