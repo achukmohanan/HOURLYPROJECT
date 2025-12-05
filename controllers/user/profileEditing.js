@@ -8,7 +8,7 @@ const { STATUS_CODE } = require("../../utils/statusCode");
 const changePassword = async (req, res) => {
   try {
     const user = req.session.user;
-    console.log("alert")
+   
     //  console.log("userId from session",user)
     const userId = await User.findById(user);
     if (userId.password === undefined) {
@@ -21,10 +21,7 @@ const changePassword = async (req, res) => {
         });
     }
     const { currentPassword, newPassword, confirmPassword } = req.body;
-    console.log("currentPassword", currentPassword);
-    console.log("newPassword", newPassword);
-
-    console.log("user from data base", userId);
+   
     if (!userId) {
       return res
         .status(STATUS_CODE.BAD_REQUEST)
