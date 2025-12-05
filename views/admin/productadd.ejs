@@ -265,11 +265,7 @@
                                         <input placeholder="0.00" name="regularPrice" type="number" step="0.01" class="form-control">
                                         <div id="regularPrice-error" class="error-message"></div>
                                     </div>
-                                    <div class="col-lg-4 mb-4">
-                                        <label class="form-label">Sale Price</label>
-                                        <input placeholder="0.00" name="salePrice" type="number" step="0.01" class="form-control">
-                                        <div id="salePrice-error" class="error-message"></div>
-                                    </div>
+                                   
                                     <div class="col-lg-4 mb-4">
                                         <label class="form-label">Quantity</label>
                                         <input placeholder="0" name="quantity" type="number" class="form-control">
@@ -576,23 +572,27 @@ if (successMessage) {
         // Validation functions
         async function validateAndSubmit() {
             const url = 'https://api.cloudinary.com/v1_1/dbl2eazti/image/upload';
-            const formData = new FormData();
+             const promises = [];
+
+            // const formData = new FormData();
             const files = Object.values(croppedImages).map(d=>d.file)
-            const promises = []
-             for(let i = 0; i < files.length; i++) {
-                let file = files[i];
-                formData.append('file', file);
-                formData.append('cloud_name', "dbl2eazti");
-                formData.append('upload_preset', 'hourly');
+        
+             for(let file of files) {
+                const  fd = new FormData()
+                fd.append('file', file);
+                
+                fd.append('upload_preset', 'hourly');
 
-                promises.push(fetch(url, {method: 'POST',body: formData,}))
+                promises.push(fetch(url, { method: "POST", body: fd }).then(r => r.json()));
             }
+            
 
-            const headers = await Promise.all(promises)
-            const result_jsons = headers.map(h=>h.json());
-            const result = await Promise.all(result_jsons);
-            const urls = result.map(res=>res.secure_url);
+            const results = await Promise.all(promises);
+            const urls = results.map(r => r.secure_url);
             document.getElementById("imgurls").value = urls
+
+           
+            
             if (validateForm()) {
                 document.forms[0].submit();
 
@@ -607,7 +607,7 @@ if (successMessage) {
             const brand = document.getElementsByName('brand')[0].value;
             const category = document.getElementsByName('category')[0].value;
             const regularPrice = document.getElementsByName('regularPrice')[0].value;
-            const salePrice = document.getElementsByName('salePrice')[0].value;
+            
             const quantity = document.getElementsByName('quantity')[0].value;
             const color = document.getElementsByName('color')[0].value;
             
@@ -650,16 +650,13 @@ if (successMessage) {
             }
             
             // Sale price validation
-            if (!/^\d+(\.\d{1,2})?$/.test(salePrice) || parseFloat(salePrice) < 0) {
-                displayErrorMessage('salePrice-error', 'Please enter a valid non-negative price.');
-                isValid = false;
-            }
+           
             
             // Price comparison
-            if (parseFloat(regularPrice) <= parseFloat(salePrice)) {
-                displayErrorMessage('salePrice-error', 'Sale price must be less than regular price.');
-                isValid = false;
-            }
+            // if (parseFloat(regularPrice) <= parseFloat(salePrice)) {
+            //     displayErrorMessage('salePrice-error', 'Sale price must be less than regular price.');
+            //     isValid = false;
+            // }
             
             // Quantity validation
             if (!/^\d+$/.test(quantity) || parseInt(quantity) < 0) {
