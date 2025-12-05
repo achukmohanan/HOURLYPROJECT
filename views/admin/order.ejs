@@ -171,7 +171,7 @@
                             <td>
                                 <% order.orderedItems.forEach(item => { %>
                                     <%= item.quantity %>  
-                                    <%= item.product.productName ? item.product.productName : '' %> <br>
+                                    <%= item.product ? item.product._id : '' %> <br>
                                     <% }) %>
                             </td>
                             <td>₹<%= order.totalPrice%></td>

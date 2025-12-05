@@ -85,7 +85,7 @@ router.get("/editProduct", adminAuth, productController.getEditProduct);
 router.post("/editProduct/:id",adminAuth,productController.editProduct);
 
 router.post("/deleteImage", adminAuth, productController.deleteSingleImage);
-router.delete("/deleteProduct/:id", adminAuth, productController.deleteProduct);
+
 
 //order management
 router.get("/order", adminAuth, orderController.getOrderPage);

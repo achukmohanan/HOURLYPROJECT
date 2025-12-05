@@ -213,7 +213,7 @@
                         <th scope="col">Quantity</th>
                         <th scope="col">Status</th>
                         <th scope="col">Edit</th>
-                        <th scope="col">Delete</th>
+                        <!-- <th scope="col">Delete</th> -->
                     </tr>
                 </thead>
                 <tbody>
@@ -260,12 +260,7 @@
                                 <a href="/admin/editProduct?id=<%=data[i]._id %>" class="text-sucess">Edit</a>
                             </button>
                         </td>
-                        <td>
-
-                            <button type="submit" class="action-btn btn-danger" onclick="confirmDelete('<%=data[i]._id %>')">Delete
-                            </button>
-                                <!-- <a href="/admin/deleteProduct?id=<%=data[i]._id %>" class="text-sucess">Delete</a> -->
-                        </td>
+                       
                     </tr>
                 <%}%>
                 </tbody>
@@ -455,36 +450,5 @@ function confirmUnblock(productId){
 });
 }
 
-function confirmDelete(productId){
-    Swal.fire({
-        title:"Are you Sure?",
-        text:"You want to delete this Product?",
-        icon:"Warning",
-        showCancelButton:true,
-        confirmButtonColor:'#d33',
-        cancelButtonColor: '#3085d6',
-        confirmButtonText: 'Yes, delete it!'
-    }).then((result)=>{ 
-        if(result.isConfirmed){         
-            fetch(`/admin/deleteProduct/${productId}`,{
-               method:'DELETE',
-                headers:{
-                   'Content-Type':'application/json' 
-                }
-            })
-            .then(res =>{
-                if(res.ok){
-                    Swal.fire('success','Deleted, This product has been Deleted' ).then(()=>{
-                        location.reload();
-                    });
-                }else{
-                    Swal.fire('Error', 'Something went wrong', 'error');
-                }
-            })
-            .catch(err => {
-          Swal.fire('Error', 'Server error', 'error');
-        });
-        }
-    })
-}
+
 </script>

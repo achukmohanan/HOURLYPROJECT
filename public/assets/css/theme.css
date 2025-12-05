@@ -4429,7 +4429,7 @@ fieldset:disabled .btn {
 
 .dropdown-item:hover, .dropdown-item:focus {
   color: #3b3b3b;
-  background-color: #ed4444;
+  background-color: #F5F5F5;
 }
 
 .dropdown-item.active, .dropdown-item:active {
@@ -4492,7 +4492,7 @@ fieldset:disabled .btn {
 }
 
 .dropdown-menu-dark .dropdown-item-text {
-  color: #c69556;
+  color: #EEEEEE;
 }
 
 .dropdown-menu-dark .dropdown-header {

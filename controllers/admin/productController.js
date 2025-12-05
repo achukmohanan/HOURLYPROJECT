@@ -353,23 +353,7 @@ const deleteSingleImage = async (req, res) => {
   }
 
 
-const deleteProduct = async (req, res) => {
-  try {
-    const deleted = await Product.findByIdAndDelete(req.params.id);
-    if (!deleted) {
-      return res
-        .status(STATUS_CODE.NOT_FOUND)
-        .json({ error: "Product not Found" });
-    }
 
-    res.status(STATUS_CODE.SUCCESS).json({ message: "Deleted" });
-  } catch (error) {
-    console.log("error happened in  Delete product:", error);
-    res
-      .status(STATUS_CODE.INTERNAL_SERVER_ERROR)
-      .json({ error: "Internal server error" });
-  }
-};
 module.exports = {
   getProductAddPage,
   addProducts,
@@ -381,5 +365,5 @@ module.exports = {
   getEditProduct,
   editProduct,
   deleteSingleImage,
-  deleteProduct,
+  
 };
