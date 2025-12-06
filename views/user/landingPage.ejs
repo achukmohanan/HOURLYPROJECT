@@ -67,7 +67,9 @@
                 <div class="product-img">
                    
                   <a href="/productDetails?id=<%=products[i]._id %>">
-                  
+                  <% if(products[i].productOffer){%>
+                    <div class="offer-badge1 "><%= products[i].productOffer %>% OFF</div>
+                   <% } %>
                     <img class="default-img img-fluid rounded-3 shadow-lg" 
                          src="<%= products[i].productImage[0]%>" 
                          alt="<%=products[i].productName %>"
@@ -82,16 +84,24 @@
               <div class="product-content-wrap">
                 <div class="product-info">
                   
-                  <h5 class="product-name text-dark text-center"><%=products[i].productName %></h5>
-                  <div class="product-price">
-                    <h5 class="price text-dark d-flex justify-content-center" >₹  <%=products[i].salePrice.toLocaleString('en-IN') %></h5>
-                    
-                    <% if(products[i].regularPrice && products[i].regularPrice > products[i].salePrice ) { %>
-                      <span class="old-price text-muted text-decoration-line-through d-flex justify-content-center">
-                       ₹  <%=products[i].regularPrice.toLocaleString('en-IN') %>
-                      </span>
-                    <% } %>
-                  </div>
+                  <h5 class="product-name text-muted text-center"><%=products[i].productName %></h5>
+
+                        <div class="product-price d-flex justify-content-center align-items-center gap-2">
+        <% if (products[i].biggestOffer > 0) { %>
+            <span class="sale-price fw-bold text-dark">
+              ₹<%= products[i].salePrice.toLocaleString('en-IN') %>
+            </span>
+
+            <span class="old-price text-muted text-decoration-line-through">
+              ₹<%= products[i].regularPrice.toLocaleString('en-IN') %>
+            </span>
+        <% } else { %>
+            <span class="regular-price fw-bold text-dark">
+              ₹<%= products[i].regularPrice.toLocaleString('en-IN') %>
+            </span>
+        <% } %>
+      </div>
+
                 </div>
                 
                 <div class="product-actions mt-3  d-flex justify-content-center">

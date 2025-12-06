@@ -1094,10 +1094,17 @@
                     <div class="product-info">
                       <div class="product-brand"><%= products[i].brand %></div>
                       <h4><%= products[i].productName %></h4>
+
                       <div class="product-price-wrapper">
+                        <% if(products[i].biggestOffer > 0){%>
                         <span class="product-price">₹<%= products[i].salePrice.toLocaleString('en-IN') %></span>
                         <span class="product-regular-price">₹<%= products[i].regularPrice.toLocaleString('en-IN') %></span>
+                        <% }else{%>
+                        <span class="product-price">₹<%= products[i].regularPrice.toLocaleString('en-IN') %></span>
+                        <%}%>
                       </div>
+
+
                     </div>
                   </a>
                   <% if(user) { %>

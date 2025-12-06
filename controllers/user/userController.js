@@ -21,35 +21,43 @@ const pageNotFound = async (req, res) => {
 
 const landingPage = async (req, res) => {
   try {
-    const userId = req.session.user;
+    
     const categories = await Category.find({ isListed: true });
     let productData = await Product.find({
       isBlocked: false,
       category: { $in: categories.map((category) => category._id) },
       quantity: { $gt: 0 },
     })
+    .populate('category')
     .sort({createdAt:-1})
     .limit(4)
 
-    const brand = await Brand.find({ isBlocked: false });
+    productData = productData.map(product => {
+      const productOffer = product.productOffer || 0;
+      const categoryOffer = product.categoryOffer || 0;
 
-    if (userId) {
-      const userData = await User.findById(userId);
-      res.render("user/landingPage", {
-        user: userData,
-        products: productData,
-        brand: brand,
-      });
-    } else {
+      const biggestOffer = Math.max(productOffer,categoryOffer);
+
+      let salePrice = product.regularPrice;
+      if(biggestOffer > 0){
+        salePrice = product.regularPrice - (product.regularPrice * biggestOffer)/100
+      }
+      return {
+        ...product.toObject(),
+        biggestOffer,
+        salePrice
+      }
+    })
+
+
+    const brand = await Brand.find({ isBlocked: false });
+ 
       return res.render("user/landingPage", {
         products: productData,
         brand: brand,
       });
-    }
-   
   } catch (error) {
     console.log("error in the landing page ",error);
-    
   }
 };
 
@@ -61,9 +69,27 @@ const loadHomepage = async (req, res) => {
       isBlocked: false,
       category: { $in: categories.map((category) => category._id) },
       quantity: { $gt: 0 },
-    });
-    productData.sort((a, b) => new Date(b.createdOn) - new Date(a.createdOn));
-    productData = productData.slice(0, 4);
+    })
+    .populate('category')
+    .sort({createdAt:-1})
+    .limit(4)
+    productData = productData.map(product => {
+      const productOffer = product.productOffer || 0;
+      const categoryOffer = product.categoryOffer || 0;
+
+      const biggestOffer = Math.max(productOffer,categoryOffer);
+
+      let salePrice = product.regularPrice;
+      if(biggestOffer > 0){
+        salePrice = product.regularPrice - (product.regularPrice * biggestOffer)/100
+      }
+      return {
+        ...product.toObject(),
+        biggestOffer,
+        salePrice
+      }
+    })
+
     const brand = await Brand.find({
       isBlocked: false,
     });
@@ -73,15 +99,11 @@ const loadHomepage = async (req, res) => {
     let cartCount = cart ? cart.items.length : 0;
     let wishlistCount = wishlist ? wishlist.products.length : 0;
 
-    // console.log("cart Count",cartCount);
-    // console.log("wishlist Count",wishlistCount);
 
     req.session.cartCount = cartCount;
     req.session.wishlistCount = wishlistCount;
 
-    // console.log(" req.session.cartCount is ", req.session.cartCount)
-    // console.log(" req.session.wishlistCount is", req.session.wishlistCount)
-
+    
     if (userId) {
       const userData = await User.findById(userId);
       res.render("user/home", {

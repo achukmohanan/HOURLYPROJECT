@@ -59,12 +59,12 @@ const loadShoppingpage = async (req, res) => {
 
     const categories = await Category.find({ isListed: true });
     const brands = await Brand.find({ isBlocked: false });
-    const categoryIds = categories.map((category) => category._id.toString());
+
+
+    // const categoryIds = categories.map((category) => category._id.toString());
 
     //get filters from query
-    const selectedCategories = req.query.category
-      ? [].concat(req.query.category)
-      : [];
+    const selectedCategories = req.query.category ? [].concat(req.query.category): [];
     const selectedBrand = req.query.brand ? [].concat(req.query.brand) : [];
     const selectedPrice = req.query.price || "";
 
@@ -72,6 +72,7 @@ const loadShoppingpage = async (req, res) => {
     const page = parseInt(req.query.page) || 1;
     const limit = 9;
     const skip = (page - 1) * limit;
+
     //sort
     const sortOption = req.query.sort || "default";
     let sortQuery = {};
@@ -86,50 +87,117 @@ const loadShoppingpage = async (req, res) => {
       sortQuery = { productName: -1 };
     }
 
-    let filterQuery = { isBlocked: false };
+    let filterMatch  = { isBlocked: false };
 
     if (selectedCategories.length > 0) {
-      filterQuery.category = { $in: selectedCategories };
-    }
-    if (selectedBrand.length > 0) {
-      filterQuery.brand = { $in: selectedBrand };
+      filterMatch.category = { $in: selectedCategories.map(id => new mongoose.Types.ObjectId(id)) };
     }
 
-    if (selectedPrice) {
-      if (selectedPrice === "under5000") {
-        filterQuery.salePrice = { $lt: 5000 };
-      } else if (selectedPrice === "under5000to10000") {
-        filterQuery.salePrice = { $gte: 5000, $lte: 10000 };
-      } else if (selectedPrice === "under10000to20000") {
-        filterQuery.salePrice = { $gte: 10000, $lte: 20000 };
-      } else if (selectedPrice === "above20000") {
-        filterQuery.salePrice = { $gte: 20000 };
-      }
+    if (selectedBrand.length > 0) {
+      filterMatch.brand = { $in: selectedBrand };
     }
 
     //search
 
     const searchQuery = req.query.query ? req.query.query.trim() : "";
     if (searchQuery) {
-      filterQuery.$or = [
+      filterMatch.$or = [
         { productName: { $regex: searchQuery, $options: "i" } },
         { brand: { $regex: searchQuery, $options: "i" } },
       ];
     }
+    //aggregation
 
-    const products = await Product.find(filterQuery)
-      // .collation({ locale: "en", strength: 2 }) 
-      .sort(sortQuery)
-      .skip(skip)
-      .limit(limit);
+    const productPipeLine = [
+      {$match:filterMatch},
+      //category offer
 
-    const totalProducts = await Product.countDocuments(filterQuery);
+      {
+        $lookup:{
+          from:'categories',
+          localField:'category',
+          foreignField:'_id',
+          as:'categoryData'
+        }
+      },
+
+      {$unwind : '$categoryData'},
+
+      // biggest offer
+      {
+        $addFields:{
+          biggestOffer:{
+            $max:['$productOffer','$categoryData.categoryOffer']
+          }
+        }
+      },
+
+      // salePrice
+      {
+        $addFields:{
+          salePrice:{
+            $cond:[
+              {$gt:['$biggestOffer',0]},
+              {
+                $round:[{
+                  $subtract:[
+                    '$regularPrice',
+                    {
+                      $multiply:[
+                        '$regularPrice',
+                        {$divide:['$biggestOffer',100]}
+                      ]
+                    }
+                  ]
+                },0]
+              },
+              "$regularPrice"
+            ]
+          }
+        }
+      }
+
+    ];
+  // PRICE FILTER (after sale price calculation)  
+    if(selectedPrice){
+      if(selectedPrice === "under5000"){
+        productPipeLine.push({$match:{salePrice:{$lt:5000}}});
+      }else if(selectedPrice === 'under5000to10000'){
+        productPipeLine.push({$match:{salePrice:{$gte:5000,$lte:10000}}});
+      }else if(selectedPrice === 'under10000to20000'){
+        productPipeLine.push({$match:{salePrice:{$gte:10000,$lte:20000}}});
+      }else if(selectedPrice === 'above20000'){
+        productPipeLine.push({$match:{salePrice:{$gt:20000}}});
+      }
+    }
+
+    //sort
+
+    if(Object.keys(sortQuery).length > 0){
+      productPipeLine.push({$sort:sortQuery});
+    }
+
+     // Pagination
+     productPipeLine.push({$skip:skip})
+     productPipeLine.push({$limit:limit})
+
+
+
+
+    const products = await Product.aggregate(productPipeLine);
+
+   // For total count (without pagination)
+    const countPipeline = [...productPipeLine];
+    countPipeline.splice(countPipeline.length - 2, 2); // remove skip + limit
+    const totalProducts = (await Product.aggregate(countPipeline)).length
     const totalPages = Math.ceil(totalProducts / limit);
 
-    const categoriesWithIds = categories.map((c) => ({
-      _id: c._id,
-      name: c.name,
-    }));
+    // const totalProducts = await Product.countDocuments(filterQuery);
+
+    // const categoriesWithIds = categories.map((c) => ({
+    //   _id: c._id,
+    //   name: c.name,
+    // }));
 
     let wishlistProductIds = []
    if(user){
@@ -143,7 +211,7 @@ if (checkwishlist) {
     res.render("user/shop", {
       user: userData,
       products: products,
-      category: categoriesWithIds,
+      category: categories.map(c => ({ _id: c._id, name: c.name })),
       brand: brands,
       totalProducts: totalProducts,
       currentPage: page,
