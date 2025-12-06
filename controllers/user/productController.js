@@ -13,9 +13,8 @@ const productDetails = async (req, res) => {
 
     const productId = req.query.id;
     const product = await Product.findById(productId).populate("category");
-    const findCategory = product.category;
-    const categoryOffer = findCategory?.categoryOffer || 0;
-    const productOffer = product.productOffer || 0;
+    // const findCategory = product.category;
+    
     // const totalOffer = categoryOffer + productOffer;
 
     if (!product) {
@@ -24,13 +23,17 @@ const productDetails = async (req, res) => {
         .json({ success: false, message: "Product Not Found" });
     }
 
-    let productOffers = null;
-    let categoryOffers = null;
-    if (categoryOffer > productOffer) {
-      categoryOffers = categoryOffer;
-    } else {
-      productOffers = productOffer;
+    const categoryOffer = product.category?.categoryOffer || 0;
+    const productOffer = product.productOffer || 0;
+
+    const biggestOffer = Math.max(categoryOffer,productOffer);
+
+    let salePrice = product.regularPrice;
+
+    if(biggestOffer > 0){
+      salePrice=Math.round(product.regularPrice - (product.regularPrice * biggestOffer)/100);
     }
+   
     const relatedProducts = await Product.find({
       _id: { $ne: product._id },
       $or: [{ category: product.category._id }, { brand: product.brand }],
@@ -41,9 +44,9 @@ const productDetails = async (req, res) => {
       user: userData,
       product,
       quantity: product.quantity,
-      categoryOffers,
-      productOffers,
-      category: findCategory,
+      biggestOffer,
+      salePrice,
+      category: product.category,
       relatedProducts,
     });
   } catch (error) {

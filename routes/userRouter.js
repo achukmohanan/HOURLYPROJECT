@@ -103,7 +103,7 @@ router.get("/updateEmail", userAuth, profileEditing.getUpdateEmail);
 router.post("/updateEmail", userAuth, profileEditing.postUpdateEmail);
 
 //product management
-router.get("/productDetails", productController.productDetails);
+router.get("/productDetails", cartWishlistCount,productController.productDetails);
 router.get("/shop",cartWishlistCount, productController.loadShoppingpage);
 
 // cart

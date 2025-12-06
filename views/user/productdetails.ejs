@@ -83,17 +83,34 @@
                                                 
                                             </div>
 
-                                            <div class="product-price mb-2">
-                                                <span class="text-brand fs-4 fw-bold">₹   <%=product.salePrice.toLocaleString('en-IN') %></span>
-                                                <del class="text-muted ms-3"><%=product.regularPrice.toLocaleString('en-IN') %></del>
-                                                <span class="offer-badge-product">
-                                                <% if(productOffers){ %>
-                                                   Product  <%= productOffers %> % Offer
-                                                <% } else if(categoryOffers) { %>
-                                                   Category <%= categoryOffers %>% Offer
-                                                <% } %>
-                                                </span>
-                                            </div>
+                                        <div class="product-price mb-2">
+
+                                <% if (biggestOffer > 0) { %>
+                                    <!-- Show Sale Price -->
+                                    <span class="text-brand fs-4 fw-bold">
+                                        ₹ <%= salePrice.toLocaleString('en-IN') %>
+                                    </span>
+
+                                    <!-- Show Regular Price -->
+                                    <del class="text-muted ms-3">
+                                        ₹ <%= product.regularPrice.toLocaleString('en-IN') %>
+                                    </del>
+
+                                    <!-- Show Offer Badge -->
+                                    <span class="offer-badge-product ms-2">
+                                        <%= biggestOffer %>% OFF
+                                    </span>
+
+                                <% } else { %>
+
+                                    <!-- No offer → Only Regular Price -->
+                                    <span class="text-brand fs-4 fw-bold">
+                                        ₹ <%= product.regularPrice.toLocaleString('en-IN') %>
+                                    </span>
+
+                                <% } %>
+
+                            </div>
 
                                             <p class="mb-3"><%=product.description %></p>
 
@@ -126,7 +143,7 @@
                                             </div>
                                             
                                             <ul class="product-meta font-xs mt-4">
-                                                <li class="mb-1">Coupon number <a href="#" class="text-dark ">FWM15VKT</a></li>
+                                                <!-- <li class="mb-1">Coupon number <a href="#" class="text-dark ">FWM15VKT</a></li> -->
                                                 
                                                 <li class="mb-1">Availability :<span class="<%= quantity <=3 ? 'text-danger':'text-success' %> ms-2"><strong><%=quantity %> in stock</strong></span></li>
                                             </ul>
@@ -156,7 +173,7 @@
                         <div class="card-body text-center">
                             <h5 class="card-title"><%= p.productName %></h5>
 
-                            <p class="card-text text-muted">SalePrice : ₹<%= p.salePrice.toLocaleString('en-IN') %></p>
+                            <p class="card-text text-muted">SalePrice : ₹ p.salePrice.toLocaleString('en-IN')</p>
                             <del class="card-text text-muted">Price : ₹<%= p.regularPrice.toLocaleString('en-IN') %></del>
 
                             <p class="card-text text-muted" >Brand : <%=p.brand %></p>
