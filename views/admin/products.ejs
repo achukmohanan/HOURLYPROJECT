@@ -207,7 +207,7 @@
                         <th scope="col">Product Name</th>
                         <th scope="col">Brand</th>
                         <th scope="col">Category</th>
-                        <th scope="col">Sale Price</th>
+                        <th scope="col">Regular Price</th>
                         <th scope="col">Offer Price</th>
                         <th scope="col">Offer Actions</th>
                         <th scope="col">Quantity</th>
@@ -222,7 +222,7 @@
                         <td><%=data[i].productName%> </td>
                         <td><%=data[i].brand %></td>
                         <td><%=data[i].category.name %></td>
-                        <td><%=data[i].salePrice %></td>
+                        <td><%=data[i].regularPrice %></td>
                         <td>
                             <%if(locals.data[i].productOffer && locals.data[i].productOffer > 0){%>
                                 <%= data[i].productOffer %>%
