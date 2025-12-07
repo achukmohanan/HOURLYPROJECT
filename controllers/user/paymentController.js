@@ -15,27 +15,40 @@ const postPayment = async (req, res) => {
     const selectedIndex = req.body.addressId;
     const discount = req.body.discount;
 
-    // req.session.discount = discount;
-
     console.log("discount is discount", discount);
-    const address = await Address.find({ userId: userId });
+
+    const address = await Address.find({ userId });
     if (!address || !address.length) {
       return res.redirect("/checkout");
     }
     const selectedAddress = address[0].address[selectedIndex];
-
+    console.log("selected address",selectedAddress)
     const findUser = await User.findById(userId);
 
-    const cart = await Cart.findOne({ userId }).populate("items.productId");
+    const cart = await Cart.findOne({ userId }).populate({path:"items.productId",populate:{path:'category'}});
     if (!cart || !cart.items.length) {
       res.redirect("/cart");
-    }
+    }//
+      cart.items.forEach(item => {
+        const product = item.productId;
 
+        const productOffer = product.productOffer || 0;
+        const categoryOffer = product.category?.categoryOffer || 0;
+
+        const biggestOffer = Math.max(productOffer,categoryOffer);
+
+        if(biggestOffer > 0){
+          product.salePrice = Math.round(product.regularPrice - (product.regularPrice * biggestOffer) / 100);
+        }else{
+          product.salePrice = Math.round(product.regularPrice)
+        }
+      });
+      console.log("chechk 11111111111111111111")
     const outofstock = cart.items.filter((item) => item.productId.quantity < 1);
-    if (outofstock.length > 0) {
-      return;
-    }
-
+    // if (outofstock.length > 0) {
+    //   return res.status(STATUS_CODE.BAD_REQUEST).json({success:false,message:"Product Out of Stock"})
+    // }
+    console.log("check 222222222222222222222")
     let total = cart.items.reduce((sum, item) => {
       return sum + item.productId.salePrice * item.quantity;
     }, 0);
@@ -43,8 +56,8 @@ const postPayment = async (req, res) => {
     let disamount = (discount / 100) * total;
     disamount = parseFloat(disamount.toFixed(2));
     console.log("discount is =", disamount);
-    total = total - disamount;
-    total = parseFloat(total.toFixed(2));
+    total = parseFloat(total - disamount).toFixed(2)
+    
     console.log("total is total", total);
    
     const orderData = {

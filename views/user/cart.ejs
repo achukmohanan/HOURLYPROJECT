@@ -649,6 +649,13 @@
                                 <div class="item-name"><%= item.productId.productName %></div>
                                 <div class="item-subtitle"><%= item.productId.description.split(' ').slice(0,10).join(' ') + '...' %></div>  
                                 <div class="item-color text-muted"><%= item.productId.color %></div>
+                                <div class="item-color text-muted">
+                                    <% if (item.productId.quantity === 0) { %>
+                                        <span class="text-danger fw-bold">Out of Stock</span>
+                                        <% } else { %>
+                                    Qty : <%= item.productId.quantity %>
+                                        <% }%>
+                                </div>
                             </div>
                           
                             <div class="quantity-controls">    
@@ -681,6 +688,7 @@
 
             <!-- Order Summary -->
             <div class="summary-section">
+                
                 <h3 class="text-dark fw-bold">Order Summary</h3>
                 <% if(cart && cart.items && cart.items.length > 0) { %>
                     <% cart.items.forEach(item => { %>    
@@ -719,10 +727,12 @@
                 </div>
             </div>
         </div>
+        
     </main>
   
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
+    
     document.addEventListener('DOMContentLoaded', function() {
         const deletebutton = document.querySelectorAll('.deletebtn');
 
@@ -780,6 +790,7 @@
             });
         });
     });
+    
 
     async function updateQuantity(productId, change) {
         try {

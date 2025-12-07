@@ -24,7 +24,7 @@ const getCart = async (req, res) => {
         const biggestOffer = Math.max(categoryOffer,productOffer);
         const finalSalePrice = product.regularPrice - (product.regularPrice * biggestOffer) / 100;
 
-        item.productId.finalSalePrice = Math.ceil(finalSalePrice);
+        item.productId.finalSalePrice =Math.round(finalSalePrice);
         
         total += item.productId.finalSalePrice * item.quantity;
       });
@@ -230,6 +230,7 @@ const addAddressInCheckout = async (req, res) => {
 };
   const getCheckOut = async (req, res) => {
     try {
+     
       const userId = req.session.user;
       const user = await User.findById(userId);
 
@@ -240,7 +241,8 @@ const addAddressInCheckout = async (req, res) => {
       
       if (!cart || !cart.items || cart.items.length === 0  ) {
         res.redirect("/cart");
-      } 
+      }
+       
 
       cart.items = cart.items.map(item => {
         let product = item.productId;
@@ -270,8 +272,7 @@ const addAddressInCheckout = async (req, res) => {
         return sum + item.productId.salePrice * item.quantity;
       }, 0);
 
-      console.log("total is in chechk out",total)
-
+      
       const addressList = await Address.find({userId });
 
       const coupons = await Coupon.find({
@@ -312,10 +313,10 @@ const applyCoupon = async (req, res) => {
     if (new Date() > coupon.expireOn) {
       return res.json({ success: false, message: "Coupon has expired" });
     }
-    console.log("code is ",coupon.code)
+    
     req.session.couponcode = coupon.code;
     req.session.discountValue = coupon.discountValue
-    console.log("couupon discoubr value is", coupon.discountValue);
+    
 
     res.json({ success: true, discount: coupon.discountValue });
   } catch (error) {
