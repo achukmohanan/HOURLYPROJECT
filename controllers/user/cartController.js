@@ -232,24 +232,48 @@ const addAddressInCheckout = async (req, res) => {
     try {
       const userId = req.session.user;
       const user = await User.findById(userId);
+
       const savedDiscount = req.session.discountValue || 0;
       const couponcode =  req.session.couponcode || "";
       
-      const cart = await Cart.findOne({ userId }).populate("items.productId");
-      if (
-        !cart ||
-        !cart.items ||
-        cart.items.length === 0 ||
-        cart.items.quantity < 0
-      ) {
+      const cart = await Cart.findOne({ userId }).populate({path:"items.productId",populate:{path:'category',model:'Category'}});
+      
+      if (!cart || !cart.items || cart.items.length === 0  ) {
         res.redirect("/cart");
-      }
+      } 
+
+      cart.items = cart.items.map(item => {
+        let product = item.productId;
+        let category = product.category;
+
+        const productOffer = product.productOffer || 0;
+        const categoryOffer = category?.categoryOffer || 0;
+        
+        const biggestOffer = Math.max(productOffer,categoryOffer);
+
+        let salePrice;
+        if(biggestOffer > 0){
+          const discountAmount  = (biggestOffer/100) * product.regularPrice;
+          salePrice = Math.round(product.regularPrice - discountAmount)
+        }else{
+            salePrice = product.regularPrice;
+        }
+
+        product.salePrice = salePrice;
+        product.biggestOffer = biggestOffer;
+
+        return item
+      })
+
 
       let total = cart.items.reduce((sum, item) => {
         return sum + item.productId.salePrice * item.quantity;
       }, 0);
 
-      const addressList = await Address.find({ userId: userId });
+      console.log("total is in chechk out",total)
+
+      const addressList = await Address.find({userId });
+
       const coupons = await Coupon.find({
         isActive: true, 
         expireOn : {$gte:new Date()},
@@ -262,7 +286,7 @@ const addAddressInCheckout = async (req, res) => {
       
       return res.render("user/checkout", {
         coupons,
-        user: user,
+        user,
         cart,
         totalPrice: total,
         addressList,

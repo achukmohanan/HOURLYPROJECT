@@ -1244,6 +1244,9 @@
                 text: result.message,
                 showConfirmButton: true,
                 confirmButtonText: 'View Cart',
+                background: '#e8ffe8',
+                timer:2000,
+                timerProgressBar:true
               }).then((res) => {
                 if(res.isConfirmed) {
                   window.location.href = "/cart";

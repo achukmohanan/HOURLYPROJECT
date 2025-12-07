@@ -404,7 +404,7 @@
                 <div class="summary-line">
                     <span>Product :<%= item.productId.productName %></span>
 
-                    <span id="price-<%= item.productId._id %>"> ₹ <%= item.productId.salePrice * item.quantity  %></span>
+                    <span id="price-<%= item.productId._id %>"> ₹ <%= (item.productId.salePrice * item.quantity).toLocaleString('en-IN')  %></span>
                 </div>
                 <%})%>
                 <div class="summary-line">
@@ -631,13 +631,17 @@ const savedCoupon = document.getElementById('appliedCoupon').value  || "";
             navigator.clipboard.writeText(code)
             .then(()=>{
                 Swal.fire({
-                    icon:'success',
-                    title:'Copied !',
-                    text:`Successfully Copied ${code}`,
-                    toast:true,
-                    position:'top-right',
-                    showConfirmButton:false
-                })
+                    icon: 'success',
+                    title: `Copied ${code}!`,
+                    toast: true,
+                    position: 'top-end',
+                    background: '#e8ffe8',
+                    color: '#0f7b0f',
+                    timer: 1800,
+                    timerProgressBar: true,
+                    showConfirmButton: false
+            });
+
             })
             .catch(err=>{
                 console.log("errror in the checkout copy clip",err)
