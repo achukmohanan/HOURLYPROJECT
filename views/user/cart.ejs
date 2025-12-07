@@ -658,8 +658,8 @@
                             </div>
 
                             <div class="price">
-                                <div class="fw-bold">
-                                    ₹<%= (item.productId.salePrice * item.quantity).toLocaleString('en-IN') %>
+                               <div class="fw-bold" id="card-price-<%= item.productId._id %>">
+                                    ₹<%= (item.productId.finalSalePrice * item.quantity).toLocaleString('en-IN') %>
                                 </div>
                                 <div class="text-muted text-decoration-line-through">
                                     ₹<%= item.productId.regularPrice.toLocaleString('en-IN') %>
@@ -686,7 +686,7 @@
                     <% cart.items.forEach(item => { %>    
                         <div class="summary-line">
                             <span><%= item.productId.productName %></span>
-                            <span id="price-<%= item.productId._id %>">₹<%= item.productId.salePrice * item.quantity %></span>
+                            <span id="summary-price-<%= item.productId._id %>">₹<%= item.productId.finalSalePrice * item.quantity %></span>
                         </div>
                     <% }) %>
                   
@@ -797,24 +797,30 @@
                 const qty = document.getElementById(`qty-${productId}`);
                 qty.textContent = result.newQuantity;
                 
-                const price = document.getElementById(`price-${productId}`);
-                if(price) {
-                    price.textContent = `₹${result.updatePrice.toLocaleString('en-IN')}`;
-                }  
+                
+                const cardPrice = document.getElementById(`card-price-${productId}`);
+                if (cardPrice) {
+                    cardPrice.textContent = `₹${result.updatePrice.toLocaleString('en-IN')}`;
+                }
+
+                const summaryPrice = document.getElementById(`summary-price-${productId}`);
+                if (summaryPrice) {
+                    summaryPrice.textContent = `₹${result.updatePrice.toLocaleString('en-IN')}`;
+                }
 
                 const totalPrice = document.getElementById('total');
-                if(totalPrice) { 
-                    totalPrice.textContent = `₹${result.total.toLocaleString('en-IN')}`;
-                }
+                totalPrice.textContent = `₹${result.total.toLocaleString('en-IN')}`;
+                
+                
             
             } else {
                 Swal.fire({
                     icon: 'warning',
                     text: result.message,
-                    showConfirmButton: true
-                }).then(() => {
-                    window.location.reload();
-                });
+                    showConfirmButton: true,
+                    timer:2000,
+                    timerProgressBar:true
+                })
             }
         } catch (error) {
             console.log("error in frontend of update quantity in cart");

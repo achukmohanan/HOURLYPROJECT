@@ -4,25 +4,34 @@ const Product = require("../../models/productSchema");
 const Address = require("../../models/addressSchema");
 const Coupon = require("../../models/couponSchema");
 const { STATUS_CODE } = require("../../utils/statusCode");
+const { path } = require("pdfkit");
 
 const getCart = async (req, res) => {
   try {
     const userId = req.session.user;
-    const findUser = await User.findById(userId);
-
     if (!userId) return res.redirect("/login");
+    const findUser = await User.findById(userId);
+    let cart = await Cart.findOne({ userId }).populate({ path:"items.productId",populate:{path:'category'}});
 
-    let cart = await Cart.findOne({ userId }).populate("items.productId");
-
-    // console.log("cart is ",cart)
     let total = 0;
     if (cart && cart.items.length > 0) {
       cart.items.forEach((item) => {
-        total += item.productId.salePrice * item.quantity;
+
+       const product = item.productId;
+       const categoryOffer = product.category?.categoryOffer || 0;
+       const productOffer = product.productOffer || 0;  
+
+        const biggestOffer = Math.max(categoryOffer,productOffer);
+        const finalSalePrice = product.regularPrice - (product.regularPrice * biggestOffer) / 100;
+
+        item.productId.finalSalePrice = Math.ceil(finalSalePrice);
+        
+        total += item.productId.finalSalePrice * item.quantity;
       });
     } else {
       cart = { items: [] };
     }
+    
     return res.render("user/cart", {
       user: findUser,
       cart,
@@ -36,8 +45,6 @@ const addToCart = async (req, res) => {
   try {
     const { productId } = req.body;
     const userId = req.session.user;
-
-    // console.log("product id from frontend" ,productId ,  typeof productId)
     const product = await Product.findOne({
       _id: productId,
     }).populate("category");
@@ -136,7 +143,7 @@ const updateCartQuantity = async (req, res) => {
     const userId = req.session.user;
     const { productId, change } = req.body;
 
-    const cart = await Cart.findOne({ userId }).populate("items.productId");
+    const cart = await Cart.findOne({ userId }).populate({path:"items.productId",populate:{path:'category'}});
     if (!cart) {
       return res
         .status(STATUS_CODE.NOT_FOUND)
@@ -150,22 +157,17 @@ const updateCartQuantity = async (req, res) => {
       return res
         .status(STATUS_CODE.NOT_FOUND)
         .json({ success: false, message: "product not in the Cart" });
-    }
-
-    const product = await Product.findById(productId);
-    if (!product) {
-      return res
-        .status(STATUS_CODE.BAD_REQUEST)
-        .json({ success: false, message: "Product not Found" });
-    }
+    } 
+    const product = item.productId;
 
     if (item.quantity + change < 1) {
       return res
         .status(STATUS_CODE.BAD_REQUEST)
         .json({ success: false, message: "Minimum Quantity Should be 1" });
     }
-    const newQuantity = product.quantity;
     const maxLimit = Math.min(5, product.quantity);
+
+    const newQuantity = product.quantity;
     if (item.quantity + change > newQuantity) {
       return res
         .status(STATUS_CODE.BAD_REQUEST)
@@ -180,15 +182,26 @@ const updateCartQuantity = async (req, res) => {
         .json({ success: false, message: "Maximum quantity limit reached" });
     }
     item.quantity += change;
-    const updatePrice = item.quantity * product.salePrice;
+    const categoryOffer = product.category?.categoryOffer || 0;
+    const productOffer = product.productOffer || 0;
+    const biggestOffer = Math.max(categoryOffer,productOffer);
+
+    const salePrice = product.regularPrice - (product.regularPrice * biggestOffer)/100;
+
+    const finalSalePrice = Math.ceil(salePrice);
+    const updatePrice  = finalSalePrice * item.quantity;
 
     let total = 0;
-    cart.items.forEach((item) => {
-      total += item.productId.salePrice * item.quantity;
+    cart.items.forEach((i) => {
+      const catOffer = i.productId.category?.categoryOffer || 0;
+      const prodOffer = i.productId.productOffer || 0;
+      const bo = Math.max(catOffer , prodOffer);
+      const sp = Math.ceil(i.productId.regularPrice - (i.productId.regularPrice * bo /100));
+
+      total += sp * i.quantity;
     });
 
     await cart.save();
-    //  console.log("Rendering cart with total:", total);
 
     return res.status(STATUS_CODE.SUCCESS).json({
       success: true,
@@ -247,7 +260,6 @@ const addAddressInCheckout = async (req, res) => {
           ],
       }).sort({ expireOn: -1 });
       
-
       return res.render("user/checkout", {
         coupons,
         user: user,
