@@ -183,24 +183,12 @@ const loadShoppingpage = async (req, res) => {
      // Pagination
      productPipeLine.push({$skip:skip})
      productPipeLine.push({$limit:limit})
-
-
-
-
     const products = await Product.aggregate(productPipeLine);
-
-   // For total count (without pagination)
+  
     const countPipeline = [...productPipeLine];
     countPipeline.splice(countPipeline.length - 2, 2); // remove skip + limit
     const totalProducts = (await Product.aggregate(countPipeline)).length
     const totalPages = Math.ceil(totalProducts / limit);
-
-    // const totalProducts = await Product.countDocuments(filterQuery);
-
-    // const categoriesWithIds = categories.map((c) => ({
-    //   _id: c._id,
-    //   name: c.name,
-    // }));
 
     let wishlistProductIds = []
    if(user){

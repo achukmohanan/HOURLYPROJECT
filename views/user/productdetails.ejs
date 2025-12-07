@@ -87,7 +87,7 @@
 
                                 <% if (biggestOffer > 0) { %>
                                     <!-- Show Sale Price -->
-                                    <span class="text-brand fs-4 fw-bold">
+                                    <span style="color: #28a745; font-weight: bold; font-size: 1.5rem;"   >
                                         ₹ <%= salePrice.toLocaleString('en-IN') %>
                                     </span>
 
@@ -173,12 +173,12 @@
                         <div class="card-body text-center">
                             <h5 class="card-title"><%= p.productName %></h5>
 
-                            <p class="card-text text-muted">SalePrice : ₹ p.salePrice.toLocaleString('en-IN')</p>
-                            <del class="card-text text-muted">Price : ₹<%= p.regularPrice.toLocaleString('en-IN') %></del>
+                            <p class="card-text text-muted">Tap to see the Price</p>
+                            <!-- <del class="card-text text-muted">Price : ₹ <%= p.regularPrice.toLocaleString('en-IN') %></del> -->
 
                             <p class="card-text text-muted" >Brand : <%=p.brand %></p>
                             <p class="card-text text-muted" >Color : <%=p.color %></p>
-                            <a href="/productDetails?id=<%= p._id %>" class="btn btn-outline-primary btn-sm">View Product</a>
+                            <a href="/productDetails?id=<%= p._id %>" class="btn btn-primary btn-sm">View Product</a>
                         </div>
                     </div>
                 </div>
