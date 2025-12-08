@@ -305,8 +305,25 @@ const viewOrderDetails = async (req, res) => {
         { "address.$": 1 }
       ).lean();
       order.fullAddress = parent?.address;
+
+      order.orderedItems.forEach((item)=>{
+        const product = item.product;
+        const categoryOffer = product.category?.categoryOffer || 0;
+        const productOffer = product.productOffer || 0;
+
+        const maxOffer = Math.max(categoryOffer,productOffer);
+
+        if(maxOffer > 0){
+          let discountAmount = (product.regularPrice * maxOffer) / 100;
+          let salePrice = product.regularPrice - discountAmount;
+
+          item.salePrice = Math.ceil(salePrice)
+        }else{
+          item.salePrice = product.regularPrice
+        }
+      });
+
     }
-    // console.log("orders ",orders)
     return res.render("user/orderView", { orders });
   } catch (error) {
     console.log("error in the viewOrderDetails ", error);
