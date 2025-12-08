@@ -99,7 +99,7 @@ const viewOrderDetails = async (req, res) => {
         "productName  salePrice productImage status"
       )
       .populate("address");
-
+console.log("order price",order)
     if (!order) {
       return res
         .status(STATUS_CODE.NOT_FOUND)

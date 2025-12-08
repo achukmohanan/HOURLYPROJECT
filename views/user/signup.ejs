@@ -412,7 +412,9 @@ console.log("Confirm:", confirmValid);
           text: data.message,
           timer:2000,
           timerProgressBar:true,
-          showConfirmButton:false
+          showConfirmButton:false,
+          background:'#e8ffe8'
+
         }).then(() => {
           window.location.href = '/confirmwithotp';
         });
@@ -421,7 +423,8 @@ console.log("Confirm:", confirmValid);
           icon: 'error',
           title: 'Error',
           text: data.message,
-          showConfirmButton:true
+          showConfirmButton:true,
+          background:'#e8ffe8'
         });
           }
         } catch (error) {
@@ -431,7 +434,8 @@ console.log("Confirm:", confirmValid);
         icon: 'error',
         title: 'Error',
         text: 'Something went wrong. Please try again later.',
-        showConfirmButton:true
+        showConfirmButton:true,
+        background:'#e8ffe8'
       });
         }
       }else{
@@ -439,7 +443,8 @@ console.log("Confirm:", confirmValid);
           icon:'error',
           title:'OOPS',
           text:"Please fill all fields correctly!",
-          showConfirmButton:true
+          showConfirmButton:true,
+          background:'#e8ffe8'
         })
       }
       });

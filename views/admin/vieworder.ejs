@@ -183,7 +183,7 @@
                                
                                     <% }) %>   
                                     <%
-                                    const itemSaleClose = order.orderedItems.some(item =>item.status === 'Cancelled' || item.status === 'Returned' || item.status === 'Return Approved');
+                                    const itemSaleClose = order.orderedItems.some(item => item.status === 'Returned' || item.status === 'Return Approved');
                                     const orderSaleClose = (order.status === 'Cancelled' || order.status === 'Returned' || order.status === 'Return Approved')
                                    
                                    const returnRequest = order.status === 'Return Requested' || order.orderedItems.some(i => i.status === 'Return Requested');
@@ -193,7 +193,7 @@
                                    const hideButton = itemSaleClose || orderSaleClose || returnRequest || cancelRequest
                                     %>
                                         
-                              <% if(!hideButton){ %>
+                              <% if(!hideButton ){ %>
                                     <button class="btn btn-success mt-4" onclick="saveStatusUpdate()">
                                           <i class="fas fa-save me-2"></i>Save Changes
                                 </button>

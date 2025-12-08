@@ -185,6 +185,9 @@
               icon: "success",
               title: "Success",
               text: response.message,
+              timer:2000,
+              timerProgressBar:true,
+              background:'#e8ffe8'
             }).then(() => {
               window.location.href = "/checkout";
             });
@@ -193,6 +196,7 @@
               icon: "error",
               title: "Oops...",
               text: "Something went wrong!",
+              background:'#e8ffe8'
             });
           }
         });
@@ -255,6 +259,7 @@
             title: "Error",
             text: "Name should contain alphabets and spaces only.",
             icon: "error",
+            background:'#e8ffe8'
           });
           return false;
         }
@@ -264,6 +269,7 @@
             title: "Error",
             text: "City should contain alphabets and spaces only.",
             icon: "error",
+            background:'#e8ffe8'
           });
           return false;
         }
@@ -273,6 +279,7 @@
             title: "Error",
             text: "State should contain alphabets and spaces only.",
             icon: "error",
+            background:'#e8ffe8'
           });
           return false;
         }
@@ -282,6 +289,7 @@
             title: "Error",
             text: "Pincode should be a 6-digit number.",
             icon: "error",
+            background:'#e8ffe8'
           });
           return false;
         }
@@ -291,6 +299,7 @@
             title: "Error",
             text: "Phone number should be a 10-digit number.",
             icon: "error",
+             background:'#e8ffe8'
           });
           return false;
         }
@@ -300,6 +309,7 @@
             title: "Error",
             text: "Alternate phone number should be a 10-digit number.",
             icon: "error",
+            background:'#e8ffe8'
           });
           return false;
         }
@@ -309,6 +319,7 @@
             title: "Error",
             text: "Phone number and alternate phone number should be different.",
             icon: "error",
+            background:'#e8ffe8'
           });
           return false;
         }

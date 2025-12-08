@@ -166,7 +166,8 @@
                     text:result.message || "OTP Sended to your Current email",
                     showConfirmButton:false,
                     timer:2000,
-                    timerProgressBar:true
+                    timerProgressBar:true,
+                     background:'#e8ffe8'
                 }).then(()=>{
                    
                     window.location.href = '/emailEditOtp'
@@ -176,7 +177,8 @@
                     icon:"error",
                     title:"FAILED",
                     text:result.message,
-                    showConfirmButton:true
+                    showConfirmButton:true ,
+                    background:'#e8ffe8'
                 })
             }
            } catch (error) {
@@ -185,7 +187,8 @@
                 icon:"error",
                 text:"OOPS",
                 text:result.message || "Internal Server Error",
-                showconfirmButton:true
+                showconfirmButton:true,
+                background:'#e8ffe8'
             })
         }
     });

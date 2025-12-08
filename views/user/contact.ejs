@@ -414,7 +414,10 @@
             Swal.fire({
                 icon:'success',
                 title:'Submitted',
-                text:result.message
+                text:result.message,
+                timer:2000,
+                timerProgressBar:true,
+                 background:'#e8ffe8'
             }).then(()=>{
                 window.location.reload()
             })
@@ -423,7 +426,8 @@
                 icon:'error',
                 title:'Failed to Submit',
                 text:'Failed to submit! Please Try again'
-                ,showConfirmButton:true
+                ,showConfirmButton:true,
+                 background:'#e8ffe8'
             })
           }
          } catch (error) {
@@ -432,7 +436,8 @@
                 icon:'error',
                 title:'OOPS',
                 text:'Something Went Wrong! Please try again',
-                showConfirmButton:true
+                showConfirmButton:true,
+                 background:'#e8ffe8'
             })
          }
        })

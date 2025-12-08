@@ -54,12 +54,14 @@ app.use((req,res,next)=>{
 
 app.set('view engine', 'ejs')
 app.set('views'[path.join(__dirname, 'views/admin'), path.join(__dirname, 'views/user')])
+
 app.use(express.static(path.join(__dirname, "public")))
+
 app.use('/uploads', express.static(path.join(__dirname, 'public/uploads')));
 app.use('/uploads', express.static('uploads'));
 
 app.use('/', userRouter);
-//password: password123 or newpassword
+//password: password@123 or newpassword
 app.use('/admin',adminRouter);
 // password:adminpassword
 
