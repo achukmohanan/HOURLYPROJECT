@@ -12,7 +12,25 @@ const { model } = require("mongoose");
 const Transaction = require("../../models/transactionSchema");
 const { STATUS_CODE } = require("../../utils/statusCode");
 
-  const postOrder = async (req, res) => {
+// Calculate sale price based on highest offer
+const calculateSalePrice = (product) => {
+  const productOffer = product.productOffer || 0;
+  const categoryOffer = product.category.categoryOffer || 0;
+
+  const highestOffer = Math.max(productOffer, categoryOffer); 
+
+  if (highestOffer === 0) {
+    return product.regularPrice;
+  }
+
+  const discountAmount = (product.regularPrice * highestOffer) / 100;
+  const salePrice = Math.round(product.regularPrice - discountAmount);
+
+  return salePrice;
+};
+
+
+const postOrder = async (req, res) => {
     try {
       const userId = req.session.user;
       const { address, paymentMethod, totalAmount, discount } = req.body;
@@ -32,7 +50,8 @@ const { STATUS_CODE } = require("../../utils/statusCode");
           .status(STATUS_CODE.BAD_REQUEST)
           .json({ success: false, message: "Address not found" });
       }
-      const cart = await Cart.findOne({ userId }).populate("items.productId");
+      const cart = await Cart.findOne({ userId }).populate({path:"items.productId",populate:{path:'category'}});
+
       if (!cart || cart.items.length === 0) {
         return res
           .status(STATUS_CODE.BAD_REQUEST)
@@ -60,7 +79,7 @@ const { STATUS_CODE } = require("../../utils/statusCode");
             orderedItems: cart.items.map((item) => ({
               product: item.productId._id,
               quantity: item.quantity,
-              price: item.productId.salePrice,
+              price: calculateSalePrice(item.productId),
             })),
             totalPrice,
             discount: discount,
@@ -126,7 +145,7 @@ const { STATUS_CODE } = require("../../utils/statusCode");
           orderedItems: cart.items.map((item) => ({
             product: item.productId._id,
             quantity: item.quantity,
-            price: item.productId.salePrice,
+            price:calculateSalePrice(item.productId),
           })),
           totalPrice,
           discount: discount,
@@ -147,7 +166,7 @@ const { STATUS_CODE } = require("../../utils/statusCode");
           description: "Payment Using Wallet",
         });
 
-        console.log("order in the wallet ", order);
+       
         for (let item of cart.items) {
           await Product.updateOne(
             { _id: item.productId._id },
@@ -317,7 +336,7 @@ const viewOrderDetails = async (req, res) => {
           let discountAmount = (product.regularPrice * maxOffer) / 100;
           let salePrice = product.regularPrice - discountAmount;
 
-          item.salePrice = Math.ceil(salePrice)
+          item.salePrice = Math.round(salePrice)
         }else{
           item.salePrice = product.regularPrice
         }

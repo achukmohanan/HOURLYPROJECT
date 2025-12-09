@@ -304,6 +304,9 @@ const approveCancelRequest = async (req, res) => {
       let refundAmount = item.quantity * item.price;
       //if coupon is applied
 
+      console.log("refund Amount in cancel ",refundAmount)
+      console.log("item price  in cancel checking",item.price)
+
       if (order.couponApplied && order.discount > 0) {
         const totalBeforeDiscount = order.totalPrice + order.discount;
         const discountPercentage = (order.discount / totalBeforeDiscount) * 100;
@@ -311,10 +314,26 @@ const approveCancelRequest = async (req, res) => {
         const itemDiscount = (refundAmount * discountPercentage) / 100;
         refundAmount = refundAmount - itemDiscount;
       }
+console.log("refund Amount in cancel ",refundAmount)
+      console.log("item price  in cancel checking",item.price)
 
       if (order.paymentMethod === "Razorpay") {
         order.userId.wallet = (order.userId.wallet || 0) + refundAmount;
         await order.userId.save();
+        console.log("transaction schema created")
+        await Transaction.create({
+          userId: order.userId._id,
+          orderId: orderId,
+          type: "Credit",
+          amount: refundAmount,
+          paymentMethod: "Razorpay",
+          description: "Order Cancelled",
+        });
+      }
+      if (order.paymentMethod === "Wallet") {
+        order.userId.wallet = (order.userId.wallet || 0) + refundAmount;
+        await order.userId.save();
+        console.log("transaction schema created")
         await Transaction.create({
           userId: order.userId._id,
           orderId: orderId,

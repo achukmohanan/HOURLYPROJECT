@@ -8,6 +8,25 @@ const crypto = require("crypto");
 const Transaction = require("../../models/transactionSchema");
 const { STATUS_CODE } = require("../../utils/statusCode");
 
+
+// Calculate sale price using highest offer
+const calculateSalePrice = (product) => {
+  const productOffer = product.productOffer || 0;
+  const categoryOffer = product.category?.categoryOffer || 0;
+
+  const highestOffer = Math.max(productOffer, categoryOffer);
+
+  if (highestOffer === 0) {
+    return product.regularPrice;
+  }
+
+  const discountAmount = (product.regularPrice * highestOffer) / 100;
+  const finalPrice = Math.round(product.regularPrice - discountAmount);
+
+  return finalPrice;
+};
+
+
 const postPayment = async (req, res) => {
   try {
     console.log("paymet");
@@ -21,7 +40,7 @@ const postPayment = async (req, res) => {
     if (!address || !address.length) {
       return res.redirect("/checkout");
     }
-    const selectedAddress = address[0].address[selectedIndex];
+    const selectedAddress = address[0 ].address[selectedIndex];
     console.log("selected address",selectedAddress)
     const findUser = await User.findById(userId);
 
@@ -29,20 +48,11 @@ const postPayment = async (req, res) => {
     if (!cart || !cart.items.length) {
       res.redirect("/cart");
     }//
-      cart.items.forEach(item => {
-        const product = item.productId;
 
-        const productOffer = product.productOffer || 0;
-        const categoryOffer = product.category?.categoryOffer || 0;
+        cart.items.forEach(item => {
+          item.productId.salePrice = calculateSalePrice(item.productId)
+        })
 
-        const biggestOffer = Math.max(productOffer,categoryOffer);
-
-        if(biggestOffer > 0){
-          product.salePrice = Math.round(product.regularPrice - (product.regularPrice * biggestOffer) / 100);
-        }else{
-          product.salePrice = Math.round(product.regularPrice)
-        }
-      });
       console.log("chechk 11111111111111111111")
     const outofstock = cart.items.filter((item) => item.productId.quantity < 1);
     // if (outofstock.length > 0) {
@@ -98,7 +108,7 @@ const confirmRazorpay = async (req, res) => {
       .digest("hex");
 
     if (expectedSignature === razorpay_signature) {
-      const cart = await Cart.findOne({ userId }).populate("items.productId");
+      const cart = await Cart.findOne({ userId }).populate({path:"items.productId",populate:{path:'category'}});
 
       const price = Number(amount / 100);
       let totalPrice = price;
@@ -117,7 +127,7 @@ const confirmRazorpay = async (req, res) => {
         orderedItems: cart.items.map((item) => ({
           product: item.productId._id,
           quantity: item.quantity,
-          price: item.productId.salePrice,
+          price: calculateSalePrice(item.productId),
         })),
         totalPrice,
         paymentMethod: "Razorpay",
@@ -188,7 +198,7 @@ const price = Number(amount)/100;
       orderedItems: cart.items.map((item) => ({
         product:item.productId._id,
         quantity:item.quantity,
-        price:item.productId.salePrice,
+        price:calculateSalePrice(item.productId),
         status:'Payment-failed'
       })),
       totalPrice:price,
