@@ -209,7 +209,12 @@ const logout = async (req, res) => {
 const salesChart = async (req, res) => {
   try {
     const { filter } = req.query;
-    const matchFilter = { "orderedItems.status": "Delivered" };
+    const matchFilter = { 
+      $or:[
+        {'orderedItems.status' : 'Delivered'},
+        {status:'Delivered'}
+      ]
+    };
 
     const today = new Date();
     let start, end;
@@ -230,14 +235,14 @@ const salesChart = async (req, res) => {
       end = new Date(today.getFullYear(), 11, 31, 23, 59, 59, 999);
     }
 
-    matchFilter.createdOn = { $gte: start, $lte: end };
+    matchFilter.deliveredAt  = { $gte: start, $lte: end };
     //filtering
     let groupStage = {};
     if (filter === "daily" || filter === "weekly") {
       groupStage = {
         _id: {
-          day: { $dayOfMonth: "$createdOn" },
-          month: { $month: "$createdOn" },
+          day: { $dayOfMonth: "$deliveredAt" },
+          month: { $month: "$deliveredAt" },
         },
         totalSales: {
           $sum: {
@@ -247,7 +252,7 @@ const salesChart = async (req, res) => {
       };
     } else if (filter === "monthly") {
       groupStage = {
-        _id: { month: { $month: "$createdOn" } },
+        _id: { month: { $month: "$deliveredAt" } },
         totalSales: {
           $sum: {
             $multiply: ["$orderedItems.quantity", "$orderedItems.price"],
@@ -256,7 +261,7 @@ const salesChart = async (req, res) => {
       };
     } else if (filter === "yearly") {
       groupStage = {
-        _id: { year: { $year: "$createdOn" } },
+        _id: { year: { $year: "$deliveredAt" } },
         totalSales: {
           $sum: {
             $multiply: ["$orderedItems.quantity", "$orderedItems.price"],
