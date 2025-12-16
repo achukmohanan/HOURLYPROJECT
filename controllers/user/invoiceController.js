@@ -6,12 +6,26 @@ const Order = require("../../models/orderSchema");
 const Product = require("../../models/productSchema");
 const { STATUS_CODE } = require("../../utils/statusCode");
 
+function calculateSalePrice(product) {
+  console.log("dbvJHBVJhsbdvjklhb")
+  const regularPrice = product.regularPrice;
+  const productOffer = product.productOffer || 0;
+  const categoryOffer = product.category?.categoryOffer || 0;
+
+  const bestOffer = Math.max(productOffer, categoryOffer);
+
+  const discountAmount = (regularPrice * bestOffer) / 100;
+
+  return Math.round(regularPrice - discountAmount);
+}
+
+
 const invoice = async (req, res) => {
   try {
     const orderId = req.params.id;
 
     const order = await Order.findOne({ orderId: orderId })
-      .populate("orderedItems.product")
+      .populate({path:"orderedItems.product",populate:{path:'category'}})
       .populate("userId");
 
     if (!order) {
@@ -188,7 +202,9 @@ const invoice = async (req, res) => {
       let subtotal = 0;
 
       order.orderedItems.forEach((item, index) => {
-        const itemTotal = item.product.salePrice * item.quantity;
+        const salePrice = calculateSalePrice(item.product);
+        console.log("saleProce sssssssssss",salePrice)
+        const itemTotal = salePrice * item.quantity;
         subtotal += itemTotal;
 
         const bgColor = index % 2 === 0 ? "white" : colors.secondary;
@@ -224,10 +240,10 @@ const invoice = async (req, res) => {
             align: "center"
           }
         );
-
+console.log("sale pproce is testing",item.itemTotal)
         // Unit price
         doc.text(
-          `₹${item.product.salePrice.toLocaleString()}`,
+          `₹${salePrice.toLocaleString()}`,
           columns.price.x,
           currentY + 10,
           {
@@ -237,8 +253,11 @@ const invoice = async (req, res) => {
         );
 
         // Discount (order level discount repeated per row like original logic)
+        const productOffer = item.product.productOffer || 0;
+        const categoryOffer = item.product.category?.categoryOffer || 0;
+        const appliedOffer = Math.max(productOffer, categoryOffer);
         doc.text(
-          `₹${order.discount.toLocaleString()}`,
+          `₹${appliedOffer}%`,
           columns.discount.x,
           currentY + 10,
           {
@@ -249,7 +268,7 @@ const invoice = async (req, res) => {
 
         // Total (itemTotal - order.discount)
         doc.text(
-          `₹${(itemTotal - order.discount).toLocaleString()}`,
+          `₹${itemTotal.toLocaleString()}`,
           columns.total.x,
           currentY + 10,
           {
