@@ -112,10 +112,11 @@ const postOrder = async (req, res) => {
       }
       if (paymentMethod === "razorpay") {
 
-        const MAX_RAZORPAY_AMOUNT = 1000000; // 10 lakh
+        const MAX_RAZORPAY_AMOUNT = 500000; // 10 lakh
 
         if(totalPrice > MAX_RAZORPAY_AMOUNT){
-          return res.status(STATUS_CODE.BAD_REQUEST).json({success:false,message:"Order amount exceeds Razorpay limit,Please use Wallet Payment"})
+          return res.status(STATUS_CODE.BAD_REQUEST).json({success:false,
+            message:"Order amount exceeds Razorpay limit,Please use Wallet Payment"})
         }
 
         const options = {
