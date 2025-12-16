@@ -111,11 +111,19 @@ const postOrder = async (req, res) => {
         }
       }
       if (paymentMethod === "razorpay") {
+
+        const MAX_RAZORPAY_AMOUNT = 1000000; // 10 lakh
+
+        if(totalPrice > MAX_RAZORPAY_AMOUNT){
+          return res.status(STATUS_CODE.BAD_REQUEST).json({success:false,message:"Order amount exceeds Razorpay limit,Please use Wallet Payment"})
+        }
+
         const options = {
           amount: Math.round(totalPrice * 100), // amount in paisa
           currency: "INR",
           receipt: "order_rcptid_" + new Date().getTime(),
         };
+        try{
         const razorpayOrder = await razorpayInstance.orders.create(options);
         return res.json({
           success: true,
@@ -127,7 +135,10 @@ const postOrder = async (req, res) => {
           },
           key: process.env.RAZORPAY_KEY_ID,
           orderId: razorpayOrder.id,
-        });
+        });}catch(err){
+        console.error("Razorpay Error:", err);
+          return res.status(STATUS_CODE.BAD_REQUEST).json({success:false,message:err?.error?.description || "Razorpay payment failed",code:err?.error?.code || "RAZORPAY_ERROR"})
+        }
       }
       if (paymentMethod === "wallet") {
         const user = await User.findById(userId);
@@ -185,7 +196,7 @@ const postOrder = async (req, res) => {
       console.log("error in the postorder", error);
       res
         .status(STATUS_CODE.INTERNAL_SERVER_ERROR)
-        .json({ status: false, message: "Internal Server Error" });
+        .json({ status: false, message: "Something went wrong while placing the order" });
     }
   };
 
