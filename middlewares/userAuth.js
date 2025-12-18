@@ -43,7 +43,7 @@ const userAuth = (req,res,next) =>{
 }
 
 const checksession = (req,res,next) =>{
-    if(req.session.user || req.isAuthenticated && req.isAuthenticated()){
+    if(req.session.user ||  req.isAuthenticated()){
         res.redirect('/home')
     }else{
         next()

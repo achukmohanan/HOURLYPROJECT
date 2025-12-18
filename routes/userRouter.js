@@ -180,6 +180,10 @@ router.get('/about',cartWishlistCount, aboutController.getAboutPage)
 router.get('/check-status',profileEditing.checkUserStatus)
 
 
+// router.get('/test?page=1',(req,res)=>{
+//   let a = req.query 
+//   res.send("get the page")
+// })
 
 router.get("/testing", cartController.gettest);
 

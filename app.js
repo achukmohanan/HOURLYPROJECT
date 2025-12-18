@@ -32,7 +32,7 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.use(nocache())
+   
 
 app.use((req,res,next)=>{
     
@@ -48,7 +48,7 @@ app.get('/auth/google',passport.authenticate('google',{scope:['profile','email']
 // })
 
 app.use((req,res,next)=>{
-    res.set('cache-control','no-store')
+    res.set('cache-control','no-store ,no-cache , must-revalidate, private');
     next();
 })
 
