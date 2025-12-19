@@ -13,29 +13,39 @@ passport.use(new GoogleStrategy({
    
     
 },
-
 async (accessToken, refreshToken, profile, done) => {
     // console.log("google profile",profile);
-    
     try {
-        let user = await User.findOne({ googleId: profile.id });
+        const email = profile.emails[0].value;
+
+        let user = await User.findOne({ 
+           $or:[
+            { googleId: profile.id },
+            { email: email }
+           ]
+        });
+
         if (user) {
-            
+            if(!user.googleId){
+                user.googleId = profile.id;
+                await user.save();
+            }
           return done(null, user);
-        } else {
+        } 
+
             console.log("creating user");
             
             user = new User({
                 name: profile.displayName,
-                email: profile.emails[0].value,
+                email: email,
                 googleId: profile.id,
             });
+
             await user.save();
             return done(null, user);
-        }
+        
     } catch (err) {
         console.log("error happened in google passport",err);
-        
         return done(err, null);
     }
 }));

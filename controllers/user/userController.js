@@ -239,6 +239,10 @@ const login = async (req, res) => {
       return res.status(STATUS_CODE.BAD_REQUEST).json({success:false, message: "User is blocked by Admin" });
     }
 
+    if(!findUser.password){
+      return res.status(STATUS_CODE.BAD_REQUEST).json({success:false,message:'This account was created using Google. Please login with Google.'})
+    }
+
     const passwordMatch = await bcrypt.compare(password, findUser.password);
     
     if (!passwordMatch) {
