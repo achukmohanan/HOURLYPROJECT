@@ -2,6 +2,7 @@ const Wishlist = require("../../models/wishlistSchema");
 const User = require("../../models/userSchema");
 const Cart = require("../../models/cartSchema");
 const { STATUS_CODE } = require("../../utils/statusCode");
+const Product = require('../../models/productSchema')
 
 const getWishList = async (req, res) => {
   try {
@@ -97,6 +98,7 @@ const deleteWishlistItem = async (req, res) => {
 
 const addToCartFromWishlist = async (req, res) => {
   try {
+    console.log("triggreddddd")
     const userId = req.session.user;
     const { productId } = req.body;
 
@@ -106,6 +108,15 @@ const addToCartFromWishlist = async (req, res) => {
         .json({ success: false, message: "Missing Data" });
     }
     const existingCart = await Cart.findOne({ userId });
+
+    const product = await Product.findById(productId)
+    if(!product){
+      return res.status(STATUS_CODE.NOT_FOUND).json({success:false,message:"Product is not found"})
+    }
+    if(product.quantity <= 0){
+      return res.status(STATUS_CODE.BAD_REQUEST).json({success:false,message:"Product is Out Of Stock,You Cannot Add this Item Into Cart"})
+    }
+
 
     if (existingCart) {
       const itemInCart = existingCart.items.some(

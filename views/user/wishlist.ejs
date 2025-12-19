@@ -543,7 +543,10 @@ body {
                     Swal.fire({
                         icon:'success',
                         title:'Added to Cart',
-                        text:result.message || "Item added to cart"
+                        text:result.message || "Item added to cart",
+                        timerProgressBar:true,
+                        timer:2000,
+                        background:'#e8ffe8'
                     }).then(()=>{
                         window.location.reload()
                     })
@@ -551,8 +554,8 @@ body {
                     Swal.fire({
                         icon:'error',
                         title:"Oops",
-                        text:result.message
-
+                        text:result.message,
+                        showConfirmButton:true
                     })
                  }
             } catch (error) {
@@ -561,7 +564,7 @@ body {
                  Swal.fire({
                         icon:'error',
                         title:"Oops",
-                        text:result.message ||"Internal Server error"
+                        text:result.message ||"Internal Server error Happened,Please try again!"
                     })
             }
 

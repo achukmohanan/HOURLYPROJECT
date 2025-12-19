@@ -50,8 +50,6 @@ async (accessToken, refreshToken, profile, done) => {
     }
 }));
 
-//  console.log("google client id is ",process.env.GOOGLE_CLIENT_ID);
-
 
 passport.serializeUser((user,done)=>{
     done(null,user.id)
