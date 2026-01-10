@@ -281,84 +281,96 @@ const approveCancelRequest = async (req, res) => {
     if (item.status !== "Cancellation Requested") {
       return res
         .status(STATUS_CODE.NOT_FOUND)
-        .json({ success: false, message: "NO Cancelation Requested" });
+        .json({ success: false, message: "NO Cancelation Request for this item" });
     }
+
+        if (action === "reject") {
+          item.status = "Cancellation Rejected";
+          
+          await order.save();
+          return res
+            .status(STATUS_CODE.SUCCESS)
+            .json({
+              success: true,
+              message: "Cancel request rejected successfully",
+            });
+        }
+
+
     if (action === "approve") {
-      await Product.findByIdAndUpdate(item.product._id, {
+      await Product.findByIdAndUpdate(item.product, {
         $inc: { quantity: item.quantity },
       });
 
       item.status = "Cancelled";
-      const cancelledItems = order.orderedItems.filter(
+      const cancelledCount  = order.orderedItems.filter(
         (i) => i.status === "Cancelled"
       ).length;
 
-      if (cancelledItems === order.orderedItems.length) {
+      if (cancelledCount === order.orderedItems.length) {
         order.status = "Cancelled";
-      } else if (cancelledItems > 0) {
+      } else{
         order.status = "Partially Cancelled";
-      } else {
-        order.status = "Pending";
-      }
+      } 
 
-      let refundAmount = item.quantity * item.price;
-      //if coupon is applied
 
-      console.log("refund Amount in cancel ",refundAmount)
+
+      let itemTotal  =  item.price * item.quantity;
+     
+      const orderSubtotal = order.totalPrice + order.discount;
+
+      console.log("refund Amount in cancel ",itemTotal)
       console.log("item price  in cancel checking",item.price)
+      //item ratio
+      const itemRatio = itemTotal / orderSubtotal;
 
-      if (order.couponApplied && order.discount > 0) {
-        const totalBeforeDiscount = order.totalPrice + order.discount;
-        const discountPercentage = (order.discount / totalBeforeDiscount) * 100;
+      //coupon share
+      const couponShare = order.couponApplied ? order.discount * itemRatio : 0;
+console.log("couponShare issssssssssss",couponShare)
+      const refundAmount = Math.round(itemTotal - couponShare);
 
-        const itemDiscount = (refundAmount * discountPercentage) / 100;
-        refundAmount = refundAmount - itemDiscount;
-      }
+      // if (order.couponApplied && order.discount > 0) {
+      //   const totalBeforeDiscount = order.totalPrice + order.discount;
+      //   const discountPercentage = (order.discount / totalBeforeDiscount) * 100;
+
+      //   const itemDiscount = (refundAmount * discountPercentage) / 100;
+      //   refundAmount = refundAmount - itemDiscount;
+      // }
 console.log("refund Amount in cancel ",refundAmount)
-      console.log("item price  in cancel checking",item.price)
-
-      if (order.paymentMethod === "Razorpay") {
-        order.userId.wallet = (order.userId.wallet || 0) + refundAmount;
-        await order.userId.save();
-        console.log("transaction schema created")
-        await Transaction.create({
-          userId: order.userId._id,
-          orderId: orderId,
-          type: "Credit",
-          amount: refundAmount,
-          paymentMethod: "Razorpay",
-          description: "Order Cancelled",
-        });
-      }
-      if (order.paymentMethod === "Wallet") {
-        order.userId.wallet = (order.userId.wallet || 0) + refundAmount;
-        await order.userId.save();
-        console.log("transaction schema created")
-        await Transaction.create({
-          userId: order.userId._id,
-          orderId: orderId,
-          type: "Credit",
-          amount: refundAmount,
-          paymentMethod: "Razorpay",
-          description: "Order Cancelled",
-        });
-      }
-      await order.save();
-      return res
-        .status(STATUS_CODE.SUCCESS)
-        .json({ success: true, message: "approved Successfully" });
-    }
-    if (action === "reject") {
-      item.status = "Cancellation Rejected";
       
+
+      if (order.paymentMethod === "Razorpay" || order.paymentMethod === "Wallet") {
+        order.userId.wallet = (order.userId.wallet || 0) + refundAmount;
+        await order.userId.save();
+        console.log("transaction schema created")
+        await Transaction.create({
+          userId: order.userId._id,
+          orderId: orderId,
+          type: "Credit",
+          amount: refundAmount,
+          paymentMethod: "Razorpay",
+          description: "Order item cancelled - refund issued",
+        });
+      }
+      // if (order.paymentMethod === "Wallet") {
+      //   order.userId.wallet = (order.userId.wallet || 0) + refundAmount;
+      //   await order.userId.save();
+      //   console.log("transaction schema created")
+      //   await Transaction.create({
+      //     userId: order.userId._id,
+      //     orderId: orderId,
+      //     type: "Credit",
+      //     amount: refundAmount,
+      //     paymentMethod: "Razorpay",
+      //     description: "Order Cancelled",
+      //   });
+      // }
       await order.save();
       return res
         .status(STATUS_CODE.SUCCESS)
-        .json({
-          success: true,
-          message: "Cancel request rejected successfully",
-        });
+        .json({ success: true, message: "Cancellation approved and refund processed" });
     }
+    
   } catch (error) {
     console.log("error in the approvecancel request", error);
     return res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({success:false,message:"Internal Server Error Happened"})

@@ -135,11 +135,8 @@ router.post("/place-order", userAuth, orderController.postOrder);
 router.get("/order-success", userAuth, orderController.orderSuccess);
 router.get("/order-failure", userAuth, orderController.orderFailure);
 // router.get('/viewOrder',userAuth,paymentController.viewOrderPage)
-router.post(
-  "/cancelOrder/:orderId/:itemId",
-  userAuth,
-  orderController.cancelOrder
-);
+router.post("/cancelOrder/:orderId/:itemId",userAuth,orderController.cancelOrder);
+
 router.post(
   "/return-order/:orderId/:itemId",
   userAuth,

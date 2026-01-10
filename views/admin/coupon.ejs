@@ -170,7 +170,7 @@
                             <th>Code</th>
                             <th>Coupon type</th>
                             <th>minimum purchase</th>
-                            <!-- <th>Maximum discount</th> -->
+                            <th>%</th>
                             <th>Usage Limit</th>
                             <th>Created On</th>
                             <th>Expiry Date</th>
@@ -186,7 +186,7 @@
                             <td><strong><%= c.code %></strong></td>
                             <td><%= c.discountType %></td>
                             <td><%= c.minPurchase %></td>
-                            <!-- <td><%= c.maxDiscount %></td> -->
+                            <td><%= c.discountValue %></td>
                             <td><%= c.limit%></td>
                             <td><%= c.createdOn.toLocaleDateString('en-GB') %></td>
                             <td><%= c.expireOn.toLocaleDateString('en-GB') %></td>
