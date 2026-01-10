@@ -7,6 +7,7 @@ const razorpayInstance = require("./razorpay");
 const crypto = require("crypto");
 const Transaction = require("../../models/transactionSchema");
 const { STATUS_CODE } = require("../../utils/statusCode");
+const Coupon = require("../../models/couponSchema");
 
 
 // Calculate sale price using highest offer
@@ -26,57 +27,71 @@ const calculateSalePrice = (product) => {
   return finalPrice;
 };
 
+function calculateCouponDiscount(total,coupon){
+  if(total < coupon.minPurchase){
+    return {success:false,message:`Mininum Purchase ₹{coupon.minPurchase} required`}
+  }
+    let discountAmount = (total * coupon.discountValue) / 100;
+    
+    if(discountAmount > coupon.maxDiscount){
+      discountAmount = coupon.maxDiscount
+    }
+    return {success:true,discountAmount,finalTotal:total-discountAmount}
+}
+
 
 const postPayment = async (req, res) => {
   try {
-    console.log("paymet");
+    console.log("paymet controller");
     const userId = req.session.user;
     const selectedIndex = req.body.addressId;
-    const discount = req.body.discount;
 
-    console.log("discount is discount", discount);
-
-    const address = await Address.find({ userId });
+    const address = await Address.find({ userId });//////////
     if (!address || !address.length) {
       return res.redirect("/checkout");
     }
-    const selectedAddress = address[0 ].address[selectedIndex];
-    console.log("selected address",selectedAddress)
+    const selectedAddress = address[0].address[selectedIndex];
+
     const findUser = await User.findById(userId);
 
     const cart = await Cart.findOne({ userId }).populate({path:"items.productId",populate:{path:'category'}});
     if (!cart || !cart.items.length) {
-      res.redirect("/cart");
-    }//
-
-        cart.items.forEach(item => {
+    return   res.redirect("/cart");
+    }
+      cart.items.forEach(item => {
           item.productId.salePrice = calculateSalePrice(item.productId)
-        })
+      })
 
-      console.log("chechk 11111111111111111111")
     const outofstock = cart.items.filter((item) => item.productId.quantity < 1);
-    // if (outofstock.length > 0) {
-    //   return res.status(STATUS_CODE.BAD_REQUEST).json({success:false,message:"Product Out of Stock"})
-    // }
-    console.log("check 222222222222222222222")
+    if (outofstock.length > 0) {
+      return res.status(STATUS_CODE.BAD_REQUEST).json({success:false,message:"Product Out of Stock"})
+    }
+    
     let total = cart.items.reduce((sum, item) => {
       return sum + item.productId.salePrice * item.quantity;
     }, 0);
 
-    let disamount = (discount / 100) * total;
-    disamount = parseFloat(disamount.toFixed(2));
-    console.log("discount is =", disamount);
-    total = parseFloat(total - disamount).toFixed(2)
-    
-    console.log("total is total", total);
-   
+    let discountAmount  = 0
+    if(req.session.coupon){
+      const coupon = await Coupon.findOne({ code:req.session.coupon.code,isActive:true})
+     
+      if(coupon && new Date() <= coupon.expireOn){
+        const result = calculateCouponDiscount(total,coupon)
+        if(!result.success){
+          return res.status(STATUS_CODE.BAD_REQUEST).json({success:false,message:result.message})
+        }
+        discountAmount = result.discountAmount;
+        total = result.finalTotal;
+      }
+    }
+
     const orderData = {
       findUser,
       userId,
       address: selectedAddress,
       items: cart.items,
-      totalPrice: total,
-      discount: disamount,
+      totalPrice: total.toFixed(2),
+      discount: discountAmount.toFixed(2),
     };
 
     res.render("user/payment", { orderData });

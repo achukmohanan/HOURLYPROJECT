@@ -15,6 +15,7 @@ const walletController = require("../controllers/user/walletController");
 const contactController = require("../controllers/user/contactController");
 const aboutController = require('../controllers/user/aboutController')
 const cartWishlistCount = require('../middlewares/cartWishlistCount');
+const couponController = require('../controllers/user/couponController')
 
 const retryPaymentController = require('../controllers/user/retryPaymentController');
 
@@ -167,8 +168,8 @@ router.post(
 router.post('/wallet-failed',userAuth,walletController.walletFailed)
 
 //coupon management
-router.post("/apply-coupon", userAuth, cartController.applyCoupon);
-router.post('/remove-coupon',userAuth,cartController.removeCoupon)
+router.post("/apply-coupon", userAuth, couponController.applyCoupon);
+router.post('/remove-coupon',userAuth,couponController.removeCoupon)
 
 //contact
 router.get("/contact", userAuth, contactController.getContactPage);

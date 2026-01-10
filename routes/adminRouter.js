@@ -117,7 +117,7 @@ router.post(
 //coupon management
 router.get("/coupon", adminAuth, couponController.getCouponPage);
 router.post("/coupon", adminAuth, couponController.postCoupon);
-router.delete("/deleteCoupon/:code", adminAuth, couponController.deleteCoupon);
+router.patch("/toggleCoupon/:code", adminAuth, couponController.toggleCoupon);
 
 // salesReport
 router.get("/salesReport", adminAuth, salesController.getsalesReport);

@@ -1,8 +1,8 @@
 const User = require("../../models/userSchema");
 const Cart = require("../../models/cartSchema");
+const Coupon = require("../../models/couponSchema");
 const Product = require("../../models/productSchema");
 const Address = require("../../models/addressSchema");
-const Coupon = require("../../models/couponSchema");
 const { STATUS_CODE } = require("../../utils/statusCode");
 const { path } = require("pdfkit");
 
@@ -298,47 +298,16 @@ const addAddressInCheckout = async (req, res) => {
       console.log("error in get checkout ", error);
     }
   };
-const applyCoupon = async (req, res) => {
-  try {
-    const { code } = req.body;
-    
-    const coupon = await Coupon.findOne({ code });
 
-    if (!coupon) {
-      return res.json({ success: false, message: "Invalid coupon code" });
-    }
-    if (!coupon.isActive) {
-      return res.json({ success: false, message: "Coupon is not active" });
-    }
-    if (new Date() > coupon.expireOn) {
-      return res.json({ success: false, message: "Coupon has expired" });
-    }
-    
-    req.session.couponcode = coupon.code;
-    req.session.discountValue = coupon.discountValue
-    
 
-    res.json({ success: true, discount: coupon.discountValue });
-  } catch (error) {
-    console.log("error in the applycoupon", error);
-  }
-};
+
 
 const gettest = async (req, res) => {
   try {
     return res.render("user/testing");
   } catch (error) {}
 };
-const removeCoupon = async (req,res) =>{
-  try {
-    req.session.couponcode = null
-     req.session.discountValue = 0
-     res.json({success:true})
-  } catch (error) {
-    console.log("error in the remove coupon",error);
-    
-  }
-}
+
 
 module.exports = {
   getCart,
@@ -348,6 +317,5 @@ module.exports = {
   addAddressInCheckout,
   getCheckOut,
   gettest,
-  applyCoupon,
-  removeCoupon
+ 
 };
