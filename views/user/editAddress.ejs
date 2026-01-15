@@ -190,14 +190,40 @@
                             
                             <div class="row">
                                 <div class="col-md-4">
+                                    <!--  -->
                                     <div class="form-group">
-                                        <label for="addressType">
+                                        <label>
                                             <i class="fas fa-tag me-1"></i>Address Type
                                         </label>
-                                        <input type="text" class="form-control border-3" value="<%= address.addressType %>" id="addressType" name="addressType" required>
+                                        </div>
+                                        <div class="d-flex gap-3 mt-2">
+                                            <div>
+                                                <input type="radio" name="addressTypeRadio" id="home" value="Home">
+                                                <label for="home">Home</label>
+                                            </div>
+
+                                             <div>
+                                            <input type="radio" name="addressTypeRadio" id="work" value="Work">
+                                            <label for="work">Work</label>
+                                            </div>
+
+                                            <div>
+                                            <input type="radio" name="addressTypeRadio" id="other" value="Other">
+                                            <label for="other">Other</label>
+                                            </div>
+
+                                            </div>
+
+                                            <input type="hidden" id="addressType" name="addressType"
+                                            value="<%= address.addressType %>">
+
+                                            <input type="text" id="otherAddressType" class="form-control mt-2 d-none"  placeholder="Enter address type (e.g., Hostel, Parents House)">
+
+                                        
+                                        <!-- <input type="text" class="form-control border-3" value="<%= address.addressType %>" id="addressType" name="addressType" required> -->
                                         <div class="invalid-feedback"></div>
                                     </div>
-                                </div>
+                                
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="name">
@@ -209,14 +235,15 @@
                                     </div>
                                 </div>
                                 <div class="col-md-4">
-                                    <div class="form-group">
-                                        <label for="city">
-                                            <i class="fas fa-city me-1"></i>City
+                                      <div class="form-group">
+                                        <label for="pincode">
+                                            <i class="fas fa-mail-bulk me-1"></i>Pincode
                                         </label>
-                                        <input type="text" class="form-control" id="city" name="city" 
-                                               value="<%= address.city %>" required minlength="2" maxlength="50">
+                                        <input type="text" class="form-control" id="pincode" name="pincode" 
+                                               value="<%= address.pincode %>" required pattern="[0-9]{6}" maxlength="6">
                                         <div class="invalid-feedback"></div>
                                     </div>
+                                   
                                 </div>
                             </div>
 
@@ -237,17 +264,17 @@
                                             <i class="fas fa-map me-1"></i>State
                                         </label>
                                         <input type="text" class="form-control" id="state" name="state" 
-                                               value="<%= address.state %>" required minlength="2" maxlength="50">
+                                               value="<%= address.state %>" required minlength="2" maxlength="50" readonly>
                                         <div class="invalid-feedback"></div>
                                     </div>
                                 </div>
                                 <div class="col-md-4">
-                                    <div class="form-group">
-                                        <label for="pincode">
-                                            <i class="fas fa-mail-bulk me-1"></i>Pincode
+                                     <div class="form-group">
+                                        <label for="city">
+                                            <i class="fas fa-city me-1"></i>City
                                         </label>
-                                        <input type="text" class="form-control" id="pincode" name="pincode" 
-                                               value="<%= address.pincode %>" required pattern="[0-9]{5,6}" maxlength="6">
+                                        <input type="text" class="form-control" id="city" name="city" 
+                                               value="<%= address.city %>" required minlength="2" maxlength="50" readonly>
                                         <div class="invalid-feedback"></div>
                                     </div>
                                 </div>
@@ -280,7 +307,7 @@
                             <div class="d-flex gap-3 mt-4">
                                   <button type="submit" id="submitButton" class="btn btn-primary">
                                 Update Address
-                                    <!-- <i class="fas fa-save me-2"></i> -->
+                                    <i class="fas fa-save me-2"></i>
                                 </button>
                                 <a href="/account" class="btn btn-secondary">
                                     <i class="fas fa-arrow-left me-2"></i>Back to Addresses
@@ -298,12 +325,108 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
+
+        let isPincodeValid = false;
+
+        const radios = document.querySelectorAll('input[name="addressTypeRadio"]');
+        const otherInput = document.getElementById('otherAddressType');
+        const hiddenAddressType = document.getElementById('addressType');
+
+
+        // Set initial value while editing
+        const existingType = hiddenAddressType.value;
+
+        radios.forEach(radio => {
+             if (radio.value === existingType) {
+                    radio.checked = true;
+                }
+            });
+
+            // If not Home or Work → Other
+                if (existingType !== "Home" && existingType !== "Work") {
+                document.getElementById("other").checked = true;
+                otherInput.classList.remove("d-none");
+                otherInput.value = existingType;
+                }
+
+                // Change handler
+                radios.forEach(radio => {
+                radio.addEventListener('change', () => {
+                    if (radio.value === "Other") {
+                    otherInput.classList.remove("d-none");
+                    hiddenAddressType.value = "";
+                    } else {
+                    otherInput.classList.add("d-none");
+                    otherInput.value = "";
+                    hiddenAddressType.value = radio.value;
+                    }
+                });
+                });
+
+                // Sync "Other" input
+            otherInput.addEventListener("input", () => {
+            hiddenAddressType.value = otherInput.value.trim();
+            });
+
          document.querySelectorAll(".form-control").forEach(input => {
     input.addEventListener("input", () => {
         input.classList.remove("is-invalid");
         if (input.nextElementSibling) input.nextElementSibling.textContent = "";
     });
 });
+
+//pincode
+
+    document.getElementById('pincode').addEventListener('blur',fetchLocationPincode)
+
+    async function fetchLocationPincode(){
+        const pincode = document.getElementById('pincode').value.trim();
+         isPincodeValid = false;
+        if(!/^\d{6}$/.test(pincode)){
+            Swal.fire({
+                icon:'error',
+                title:'Please',
+                text:'Please enter a valid 6-digit pincode'
+            })
+            return;
+        }
+
+        try {
+            const res = await fetch(`https://api.postalpincode.in/pincode/${pincode}`);
+
+            const data = await res.json();
+            console.log("data isss",data)
+            if(data[0].Status === 'Success'){
+                const postOffice = data[0].PostOffice[0];
+
+                document.getElementById('city').value = postOffice.District
+                document.getElementById('state').value = postOffice.State;
+
+                isPincodeValid = true;
+            }else{
+                Swal.fire({
+                    icon: "error",
+                    title: "Not Found",
+                    text: "No location found for this pincode",
+                });
+
+                document.getElementById('city').value = '';
+                document.getElementById('state').value = '';
+                
+            }
+
+        } catch (error) {
+           console.error("errror in the fetch api of pincode",error)
+             Swal.fire({
+          icon: "error",
+          title: "Error", 
+          text: "Unable to fetch location details",
+        });
+        document.getElementById('city').value = '';
+        document.getElementById('state').value = '';
+        }
+    }
+   
         
 document.getElementById('addressForm').addEventListener('submit',async function (event) {
         event.preventDefault()
@@ -334,7 +457,6 @@ document.getElementById('addressForm').addEventListener('submit',async function 
                 text: result.message,
                 timer: 2000,
                 showConfirmButton: false,
-                timer:2000,
                 timerProgressBar:true
             }).then(()=>{
                 window.location.href="/account?address=&tab=address"
@@ -362,10 +484,37 @@ document.getElementById('addressForm').addEventListener('submit',async function 
    function validateForm() {
     let isValid = true;
 
+        if(hiddenAddressType.value.trim() === ""){
+        Swal.fire({
+            icon:'error',
+            title:'Address Type Required',
+            text:'Please select or enter an address type'
+        });
+        return false;
+    }
+
+    if(!isPincodeValid){
+            Swal.fire({
+                icon:'error',
+                title:'Invalid Pincode',
+                text:'Please enter a valid pincode and wait for address auto-fill'
+            });
+            return false;
+        }
+
     document.querySelectorAll(".invalid-feedback").forEach(div => div.textContent = "");
     document.querySelectorAll(".form-control").forEach(input => input.classList.remove("is-invalid"));
 
-   
+   const selectedType = document.querySelector('input[name="addressTypeRadio"]:checked');
+
+        if(!selectedType){
+            Swal.fire({
+                icon:'error',
+                title:'Address Type',
+                text:'Please select an address type'
+            });
+            return false;
+        }
 
 
     const fields = {
@@ -410,6 +559,9 @@ document.getElementById('addressForm').addEventListener('submit',async function 
     return isValid
 
 }
+document.getElementById('pincode').addEventListener('input', () => {
+    isPincodeValid = false;
+});
         
     </script>
 </body>
