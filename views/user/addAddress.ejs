@@ -22,17 +22,55 @@
         Create User Address
       </h3>
 
-      <form id="addressForm" class="p-3">
+      <form id="addressForm" class="p-3" novalidate>
         <div class="row mb-5">
+          
           <div class="form-group2 col-md-4  ">
-            <label for="addressType" class="form-label">Address Type:</label>
+            <label   class="form-label  d-block">Address Type:</label>
+            
+            
+            <div class="form-check form-check-inline">
             <input
-              type="text"
-              class="form-control border-3"
-              id="addressType"
+              type="radio"
+              class="form-check-input"
+              
               name="addressType"
+              id="home"
+              value="Home"
               required
             />
+            <label class="form-check-label" for="home">Home</label>
+            </div>
+
+             <div class="form-check form-check-inline">
+              <input
+                class="form-check-input"
+                type="radio"
+                name="addressType"
+                id="work"
+                value="Work"
+              />
+              <label class="form-check-label" for="work">Work</label>
+            </div>
+
+            <div class="form-check form-check-inline">
+              <input
+                class="form-check-input"
+                type="radio"
+                name="addressType"
+                id="other"
+                value="Other"
+              />
+              <label class="form-check-label" for="other">Other</label>
+            </div>
+
+                    <input
+                  type="text"
+                  class="form-control mt-2 d-none"
+                  id="customAddressType"
+                  name="customAddressType"
+                  placeholder="Enter address type (e.g., Hostel, Parents House)"
+                />
           </div>
           <div class="form-group2 col-md-4 " >
             <label for="name" class="form-label">Name:</label>
@@ -44,13 +82,14 @@
               required
             />
           </div>
+
           <div class="form-group2 col-md-4">
-            <label for="city" class="form-label">City:</label>
+            <label for="pincode" class="form-label">Pincode:</label>
             <input
-              type="text"
+              type="number"
               class="form-control border-3"
-              id="city"
-              name="city"
+              id="pincode"
+              name="pincode"
               required
             />
           </div>
@@ -73,17 +112,17 @@
               class="form-control border-3"
               id="state"
               name="state"
-              required
+              readonly
             />
           </div>
           <div class="form-group2 col-md-4">
-            <label for="pincode" class="form-label">Pincode:</label>
+            <label for="city" class="form-label">City:</label>
             <input
-              type="number"
+              type="text"
               class="form-control border-3"
-              id="pincode"
-              name="pincode"
-              required
+              id="city"
+              name="city"
+              readonly
             />
           </div>
         </div>
@@ -117,14 +156,73 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-      document
+
+       const radios = document.querySelectorAll('input[name="addressType"]');
+       const customInput = document.getElementById("customAddressType");
+
+  radios.forEach(radio => {
+    radio.addEventListener("change", () => {
+      if (radio.value === "Other") {
+        customInput.classList.remove("d-none");
+        customInput.required = true;
+      } else {
+        customInput.classList.add("d-none");
+        customInput.required = false;
+        customInput.value = "";
+      }
+    });
+  });
+    
+    document.getElementById('pincode').addEventListener('change',fetchLocationFromPincode)
+
+    async function fetchLocationFromPincode() {
+     
+      const pincode = document.getElementById('pincode').value.trim();
+
+      if(!/^\d{6}$/.test(pincode)){
+         showError("pincode", "Please enter a valid 6-digit pincode");
+        return;
+      }
+      try {
+        const res = await fetch(`https://api.postalpincode.in/pincode/${pincode}`);
+       
+        const data = await res.json();
+        console.log("data is",data)
+       if(data[0].Status === 'Success'){
+        const postOffice = data[0].PostOffice[0];
+
+        document.getElementById('city').value = postOffice.District;
+        document.getElementById('state').value = postOffice.State
+       }else{
+         Swal.fire({
+            icon: "error",
+            title: "Not Found",
+            text: "No location found for this pincode",
+          });
+
+            document.getElementById("city").value = "";
+            document.getElementById("state").value = "";
+       }
+      } catch (error) {
+        console.error("errror in the fetch api of pincode",error)
+         Swal.fire({
+          icon: "error",
+          title: "Error", 
+          text: "Unable to fetch location details",
+        });
+      }
+    }
+    
+    document
         .getElementById("addressForm")
         .addEventListener("submit", async function (event) {
           event.preventDefault();
           if (!validateForm()) {
             return;
           }
-          const addressType = document.getElementById("addressType").value;
+         const selectedAddressType = document.querySelector('input[name="addressType"]:checked')
+
+         const addressType =selectedAddressType.value === "Other" ? document.getElementById("customAddressType").value.trim() : selectedAddressType.value;
           const name = document.getElementById("name").value;
           const city = document.getElementById("city").value;
           const landMark = document.getElementById("landMark").value;
@@ -168,47 +266,27 @@
           }
         });
 
+        //pincode
+   
+    
+
       function validateForm() {
         let isValid = true;
-        const requiredFields = [
-          "addressType",
-          "name",
-          "city",
-          "landMark",
-          "state",
-          "pincode",
-          "phone",
-          "altPhone",
-        ];
+         clearAllErrors()
+   
+       const selectedAddressType = document.querySelector('input[name="addressType"]:checked');
 
-        // Clear previous error messages
-        requiredFields.forEach(function (field) {
-          const errorElement = document.getElementById(field + "-error");
-          if (errorElement) {
-            errorElement.remove();
-          }
-        });
-
-        requiredFields.forEach(function (field) {
-          const input = document.getElementById(field);
-          const inputValue = input.value.trim();
-
-          if (inputValue === "") {
-            const errorMessage = "This field is required.";
-            const errorDiv = document.createElement("div");
-            errorDiv.className = "text-danger mt-1";
-            errorDiv.textContent = errorMessage;
-            errorDiv.id = field + "-error";
-            input.parentNode.appendChild(errorDiv);
-            isValid = false;
-          }
-        });
-
-        if (!isValid) {
-          return false;
+       if (!selectedAddressType) {
+          showError("home", "Address type is required");
+          isValid = false;
+        } else if (
+          selectedAddressType.value === "Other" &&
+          !document.getElementById("customAddressType").value.trim()
+        ) {
+          showError("customAddressType", "Please enter address type");
+          isValid = false;
         }
 
-        const addressType = document.getElementById("addressType").value.trim();
         const name = document.getElementById("name").value.trim();
         const city = document.getElementById("city").value.trim();
         const landMark = document.getElementById("landMark").value.trim();
@@ -221,73 +299,86 @@
         const pincodePattern = /^\d{6}$/;
         const phonePattern = /^\d{10}$/;
 
-        if (!namePattern.test(name)) {
-          Swal.fire({
-            title: "Error",
-            text: "Name should contain alphabets and spaces only.",
-            icon: "error",
-          });
-          return false;
+       
+        if (!name) {
+          showError("name", "Name is required");
+          isValid = false;
+        }else if (!namePattern.test(name)) {
+          showError("name", "Only alphabets and spaces allowed");
+          isValid = false;
         }
 
-        if (!namePattern.test(city)) {
-          Swal.fire({
-            title: "Error",
-            text: "City should contain alphabets and spaces only.",
-            icon: "error",
-          });
-          return false;
+        if (!landMark) {
+        showError("landMark", "Landmark is required");
+        isValid = false;
+      }
+
+      if (!pincode) {
+        showError("pincode", "Pincode is required");
+        isValid = false;
+      } else if (!pincodePattern.test(pincode)) {
+        showError("pincode", "Pincode must be 6 digits");
+        isValid = false;
+      }
+
+       if (!city) {
+        showError("city", "City is required");
+        isValid = false;
+      } else if (!namePattern.test(city)) {
+        showError("city", "City must contain only letters");
+        isValid = false;
+      }
+
+      if (!state) {
+        showError("state", "State is required");
+        isValid = false;
+      } else if (!namePattern.test(state)) {
+        showError("state", "State must contain only letters");
+        isValid = false;
+      }
+
+      if (!phone) {
+        showError("phone", "Phone number is required");
+        isValid = false;
+      } else if (!phonePattern.test(phone)) {
+        showError("phone", "Phone must be 10 digits");
+        isValid = false;
+      }
+
+      if (!altPhone) {
+          showError("altPhone", "Alternate phone is required");
+          isValid = false;
+        } else if (!phonePattern.test(altPhone)) {
+          showError("altPhone", "Alternate phone must be 10 digits");
+          isValid = false;
         }
 
-        if (!namePattern.test(state)) {
-          Swal.fire({
-            title: "Error",
-            text: "State should contain alphabets and spaces only.",
-            icon: "error",
-          });
-          return false;
-        }
-
-        if (!pincodePattern.test(pincode)) {
-          Swal.fire({
-            title: "Error",
-            text: "Pincode should be a 6-digit number.",
-            icon: "error",
-          });
-          return false;
-        }
-
-        if (!phonePattern.test(phone)) {
-          Swal.fire({
-            title: "Error",
-            text: "Phone number should be a 10-digit number.",
-            icon: "error",
-          });
-          return false;
-        }
-
-        if (!phonePattern.test(altPhone)) {
-          Swal.fire({
-            title: "Error",
-            text: "Alternate phone number should be a 10-digit number.",
-            icon: "error",
-          });
-          return false;
-        }
-
-        if (phone === altPhone) {
-          Swal.fire({
-            title: "Error",
-            text: "Phone number and alternate phone number should be different.",
-            icon: "error",
-          });
-          return false;
-        }
-
+        if (phone && altPhone && phone === altPhone) {
+        showError("altPhone", "Phone numbers must be different");
+        isValid = false;
+      }
         return isValid;
       }
 
-     
+      function showError(field, message) {
+         clearError(field);
+          const input = document.getElementById(field);
+          const errorDiv = document.createElement("div");
+
+          errorDiv.className = "text-danger mt-1";
+          errorDiv.id = field + "-error";
+          errorDiv.innerText = message;
+          input.parentNode.appendChild(errorDiv);
+      }
+
+      function clearError(field) {
+      const error = document.getElementById(field + "-error");
+      if (error) error.remove();
+      }
+
+     function clearAllErrors() {
+      document.querySelectorAll(".text-danger").forEach(el => el.remove());
+    }
     </script>
   </body>
-</html><%- include("../../views/partials/user/supportfooter") %>
+<%- include("../../views/partials/user/supportfooter") %>

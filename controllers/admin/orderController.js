@@ -329,13 +329,6 @@ const approveCancelRequest = async (req, res) => {
 console.log("couponShare issssssssssss",couponShare)
       const refundAmount = Math.round(itemTotal - couponShare);
 
-      // if (order.couponApplied && order.discount > 0) {
-      //   const totalBeforeDiscount = order.totalPrice + order.discount;
-      //   const discountPercentage = (order.discount / totalBeforeDiscount) * 100;
-
-      //   const itemDiscount = (refundAmount * discountPercentage) / 100;
-      //   refundAmount = refundAmount - itemDiscount;
-      // }
 console.log("refund Amount in cancel ",refundAmount)
       
 

@@ -202,7 +202,7 @@ const signup = async (req, res) => {
     req.session.userOtp = otp;
     req.session.userOtpExpires = Date.now() +  (60 * 1000);
     req.session.userData = { name, phone, email, password, referalcode };
-
+    
     console.log("Signup Otp sent", otp);
 
     return res

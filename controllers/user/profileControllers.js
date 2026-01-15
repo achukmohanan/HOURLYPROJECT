@@ -498,6 +498,9 @@ const getEditProfile = async (req, res) => {
   try {
     const user = req.session.user;
     const findUser = await User.findById(user);
+    if(!findUser){
+      return res.redirect('/login')
+    }
     return res.render("user/editProfile", {
       user: findUser,
     });
