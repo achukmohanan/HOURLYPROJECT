@@ -373,11 +373,7 @@ cPasswordid.addEventListener("input", () => {
       const phoneValid = phoneValidateChecking();
       const passwordValid = passwordValidateChecking();
       const confirmValid = confirmPasswordChecking();
-      console.log("Name valid:", nameValid);
-console.log("Email valid:", emailValid);
-console.log("Phone valid:", phoneValid);
-console.log("Pass valid:", passwordValid);
-console.log("Confirm:", confirmValid);
+  
 
 
         if (nameValid && emailValid && phoneValid && passwordValid && confirmValid) {
@@ -403,8 +399,7 @@ console.log("Confirm:", confirmValid);
           });
           
           const data = await res.json();
-         
-          console.log("response is ",data)
+ 
           if(data.success){
           Swal.fire({
           icon: 'success',

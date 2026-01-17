@@ -33,7 +33,14 @@ router.get("/confirmwithotp", checksession, userController.confirmWithOtp);
 router.post("/confirmwithotp", checksession, userController.confirmwithotp);
 //google login
 router.get(
-  "/google",checksession,
+  "/google",
+  (req,res,next)=>{
+    if(req.query.ref){
+      req.session.refferalCode = req.query.ref;
+    }
+    next()
+  },
+  checksession,
   passport.authenticate("google", { scope: ["profile", "email"] })
 );
 router.get(

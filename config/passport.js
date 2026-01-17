@@ -5,14 +5,14 @@ const User = require("../models/userSchema");
 const env = require('dotenv').config()
 
 
-passport.use(new GoogleStrategy({
-    clientID: process.env.GOOGLE_CLIENT_ID,
-    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    callbackURL: "https://www.hourly.sbs/google/callback"
-  
-   
-    
-},
+passport.use(
+    new GoogleStrategy(
+        {
+            clientID: process.env.GOOGLE_CLIENT_ID,
+            clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+            callbackURL: "https://www.hourly.sbs/google/callback",
+            passReqToCallback:true
+        },
 async (accessToken, refreshToken, profile, done) => {
     // console.log("google profile",profile);
     try {
@@ -34,14 +34,32 @@ async (accessToken, refreshToken, profile, done) => {
         } 
 
             console.log("creating user");
+
+            let referredBy = null;
+            if(req.session.refferalCode){
+                const refUser =  await User.findOne({
+                    referralCode:req.session.referralCode,
+
+                })
+                if(refUser) referredBy = refUser._id;
+            }
             
             user = new User({
                 name: profile.displayName,
                 email: email,
                 googleId: profile.id,
+                referralCode:generateReferralCode(profile.displayName),
+                referredBy
             });
 
             await user.save();
+             if (referredBy) {
+                await User.findByIdAndUpdate(referredBy, {
+                    $inc: { wallet: 50 },
+                    $push: { redeemedUsers: newUser._id },
+                });
+                }
+                delete req.session.referralCode;
             return done(null, user);
         
     } catch (err) {
@@ -49,6 +67,12 @@ async (accessToken, refreshToken, profile, done) => {
         return done(err, null);
     }
 }));
+
+function generateReferralCode(name) {
+  const prefix = name.replace(/\s/g, "").slice(0, 4).toUpperCase();
+  const random = Math.floor(1000 + Math.random() * 9000);
+  return prefix + random;
+}
 
 
 passport.serializeUser((user,done)=>{
