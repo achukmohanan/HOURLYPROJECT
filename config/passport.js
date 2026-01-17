@@ -14,7 +14,7 @@ passport.use(
             passReqToCallback:true
         },
 async (accessToken, refreshToken, profile, done) => {
-    // console.log("google profile",profile);
+    console.log("google profile",profile);
     try {
         const email = profile.emails[0].value;
 
