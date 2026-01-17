@@ -13,9 +13,13 @@ passport.use(
             callbackURL: "https://www.hourly.sbs/google/callback",
             passReqToCallback:true
         },
-async (accessToken, refreshToken, profile, done) => {
-    console.log("google profile",profile);
+async (req,accessToken, refreshToken, profile, done) => {
     try {
+        console.log("google profile",profile);
+
+        if (!profile || !profile.emails || !profile.emails.length) {
+          return done(new Error("Google profile email not found"), null);
+        }
         const email = profile.emails[0].value;
 
         let user = await User.findOne({ 
@@ -36,7 +40,8 @@ async (accessToken, refreshToken, profile, done) => {
             console.log("creating user");
 
             let referredBy = null;
-            if(req.session.refferalCode){
+
+            if(req.session.referralCode){
                 const refUser =  await User.findOne({
                     referralCode:req.session.referralCode,
 
@@ -49,7 +54,7 @@ async (accessToken, refreshToken, profile, done) => {
                 email: email,
                 googleId: profile.id,
                 referralCode:generateReferralCode(profile.displayName),
-                referredBy
+                referredBy,
             });
 
             await user.save();
