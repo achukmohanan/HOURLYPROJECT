@@ -31,10 +31,9 @@ const getCouponPage = async (req, res) => {
 
 const postCoupon = async (req, res) => {
   try {
-    // console.log("data is received ", req.body);
+    
     const {
       code,
-      // discountType,
       discountValue,
       maxDiscount,
       description,
