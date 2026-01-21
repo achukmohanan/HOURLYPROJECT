@@ -15,13 +15,16 @@ const storage = require("../helpers/multer");
 const { checksession } = require("../middlewares/userAuth");
 const uploads = multer({ storage: storage });
 const upload = require('../helpers/multerCloudinary')
-
+const orderController2 = require('../controllers/admin/orderController2')
+const adminController2 = require('../controllers/admin/adminController2')
+const productController2 = require('../controllers/admin/productController2')
+const salesController2 = require('../controllers/admin/salesController2')
 
 router.get("/adminlogin", checksession, adminController.loadLogin);
 router.post("/adminlogin", adminController.login);
 
 router.get("/dashboard", adminAuth, adminController.loaddashboard);
-router.get("/load-chart", adminAuth, adminController.salesChart);
+router.get("/load-chart", adminAuth, adminController2.salesChart);
 
 router.get("/pageerror", adminController.pageerror);
 router.get("/logout", adminAuth, adminController.logout);
@@ -78,11 +81,11 @@ router.post(
   adminAuth,
   productController.removeProductOffer
 );
-router.get("/blockProduct", adminAuth, productController.blockProduct);
-router.get("/unblockProduct", adminAuth, productController.unblockProduct);
-router.get("/editProduct", adminAuth, productController.getEditProduct);
+router.get("/blockProduct", adminAuth, productController2.blockProduct);
+router.get("/unblockProduct", adminAuth, productController2.unblockProduct);
+router.get("/editProduct", adminAuth, productController2.getEditProduct);
 //edit product 
-router.post("/editProduct/:id",adminAuth,productController.editProduct);
+router.post("/editProduct/:id",adminAuth,productController2.editProduct);
 
 router.post("/deleteImage", adminAuth, productController.deleteSingleImage);
 
@@ -103,7 +106,7 @@ router.post(
 router.put(
   "/returnRequest/:orderId/:itemId",
   adminAuth,
-  orderController.approveReturnRequest
+  orderController2.approveReturnRequest
 );
 //reject return
 
@@ -111,7 +114,7 @@ router.put(
 router.post(
   "/cancelApproveRequest/:orderId/:itemId",
   adminAuth,
-  orderController.approveCancelRequest
+  orderController2.approveCancelRequest
 );
 
 //coupon management
@@ -121,7 +124,7 @@ router.patch("/toggleCoupon/:code", adminAuth, couponController.toggleCoupon);
 
 // salesReport
 router.get("/salesReport", adminAuth, salesController.getsalesReport);
-router.get("/sales-Report", adminAuth, salesController.filterSales);
+router.get("/sales-Report", adminAuth, salesController2.filterSales);
 router.get("/sales-report/filter", adminAuth, salesController.getFilteredSalesData);
 
 //concern

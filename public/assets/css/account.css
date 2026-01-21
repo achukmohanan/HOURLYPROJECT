@@ -15,7 +15,7 @@ body {
 .main-content {
     background: white;
     min-height: calc(100vh - 200px);
-    padding: 20px 0;
+    padding: 2px 0;
 }
 
 .container {
@@ -30,7 +30,7 @@ body {
     background: white;
     border-radius: 15px;
     box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-    margin: 20px 0;
+    /* margin: 20px 0; */
 }
 
 .account-header {
