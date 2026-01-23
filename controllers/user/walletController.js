@@ -25,7 +25,7 @@ const walletTopUp = async (req, res) => {
       key: process.env.RAZORPAY_KEY_ID,
     });
   } catch (error) {
-    console.log("error in the wallet top up ", error);
+    console.log("error in the wallet top up ", erro);
     return res
       .status(STATUS_CODE.INTERNAL_SERVER_ERROR)
       .json({ success: false, message: "Razorpay payment creation failed" });
