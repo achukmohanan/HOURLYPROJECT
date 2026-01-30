@@ -335,6 +335,8 @@ const confirmwithotp = async (req, res) => {
         referralCode: myReferalCode,
         referredBy: referredByUser ? referredByUser._id : null,
       });
+     
+
 
       await saveUserData.save();
       //coupn for refered user

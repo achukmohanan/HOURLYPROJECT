@@ -27,7 +27,7 @@ const customerInfo = async (req, res) => {
         { email: { $regex: ".*" + search + ".*", $options: "i" } },
       ],
     });
-
+ 
     res.render("admin/customers", {
       data: userData,
       totalPages: Math.ceil(count / limit),
