@@ -72,7 +72,8 @@
                 onclick="toggleFilters(event)">×</button>
               <form action="/shop" method="get" id="filterForm">
 
-
+          <button id="clearFilterBtn" class="btn btn-outline-secondary mx-5  mb-2" type="button"
+                    style="display:   none;">Clear Filter </button>
                 <div class="filter-section">
                   <div class="filter-title">Categories</div>
                   <div class="category-brand-container">
@@ -81,7 +82,7 @@
                         <li class="filter-item">
                           <label>
                             <input type="checkbox" name="category" value="<%= cat._id %>"
-                              <%=selectedCategories.includes(String(cat._id)) ? "checked" : "" %>
+                              <%= selectedCategories.includes(String(cat._id)) ? "checked" : "" %>
                             >
                             <%= cat.name%>
                           </label>
@@ -99,7 +100,7 @@
                         <li class="filter-item">
                           <label>
                             <input type="checkbox" name="brand" value="<%= b.brandName %>"
-                              <%=selectedBrand.includes(String(b.brandName)) ? "checked" : '' %>
+                              <%= selectedBrand.includes(String(b.brandName)) ? "checked" : '' %>
                             >
                             <%= b.brandName %>
                           </label>
@@ -135,9 +136,7 @@
                   </div>
                 </div>
                 <div class="filter-action mt-3">
-                  <button class="btn btn-dark mx-5 my-3" type="submit"> Apply Filter </button>
-                  <button id="clearFilterBtn" class="btn btn-outline-secondary mx-5  " type="button"
-                    style="display:   none;">Clear Filter </button>
+             
                 </div>
               </form>
             </aside>
@@ -436,9 +435,18 @@
         const clearBtn = document.getElementById('clearFilterBtn');
         const inputs = filterForm.querySelectorAll("input[name='category'], input[name='brand'], input[name='price']");
 
+        inputs.forEach(input =>{
+          input.addEventListener('change',()=>{
+            filterForm.submit()
+          })
+        })
+
         // Function to check if any filter is applied
         function checkFilter() {
           let anySelected = false;
+
+          
+
           inputs.forEach(input => {
             if ((input.type === 'checkbox' || input.type === 'radio') && input.checked) {
               anySelected = true;
