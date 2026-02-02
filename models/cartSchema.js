@@ -1,4 +1,5 @@
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
+const Coupon = require('./couponSchema');
 const  {Schema} = mongoose;
 
 const cartSchema = new Schema({
@@ -19,7 +20,13 @@ const cartSchema = new Schema({
             default:1
         },
         
-    }]
+    }],
+    coupon:{
+        code:String,
+        discountAmount:Number
+    },
+    totalAmount: Number,
+    finalAmount: Number
 })
 
 const Cart = mongoose.model("Cart", cartSchema)

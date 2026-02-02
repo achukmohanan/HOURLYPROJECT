@@ -16,7 +16,9 @@ const getSalePrice = (product) =>{
 
 const applyCoupon = async (req, res) => {
   try {
+    console.log('req.body isssss',req.body)
     const { code } = req.body;
+
     const userId = req.session.user;
     const coupon = await Coupon.findOne({ code ,isActive:true});
 
@@ -60,15 +62,16 @@ const applyCoupon = async (req, res) => {
     }
     const finalAmount = Math.max(totalAmount - discount,0)
 
-
-    req.session.coupon = {
-        code: coupon.code,
-        discount,
-        discountType:coupon.discountType,
-        discountValue: coupon.discountValue,
-        maxDiscount: coupon.maxDiscount
+    cart.coupon = {
+      code:coupon.code,
+      discountAmount:discount
     }
-    
+
+    cart.totalAmount = totalAmount
+    cart.finalAmount = finalAmount
+
+    await cart.save();
+
 
    return res.json({ success: true,  message: "Coupon applied successfully" ,discount,finalAmount});
   } catch (error) {
@@ -80,8 +83,11 @@ const applyCoupon = async (req, res) => {
 
 const removeCoupon = async (req,res) =>{
   try {
-    req.session.couponcode = null
-     req.session.discountValue = 0
+    const cart = await Cart.findOne({userId:req.session.user});
+
+    cart.coupon = null;
+    cart.finalAmount = cart.totalAmount;
+    cart.save()
      res.json({success:true})
   } catch (error) {
     console.log("error in the remove coupon",error);

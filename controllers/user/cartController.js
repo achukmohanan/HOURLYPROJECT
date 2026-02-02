@@ -234,8 +234,6 @@ const addAddressInCheckout = async (req, res) => {
       const userId = req.session.user;
       const user = await User.findById(userId);
 
-      const savedDiscount = req.session.discountValue || 0;
-      const couponcode =  req.session.couponcode || "";
       
       const cart = await Cart.findOne({ userId }).populate({path:"items.productId",populate:{path:'category',model:'Category'}});
       
@@ -272,6 +270,15 @@ const addAddressInCheckout = async (req, res) => {
         return sum + item.productId.salePrice * item.quantity;
       }, 0);
 
+      let discount = 0;
+      let finalAmount = total;
+      let couponCode = "";
+
+      if(cart.coupon){
+        discount = cart.coupon.discountAmount;
+        couponCode = cart.coupon.code;
+        finalAmount = Math.max(total-discount , 0)
+      }
       
       const addressList = await Address.find({userId });
 
@@ -291,8 +298,10 @@ const addAddressInCheckout = async (req, res) => {
         cart,
         totalPrice: total,
         addressList,
-        savedDiscount,
-        couponcode
+        couponCode,
+        discount,
+        finalAmount
+
       });
     } catch (error) {
       console.log("error in get checkout ", error);

@@ -42,8 +42,9 @@ function calculateCouponDiscount(total,coupon){
 
 const postPayment = async (req, res) => {
   try {
-    console.log("paymet controller");
+  
     const userId = req.session.user;
+   
     const selectedIndex = req.body.addressId;
 
     const address = await Address.find({ userId });//////////
@@ -72,8 +73,8 @@ const postPayment = async (req, res) => {
     }, 0);
 
     let discountAmount  = 0
-    if(req.session.coupon){
-      const coupon = await Coupon.findOne({ code:req.session.coupon.code,isActive:true})
+    if(cart.coupon && cart.coupon.code){
+      const coupon = await Coupon.findOne({ code:cart.coupon.code,isActive:true})
      
       if(coupon && new Date() <= coupon.expireOn){
         const result = calculateCouponDiscount(total,coupon)

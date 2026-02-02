@@ -628,10 +628,12 @@
                             </div>  
                         <% }) %>
                         
+                        <% if(orderData.discount > 0){%>
                         <div class="order-item">
                             <span class="product-name">Coupon Discount</span> 
-                            <span class="product-amount" style="color: #28a745;">- ₹<%= orderData.discount %></span>
+                            <span class="product-amount" style="color: #28a745;">- ₹<%= orderData.discount   %></span>
                         </div>
+                        <% }  %>
                         
                         <div class="order-item1">
                             <span>Total Amount</span>

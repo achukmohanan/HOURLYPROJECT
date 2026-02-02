@@ -83,13 +83,7 @@ const toggleCoupon = async (req, res) => {
   try {
     const { code } = req.params;
     const {isActive} = req.body
-
-  // const updated = await Coupon.findOneAndUpdate(
-  //   { code,isActive:true },
-  //   {$set:{isActive:false}},
-  //   {new:true}
-  // );
-
+    
   const coupon = await Coupon.findOne({code})
 
   if (!coupon) {

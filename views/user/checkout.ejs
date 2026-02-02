@@ -411,9 +411,9 @@
                     <span>Shipping</span>
                     <span style="color: #0bdb15;">Free</span>
                 </div>
-                <div class="summary-line" id="discountRow" style="display:none;">
+                <div class="summary-line" id="discountRow" style=" <%= discount > 0 ? 'display:flex' : 'display:none' %>">
                     <span>Discount</span>
-                        <span class="text-danger" id="discountAmount">- ₹0</span>
+                        <span class="text-danger" id="discountAmount">- ₹<%= discount ? discount.toLocaleString('en-IN') : "" %></span>
                     </div>
              
             <h5>Apply Coupon</h5>
@@ -424,9 +424,10 @@
                         name="couponCode"
                         id="couponCode"
                         placeholder="Enter coupon code"
+                        value="<%= cart.coupon ? cart.coupon.code : '' %>"
                     >   
                     <input type="hidden" name="discount" id="discountInput" value="0 ">
-                    <input type="hidden" name="appliedCoupon" id="appliedCoupon" value="">
+                    <input type="hidden" name="appliedCoupon" id="appliedCoupon" value="<%= cart.coupon ? cart.coupon.code : '' %>">
 
                     <button type="button" class="btn btn-primary" id="applyCouponBtn">Apply</button>
                     <button type="button" class="btn btn-danger" id="removeCouponBtn" style="display: none;">Remove</button>
@@ -435,7 +436,11 @@
                 <hr>
                 <div class="summary-line ">
                     <span class="fw-bold">Total</span>
-                    <span  id="total" data-original-total="<%=totalPrice %>"> ₹ <%= totalPrice.toLocaleString('en-IN') %></span>
+                    <span  id="total" 
+                     data-coupon="<%= cart.coupon ? cart.coupon.code : '' %>"
+                     data-original-total="<%= finalAmount %>"
+                     data-discount="<%= discount %>"
+                     > ₹ <%= finalAmount.toLocaleString('en-IN') %></span>
                 </div>
                 
                 <button type="submit" class="btn checkout-btn">Proceed to Pay </button>
@@ -449,6 +454,9 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         document.addEventListener('DOMContentLoaded',()=>{
+
+
+            
             
             const addressSelect = document.getElementById('addressSelect');
             const errorAddress = document.getElementById('addressmessage')
@@ -468,6 +476,31 @@
         const applyBtn = document.getElementById('applyCouponBtn');
         const couponCodeInput = document.getElementById('couponCode');
         let appliedDiscount = 0;
+
+        const discount = Number(totalEl.dataset.discount);
+const couponCode = totalEl.dataset.coupon;
+
+if (discount > 0 && couponCode) {
+  // show discount row
+  document.getElementById('discountRow').style.display = 'flex';
+
+  // show discount amount
+  document.getElementById('discountAmount').innerText =
+    `- ₹${discount.toLocaleString('en-IN')}`;
+
+  // restore coupon code
+  couponCodeInput.value = couponCode;
+
+  // 🔥 THIS IS WHAT YOU MISSED
+  removeCouponBtn.style.display = 'inline-block';
+  applyBtn.style.display = 'none';
+
+  // sync hidden input (optional)
+  discountInput.value = discount;
+}
+
+        
+        
 
         applyBtn.addEventListener('click',async ()=>{
             const code = couponCodeInput.value.trim();
@@ -523,6 +556,7 @@
 
             removeCouponBtn.style.display = 'none'
             applyBtn.style.display = 'inline-block'
+            discountAmount.innerText = 0
             await fetch('/remove-coupon', { method: 'POST' });
         })
 })

@@ -130,7 +130,6 @@ router.get("/sales-report/filter", adminAuth, salesController.getFilteredSalesDa
 //concern
 router.get("/concerns", adminAuth, concernController.getConcernPage);
 router.get("/viewConcern/:id", adminAuth, concernController.viewConcernpage);
-
 router.post("/updateConcern/:id", adminAuth, concernController.updateConcern);
 
 // router.get('/users',customerController.loadcustomerInfo)
