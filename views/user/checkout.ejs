@@ -558,6 +558,7 @@ if (discount > 0 && couponCode) {
             applyBtn.style.display = 'inline-block'
             discountAmount.innerText = 0
             await fetch('/remove-coupon', { method: 'POST' });
+            window.location.reload()
         })
 })
 

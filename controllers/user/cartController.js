@@ -233,7 +233,6 @@ const addAddressInCheckout = async (req, res) => {
      
       const userId = req.session.user;
       const user = await User.findById(userId);
-
       
       const cart = await Cart.findOne({ userId }).populate({path:"items.productId",populate:{path:'category',model:'Category'}});
       
@@ -241,7 +240,6 @@ const addAddressInCheckout = async (req, res) => {
         res.redirect("/cart");
       }
        
-
       cart.items = cart.items.map(item => {
         let product = item.productId;
         let category = product.category;
@@ -273,11 +271,14 @@ const addAddressInCheckout = async (req, res) => {
       let discount = 0;
       let finalAmount = total;
       let couponCode = "";
-
+console.log('final amount in the check1',finalAmount)
+console.log("cart is ",cart)
       if(cart.coupon){
-        discount = cart.coupon.discountAmount;
+        discount = cart.coupon.discountAmount || 0;
         couponCode = cart.coupon.code;
-        finalAmount = Math.max(total-discount , 0)
+        console.log("discount is ",discount)
+        finalAmount = Math.max(total - discount , 0)
+        console.log("finaaaa",finalAmount)
       }
       
       const addressList = await Address.find({userId });
@@ -291,12 +292,12 @@ const addAddressInCheckout = async (req, res) => {
            { userId: { $size: 0 } }
           ],
       }).sort({ expireOn: -1 });
-      
+      console.log('finalAmount iss chcek 2',finalAmount)
       return res.render("user/checkout", {
         coupons,
         user,
         cart,
-        totalPrice: total,
+        totalPrice: total,  
         addressList,
         couponCode,
         discount,

@@ -9,8 +9,9 @@ const getSalePrice = (product) =>{
     const maxOffer = Math.max(productOffer,categoryOffer);
 
     if(maxOffer>0){
-        return Math.floor(regularPrice-(regularPrice * maxOffer)/100)
+        return Math.round(regularPrice-(regularPrice * maxOffer)/100)
     }
+    console.log('regularPrice is ',regularPrice)
     return regularPrice
 }
 
@@ -55,13 +56,14 @@ const applyCoupon = async (req, res) => {
     let discount = 0;
     if(coupon.discountType === 'percentage'){
         discount = Math.floor((totalAmount * coupon.discountValue)/100);
-
+      console.log("discount is ",discount)
         if(discount > coupon.maxDiscount){
             discount = coupon.maxDiscount;
         }
     }
+    console.log("totaol amount - discount",totalAmount - discount)
     const finalAmount = Math.max(totalAmount - discount,0)
-
+    console.log("final amount is ",finalAmount)
     cart.coupon = {
       code:coupon.code,
       discountAmount:discount
