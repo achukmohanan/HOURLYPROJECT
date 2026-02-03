@@ -18778,3 +18778,287 @@ Calaendar icon input[type="date"]::-webkit-calendar-picker-indicator {
     font-size: 0.9rem;
     opacity: 0.7;
 }
+
+         .container {
+            max-width: 1200px;
+            margin: auto;
+            padding: 0 30px;
+        }
+        /* Header */
+        .header {
+            background: white;
+            border-bottom: 1px solid #e0e0e0;
+            padding: 20px 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 40px;
+            margin: 0;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #666;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: color 0.3s ease;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        .nav-links a:hover {
+            color: #100808;
+        }
+
+    .zoom-wrapper {
+  position: relative;
+  overflow: hidden;
+}
+
+.zoom-wrapper img {
+  transition: transform 0.3s ease;
+}
+
+.zoom-wrapper:hover img {
+  transform: scale(1.6); /* You can increase/decrease the zoom */
+  cursor: zoom-in;
+}
+.active-thumb {
+  border: 2px solid #007bff !important;
+  border-radius: 5px;
+}
+.zoom-container {
+  position: relative;
+  overflow: hidden;
+}
+
+.zoom-image {
+  transition: transform 0.3s ease;
+  transform-origin: center center;
+}
+
+.zoom-container:hover .zoom-image {
+  transform: scale(2.5); /* Zoom level */
+}
+
+.zoom-container {
+  cursor: crosshair;
+}
+.active-thumb {
+  border: 2px solid #007bff !important;
+  border-radius: 5px;
+}
+
+.zoom-container:hover .zoom-image {
+  transition: transform 0.3s ease, transform-origin 0.3s ease;
+}
+
+         @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: white;
+                flex-direction: column;
+                padding: 20px;
+                box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+                gap: 20px;
+            }
+
+            .nav-links.active {
+                display: flex;
+            }
+
+            .hamburger {
+                display: flex;
+            }
+
+            .hamburger.active span:nth-child(1) {
+                transform: rotate(45deg) translate(5px, 5px);
+            }
+
+            .hamburger.active span:nth-child(2) {
+                opacity: 0;
+            }
+
+            .hamburger.active span:nth-child(3) {
+                transform: rotate(-45deg) translate(7px, -6px);
+            }
+
+            .account-content {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .sidebar {
+                order: 2;
+            }
+
+            .tab-content {
+                order: 1;
+            }
+
+            .tab-pane {
+                padding: 20px;
+            }
+
+            .container {
+                padding: 0 15px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .account-header h1 {
+                font-size: 24px;
+            }
+
+            .tab-pane {
+                padding: 15px;
+            }
+
+            .btn-small {
+                padding: 4px 8px;
+                font-size: 12px;
+            }
+        }
+       
+        .user-dropdown {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+}
+
+.user-dropdown a {
+    text-decoration: none;
+    /* color: #000; */
+   
+}
+
+ .user-name .dropdown-content {
+    display: none; 
+    position: absolute; 
+    background-color: #ffffff;
+    min-width: 120px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    border-radius: 8px;
+    z-index: 10; 
+    /* margin-top: 5px; */
+    
+} 
+
+.user-name:hover .dropdown-content {
+    display: block;
+}
+
+.logout-btn {
+    /* display: block; */
+    padding: 10px;
+    color: #dc3545;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.logout-btn:hover {
+    background-color: #f8d7da;
+    color: #a71d2a;
+    border-radius: 8px;
+}
+.form-group{
+    background-color: #cccccc5a;
+    border-radius: 10px;
+}
+.image-upload-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            cursor: pointer;
+        }
+        .img-div {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+
+
+/* Overlay */
+.loader-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(102, 99, 99, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+/* Hide helper */
+.hidden {
+  display: none;
+}
+
+/* Loader container */
+.loader {
+  text-align: center;
+}
+
+/* Shimmer text (YOUR CSS - slightly refined) */
+.text {
+  font-size: 42px;
+  font-weight: 600;
+   font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+  letter-spacing: 2px;
+  background: linear-gradient(
+    90deg,
+    #444 40%,
+    #f5c16c 50%,
+    #444 75%
+  );
+  background-size: 200% auto;
+  color: transparent;
+  background-clip: text;
+  -webkit-background-clip: text;
+  animation: shimmer 1.5s infinite linear;
+}
+
+/* Animation */
+@keyframes shimmer {
+  0% {
+    background-position: 200% center;
+  }
+  100% {
+    background-position: -200% center;
+  }
+}
