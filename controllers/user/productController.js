@@ -13,15 +13,16 @@ const productDetails = async (req, res) => {
     const userData = await User.findById(userId);
 
     const productId = req.query.id;
+
+    if(!productId){
+      res.redirect('/pagenotfound')
+    }
     const product = await Product.findById(productId).populate("category");
-    // const findCategory = product.category;
-    
-    // const totalOffer = categoryOffer + productOffer;
+   
+
 
     if (!product) {
-      return res
-        .status(STATUS_CODE.NOT_FOUND)
-        .json({ success: false, message: "Product Not Found" });
+      return redirect('/pagenotfound]')
     }
 
     const categoryOffer = product.category?.categoryOffer || 0;
