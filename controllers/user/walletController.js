@@ -54,6 +54,7 @@ const verifyWalletTopup = async (req, res) => {
         orderId:razorpay_order_id,
         type:"Failed",
         amount:amount,
+        wallet: true,
         paymentMethod:"Razorpay",
         description:"Wallet Topup - Payment verification failed"
       })
@@ -78,6 +79,7 @@ const verifyWalletTopup = async (req, res) => {
       orderId: null,
       type: "Credit",
       amount: amount,
+      wallet: true,
       paymentMethod: "Razorpay",
       description: "Wallet Topup",
     });
@@ -101,6 +103,7 @@ const walletFailed = async (req,res) =>{
       type:"Failed",
       amount:amount,
       paymentMethod:"Razorpay",
+      wallet: true,
       description: reason || "Wallet Topup Failed"
     })
       return res.status(200).json({ success: true });

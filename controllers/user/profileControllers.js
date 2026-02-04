@@ -258,7 +258,9 @@ const userProfile = async (req, res) => {
     const orderSkip = (orderPage - 1) * orderLimit;
 
     const totalOrders = await Order.countDocuments({ userId: userId });
-    const orders = await Order.find({ userId: userId })
+    
+    //payment method not q to wallet
+    const orders = await Order.find({ userId: userId})
       .populate("orderedItems.product")
       .sort({ createdOn: -1 })
       .skip(orderSkip)
@@ -280,7 +282,7 @@ const userProfile = async (req, res) => {
       referredName = refer ? refer.name : null;
     }
     const page = parseInt(req.query.page) || 1;
-    const limit = 3;
+    const limit = 5;
     const skip = (page - 1) * limit;
 
     const totalTransaction = await Transaction.countDocuments({ userId });
@@ -290,6 +292,22 @@ const userProfile = async (req, res) => {
       .limit(limit)
       .lean();
 
+    //wallet x
+    const walletPage  = parseInt(req.query.walletPage) || 1;
+    const walletLimit  = 3;
+    const walletSkip  = (walletPage  - 1)* walletLimit;
+
+    const totalWalletTxns  = await Transaction.countDocuments({userId,paymentMethod:'Wallet'})
+
+    const walletTransaction  = await Transaction.find({
+                                userId:userId,
+                                wallet: true,
+                                type: { $in: ['Credit','Debit','Failed']}})
+                                .sort({date:-1})
+                                .skip(walletSkip)
+                                .limit(walletLimit)
+                                .lean()
+    
     for (let txn of transaction) {
       const order = await Order.findOne({ orderId: txn.orderId })
         .populate("orderedItems.product", "productName productImage")
@@ -302,6 +320,12 @@ const userProfile = async (req, res) => {
       user: userData,
       userAddress: addressData,
       orders: orders,
+      walletTxns:walletTransaction,
+      walletPagination:{
+        page1:walletPage,
+        totalPages1: Math.ceil(totalWalletTxns /walletLimit),
+        totalWalletTxns 
+      },
       transaction: transaction,
       pagination: {
         page,

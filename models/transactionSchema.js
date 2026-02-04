@@ -26,6 +26,10 @@ const transactionSchema = new Schema({
         enum:['Wallet','Razorpay','COD'],
         required:false
     },
+     wallet: {
+    type: Boolean,
+    default: false
+  },
     description:{
         type:String
     },

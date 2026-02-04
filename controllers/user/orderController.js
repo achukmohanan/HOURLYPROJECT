@@ -174,6 +174,7 @@ const postOrder = async (req, res) => {
           orderId: order.orderId,
           type: "Debit",
           amount: totalPrice,
+          wallet: true,
           paymentMethod: "Wallet",
           description: "Payment Using Wallet",
         });
