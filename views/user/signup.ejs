@@ -47,11 +47,6 @@
           <div id="error5" class="error-message"></div>
           <input type="password" id="cPassword" name="cPassword" placeholder="Enter Confirm Password"   />
         </div>
-          <% if (locals.message && locals.message.length > 0) { %>
-  <div class="alert alert-danger text-center">
-    <%= locals.message %>
-  </div>
-<% } %>
         <button type="submit" id="signupBtn" disabled>signup</button>
         <p>already a User? <a href="/login">Login Now</a></p>
       </form>
@@ -61,7 +56,13 @@
       <img src="https://res.cloudinary.com/dbl2eazti/image/upload/v1761223625/HourlyYours_axzt7h.png" alt="Watch">
       <!-- <div class="hourly-label">HOURLY</div> -->
     </div>
+    <div id="global-spinner" class="loader-overlay hidden">
+              <div class="loader">
+                  <h1 class="text" >HOURLY WATCHES</h1>
+              </div>
+          </div>
   </div>
+        <script  src="/assets/js/globalSnippper.js" ></script>
   <script>
     const signupBtn = document.getElementById("signupBtn");
     const nameid = document.getElementById('name');
