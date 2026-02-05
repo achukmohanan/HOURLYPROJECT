@@ -484,6 +484,27 @@ td img {
     background: #f8d7da;
     color: #721c24;
 }
+/* //password */
+
+.password-wrap {
+    position: relative;
+}
+
+.password-wrap input {
+    width: 100;
+    padding-right: 30px;
+}
+
+.toggle-eye {
+    position:absolute;
+    right: 12px;
+    top:50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    font-size: 18px;
+    user-select: none;
+
+}
 
 /* ==================== PAGINATION ==================== */
 nav ul,

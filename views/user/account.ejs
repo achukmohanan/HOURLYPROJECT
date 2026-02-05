@@ -304,17 +304,23 @@
                                 <% }else{%>
                             <h2>Change Password</h2>
                             <form id="changePassword" novalidate>
-                            <div class="form-group">         
+
+                            <div class="form-group password-wrap">         
                                 <label for="currentPassword">Current Password</label>
                                 <input type="password" id="currentPassword" name="currentPassword" placeholder="Enter current password" required>
+                                <span class="toggle-eye" onclick="togglePassword('currentPassword',this)">👁️</span>
                             </div>
-                            <div class="form-group">
+
+                            <div class="form-group password-wrap" >
                                 <label for="newPassword">New Password</label>
                                 <input type="password" id="newPassword" name="newPassword" placeholder="Enter new password" required>
+                                <span class="toggle-eye" onclick="togglePassword('newPassword',this)">👁️</span>
                             </div>
-                            <div class="form-group">    
+
+                            <div class="form-group password-wrap">    
                                 <label for="confirmPassword">Confirm Password</label>
                                 <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm new password" required>
+                                <span class="toggle-eye" onclick="togglePassword('confirmPassword',this)">👁️</span>
                             </div>
                             <button type="submit" class="save-btn">Update Passsword</button>
                              </form>
@@ -652,8 +658,21 @@
     <script>
        
 // Enhanced JavaScript for Responsive User Profile
+function togglePassword (inputId,icon){
+        const input = document.getElementById(inputId);
 
+        if(input.type === 'password'){
+            input.type = 'text';
+            icon.textContent = '🙈'
+        }else{
+            input.type = 'password';
+            icon.textContent = '👁️'
+        }
+    }
 document.addEventListener('DOMContentLoaded', () => {
+
+    
+
     // Initialize tab from URL parameter
     initializeTabFromURL();
     

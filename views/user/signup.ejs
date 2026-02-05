@@ -39,13 +39,15 @@
           <input type="tel" id="referalcode" name="referalcode" placeholder="Referal Code"    />
         </div>
 
-        <div class="form-group">
+        <div class="form-group password-wrapper">
           <div id="error4" class="error-message"></div>
           <input type="password" id="password" name="password" placeholder="Enter Password"   />
+            <span class="toggle-eye" onclick="togglePassword('password',this)">👁️</span>
         </div>
-        <div class="form-group">
+        <div class="form-group password-wrapper">
           <div id="error5" class="error-message"></div>
           <input type="password" id="cPassword" name="cPassword" placeholder="Enter Confirm Password"   />
+          <span class="toggle-eye" onclick="togglePassword('cPassword',this)" >👁️</span>
         </div>
         <button type="submit" id="signupBtn" disabled>signup</button>
         <p>already a User? <a href="/login">Login Now</a></p>
@@ -64,6 +66,18 @@
   </div>
         <script  src="/assets/js/globalSnippper.js" ></script>
   <script>
+    function togglePassword(inputId , icon){
+      const input = document.getElementById(inputId)
+
+      if(input.type === 'password'){
+        input.type = 'text';
+        icon.textContent = '🙈'
+      }else{
+        input.type = 'password';
+        icon.textContent = "👁️"
+      }
+    }
+
     const signupBtn = document.getElementById("signupBtn");
     const nameid = document.getElementById('name');
     const emailid = document.getElementById('email');
