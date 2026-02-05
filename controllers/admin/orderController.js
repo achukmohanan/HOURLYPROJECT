@@ -6,7 +6,8 @@ const { STATUS_CODE } = require("../../utils/statusCode");
 
 const getOrderPage = async (req, res) => {
   try {
-    const { status, date, search } = req.query;
+    const { status, date, search ,startDate ,endDate } = req.query;
+   
     let filter = {};
     //status
     if (status && status !== "") {
@@ -36,7 +37,29 @@ const getOrderPage = async (req, res) => {
         monthAgo.setMonth(today.getMonth() - 1);
 
         filter.createdOn = { $gte: monthAgo, $lte: today };
-      }
+      } else if (date === 'custom') {
+
+         if (!startDate || !endDate) {
+          return res.status(STATUS_CODE.BAD_REQUEST).json({ message: "Start and end date required" });
+        }
+      const start = new Date(startDate);
+      const end   = new Date(endDate);
+      const today = new Date();
+
+      if ( isNaN(start.getTime()) || isNaN(end.getTime())) {
+        return res.status(STATUS_CODE.BAD_REQUEST).json({message:'Invalid date format'})
+        }
+
+        if(start > end){
+          return res.status(STATUS_CODE.BAD_REQUEST).json({message:'Start date cannot be after end date'})
+        } 
+
+        if(start > today || end > today){
+          return res.status(STATUS_CODE.BAD_REQUEST).json({ message: "Future dates are not allowed" });
+        }
+        end.setHours(23, 59, 59, 999);
+        filter.createdOn = { $gte: start, $lte: end };
+    }
     }
     //search
       if (search && search.trim() !== "") {
@@ -69,6 +92,9 @@ const getOrderPage = async (req, res) => {
     if (req.xhr || req.headers.accept.indexOf("application/json") > -1) {
       return res.json({
         orders,
+        currentPage:page,
+        totalPages,
+        totalOrders
       });
     }
 
