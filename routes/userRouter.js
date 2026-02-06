@@ -69,10 +69,11 @@ router.get("/logout", userAuth, userController.logout);
 router.get("/home", userAuth, userController.loadHomepage);
 
 //profile management
+//forgot password ena pageinte post route ahnuu from forgot p[assword]
 router.get("/forgotpassword", profileController.forgotPassword);
-router.get("/forgotemailotp", profileController.getForgotEmailOtp);
-//forgot password enmnma pageinte post route ahnuu from forgot p[assword]
 router.post("/forgotemailotp", profileController.forgotEmailOtp);
+
+router.get("/forgotemailotp", profileController.getForgotEmailOtp);
 // verify
 router.post("/verify-passForgot-otp", profileController.verifyForgotPassOtp);
 //resend otp

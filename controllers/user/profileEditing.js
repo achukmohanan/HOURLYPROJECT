@@ -4,6 +4,7 @@ const session = require("express-session");
 const bcrypt = require("bcrypt");
 const nodemailer = require("nodemailer");
 const { STATUS_CODE } = require("../../utils/statusCode");
+const Otp = require('../../models/otpSchema')
 
 const changePassword = async (req, res) => {
   try {
@@ -59,6 +60,7 @@ const changePassword = async (req, res) => {
 
 const getCurrentEmail = async (req, res) => {
   try {
+
     return res.render("user/currentEmail");
   } catch (error) {
     console.log("error in the get Current email page",error);
@@ -100,6 +102,9 @@ async function sendVerificationEmail(currentEmail, otp) {
 const postCurrentEmail = async (req, res) => {
   try {
     const { currentEmail } = req.body;
+    if(!currentEmail){
+      return res.status(STATUS_CODE.BAD_REQUEST).json({success:false,message:'enter email'})
+    }
     const findEmail = await User.findOne({ email: currentEmail });
    
   if (!findEmail) {
@@ -117,25 +122,29 @@ const postCurrentEmail = async (req, res) => {
         });
     }
     const otp = generateOtp();
+
+    await Otp.deleteMany({email:currentEmail})
+
+  const newOtp =  await Otp.create({email:currentEmail,otp})
     
     const sent = await sendVerificationEmail(currentEmail, otp);
     if (sent) {
-      req.session.otp = otp;
-      req.session.otpExpires = Date.now() + (60 * 1000);
+    req.session.email = currentEmail;
+    console.log("Otp for email changing", otp);
       res
         .status(STATUS_CODE.SUCCESS)
         .json({
           success: true,
           message: "OTP Successfully Send to your Current Email",
-          otpExpires: req.session.otpExpires
+          otpExpires: newOtp.createdAt.getTime() + 60*1000
         });
     } else {
       res
         .status(STATUS_CODE.SERVICE_UNAVAILABLE)
         .json({ success: false, message: "Failed to send otp" });
     }
+ 
    
-    console.log("Otp for email changing", otp);
     // console.log("otp in session ",req.session.otp)
   } catch (error) {
     console.log("error in post email edit", error);
@@ -162,17 +171,22 @@ const postEmailEditOtp = async (req, res) => {
       return res.status(STATUS_CODE.BAD_REQUEST).json({success:false,message:"All 4 OTP digits are required"})
     }
 
-if(Date.now() > req.session.otpExpires){
-  return res.status(STATUS_CODE.BAD_REQUEST).json({success:false,message:'OTP expired. Please request a new one'})
-}
 
+    const email = req.session.email;
     const otp = otp1 + otp2 + otp3 + otp4;
+    const otpDoc = await Otp.findOne({email,otp});
 
-    if (otp !== req.session.otp) {
-      return res
-        .status(STATUS_CODE.NOT_FOUND)
-        .json({ success: false, message: "You Entered OTP is MissMatch" });
+    if(!otpDoc){
+      return res.status(STATUS_CODE.BAD_REQUEST).json({success:false,message:'Invalid OTP or Expired OTP'})
     }
+
+  const isExpired = Date.now() > otpDoc.createdAt.getTime() + 60 * 1000;
+
+    if (isExpired) {
+      return res.status(400).json({ success: false, message: "OTP expired" });
+    }
+
+
     return res
       .status(STATUS_CODE.SUCCESS)
       .json({ success: true, message: "OTP verified successfully" });
@@ -245,39 +259,30 @@ res.json({isBlocked:false})
 
 const emailResendOtp = async (req,res)=>{
   try {
-    console.log("user id is",req.session.user)
-    const userId = req.session.user
-    if(!userId){
-      return res.status(STATUS_CODE.BAD_REQUEST).json({ success: false, message: "User not logged in" });
-    }
-
-const user = await User.findById(userId);
-console.log("user foount ",user)
-
-if(!user){
-  return res.status(STATUS_CODE.NOT_FOUND).json({success:false,message:"User is not Found"})
-}
-
-const email = user.email  
-console.log("current email is ",email)
+ 
+    const email = req.session.email;  
     if (!email) {
-          return res.status(STATUS_CODE.NOT_FOUND).json({ success: false, message: "Email not found in session" });
+          return res.status(STATUS_CODE.NOT_FOUND).json({ success: false, message: "OTP session expired" });
       }
 
       const newOtp = generateOtp();
+
+      await Otp.deleteMany({email})
+
+      const otpDoc =  await Otp.create({email,otp:newOtp});
+
       const sent = await sendVerificationEmail(email, newOtp);
-
+    
        if (!sent) {
-            return res.status(503).json({ success: false, message: "Failed to resend OTP" });
+          await Otp.deleteOne({ _id: otpDoc._id });
+          return res.status(STATUS_CODE.SERVICE_UNAVAILABLE).json({ success: false, message: "Failed to resend OTP" });
         }
-console.log("resend email otp is ",newOtp);
-        req.session.otp = newOtp;
-        req.session.otpExpires = Date.now() + (60 * 1000);
+        console.log("resend email otp is ",newOtp);
 
-        return res.status(STATUS_CODE.SUCCESS).json({
+      return res.status(STATUS_CODE.SUCCESS).json({
             success: true,
             message: "OTP resent successfully",
-            otpExpires: req.session.otpExpires
+            otpExpires: otpDoc.createdAt.getTime() + 60 *1000
         });
   } catch (error) {
     console.log("Error in resend OTP", error);

@@ -8,6 +8,7 @@ const session = require("express-session");
 const Transaction = require("../../models/transactionSchema");
 const Coupon = require("../../models/couponSchema");
 const { STATUS_CODE } = require("../../utils/statusCode");
+const Otp = require('../../models/otpSchema');
 
 function generateOtp() {
   const digits = "1234567890";
@@ -69,68 +70,75 @@ const forgotEmailOtp = async (req, res) => {
     const { email } = req.body;
 
     if (!email) {
-      return res.json({ success: false, message: "Email is required" });
+      return res.status(STATUS_CODE.BAD_REQUEST).json({ success: false, message: "Email is required" });
     }
-    const findUser = await User.findOne({ email });
+    const user = await User.findOne({ email });
 
-      if(!findUser){
-        return res.status(STATUS_CODE.BAD_REQUEST).json({success:false,message:"Email with User Not Found"})
+      if(!user){
+        return res.status(STATUS_CODE.BAD_REQUEST).json({success:false,message:"User with this email not found"})
       }
-     if(findUser.googleId){
+     if(user.googleId){
       return res.status(STATUS_CODE.BAD_REQUEST).json({success:false,message:'"This account uses Google login. Password reset is not available."'})
-     }
+     } 
 
-
-    if (findUser) {
       const otp = generateOtp();
-   
+
+      await Otp.deleteMany({email})
+
+      await Otp.create({
+        email,
+        otp
+      })
+      console.log("otp schema created")
+      
       const emailSent = await sendVerificationEmail(email, otp);
 
-      if (emailSent) {
-         
-        req.session.userOtp = otp;
-        req.session.otpExpires = Date.now() + 60 * 1000;
+      if(!emailSent){
+        return res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({success:false,message:'Failed to send OTP. Please try again'})
+      }
+
         req.session.email = email; 
 
         console.log("Forgot password OTP:", otp);
 
         return res.status(STATUS_CODE.SUCCESS).json({success:true
           , message:'OTP Send Successfully',
-          otpExpires:req.session.otpExpires
+          expiresAt:Date.now() + 60 * 1000
         })
         
-      } else {
-        res.json({
-          success: false,
-          message: "Failed to send OTP. Please try again",
-        });
-      }
-    } else {
-      return res
-        .status(STATUS_CODE.NOT_FOUND)
-        .json({
-          success: false,
-          message: "User with this email does not exist",
-        });
-    }
   } catch (error) {
-    console.log("Error happened in post route:", error);
-    res.json({ success: false, message: "Server error occurred" });
+    console.log("Error happened in forgot otp route:", error);
+    res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ success: false, message: "Server error occurred" });
   }
 };
-  const verifyForgotPassOtp = async (req, res) => {
+
+const verifyForgotPassOtp = async (req, res) => {
     try {
       
       const { otp1, otp2, otp3, otp4 } = req.body;
+
+      if(!otp1 || !otp2 || !otp3 || !otp4){
+        return res.status(STATUS_CODE.BAD_REQUEST).json({success:false,message:'All 4 OTP digits required!'})
+      }
       const enteredOtp = otp1 + otp2 + otp3 + otp4;
 
-      if(!req.session.otpExpires || Date.now() > req.session.otpExpires){
-        return res.json({success:false,message:"OTP has expired"})
+  
+      const email = req.session.email;
+
+      if(!email){
+        return res.status(STATUS_CODE.BAD_REQUEST).json({success:false,message:"Session expired. Please request OTP again"})
       }
 
-      if (enteredOtp !== req.session.userOtp) {
-      return res.json({ success: false, message: "Invalid OTP" });
-    }
+      const otpDoc = await Otp.findOne({email,otp:enteredOtp});
+
+      if(!otpDoc){
+        return res.status(STATUS_CODE.BAD_REQUEST).json({success:false,message:"Invalid or Expired Otp"})
+      }
+
+      await Otp.deleteOne({_id:otpDoc._id});
+
+      req.session.forgotOtpVerified = true;
+
     return res.json({ success: true, message: "OTP Verified Successfully" });
      
     } catch (error) {
@@ -139,23 +147,31 @@ const forgotEmailOtp = async (req, res) => {
         .status(STATUS_CODE.INTERNAL_SERVER_ERROR)
         .json({ success: false, message: "An error Occured. Please try again" });
     }
-  };
+};
 
 const resendForgotOtp = async (req, res) => {
   try {
-    
-    const otp = generateOtp();
-    req.session.userOtp = otp;
-   req.session.otpExpires = Date.now() + 60 * 1000; // reset expiry
     const email = req.session.email;
-    
+
+    if(!email){
+      return res.status(STATUS_CODE.BAD_REQUEST).json({success:false,message:'Email not found in Session! ,Session expired'})
+    }
+    const otp = generateOtp();
+
+    await Otp.deleteMany({email})
+
+   const newOtp =  await Otp.create({
+      email,
+      otp
+    })
+
     const emailSent = await sendVerificationEmail(email, otp);
    
     if (emailSent) {
       console.log("Resend OTP For Forgot Password : ", otp);
       return res
         .status(STATUS_CODE.SUCCESS)
-        .json({ success: true, message: "OTP Resend Successfully",otpExpires:req.session.otpExpires });
+        .json({ success: true, message: "OTP Resend Successfully",createdAt:newOtp.createdAt });
     } else {
       return res
         .status(STATUS_CODE.NOT_FOUND)

@@ -293,6 +293,7 @@ cPasswordid.addEventListener("input", () => {
           const data = await res.json();
  
           if(data.success){
+            sessionStorage.setItem('otpExpiresAt',data.expiresAt)
           Swal.fire({
           icon: 'success',
           title: 'Success',

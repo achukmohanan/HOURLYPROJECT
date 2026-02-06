@@ -5,11 +5,13 @@ const Brand = require("../../models/brandSchema");
 const Coupon = require("../../models/couponSchema");
 const Cart = require("../../models/cartSchema");
 const Wishlist = require("../../models/wishlistSchema");
+const Otp = require('../../models/otpSchema')
 const nodemailer = require("nodemailer");
 const env = require("dotenv").config();
 const bcrypt = require("bcrypt");
 const { STATUS_CODE } = require("../../utils/statusCode");
 const { STATES } = require("mongoose");
+
 
 const pageNotFound = async (req, res) => {
   try {
@@ -192,6 +194,14 @@ const signup = async (req, res) => {
   }
     const otp = generateOtp();
 
+    await Otp.deleteMany({email});
+
+    await Otp.create({
+      email,
+      otp
+    })
+    console.log("otp Schema  created")
+
     const emailSent = await sendVerificationEmail(email, otp);
     if (!emailSent) {
       return res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({
@@ -199,22 +209,20 @@ const signup = async (req, res) => {
         message: "Failed to send verification Email.Please try again",
       });
     }
-    req.session.userOtp = otp;
-    req.session.userOtpExpires = Date.now() +  (60 * 1000);
+    // req.session.userOtp = otp;
+    // req.session.userOtpExpires = Date.now() +  (60 * 1000);
     req.session.userData = { name, phone, email, password, referalcode };
     
     console.log("Signup Otp sent", otp);
 
     return res
       .status(STATUS_CODE.SUCCESS)
-      .json({ success: true, message: "Otp send Successfully...!" });
+      .json({ success: true, message: "Otp send Successfully...!" ,expiresAt:Date.now() + 60 * 1000 });
   } catch (error) {
     console.log("signup error", error);
     return res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({success:false,message:"Internal Server Happened,Please Try Again!"});
   }
 }
-
-
 
 const loadLogin = async (req, res) => {
   try {
@@ -295,59 +303,49 @@ const confirmwithotp = async (req, res) => {
         .json({ success: false, message: "All 4 OTP digits are required" });
     }
 
-    if(Date.now() > req.session.userOtpExpires){
-      return res.status(STATUS_CODE.BAD_REQUEST).json({success:false,message:"OTP expired. Please request a new one"});
+    const userSessionData = req.session.userData;
+    if(!userSessionData || !userSessionData.email){
+      return res.status(STATUS_CODE.BAD_REQUEST).json({success:false,message:'Session expired. Please signup again'})
     }
 
+    const email = userSessionData.email;
     const otp = otp1 + otp2 + otp3 + otp4;
+    
+    console.log("check 1 email",email);
 
-
-    if (otp === req.session.userOtp) {
-      console.log("OTP verified successfully");
-      // console.log("req.session.userdata",req.session.userData)
-
-      const user = req.session.userData;
-      console.log("testing user issss", user);
-      if (!user) {
-        return res
-          .status(STATUS_CODE.BAD_REQUEST)
-          .json({
-            success: false,
-            message: "User session expired. Please sign up again.",
-          });
-      }
-
-      const passwordHash = await securePassword(user.password);
+    const otpDoc = await Otp.findOne({email,otp});
+   
+    if(!otpDoc){
+      return res.status(STATUS_CODE.BAD_REQUEST).json({success:false,message:"Invalid OTP or Expired OTP"})
+    }
+   
+      const passwordHash = await securePassword(userSessionData.password);
       //referal setup
 
-      const myReferalCode = generateReferalCode(user.name);
+      const myReferalCode = generateReferalCode(userSessionData.name);
 
       let referredByUser = null;
-      if (user.referalcode) {
-        referredByUser = await User.findOne({ referralCode: user.referalcode });
+      if (userSessionData.referalcode) {
+        referredByUser = await User.findOne({ referralCode: userSessionData.referalcode });
       }
       console.log("referd by user is ", referredByUser);
-      const saveUserData = new User({
-        name: user.name,
-        email: user.email,
-        phone: user.phone,
+      const newUser = new User({
+        name: userSessionData.name,
+        email: userSessionData.email,
+        phone: userSessionData.phone,
         password: passwordHash,
         referralCode: myReferalCode,
         referredBy: referredByUser ? referredByUser._id : null,
       });
      
+      await newUser.save();
 
+      await Otp.deleteOne({_id:otpDoc._id})
 
-      await saveUserData.save();
-      //coupn for refered user
-      const findReferal = user.referalcode;
+      if (userSessionData.referalcode && referredByUser) {
 
-      if (user.referalcode) {
-        const refer = await User.findOne({ referralCode: findReferal });
-        console.log("refer in fetched in user.referal code", refer);
-        if (refer) {
           const coupon = await Coupon.create({
-            code: generateCouponCode(refer._id),
+            code: generateCouponCode(referredByUser._id),
             purpose: "Referral",
             discountType: "percentage",
             discountValue: 10,
@@ -357,27 +355,20 @@ const confirmwithotp = async (req, res) => {
             expireOn: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
             minPurchase: 1000,
             isActive: true,
-            userId: [refer._id],
+            userId: [referredByUser._id],
           });
           console.log("Coupon is created in refreal", coupon);
-          coupon.save();
-        }
-      }
 
-      req.session.user = saveUserData._id;
-      delete req.session.userOtp;
+          await coupon.save();
+        }
+  
+      req.session.user = newUser._id;
       delete req.session.userData;
 
       return res.status(STATUS_CODE.SUCCESS).json({
         success: true,
         message: "OTP verified successfully",
       });
-    } else {
-      return res.status(STATUS_CODE.BAD_REQUEST).json({
-        success: false,
-        message: "Invalid OTP, please try again",
-      });
-    }
   } catch (error) {
     console.error("Error verifying OTP:", error);
     return res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({
@@ -390,23 +381,31 @@ const confirmwithotp = async (req, res) => {
 const resendOtp = async (req, res) => {
   try {
     console.log("req.session.userData", req.session.userData);
+    
     const { email } = req.session.userData;
     if (!email) {
       return res
         .status(STATUS_CODE.BAD_REQUEST)
-        .json({ success: false, message: "Email not found in Session" });
+        .json({ success: false, message: "Email not found in Session! ,Session expired" });
     }
 
     const otp = generateOtp();
-    req.session.userOtp = otp;
-    req.session.userOtpExpires = Date.now() + (60 * 1000);
 
+    await Otp.deleteMany({email});
+
+    await Otp.create({
+      email,
+      otp
+    })
+        console.log("otp Schema  created")
+    
     const emailSent = await sendVerificationEmail(email, otp);
     if (emailSent) {
       console.log("Resend OTP:", otp);
+      
       return res
         .status(STATUS_CODE.SUCCESS)
-        .json({ success: true, message: "OTP Resend Succesfully" });
+        .json({ success: true, message: "OTP Resend Succesfully",expiresAt:Date.now() + 60*1000 });
     } else {
       return res
         .status(STATUS_CODE.INTERNAL_SERVER_ERROR)

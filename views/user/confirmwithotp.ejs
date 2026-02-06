@@ -341,13 +341,13 @@ document.querySelectorAll('.otp-input').forEach((input, index, inputs) => {
 
         
         async function resendOTP() {
-            clearInterval(timerInterval);
-            time = 60;
-            sessionStorage.setItem("otpStartTime", Date.now());
-            document.querySelectorAll("#otp input").forEach(i => i.disabled = false);
-            // document.getElementById('otp').disabled = false;
-            document.getElementById('timerValue').classList.remove("Expired");
-            startTimer();
+            // clearInterval(timerInterval);
+            // time = 60;
+            // sessionStorage.setItem("otpStartTime",expiresAt);
+            // document.querySelectorAll("#otp input").forEach(i => i.disabled = false);
+            // // document.getElementById('otp').disabled = false;
+            // document.getElementById('timerValue').classList.remove("Expired");
+            // startTimer();
 
             try {
                 const response = await fetch('/resend-otp', {
@@ -359,25 +359,37 @@ document.querySelectorAll('.otp-input').forEach((input, index, inputs) => {
 
                 const data = await response.json();
 
-                if (response.ok) {
-                    Swal.fire({
-                        icon: "success", // Fixed typo: "Sucess" -> "success"
-                        title: "OTP Sent Again",
-                        showConfirmButton: false,
-                        timer: 2000,
-                        timerProgressBar:true,
-                         background:'#e8ffe8'
-                    }).then(()=>{
-                        window.location.reload();
-                    })
-                } else {
-                    Swal.fire({
-                        icon: "error", // Fixed typo: "Error" -> "error"
-                        title: "Failed to Resend OTP",
-                        text: data.message || "Please try again",
-                         background:'#e8ffe8'
+                 if (!response.ok || !data.success) {
+                        Swal.fire({
+                            icon: "error",
+                            title: "Failed to Resend OTP",
+                            text: data.message || "Please try again"
+                        });
+                        return;
+                    }
+
+                    clearInterval(timerInterval);
+                    totalTime = 60;
+                    
+                    sessionStorage.setItem("otpStartTime", Date.now());
+
+                      // ✅ Enable + clear OTP inputs
+                    document.querySelectorAll(".otp-input").forEach(i => {
+                        i.disabled = false;
+                        i.value = "";
                     });
-                }
+                    document.getElementById('resendBtn').style.display = 'none';
+                    startTimer();
+
+                      Swal.fire({
+                    icon: "success",
+                    title: "OTP Sent Again",
+                    showConfirmButton: false,
+                    timer: 1500,
+                    timerProgressBar: true,
+                    background:'#e8ffe8'
+                });
+                
             } catch (error) {
                 Swal.fire({
                     icon: "error",

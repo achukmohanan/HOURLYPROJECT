@@ -353,15 +353,7 @@ document.querySelectorAll('.otp-input').forEach((input, index, inputs) => {
         async function resendOTP() {
            
             clearInterval(timerInterval);
-           
-             // reset new timer start time
-            // sessionStorage.setItem("otpStartTime", Date.now());
-            // sessionStorage.setItem("otpExpires", Date.now() + 60 * 1000);
-            // startTimer()
-            // document.querySelectorAll(".otp-input").forEach(inp => inp.disabled = false);
-            // document.getElementById("timerValue").classList.remove("expired");
 
-         
             try {
                 const response = await fetch('/resend-Forgot-passwordOtp', {
                     method: "POST",
@@ -374,17 +366,22 @@ document.querySelectorAll('.otp-input').forEach((input, index, inputs) => {
 
                 if (data.success) {
 
-                    sessionStorage.setItem("otpExpires", data.otpExpires);
-                    sessionStorage.setItem("otpStartTime", Date.now());
+                     const otpExpires = new Date(data.createdAt).getTime() + 60 * 1000;
 
-                    document.querySelectorAll(".otp-input").forEach(inp => inp.disabled = false);
+                    sessionStorage.setItem("otpExpires", otpExpires);
+                    
+
+                    document.querySelectorAll(".otp-input").forEach(inp =>{
+                        inp.disabled = false;
+                        inp.value = "";
+                    });
                     startTimer()
 
                     Swal.fire({
                         icon: "success", 
                         title: "OTP Sent",
                         showConfirmButton: false,
-                        timer: 1000
+                        timer: 2000
                     });
                 } else {
                     Swal.fire({
