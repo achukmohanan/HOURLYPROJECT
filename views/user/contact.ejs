@@ -425,7 +425,7 @@
             Swal.fire({
                 icon:'error',
                 title:'Failed to Submit',
-                text:'Failed to submit! Please Try again'
+                text:result.message ||'Failed to submit! Please Try again'
                 ,showConfirmButton:true,
                  background:'#e8ffe8'
             })

@@ -17,6 +17,10 @@ const postContact = async (req, res) => {
     const userId = req.session.user;
   
     const { name, email, issueType, message } = req.body;
+
+    if(!name || !email || !issueType || !message){
+      return res.status(STATUS_CODE.BAD_REQUEST).json({success:false,message:"All fields required!"})
+    }
     
     const concern = await Concern.create({
       userId: userId,

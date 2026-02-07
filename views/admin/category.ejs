@@ -17,7 +17,7 @@
 
         <!-- Search Section -->
         <div class="search-section">
-            <form action="/admin/category" method="get" class="search-form">
+            <form action="/admin/category" method="get" class="search-form" >
                 <div class="input-group">
                     <input type="text" class="form-control" placeholder="Search categories..." name="search"  value="<%= searchValue %>" />
 
@@ -43,7 +43,7 @@
                 <div class="col-lg-4">
                     <div class="category-form">
                         <h5 class="mb-4">Add New Category</h5>
-                        <form  onsubmit="return handleFormSubmit(event)">
+                        <form  onsubmit="return handleFormSubmit(event)" novalidate>
                             <div class="mb-3">
                                 <label for="product_name" class="form-label">Category Name</label>
                                 <input type="text" name="name" placeholder="Enter category name" class="form-control" id="product_name" required/>
