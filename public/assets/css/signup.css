@@ -109,7 +109,11 @@ input.invalid {
     cursor: pointer;
     font-size: 18px;
     user-select: none;
+     opacity: 0.6;
   }
+  .toggle-eye:hover {
+  opacity: 1;
+}
 
 
 

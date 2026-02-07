@@ -8,21 +8,19 @@ const { STATUS_CODE } = require("../../utils/statusCode");
 
 const productDetails = async (req, res) => {
   try {
-    // console.log("sessiondata", req.session)
+   
     const userId = req.session.user;
-    const userData = await User.findById(userId);
+    const userData =  userId ? await User.findById(userId) : null;
 
     const productId = req.query.id;
 
     if(!productId){
-      res.redirect('/pagenotfound')
+     return  res.redirect('/pagenotfound')
     }
     const product = await Product.findById(productId).populate("category");
-   
-
 
     if (!product) {
-      return redirect('/pagenotfound]')
+      return res.redirect('/pagenotfound]')
     }
 
     const categoryOffer = product.category?.categoryOffer || 0;

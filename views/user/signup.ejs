@@ -147,7 +147,7 @@ function markInvalid(input, errorBox) {
 function emailValidateChecking() {
   const emailval = emailid.value.trim().toLowerCase();
 
-  const emailpattern = /^([a-zA-Z0-9._-]+)@([a-zA-Z0-9.-]+)\.[A-Za-z]{2,}$/;
+  const emailpattern = /^[a-zA-Z]{3}[a-zA-Z0-9._-]*@[a-zA-Z0-9.-]+\.[A-Za-z]{2,}$/;
 
   if (!emailpattern.test(emailval)) {
     error2.style.display = "block";
