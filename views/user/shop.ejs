@@ -149,6 +149,7 @@
                 <% } else { %>
                   <% for(let i=0; i<products.length; i++) { %>
                     <div class="product-card">
+                       <a href="/productDetails?id=<%= products[i]._id %>">
                       <div class="product-image-wrapper">
                         <% if(products[i].biggestOffer> 0 ) { %>
                           <div class="offer-badge">
@@ -166,9 +167,10 @@
 
                               </span>
                               <%}%>
+                             
                                 <img src="<%= products[i].productImage[0] %>" alt="<%= products[i].productName %>" />
                       </div>
-                      <a href="/productDetails?id=<%= products[i]._id %>">
+                      
                         <div class="product-info">
                           <div class="product-brand">
                             <%= products[i].brand %>
