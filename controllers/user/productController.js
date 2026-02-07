@@ -14,13 +14,13 @@ const productDetails = async (req, res) => {
 
     const productId = req.query.id;
 
-    if(!productId){
-     return  res.redirect('/pagenotfound')
+    if (!productId || !mongoose.Types.ObjectId.isValid(productId)) {
+      return res.redirect("/pagenotfound");
     }
     const product = await Product.findById(productId).populate("category");
 
     if (!product) {
-      return res.redirect('/pagenotfound]')
+      return res.redirect('/pagenotfound')
     }
 
     const categoryOffer = product.category?.categoryOffer || 0;
@@ -40,7 +40,7 @@ const productDetails = async (req, res) => {
     }).limit(4);
 
     // console.log("product", product)
-    res.render("user/productdetails", {
+   return res.render("user/productdetails", {
       user: userData,
       product,
       quantity: product.quantity,
@@ -51,7 +51,7 @@ const productDetails = async (req, res) => {
     });
   } catch (error) {
     console.error("Error happened in fetching product details offer", error);
-    res.redirect("/pagenotfound");
+   return res.redirect("/pagenotfound");
   }
 };
 
