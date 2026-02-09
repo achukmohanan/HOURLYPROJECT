@@ -1333,7 +1333,9 @@ function logoutFunc(e){
 
 setInterval(async()=>{
     try {
-        const response = await fetch('/check-status');
+        const response = await fetch('/check-status',{
+            headers:{'X-Background-Request':'true'}
+        });
 
         const data = await response.json();
         if(data.isBlocked){

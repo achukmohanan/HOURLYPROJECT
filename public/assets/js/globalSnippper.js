@@ -48,14 +48,24 @@ if (spinner) {
   const originalFetch = window.fetch;
 
   window.fetch = async (...args) => {
+
+    const options = args[1] || {};
+    const headers = options.headers || {};
+
+    const isBackground = headers['X-Background-Request']==='true';
+
+    if(!isBackground){
     showSpinnerDelayed();
+    }
 
     try {
       return await originalFetch(...args);
     } catch (error) {
       throw error; 
     } finally {
+      if(!isBackground){
       hideSpinnerSafe(); 
+      }
     }
   };
 
