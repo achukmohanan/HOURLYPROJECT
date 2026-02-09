@@ -348,7 +348,7 @@ const confirmwithotp = async (req, res) => {
             code: generateCouponCode(referredByUser._id),
             purpose: "Referral",
             discountType: "percentage",
-            discountValue: 10,
+            discountValue: 50,
             maxDiscount: 500,
             description: "Referral Reward",
             limit: 1,
