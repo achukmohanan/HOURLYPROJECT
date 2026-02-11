@@ -367,6 +367,7 @@
                                     <small class="text-muted">END:<%= item.expireOn.toLocaleString('en-IN') %></small><br>
                                     <small class="text-muted">Coupon Type : <%= item.purpose %></small><br>
                                     <small class="text-muted">MIN Purchase : <%= item.minPurchase.toLocaleString('en-IN',{style:'currency',currency:"INR"}) %></small><br>
+                                    <small class="text-muted">Offer  : <%= item.discountValue%>% OFF</small><br>
                                     <small class="text-muted">MAX Discount : <%= item.maxDiscount.toLocaleString('en-IN',{style:'currency',currency:"INR"}) %></small><br>
                                     <small class=" text-success">Active : <%= item.isActive %></small><br>
                                     </div>

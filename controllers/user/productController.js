@@ -13,6 +13,7 @@ const productDetails = async (req, res) => {
     const userData =  userId ? await User.findById(userId) : null;
 
     const productId = req.query.id;
+    console.log('productId is',productId )
 
     if (!productId || !mongoose.Types.ObjectId.isValid(productId)) {
       return res.redirect("/pagenotfound");

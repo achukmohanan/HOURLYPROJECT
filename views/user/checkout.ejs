@@ -52,6 +52,7 @@
                             <small>Type : <%= coupon.purpose %></small><br>
                             <small><%= coupon.description %></small><br>
                             <small>MIN Purchase :<%= coupon.minPurchase.toLocaleString('en-IN',{style:'currency',currency:'INR'}) %></small><br>
+                            <small>Offer <%= coupon.discountValue %>% OFF</small><br>
                             <small>Max Discount :₹<%= coupon.maxDiscount %></small><br>
                             <small>Expires: <%= coupon.expireOn.toLocaleString('en-IN') %></small>
                         </div>
