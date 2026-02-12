@@ -8,12 +8,12 @@ const { STATUS_CODE } = require("../../utils/statusCode");
 
 const productDetails = async (req, res) => {
   try {
-   
+
     const userId = req.session.user;
-    const userData =  userId ? await User.findById(userId) : null;
+    const userData = userId ? await User.findById(userId) : null;
 
     const productId = req.query.id;
-    console.log('productId is',productId )
+    console.log('productId is', productId)
 
     if (!productId || !mongoose.Types.ObjectId.isValid(productId)) {
       return res.redirect("/pagenotfound");
@@ -27,21 +27,42 @@ const productDetails = async (req, res) => {
     const categoryOffer = product.category?.categoryOffer || 0;
     const productOffer = product.productOffer || 0;
 
-    const biggestOffer = Math.max(categoryOffer,productOffer);
+    const biggestOffer = Math.max(categoryOffer, productOffer);
 
     let salePrice = product.regularPrice;
 
-    if(biggestOffer > 0){
-      salePrice=Math.round(product.regularPrice - (product.regularPrice * biggestOffer)/100);
+    if (biggestOffer > 0) {
+      salePrice = Math.round(product.regularPrice - (product.regularPrice * biggestOffer) / 100);
     }
-   
+
     const relatedProducts = await Product.find({
       _id: { $ne: product._id },
       $or: [{ category: product.category._id }, { brand: product.brand }],
-    }).limit(4);
+    }).populate('category').limit(4).lean();
+
+    relatedProducts.forEach(p => {
+      const catOffer = p.category?.categoryOffer || 0;
+      const prodOffer = p.productOffer || 0;
+      const biggest = Math.max(catOffer, prodOffer);
+      p.biggestOffer = biggest;
+
+      if (biggest > 0) {
+        p.salePrice = Math.round(p.regularPrice - (p.regularPrice * biggest) / 100);
+      } else {
+        p.salePrice = p.regularPrice;
+      }
+    });
+
+    let wishlistProductIds = [];
+    if (userData) {
+      const wishlist = await Wishlist.findOne({ userId: userData._id });
+      if (wishlist) {
+        wishlistProductIds = wishlist.products.map(item => item.productId.toString());
+      }
+    }
 
     // console.log("product", product)
-   return res.render("user/productdetails", {
+    return res.render("user/productdetails", {
       user: userData,
       product,
       quantity: product.quantity,
@@ -49,10 +70,11 @@ const productDetails = async (req, res) => {
       salePrice,
       category: product.category,
       relatedProducts,
+      wishlistProductIds
     });
   } catch (error) {
     console.error("Error happened in fetching product details offer", error);
-   return res.redirect("/pagenotfound");
+    return res.redirect("/pagenotfound");
   }
 };
 
@@ -68,7 +90,7 @@ const loadShoppingpage = async (req, res) => {
     // const categoryIds = categories.map((category) => category._id.toString());
 
     //get filters from query
-    const selectedCategories = req.query.category ? [].concat(req.query.category): [];
+    const selectedCategories = req.query.category ? [].concat(req.query.category) : [];
     const selectedBrand = req.query.brand ? [].concat(req.query.brand) : [];
     const selectedPrice = req.query.price || "";
 
@@ -91,7 +113,7 @@ const loadShoppingpage = async (req, res) => {
       sortQuery = { productName: -1 };
     }
 
-    let filterMatch  = { isBlocked: false };
+    let filterMatch = { isBlocked: false };
 
     if (selectedCategories.length > 0) {
       filterMatch.category = { $in: selectedCategories.map(id => new mongoose.Types.ObjectId(id)) };
@@ -113,47 +135,47 @@ const loadShoppingpage = async (req, res) => {
     //aggregation
 
     const productPipeLine = [
-      {$match:filterMatch},
+      { $match: filterMatch },
       //category offer
 
       {
-        $lookup:{
-          from:'categories',
-          localField:'category',
-          foreignField:'_id',
-          as:'categoryData'
+        $lookup: {
+          from: 'categories',
+          localField: 'category',
+          foreignField: '_id',
+          as: 'categoryData'
         }
       },
 
-      {$unwind : '$categoryData'},
+      { $unwind: '$categoryData' },
 
       // biggest offer
       {
-        $addFields:{
-          biggestOffer:{
-            $max:['$productOffer','$categoryData.categoryOffer']
+        $addFields: {
+          biggestOffer: {
+            $max: ['$productOffer', '$categoryData.categoryOffer']
           }
         }
       },
 
       // salePrice
       {
-        $addFields:{
-          salePrice:{
-            $cond:[
-              {$gt:['$biggestOffer',0]},
+        $addFields: {
+          salePrice: {
+            $cond: [
+              { $gt: ['$biggestOffer', 0] },
               {
-                $round:[{
-                  $subtract:[
+                $round: [{
+                  $subtract: [
                     '$regularPrice',
                     {
-                      $multiply:[
+                      $multiply: [
                         '$regularPrice',
-                        {$divide:['$biggestOffer',100]}
+                        { $divide: ['$biggestOffer', 100] }
                       ]
                     }
                   ]
-                },0]
+                }, 0]
               },
               "$regularPrice"
             ]
@@ -162,44 +184,44 @@ const loadShoppingpage = async (req, res) => {
       }
 
     ];
-  // PRICE FILTER (after sale price calculation)  
-    if(selectedPrice){
-      if(selectedPrice === "under5000"){
-        productPipeLine.push({$match:{salePrice:{$lt:5000}}});
-      }else if(selectedPrice === 'under5000to10000'){
-        productPipeLine.push({$match:{salePrice:{$gte:5000,$lte:10000}}});
-      }else if(selectedPrice === 'under10000to20000'){
-        productPipeLine.push({$match:{salePrice:{$gte:10000,$lte:20000}}});
-      }else if(selectedPrice === 'above20000'){
-        productPipeLine.push({$match:{salePrice:{$gt:20000}}});
+    // PRICE FILTER (after sale price calculation)  
+    if (selectedPrice) {
+      if (selectedPrice === "under5000") {
+        productPipeLine.push({ $match: { salePrice: { $lt: 5000 } } });
+      } else if (selectedPrice === 'under5000to10000') {
+        productPipeLine.push({ $match: { salePrice: { $gte: 5000, $lte: 10000 } } });
+      } else if (selectedPrice === 'under10000to20000') {
+        productPipeLine.push({ $match: { salePrice: { $gte: 10000, $lte: 20000 } } });
+      } else if (selectedPrice === 'above20000') {
+        productPipeLine.push({ $match: { salePrice: { $gt: 20000 } } });
       }
     }
 
     //sort
 
-    if(Object.keys(sortQuery).length > 0){
-      productPipeLine.push({$sort:sortQuery});
+    if (Object.keys(sortQuery).length > 0) {
+      productPipeLine.push({ $sort: sortQuery });
     }
 
-     // Pagination
-     productPipeLine.push({$skip:skip})
-     productPipeLine.push({$limit:limit})
+    // Pagination
+    productPipeLine.push({ $skip: skip })
+    productPipeLine.push({ $limit: limit })
     const products = await Product.aggregate(productPipeLine);
-  
+
     const countPipeline = [...productPipeLine];
     countPipeline.splice(countPipeline.length - 2, 2); // remove skip + limit
     const totalProducts = (await Product.aggregate(countPipeline)).length
     const totalPages = Math.ceil(totalProducts / limit);
 
     let wishlistProductIds = []
-   if(user){
-   const checkwishlist = await Wishlist.findOne({ userId: req.session.user })
+    if (user) {
+      const checkwishlist = await Wishlist.findOne({ userId: req.session.user })
 
-if (checkwishlist) {
-  wishlistProductIds = checkwishlist.products.map(item => item.productId.toString())
-}
+      if (checkwishlist) {
+        wishlistProductIds = checkwishlist.products.map(item => item.productId.toString())
+      }
 
-   }
+    }
     res.render("user/shop", {
       user: userData,
       products: products,
