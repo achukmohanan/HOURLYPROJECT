@@ -9,6 +9,7 @@
         <section class="shop-page container-fluid">
           <div class="shop-topbar">
             <div class="search-bar">
+
               <form action="/shop" method="GET" class="search-form" id="searchForm">
                 <div style="position: relative; display: inline-block;">
                   <input type="text" name="query" placeholder="Search items..." class="search-input"
@@ -22,6 +23,7 @@
                 </div>
                 <button type="submit" class="search-button">Search</button>
               </form>
+
             </div>
           </div>
 
@@ -207,7 +209,8 @@
             </main>
           </div>
 
-          <% let queryParam='' ; if(selectedCategories && selectedCategories.length> 0){
+          <% let queryParam='' ; 
+          if(selectedCategories && selectedCategories.length> 0){
             selectedCategories.forEach(cat =>{
             queryParam += `category=${encodeURIComponent(cat)}`;
             });

@@ -63,7 +63,6 @@ const editProduct = async (req, res) => {
   try {
     const id = req.params.id;
     const data = req.body;
-console.log("reqq is ",data)
       
     if (!data || !data.productName) {
       return res.json({ success: false, message: "Invalid request" });
