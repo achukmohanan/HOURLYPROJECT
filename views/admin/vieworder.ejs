@@ -17,7 +17,7 @@
         }
 
         .order-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg,  #789A99 100%);
             color: white;
             padding: 2rem;
             margin: 0;
@@ -218,7 +218,7 @@
                         <div class="card-body">
                             <p><strong>Name:</strong> <%= order.userId ? order.userId.name : "Guest User" %></p>
                             <p><strong>Email:</strong> <%= order.userId ? order.userId.email : "-" %>   </p>
-                            <p><strong>Phone:</strong> <%= order.userId ? order.userId.phone : "nill" %></p>
+                            <p><strong>Phone:</strong> <%= order.userId.phone ? order.userId.phone : "nill" %></p>
                             <p><strong>Customer ID:</strong> <%= order.userId ? order.userId._id : "N/A" %></p>
                         </div>
                     </div>

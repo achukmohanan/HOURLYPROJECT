@@ -100,13 +100,9 @@
                         <td class="text-start">
                            <% if (category.categoryOffer === 0) { %>
 
-                        <button class="btn btn-info" style="width: 100px">
-                            <a href="#" class="text-white text-decoration-none" onclick="addOffer('<%= category._id%>')" >Add Offer</a>
-                        </button>
+                        <button class="btn btn-info text-white" style="width:100px" onclick="addOffer('<%= category._id %>')">Add Offer</button>
                         <%}else{ %>
-                        <button class="btn btn-info"style="width: 100px">
-                            <a href="#" class="text-white text-decoration-none " onclick="removeOffer('<%= category._id%>')">Remove</a>
-                        </button>
+                        <button class="btn btn-info text-white" style="width:100px" onclick="removeOffer('<%= category._id%>')">Remove</button>
                         <%} %>
                         </td>
                         <td class="text-start">
@@ -266,7 +262,20 @@
                 input:"number",
                 inputLabel:"Percentage",
                 inputPlaceholder:"%",
-            })
+                inputAttributes:{
+                    min:1,
+                    max:99,
+                    step:1
+                },
+                inputValidator : (value) =>{
+                    if(!value){
+                        return "Please enter an offer percentage!";
+                    }
+                    if(value < 1 || value >99){
+                        return "Offer must be between 1% and 99%";
+                    }
+                }
+            });
 
             if(amount){
                 console.log("is data ");
@@ -278,7 +287,7 @@
                             'Content-Type':'application/json',
                         },
                         body:JSON.stringify({
-                            percentage:amount,
+                            percentage:Number(amount),
                             categoryId:categoryId
                         }),  
                     });
@@ -298,8 +307,8 @@
                     }
                     console.log("add offers");
                     
-                    console.log(data)
-                    console.log(response.status)
+                    console.log("data is in add offer",data)
+                    console.log('data is in add offer',response.status)
                 } catch (error) {
                     console.log("error in add offer")
                     Swal.fire(
@@ -307,12 +316,9 @@
                         "An error occured while adding the offer",
                         "error"
                     );
-                    console.log("error in adding offfer",error);
-                    
+                    console.log("error in adding offfer",error); 
                 }
             }
-
-
         }
 
 

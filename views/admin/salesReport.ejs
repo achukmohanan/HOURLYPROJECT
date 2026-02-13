@@ -286,14 +286,14 @@
             <thead>
                 <tr>
                     <th>Buyer</th>
-                    <th>email</th>
+                    <th>Email</th>
                     <th>Product Name</th>
-                    <th>Product ID</th>
+                    <!-- <th>Product ID</th> -->
                     <th>Qty</th>
                     <th>Price</th>
-                    <th>paymentMethod</th>
+                    <th>PaymentMethod</th>
                     <th>Date</th>
-                    <th>couponApplied</th>
+                    <th>CouponApplied</th>
                     <th>Discount</th>
                     <th>Total</th>
                 </tr>
@@ -306,7 +306,7 @@
                 <td><%= order.userId?.name %></td>
                 <td><%= order.userId?.email %></td>
                 <td><%= item.product.productName %></td>
-                <td><%= item.product._id %></td>
+                <!-- <td><%= item.product._id %></td> -->
                 <td><%= item.quantity%></td>
                 <td><%= item.price%></td>
                 <td><%= order.paymentMethod %></td>
