@@ -94,7 +94,8 @@ const getOrderPage = async (req, res) => {
         orders,
         currentPage:page,
         totalPages,
-        totalOrders
+        totalOrders,
+        limit
       });
     }
 
@@ -103,6 +104,7 @@ const getOrderPage = async (req, res) => {
       currentPage: page,
       totalOrders,
       totalPages,
+      limit,
     });
   } catch (error) {
     console.log("error in the get order page", error);
