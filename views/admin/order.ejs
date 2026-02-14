@@ -18,44 +18,98 @@
                 </div>
 
                 <!-- Stats Cards -->
-                <div class="row mb-4">
-                <div class="col-xl-3 col-md-6 mb-3">
-                    <div class="stats-card p-4 text-center">
-                        <div class="text-warning mb-2">
-                            <i class="fas fa-clock fa-2x"></i>
+                <div class="row mb-4 g-2 row-cols-2 row-cols-sm-3 row-cols-md-4 row-cols-lg-5 row-cols-xl-5">
+                    <div class="col">
+                        <div class="stats-card p-2 text-center h-100">
+                            <div class="text-warning mb-1"><i class="fas fa-clock"></i></div>
+                            <h4 class="mb-0" id="pendingCount">
+                                <%= statusCounts.Pending %>
+                            </h4>
+                            <p class="text-muted small mb-0">Pending</p>
                         </div>
-                        <h3 class="text-warning mb-1" id="pendingCount">24</h3>
-                        <p class="text-muted mb-0">Pending Orders</p>
+                    </div>
+                    <div class="col">
+                        <div class="stats-card p-2 text-center h-100">
+                            <div class="text-primary mb-1"><i class="fas fa-cog"></i></div>
+                            <h4 class="mb-0" id="processingCount">
+                                <%= statusCounts.Processing %>
+                            </h4>
+                            <p class="text-muted small mb-0">Processing</p>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="stats-card p-2 text-center h-100">
+                            <div class="text-info mb-1"><i class="fas fa-shipping-fast"></i></div>
+                            <h4 class="mb-0" id="shippedCount">
+                                <%= statusCounts.Shipped %>
+                            </h4>
+                            <p class="text-muted small mb-0">Shipped</p>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="stats-card p-2 text-center h-100">
+                            <div class="text-secondary mb-1"><i class="fas fa-truck"></i></div>
+                            <h4 class="mb-0" id="outForDeliveryCount">
+                                <%= statusCounts['Out-for-delivery'] %>
+                            </h4>
+                            <p class="text-muted small mb-0">Out for Delivery</p>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="stats-card p-2 text-center h-100">
+                            <div class="text-success mb-1"><i class="fas fa-check-circle"></i></div>
+                            <h4 class="mb-0" id="deliveredCount">
+                                <%= statusCounts.Delivered %>
+                            </h4>
+                            <p class="text-muted small mb-0">Delivered</p>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="stats-card p-2 text-center h-100">
+                            <div class="text-danger mb-1"><i class="fas fa-times-circle"></i></div>
+                            <h4 class="mb-0" id="cancelledCount">
+                                <%= statusCounts.Cancelled %>
+                            </h4>
+                            <p class="text-muted small mb-0">Cancelled</p>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="stats-card p-2 text-center h-100">
+                            <div class="text-dark mb-1"><i class="fas fa-undo"></i></div>
+                            <h4 class="mb-0" id="returnedCount">
+                                <%= statusCounts.Returned %>
+                            </h4>
+                            <p class="text-muted small mb-0">Returned</p>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="stats-card p-2 text-center h-100">
+                            <div class="text-muted mb-1"><i class="fas fa-exclamation-triangle"></i></div>
+                            <h4 class="mb-0" id="paymentFailedCount">
+                                <%= statusCounts['Payment-failed'] %>
+                            </h4>
+                            <p class="text-muted small mb-0">Pay Failed</p>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="stats-card p-2 text-center h-100 border-danger">
+                            <div class="text-danger mb-1"><i class="fas fa-ban"></i></div>
+                            <h4 class="mb-0" id="cancelRequestCount">
+                                <%= statusCounts['Cancellation Requested'] %>
+                            </h4>
+                            <p class="text-muted small mb-0">Cancel Req</p>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="stats-card p-2 text-center h-100 border-warning">
+                            <div class="text-warning mb-1"><i class="fas fa-reply-all"></i></div>
+                            <h4 class="mb-0" id="returnRequestCount">
+                                <%= statusCounts['Return Requested'] %>
+                            </h4>
+                            <p class="text-muted small mb-0">Return Req</p>
+                        </div>
                     </div>
                 </div>
-                <div class="col-xl-3 col-md-6 mb-3">
-                    <div class="stats-card p-4 text-center">
-                        <div class="text-primary mb-2">
-                            <i class="fas fa-cog fa-2x"></i>
-                        </div>
-                        <h3 class="text-primary mb-1" id="processingCount">18</h3>
-                        <p class="text-muted mb-0">Processing</p>
-                    </div>
-                </div>
-                <div class="col-xl-3 col-md-6 mb-3">
-                    <div class="stats-card p-4 text-center">
-                        <div class="text-success mb-2">
-                            <i class="fas fa-shipping-fast fa-2x"></i>
-                        </div>
-                        <h3 class="text-success mb-1" id="shippedCount">42</h3>
-                        <p class="text-muted mb-0">Shipped</p>
-                    </div>
-                </div>
-                <div class="col-xl-3 col-md-6 mb-3">
-                    <div class="stats-card p-4 text-center">
-                        <div class="text-info mb-2">
-                            <i class="fas fa-check-circle fa-2x"></i>
-                        </div>
-                        <h3 class="text-info mb-1" id="deliveredCount">156</h3>
-                        <p class="text-muted mb-0">Delivered</p>
-                    </div>
-                </div>
-            </div>
 
                 <!-- Filters -->
                 <div class="filter-section p-4 mb-4">
@@ -67,8 +121,11 @@
                                 <option value="Pending">Pending</option>
                                 <option value="Processing">Processing</option>
                                 <option value="Shipped">Shipped</option>
+                                <option value="Out-for-delivery">Out for Delivery</option>
                                 <option value="Delivered">Delivered</option>
                                 <option value="Cancelled">Cancelled</option>
+                                <option value="Returned">Returned</option>
+                                <option value="Payment-failed">Payment Failed</option>
                             </select>
                         </div>
                         <div class="col-md-3">
@@ -223,10 +280,25 @@
                         const data = await res.json();
                         renderTable(data.orders, data.currentPage, data.limit);
                         renderPagination(data.currentPage, data.totalPages)
+                        updateStats(data.statusCounts);
                     } catch (error) {
 
                         console.error("error in order filter ejs ", error)
                     }
+                }
+
+                function updateStats(counts) {
+                    if (!counts) return;
+                    document.getElementById('pendingCount').innerText = counts.Pending || 0;
+                    document.getElementById('processingCount').innerText = counts.Processing || 0;
+                    document.getElementById('shippedCount').innerText = counts.Shipped || 0;
+                    document.getElementById('outForDeliveryCount').innerText = counts['Out-for-delivery'] || 0;
+                    document.getElementById('deliveredCount').innerText = counts.Delivered || 0;
+                    document.getElementById('cancelledCount').innerText = counts.Cancelled || 0;
+                    document.getElementById('returnedCount').innerText = counts.Returned || 0;
+                    document.getElementById('paymentFailedCount').innerText = counts['Payment-failed'] || 0;
+                    document.getElementById('cancelRequestCount').innerText = counts['Cancellation Requested'] || 0;
+                    document.getElementById('returnRequestCount').innerText = counts['Return Requested'] || 0;
                 }
 
                 function renderTable(orders, page = 1, limit = 10) {

@@ -6,8 +6,8 @@ const { STATUS_CODE } = require("../../utils/statusCode");
 
 const getOrderPage = async (req, res) => {
   try {
-    const { status, date, search ,startDate ,endDate } = req.query;
-   
+    const { status, date, search, startDate, endDate } = req.query;
+
     let filter = {};
     //status
     if (status && status !== "") {
@@ -39,42 +39,42 @@ const getOrderPage = async (req, res) => {
         filter.createdOn = { $gte: monthAgo, $lte: today };
       } else if (date === 'custom') {
 
-         if (!startDate || !endDate) {
+        if (!startDate || !endDate) {
           return res.status(STATUS_CODE.BAD_REQUEST).json({ message: "Start and end date required" });
         }
-      const start = new Date(startDate);
-      const end   = new Date(endDate);
-      const today = new Date();
+        const start = new Date(startDate);
+        const end = new Date(endDate);
+        const today = new Date();
 
-      if ( isNaN(start.getTime()) || isNaN(end.getTime())) {
-        return res.status(STATUS_CODE.BAD_REQUEST).json({message:'Invalid date format'})
+        if (isNaN(start.getTime()) || isNaN(end.getTime())) {
+          return res.status(STATUS_CODE.BAD_REQUEST).json({ message: 'Invalid date format' })
         }
 
-        if(start > end){
-          return res.status(STATUS_CODE.BAD_REQUEST).json({message:'Start date cannot be after end date'})
-        } 
+        if (start > end) {
+          return res.status(STATUS_CODE.BAD_REQUEST).json({ message: 'Start date cannot be after end date' })
+        }
 
-        if(start > today || end > today){
+        if (start > today || end > today) {
           return res.status(STATUS_CODE.BAD_REQUEST).json({ message: "Future dates are not allowed" });
         }
         end.setHours(23, 59, 59, 999);
         filter.createdOn = { $gte: start, $lte: end };
-    }
+      }
     }
     //search
-      if (search && search.trim() !== "") {
+    if (search && search.trim() !== "") {
 
-        const matchedUsers = await User.find({
-          name:{$regex:search,$options:'i'},
-        }).select('_id');
+      const matchedUsers = await User.find({
+        name: { $regex: search, $options: 'i' },
+      }).select('_id');
 
-        const userIds = matchedUsers.map((u)=>u._id);
+      const userIds = matchedUsers.map((u) => u._id);
 
-        filter.$or = [  
-          { orderId: { $regex: search, $options: "i" } },
-          { userId: {$in:userIds } },
-        ];
-      }
+      filter.$or = [
+        { orderId: { $regex: search, $options: "i" } },
+        { userId: { $in: userIds } },
+      ];
+    }
 
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
@@ -89,13 +89,47 @@ const getOrderPage = async (req, res) => {
       .skip((page - 1) * limit)
       .limit(limit);
 
+    // Calculate statistics based on current non-status filters (date and search)
+    let statsFilter = { ...filter };
+    delete statsFilter.status;
+
+    const stats = await Order.aggregate([
+      { $match: statsFilter },
+      {
+        $group: {
+          _id: "$status",
+          count: { $sum: 1 },
+        },
+      },
+    ]);
+
+    const statusCounts = {
+      Pending: 0,
+      Processing: 0,
+      Shipped: 0,
+      Delivered: 0,
+      Cancelled: 0,
+      Returned: 0,
+      "Payment-failed": 0,
+      "Out-for-delivery": 0,
+      "Cancellation Requested": 0,
+      "Return Requested": 0,
+    };
+
+    stats.forEach((item) => {
+      if (statusCounts.hasOwnProperty(item._id)) {
+        statusCounts[item._id] = item.count;
+      }
+    });
+
     if (req.xhr || req.headers.accept.indexOf("application/json") > -1) {
       return res.json({
         orders,
-        currentPage:page,
+        currentPage: page,
         totalPages,
         totalOrders,
-        limit
+        limit,
+        statusCounts,
       });
     }
 
@@ -105,9 +139,11 @@ const getOrderPage = async (req, res) => {
       totalOrders,
       totalPages,
       limit,
+      statusCounts,
     });
   } catch (error) {
     console.log("error in the get order page", error);
+    return res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).send("Internal Server Error");
   }
 };
 const viewOrderDetails = async (req, res) => {
@@ -120,13 +156,13 @@ const viewOrderDetails = async (req, res) => {
         "productName  salePrice productImage status"
       )
       .populate("address");
-console.log("order price",order)
+    console.log("order price", order)
     if (!order) {
       return res
         .status(STATUS_CODE.NOT_FOUND)
         .json({ success: false, message: " order is not found" });
     }
-    
+
     return res.render("admin/vieworder", { order });
   } catch (error) {
     console.log("error in view get order details ", error);
@@ -157,7 +193,7 @@ const updateOrderStatus = async (req, res) => {
     }
 
     let canUpdate = false;
-    
+
     order.orderedItems.forEach((item) => {
       const currentIndex = STATUS_SEQUENCE.indexOf(item.status);
       const newIndex = STATUS_SEQUENCE.indexOf(status);
