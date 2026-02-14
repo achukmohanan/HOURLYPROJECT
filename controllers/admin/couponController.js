@@ -8,8 +8,8 @@ const getCouponPage = async (req, res) => {
     let skip = (page - 1) * limit;
 
     await Coupon.updateMany(
-      {expireOn:{$lt:new Date()},isActive:true},
-      {$set:{isActive:false}}
+      { expireOn: { $lt: new Date() }, isActive: true },
+      { $set: { isActive: false } }
     )
 
     let totalCoupons = await Coupon.countDocuments();
@@ -31,7 +31,7 @@ const getCouponPage = async (req, res) => {
 
 const postCoupon = async (req, res) => {
   try {
-    
+
     const {
       code,
       discountValue,
@@ -42,10 +42,10 @@ const postCoupon = async (req, res) => {
       minPurchase,
     } = req.body;
 
-    if (!code || !expiryDate ||!discountValue ||discountValue <= 0|| !maxDiscount||maxDiscount <= 0|| !minPurchase|| minPurchase <= 0||!limit || limit <= 0) {
+    if (!code || !expiryDate || !discountValue || discountValue <= 0 || !maxDiscount || maxDiscount <= 0 || !minPurchase || minPurchase <= 0 || !limit || limit <= 0) {
       return res
         .status(STATUS_CODE.BAD_REQUEST)
-        .json({ success: false, message: "Invalid coupon values"});
+        .json({ success: false, message: "Invalid coupon values" });
     }
 
     if (new Date(expiryDate) <= new Date()) {
@@ -63,7 +63,7 @@ const postCoupon = async (req, res) => {
     const coupon = new Coupon({
       code,
       purpose: "General",
-      discountType:'percentage',
+      discountType: 'percentage',
       discountValue,
       maxDiscount,
       description,
@@ -82,40 +82,107 @@ const postCoupon = async (req, res) => {
 const toggleCoupon = async (req, res) => {
   try {
     const { code } = req.params;
-    const {isActive} = req.body
-    
-  const coupon = await Coupon.findOne({code})
+    const { isActive } = req.body
 
-  if (!coupon) {
-    return res
-      .status(STATUS_CODE.NOT_FOUND)
-      .json({ success: false, message: "Coupon is not Found" });
-  }
+    const coupon = await Coupon.findOne({ code })
 
-  if(coupon.expireOn < new Date()){
-    if(coupon.isActive){
-      coupon.isActive = false;
-      await coupon.save();
+    if (!coupon) {
+      return res
+        .status(STATUS_CODE.NOT_FOUND)
+        .json({ success: false, message: "Coupon is not Found" });
     }
-    return res.status(STATUS_CODE.BAD_REQUEST).json({success:false,message:"Coupon is expired and cannot be enabled"})
-  }
 
-  coupon.isActive = isActive;
-  await coupon.save()
+    if (coupon.expireOn < new Date()) {
+      if (coupon.isActive) {
+        coupon.isActive = false;
+        await coupon.save();
+      }
+      return res.status(STATUS_CODE.BAD_REQUEST).json({ success: false, message: "Coupon is expired and cannot be enabled" })
+    }
 
-  return res.status(STATUS_CODE.SUCCESS).json({ success: true, message: `Coupon ${isActive ? "enabled" : "disabled"} Successfully` });
-    } catch (error) {
-      console.log("error in the soft delete of coupon",error)
-      return res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({
+    coupon.isActive = isActive;
+    await coupon.save()
+
+    return res.status(STATUS_CODE.SUCCESS).json({ success: true, message: `Coupon ${isActive ? "enabled" : "disabled"} Successfully` });
+  } catch (error) {
+    console.log("error in the soft delete of coupon", error)
+    return res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({
       success: false,
       message: "Something went wrong",
     });
+  }
+
+};
+
+const editCoupon = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const {
+      code,
+      discountValue,
+      maxDiscount,
+      description,
+      limit,
+      expiryDate,
+      minPurchase,
+    } = req.body;
+
+    if (!code || !expiryDate || !discountValue || discountValue <= 0 || !maxDiscount || maxDiscount <= 0 || !minPurchase || minPurchase <= 0 || !limit || limit <= 0) {
+      return res
+        .status(STATUS_CODE.BAD_REQUEST)
+        .json({ success: false, message: "Invalid coupon values" });
     }
- 
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    if (new Date(expiryDate) < today) {
+      return res
+        .status(STATUS_CODE.BAD_REQUEST)
+        .json({ success: false, message: "Expiry date must be in the future" });
+    }
+
+    const existing = await Coupon.findOne({ code, _id: { $ne: id } });
+    if (existing) {
+      return res
+        .status(STATUS_CODE.BAD_REQUEST)
+        .json({ success: false, message: "Coupon code already exists" });
+    }
+
+    const updatedCoupon = await Coupon.findByIdAndUpdate(
+      id,
+      {
+        code,
+        discountValue,
+        maxDiscount,
+        description,
+        limit,
+        expireOn: expiryDate,
+        minPurchase,
+      },
+      { new: true }
+    );
+
+    if (!updatedCoupon) {
+      return res
+        .status(STATUS_CODE.NOT_FOUND)
+        .json({ success: false, message: "Coupon not found" });
+    }
+
+    return res
+      .status(STATUS_CODE.SUCCESS)
+      .json({ success: true, message: "Coupon Updated Successfully" });
+  } catch (error) {
+    console.log("error in the backend of edit coupon", error);
+    return res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({
+      success: false,
+      message: "Something went wrong",
+    });
+  }
 };
 
 module.exports = {
   getCouponPage,
   postCoupon,
   toggleCoupon,
+  editCoupon,
 };

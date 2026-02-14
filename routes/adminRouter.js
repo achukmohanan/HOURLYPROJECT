@@ -63,8 +63,8 @@ router.post(
 router.get("/blockBrand", adminAuth, brandController.blockBrand);
 router.get("/unBlockBrand", adminAuth, brandController.unBlockBrand);
 
-router.get('/editBrand',adminAuth, brandController.getBrandEditPage)
-router.post('/editBrand',upload.single('brandImage'),brandController.postEditBrand)
+router.get('/editBrand', adminAuth, brandController.getBrandEditPage)
+router.post('/editBrand', upload.single('brandImage'), brandController.postEditBrand)
 
 //product management
 router.get("/addProducts", adminAuth, productController.getProductAddPage);
@@ -85,7 +85,7 @@ router.get("/blockProduct", adminAuth, productController2.blockProduct);
 router.get("/unblockProduct", adminAuth, productController2.unblockProduct);
 router.get("/editProduct", adminAuth, productController2.getEditProduct);
 //edit product 
-router.post("/editProduct/:id",adminAuth,productController2.editProduct);
+router.post("/editProduct/:id", adminAuth, productController2.editProduct);
 
 router.post("/deleteImage", adminAuth, productController.deleteSingleImage);
 
@@ -121,6 +121,7 @@ router.post(
 router.get("/coupon", adminAuth, couponController.getCouponPage);
 router.post("/coupon", adminAuth, couponController.postCoupon);
 router.patch("/toggleCoupon/:code", adminAuth, couponController.toggleCoupon);
+router.put("/editCoupon/:id", adminAuth, couponController.editCoupon);
 
 // salesReport
 router.get("/salesReport", adminAuth, salesController.getsalesReport);
