@@ -199,7 +199,7 @@ const logout = async (req, res) => {
       }
       console.log("logout session");
 
-      res.redirect("/admin/adminlogin");
+    return  res.redirect("/admin/adminlogin");
     });
   } catch (error) {
     console.log("unexpected error during  logout", error);
