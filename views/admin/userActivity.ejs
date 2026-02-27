@@ -52,6 +52,7 @@
                             <thead>
                                 <tr>
                                     <th scope="col"><b>User Name</b></th>
+                                    <th scope="col"><b>Email</b></th>
                                     <th scope="col"><b>Login Time</b></th>
                                     <th scope="col"><b>Logout Time</b></th>
                                     <th scope="col"><b>Duration</b></th>
@@ -63,7 +64,11 @@
                                     <% for(let i=0; i < activities.length; i++) { %>
                                         <tr>
                                             <td>
-                                                <%= activities[i].name %>
+                                                <%= activities[i].userId ? activities[i].userId.name :
+                                                    activities[i].name %>
+                                            </td>
+                                            <td>
+                                                <%= activities[i].userId ? activities[i].userId.email : 'N/A' %>
                                             </td>
                                             <td>
                                                 <%= activities[i].loginTime ?
@@ -108,7 +113,7 @@
                                         <% } %>
                                             <% } else { %>
                                                 <tr>
-                                                    <td colspan="5" class="text-center">No activity records found</td>
+                                                    <td colspan="6" class="text-center">No activity records found</td>
                                                 </tr>
                                                 <% } %>
                             </tbody>

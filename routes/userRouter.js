@@ -16,6 +16,7 @@ const contactController = require("../controllers/user/contactController");
 const aboutController = require('../controllers/user/aboutController')
 const cartWishlistCount = require('../middlewares/cartWishlistCount');
 const couponController = require('../controllers/user/couponController')
+const UserActivity = require('../models/userActivity');
 
 const retryPaymentController = require('../controllers/user/retryPaymentController');
 
@@ -34,8 +35,8 @@ router.post("/confirmwithotp", checksession, userController.confirmwithotp);
 //google login
 router.get(
   "/google",
-  (req,res,next)=>{
-    if(req.query.ref){
+  (req, res, next) => {
+    if (req.query.ref) {
       req.session.refferalCode = req.query.ref;
     }
     next()
@@ -49,13 +50,20 @@ router.get(
     failureRedirect: "/login",
     session: true,
   }),
-  (req, res) => {
+  async (req, res) => {
     console.log("google login successful");
     if (req.user) {
-    req.session.user = req.user; 
-  }
-    // req.session.user = req.session.user;
-    res.redirect("/home"); 
+      req.session.user = req.user._id;
+
+      // Log user activity
+      const activity = await UserActivity.create({
+        userId: req.user._id,
+        name: req.user.name,
+        loginTime: new Date()
+      });
+      req.session.activityId = activity._id;
+    }
+    res.redirect("/home");
   }
 );
 
@@ -103,7 +111,7 @@ router.get("/verifyCurrentEmail", userAuth, profileEditing.getCurrentEmail);
 router.post("/verifyCurrentEmail", userAuth, profileEditing.postCurrentEmail);
 
 //resend otp 
-router.post('/email-resend-otp',userAuth , profileEditing.emailResendOtp)
+router.post('/email-resend-otp', userAuth, profileEditing.emailResendOtp)
 
 router.get("/emailEditOtp", userAuth, profileEditing.getEmailEditOtp);
 router.post("/emailEditOtp", userAuth, profileEditing.postEmailEditOtp);
@@ -112,11 +120,11 @@ router.get("/updateEmail", userAuth, profileEditing.getUpdateEmail);
 router.post("/updateEmail", userAuth, profileEditing.postUpdateEmail);
 
 //product management
-router.get("/productDetails", cartWishlistCount,productController.productDetails);
-router.get("/shop",cartWishlistCount, productController.loadShoppingpage);
+router.get("/productDetails", cartWishlistCount, productController.productDetails);
+router.get("/shop", cartWishlistCount, productController.loadShoppingpage);
 
 // cart
-router.get("/cart",userAuth, cartController.getCart);
+router.get("/cart", userAuth, cartController.getCart);
 router.post("/addtocart", cartController.addToCart);
 router.delete("/delete-cart-item", cartController.deleteCartItem);
 router.patch("/update-quantity-cart", cartController.updateCartQuantity);
@@ -134,16 +142,16 @@ router.post("/payment", paymentController.postPayment);
 router.post("/verify-payment", userAuth, paymentController.confirmRazorpay);
 
 //retry payment
-router.post('/retry-payment',userAuth, retryPaymentController.retryPayment)
-router.post('/verify-retry-payment',userAuth , retryPaymentController.verifyRetryPayment)
+router.post('/retry-payment', userAuth, retryPaymentController.retryPayment)
+router.post('/verify-retry-payment', userAuth, retryPaymentController.verifyRetryPayment)
 //order failure
-router.post('/payment-failed',userAuth, paymentController.paymentFailed)
+router.post('/payment-failed', userAuth, paymentController.paymentFailed)
 // order management
 router.post("/place-order", userAuth, orderController.postOrder);
 router.get("/order-success", userAuth, orderController.orderSuccess);
 router.get("/order-failure", userAuth, orderController.orderFailure);
 // router.get('/viewOrder',userAuth,paymentController.viewOrderPage)
-router.post("/cancelOrder/:orderId/:itemId",userAuth,orderController.cancelOrder);
+router.post("/cancelOrder/:orderId/:itemId", userAuth, orderController.cancelOrder);
 
 router.post(
   "/return-order/:orderId/:itemId",
@@ -170,20 +178,20 @@ router.post(
   walletController.verifyWalletTopup
 );
 //wallet failed
-router.post('/wallet-failed',userAuth,walletController.walletFailed)
+router.post('/wallet-failed', userAuth, walletController.walletFailed)
 
 //coupon management
 router.post("/apply-coupon", userAuth, couponController.applyCoupon);
-router.post('/remove-coupon',userAuth,couponController.removeCoupon)
+router.post('/remove-coupon', userAuth, couponController.removeCoupon)
 
 //contact
 router.get("/contact", userAuth, contactController.getContactPage);
 router.post("/contact", userAuth, contactController.postContact);
 
 //about
-router.get('/about',cartWishlistCount, aboutController.getAboutPage)
+router.get('/about', cartWishlistCount, aboutController.getAboutPage)
 //chechk user status
-router.get('/check-status',profileEditing.checkUserStatus)
+router.get('/check-status', profileEditing.checkUserStatus)
 
 
 // router.get('/test?page=1',(req,res)=>{
