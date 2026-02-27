@@ -1,4 +1,4 @@
-const { model } = require("mongoose");
+const UserActivity = require("../../models/userActivity");
 const User = require("../../models/userSchema");
 const { STATUS_CODE } = require("../../utils/statusCode");
 
@@ -27,7 +27,7 @@ const customerInfo = async (req, res) => {
         { email: { $regex: ".*" + search + ".*", $options: "i" } },
       ],
     });
- 
+
     res.render("admin/customers", {
       data: userData,
       totalPages: Math.ceil(count / limit),
@@ -68,8 +68,34 @@ const customerunBlocked = async (req, res) => {
   }
 };
 
+const getUserActivity = async (req, res) => {
+  try {
+    let page = parseInt(req.query.page) || 1;
+    const limit = 10;
+
+    const activityData = await UserActivity.find()
+      .populate('userId')
+      .sort({ loginTime: -1 })
+      .limit(limit)
+      .skip((page - 1) * limit)
+      .exec();
+
+    const count = await UserActivity.countDocuments();
+
+    res.render("admin/userActivity", {
+      activities: activityData,
+      totalPages: Math.ceil(count / limit),
+      currentPage: page,
+    });
+  } catch (error) {
+    console.error("Error in getUserActivity:", error);
+    res.redirect("/admin/pageerror");
+  }
+};
+
 module.exports = {
   customerInfo,
   customerBlocked,
   customerunBlocked,
+  getUserActivity,
 };

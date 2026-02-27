@@ -33,6 +33,7 @@ router.get("/logout", adminAuth, adminController.logout);
 router.get("/users", adminAuth, customerController.customerInfo);
 router.get("/blockCustomer", adminAuth, customerController.customerBlocked);
 router.get("/unblockCustomer", adminAuth, customerController.customerunBlocked);
+router.get("/userActivity", adminAuth, customerController.getUserActivity);
 
 //category managment
 router.get("/category", adminAuth, categoryController.categoryInfo);
